@@ -23,7 +23,7 @@ export class Footer extends React.Component<FooterProps, FooterState> {
                         <a href="mailto:kotliluk@fel.cvut.cz">Contact author</a>
                     </li>
                     <li>
-                        <a href="https://gitlab.fel.cvut.cz/kotliluk/rachel" target="_blank" rel="noreferrer">About</a>
+                        <a href="https://github.com/kotliluk/rachel" target="_blank" rel="noreferrer">About</a>
                     </li>
                 </ul>
             </footer>
