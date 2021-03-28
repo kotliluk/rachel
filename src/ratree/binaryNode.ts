@@ -1,0 +1,56 @@
+import RATreeNode from "./raTreeNode";
+import Relation from "../relation/relation";
+import ErrorWithTextRange from "../error/errorWithTextRange";
+
+/**
+ * Classes extending binary node.
+ */
+export type BinaryNodeClass = "left antijoin" | "right antijoin" | "cartesian product" | "division" | "natural join"
+    | "left outer join" | "right outer join" | "full outer join" | "left semijoin" | "right semijoin" | "union"
+    | "intersection" | "difference" | "theta join" | "left theta semijoin" | "right theta semijoin";
+
+/**
+ * Abstract node of the relational algebra syntactic tree with two subtrees.
+ */
+export default abstract class BinaryNode extends RATreeNode {
+
+    protected leftSubtree: RATreeNode;
+    protected rightSubtree: RATreeNode;
+
+    protected constructor(left: RATreeNode, right: RATreeNode) {
+        super();
+        this.leftSubtree = left;
+        this.rightSubtree = right;
+    }
+
+    public getLeftSubtree(): RATreeNode {
+        return this.leftSubtree;
+    }
+
+    public getRightSubtree(): RATreeNode {
+        return this.rightSubtree;
+    }
+
+    /**
+     * Fake evaluates left and right subtrees of the current not-parametrized binary node.
+     * If not, returns new simple faked schema with empty "" name:
+     * - type = union: returns union of source schemas
+     * - type = left: returns left source schema
+     * - type = right: returns right source schema
+     */
+    protected fakeEvalBinary(cursorIndex: number, type: "union" | "left" | "right"): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
+        // evaluates the subtrees
+        const left: {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} = this.leftSubtree.fakeEval(cursorIndex);
+        const right: {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} = this.rightSubtree.fakeEval(cursorIndex);
+        // creates return relation
+        const result: Relation = new Relation("");
+        if (type === "left" || type === "union") {
+            left.result.forEachColumn((type, name) => result.addColumn(name, type));
+        }
+        if (type === "right" || type === "union") {
+            right.result.forEachColumn((type, name) => result.addColumn(name, type));
+        }
+        left.errors.push(...right.errors);
+        return {result, whispers: left.whispers.length !== 0 ? left.whispers : right.whispers, errors: left.errors};
+    }
+}

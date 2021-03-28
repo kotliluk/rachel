@@ -1,0 +1,445 @@
+import React from "react";
+import "./css/expressionSection.css"
+import Relation from "../relation/relation";
+import {TooltipButton} from "./tooltipButton";
+import {MessageLabel} from "./messageLabel";
+import RASyntaxError from "../error/raSyntaxError";
+import RASemanticError from "../error/raSemanticError";
+import {XTextArea} from "./xTextArea";
+import {ExprParser} from "../expression/exprParser";
+import {getStartOfWordBeforeIndex, sortWhispers} from "../tools/whisper";
+import {Expression} from "../expression/expression";
+import {TextInput} from "./textInput";
+import ErrorWithTextRange from "../error/errorWithTextRange";
+import RATreeNode from "../ratree/raTreeNode";
+
+interface ExpressionSectionProps {
+    expressions: Expression[],
+    currentExpressionIndex: number,
+
+    relations: Map<string, Relation>,
+
+    onSelectDifferentExpression: (newIndex: number) => void,
+    onNewExpression: () => void,
+    onDeleteExpression: (onDone: () => void) => void,
+    onExportExpressions: (onDone: (msg: string) => void) => void,
+    onImportExpressions: (onDone: (msg: string) => void) => void,
+
+    onChange: (name: string, text: string) => void,
+    onEval: (tree: RATreeNode) => void,
+    onUnexpectedError: (e: Error) => void,
+
+    nullValuesSupport: boolean,
+    darkTheme: boolean
+}
+
+interface ExpressionSectionState {
+    sectionClicked: boolean,
+    whispers: string[],
+    errors: {start: number, end: number, msg: string}[],
+    cursorIndex: number,
+    messageText: string,
+    isMessageError: boolean
+}
+
+interface OpButtonProps {
+    // key for React DOM
+    key: string,
+    // characters to be added on click
+    char: string,
+    // text to display on the button
+    text: string,
+    // tooltip ti show on mouse move
+    tooltip: string,
+    // shift to left of the cursor after adding the characters
+    shift: number
+}
+
+/**
+ * Section to edit, manage, and eval relational algebra expressions.
+ *
+ * Props:
+ * - currentExpressionText: string: the text of the current expression
+ * - currentExpressionPosition: number: the position of the current expression in the expression list
+ * - relations: Map<string, Relation>: actual relations (used to find Relations and Columns, which are not defined)
+ * - onSelectDifferentExpression: (newIndex: number) => void: handler of selecting different expression as current
+ * - onNewExpression: () => void: handler of creating the new expression
+ * - onDeleteExpression: () => void: handler of deleting the current expression
+ * - onExportExpressions: (onDone: (msg: string) => void) => void: handler of saving the expressions, it accepts the callback
+ to display the saving status messages
+ * - onImportExpressions: (onDone: (msg: string) => void) => void: handler of loading the expressions, it accepts the callback
+ to display the loading status messages
+ * - onChange: (text: string) => void: handler of change in expression text, it accepts the new text value
+ * - onEval: (tree: RATreeNode) => void: handler of evaluation, it accepts the parsed tree from the expression text
+ * - onUnexpectedError: (e: Error) => void: handler of unexpected errors
+ * - nullValuesSupport: boolean: whether to support null values
+ * - darkTheme: boolean: true if dark theme should be applied
+ */
+export class ExpressionSection extends React.Component<ExpressionSectionProps, ExpressionSectionState> {
+
+    // buttons for inserting RA operations supported without null values
+    private readonly buttonPropsFirstPart: Array<OpButtonProps> = [
+        // unary
+        {key: 'unary_a', char: '()',        text: '()', tooltip: 'Selection (P1)',   shift: 1},
+        {key: 'unary_b', char: '[]',        text: '[]', tooltip: 'Projection (P1)',  shift: 1},
+        {key: 'unary_c', char: '< -> >',    text: '<>', tooltip: 'Rename (P1)',      shift: 5},
+        // binary (precedence A)
+        {key: 'a', char: '*',       text: '*',      tooltip: 'Natural join (P2)',            shift: 0},
+        {key: 'b', char: '\u2a2f',  text: '\u2a2f', tooltip: 'Cartesian product (P2)',       shift: 0},
+        {key: 'c', char: '{}',      text: '{}',     tooltip: 'Theta join (P2)',              shift: 1},
+        // binary (precedence B)
+        {key: 'd', char: '<*',      text: '<*',     tooltip: 'Left semijoin (P3)',           shift: 0},
+        {key: 'e', char: '*>',      text: '*>',     tooltip: 'Right semijoin (P3)',          shift: 0},
+        {key: 'f', char: '\u22b3',  text: '\u22b3', tooltip: 'Left antijoin (P3)',           shift: 0},
+        {key: 'g', char: '\u22b2',  text: '\u22b2', tooltip: 'Right antijoin (P3)',          shift: 0},
+        {key: 'h', char: '<}',      text: '<}',     tooltip: 'Left theta semijoin (P3)',     shift: 1},
+        {key: 'i', char: '{>',      text: '{>',     tooltip: 'Right theta semijoin (P3)',    shift: 1},
+    ];
+    // buttons for inserting RA operations supported without null values
+    private readonly buttonPropsSecondPart: Array<OpButtonProps> = [
+        // binary (precedence D)
+        {key: 'j', char: '\u00f7',  text: '\u00f7', tooltip: 'Division (P5)',                shift: 0},
+        // binary (precedence E)
+        {key: 'k', char: '\u2229',  text: '\u2229', tooltip: 'Intersection (P6)',            shift: 0},
+        // binary (precedence F)
+        {key: 'l', char: '\\',      text: '\\',     tooltip: 'Difference (P7)',              shift: 0},
+        // binary (precedence G)
+        {key: 'm', char: '\u222a',  text: '\u222a', tooltip: 'Union (P8)',                   shift: 0},
+    ];
+    // buttons for inserting RA operations supported with null values only
+    private readonly nullSupportRequiredButtonProps: Array<OpButtonProps> = [
+        // binary (precedence C)
+        {key: 'null_a', char: '*F*', text: '*F*', tooltip: 'Full outer join (P4)',  shift: 0},
+        {key: 'null_b', char: '*L*', text: '*L*', tooltip: 'Left outer join (P4)',  shift: 0},
+        {key: 'null_c', char: '*R*', text: '*R*', tooltip: 'Right outer join (P4)', shift: 0}
+    ];
+
+    // reference to child textarea element
+    private readonly textAreaRef: React.RefObject<XTextArea>;
+    // timestamp of last expression text change
+    private lastChange: number = 0;
+    // timestamp of last display of whispers and errors
+    private lastWhisperAndErrorsUpdate: number = 0;
+    // update rate of whispers and errors (in ms)
+    private readonly whispersAndErrorsUpdateRate: number = 200;
+    // reference to this section element
+    private readonly sectionRef: React.RefObject<HTMLDivElement>;
+
+    constructor(props: ExpressionSectionProps) {
+        super(props);
+        this.state = {
+            sectionClicked: false,
+            whispers: [],
+            errors: [],
+            cursorIndex: 0,
+            messageText: "",
+            isMessageError: false
+        }
+        this.textAreaRef = React.createRef<XTextArea>();
+        this.sectionRef = React.createRef<HTMLDivElement>();
+        setInterval(() => this.updateWhispersAndErrors(), this.whispersAndErrorsUpdateRate);
+    }
+
+    componentDidMount() {
+        // adds listeners for evaluating on Ctrl+Enter
+        const section = this.sectionRef.current;
+        if (section !== null) {
+            section.addEventListener("click", () => {
+                this.setState({sectionClicked: true});
+            }, true); // useCapture = true for overwriting the window listener
+        }
+        window.addEventListener("click", () => {
+            this.setState({sectionClicked: false});
+        }, true); // useCapture = true for overwriting by section listener
+        window.addEventListener("keydown", (event) => {
+            if (this.state.sectionClicked && event.ctrlKey) {
+                if (event.key === "Enter") {
+                    this.evalExpr();
+                    event.preventDefault();
+                }
+                else if (event.shiftKey && event.key.toLowerCase() === "a") {
+                    this.newExpression();
+                    event.preventDefault();
+                }
+                else if (event.shiftKey && event.key.toLowerCase() === "d") {
+                    this.deleteExpression();
+                    event.preventDefault();
+                }
+            }
+        });
+        this.updateErrors();
+    }
+
+    /**
+     * Updates displayed errors in the text area input.
+     */
+    public updateErrors = () => {
+        const text = this.getCurExpr().text;
+        const exprParser: ExprParser = new ExprParser(this.props.relations, this.props.nullValuesSupport);
+        const { errors } = exprParser.fakeParse(text, this.state.cursorIndex);
+        this.setState({
+            errors: errors.filter(err => err.range !== undefined)
+                // @ts-ignore
+                .map(err => {return {start: err.range.start, end: err.range.end + 1, msg: err.message}})
+        });
+    }
+
+    private getCurExpr(): Expression {
+        return this.props.expressions[this.props.currentExpressionIndex];
+    }
+
+    private handleSelectDifferentExpression(index: number): void {
+        this.setState({errors: []});
+        this.props.onSelectDifferentExpression(index);
+        this.showMessage("");
+    }
+
+    private evalExpr = (): void => {
+        this.showMessage("");
+        try {
+            const exprParser: ExprParser = new ExprParser(this.props.relations, this.props.nullValuesSupport);
+            const tree = exprParser.indexedParse(this.props.expressions[this.props.currentExpressionIndex].text);
+            tree.eval();
+            this.setState({errors: []});
+            this.props.onEval(tree);
+        }
+        catch (err) {
+            if (err instanceof ErrorWithTextRange) {
+                if (err.range !== undefined) {
+                    // change end to also highlight the last char
+                    err.range.end += 1;
+                    this.setState(state => {
+                        const errorRanges = state.errors;
+                        // does not push duplicate error range
+                        if (errorRanges.every(er => er.start !== err.range.start || er.end !== err.range.end)) {
+                            errorRanges.push({...err.range, msg: err.message});
+                        }
+                        return {errors: errorRanges}
+                    });
+                }
+            }
+            this.showError(err);
+        }
+    }
+
+    private newExpression = (): void => {
+        this.props.onNewExpression();
+    }
+
+    private deleteExpression = (): void => {
+        this.props.onDeleteExpression(this.updateErrors);
+    }
+
+    private saveExpressions = (): void => {
+        this.props.onExportExpressions(this.showMessage);
+    }
+
+    private loadExpressions = (): void => {
+        this.setState({errors: []});
+        this.props.onImportExpressions((msg) => {
+            this.showMessage(msg);
+            this.updateErrors();
+        });
+    }
+
+    /**
+     * Adds given special string into RA expression at the current cursor position.
+     *
+     * @param str string to be added
+     * @param shift move of the cursor from added string end position (to the beginning)
+     */
+    private addSpecialString = (str: string, shift: number): void => {
+        // @ts-ignore
+        const {start, end} = this.textAreaRef.current.getSelection();
+        const firstPart: string = this.getCurExpr().text.substring(0, start);
+        const secondPart: string = this.getCurExpr().text.substring(end);
+        const newPosition: number = firstPart.length + str.length - shift;
+        const newStr: string = firstPart + str + secondPart;
+        // updates text in textarea
+        this.handleExprChange(newStr, newPosition, () => {
+            // @ts-ignore - moves cursor to expected position
+            this.textAreaRef.current.setSelection(newPosition);
+            // @ts-ignore
+            this.textAreaRef.current.focus();
+        });
+    }
+
+    /**
+     * Handles change of expression text. Updates text and notifies the parent.
+     *
+     * @param text
+     * @param cursorIndex
+     * @param onDone callback after updating the state
+     */
+    private handleExprChange = (text: string, cursorIndex: number, onDone: () => void = () => {}) => {
+        this.props.onChange(this.getCurExpr().name, text);  // must be called before setState for proper functionality of XTextArea
+        this.setState({cursorIndex: cursorIndex}, onDone);
+        this.lastChange = Date.now();
+    }
+
+    /**
+     * Shows current whispers and errors, if the text area is focused and there was a text change after last update.
+     */
+    private updateWhispersAndErrors = () => {
+        const textArea = this.textAreaRef.current;
+        if (textArea !== null && textArea.isFocused() && this.lastChange > this.lastWhisperAndErrorsUpdate) {
+            const text = this.getCurExpr().text;
+            const exprParser: ExprParser = new ExprParser(this.props.relations, this.props.nullValuesSupport);
+            const { whispers, errors } = exprParser.fakeParse(text, this.state.cursorIndex);
+            const wordBeforeCursor: string = text.slice(getStartOfWordBeforeIndex(text, this.state.cursorIndex), this.state.cursorIndex);
+            sortWhispers(whispers, wordBeforeCursor);
+            this.setState({
+                whispers: whispers,
+                errors: errors.filter(err => err.range !== undefined)
+                    // @ts-ignore
+                    .map(err => {return {start: err.range.start, end: err.range.end + 1, msg: err.message}})
+            });
+            this.lastWhisperAndErrorsUpdate = Date.now();
+        }
+    }
+
+    private handleExprNameChange = (name: string) => {
+        this.props.onChange(name, this.getCurExpr().text);
+    }
+
+    /**
+     * Shows the given message.
+     *
+     * @param msg message to be shown
+     * @param isError whether the message is error
+     */
+    private showMessage = (msg: string, isError: boolean = false) => {
+        this.setState({
+            messageText: msg,
+            isMessageError: isError
+        });
+    }
+
+    /**
+     * Handles and shows the given error. If the error is not of RASyntaxError or RASemanticError class, it is passed
+     * to the parent as unexpected error.
+     *
+     * @param err the error to handle
+     */
+    private showError = (err: Error) => {
+        // common user's errors
+        if (err instanceof RASyntaxError || err instanceof RASemanticError) {
+            this.showMessage(err.message, true);
+        }
+        else {
+            this.props.onUnexpectedError(err);
+            this.showMessage("UNEXPECTED ERROR: " + err.message + "\n" +
+                "Please, report it with your last actions to kotliluk@fel.cvut.cz, thank you!", true);
+        }
+    }
+
+    public render() {
+        const createExprMenuButtons = () => {
+            return this.props.expressions.map((expr, i) => {
+                const className: string = (this.props.darkTheme ?
+                    (this.props.currentExpressionIndex === i ? "button-clicked-dark" : "button-dark") :
+                    (this.props.currentExpressionIndex === i ? "button-clicked-light" : "button-light"));
+                return (<TooltipButton
+                    key={i}
+                    text={expr.name}
+                    onClick={() => this.handleSelectDifferentExpression(i)}
+                    className={className}
+                    style={{width: (98 / this.props.expressions.length) + "%"}}
+                    tooltip={expr.name}
+                    tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                />);
+            });
+        }
+
+        const createButton = (text: string, onClick: () => void, tooltip: string, style?: React.CSSProperties) => {
+            return (<TooltipButton
+                key={text}
+                text={text}
+                onClick={onClick}
+                className={this.props.darkTheme ? "button-dark" : "button-light"}
+                // @ts-ignore
+                style={style}
+                tooltip={tooltip}
+                tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+            />);
+        }
+
+        const createOpButtons = (buttonProps: Array<OpButtonProps>) => {
+            return buttonProps.map(prop => {
+                return (<TooltipButton
+                    key={prop.key}
+                    text={prop.text}
+                    onClick={() => this.addSpecialString(prop.char, prop.shift)}
+                    className={this.props.darkTheme ? "button-dark" : "button-light"}
+                    tooltip={prop.tooltip}
+                    tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                />);
+            });
+        }
+
+        let sectionClassName = this.props.darkTheme ? "section-border-dark" : "section-border-light";
+        if (this.state.sectionClicked) {
+            sectionClassName = this.props.darkTheme ? "section-border-dark-clicked" : "section-border-light-clicked";
+        }
+        return (
+            <section
+                ref={this.sectionRef}
+                className={sectionClassName}>
+                <div className="expressions-list-menu">
+                    {createExprMenuButtons()}
+                </div>
+
+                <XTextArea
+                    ref={this.textAreaRef}
+                    id="expression-section-textarea"
+                    text={this.getCurExpr().text}
+                    placeholder="Write RA expression here..."
+                    highlights={this.state.errors}
+                    whispers={this.state.whispers}
+
+                    initRows={3}
+
+                    onChange={this.handleExprChange}
+
+                    darkTheme={this.props.darkTheme}
+                />
+
+                <div>
+                    {createOpButtons(this.buttonPropsFirstPart)}
+                    {this.props.nullValuesSupport ? createOpButtons(this.nullSupportRequiredButtonProps) : null}
+                    {createOpButtons(this.buttonPropsSecondPart)}
+                </div>
+
+                <div className="expressions-management-menu">
+                    <div className="expressions-management-menu-left">
+                        <TextInput
+                            label=""
+                            value={this.getCurExpr().name}
+                            buttonText="Rename"
+                            onSubmit={this.handleExprNameChange}
+                            forbidden={() => false}
+                            id="expression-name-input"
+                            darkTheme={this.props.darkTheme}
+                        />
+                    </div>
+
+                    <div className="expressions-management-menu-right">
+                        {createButton("Evaluate", this.evalExpr, "Evaluates given RA expression", {marginRight: "20px"})}
+                        {createButton("New", this.newExpression, "Creates a new RA expression")}
+                        {createButton("Delete", this.deleteExpression, "Deletes current RA expression", {marginRight: "20px"})}
+                        {createButton("Import", this.loadExpressions, "Loads expressions from a file")}
+                        {createButton("Export", this.saveExpressions, "Saves expressions to a file")}
+                    </div>
+                </div>
+
+                <MessageLabel
+                    message={this.state.messageText}
+                    darkTheme={this.props.darkTheme}
+                    error={this.state.isMessageError}
+                />
+
+                <div style={{clear: "both"}}/>
+            </section>
+        );
+    }
+}

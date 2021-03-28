@@ -1,0 +1,187 @@
+/* TABLE CONTAINER */
+
+.edit-table-container {
+    min-height: 80px;
+    resize: vertical;
+    overflow: auto;
+    font-size: 14px;
+
+    border-radius: 12px;
+    padding-right: 2px;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.edit-table-container-light {
+    border: 6px solid var(--light-section);
+}
+
+.edit-table-container-dark {
+    border: 6px solid var(--dark-section);
+}
+
+.edit-table-container .tooltip {
+    font-weight: normal;
+}
+
+/* TABLE */
+
+.edit-table {
+    width: 100%;
+    max-width: 100%;
+    background-color: transparent;
+    border-spacing: 0;
+    padding-left: 2px;
+    padding-top: 2px;
+    text-align: left;
+    table-layout: auto;
+}
+
+.edit-table-light {
+}
+
+.edit-table-dark {
+}
+
+/* TD */
+
+.edit-table td {
+    position: relative;
+    height: 21px;
+    padding: 0 4px 0 4px;
+    white-space: nowrap;
+}
+
+.edit-table td button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+}
+
+.edit-table td:hover .tooltip {
+    visibility: visible;
+}
+
+.edit-table-light td {
+    border: 1px solid var(--light-section);
+}
+
+.edit-table-dark td {
+    border: 1px solid var(--dark-section);
+}
+
+.edit-table-light td:focus-within {
+    border: 1px solid var(--light-details);
+}
+
+.edit-table-dark td:focus-within {
+    border: 1px solid var(--dark-details);
+}
+
+/* INPUT IN TABLE */
+
+.edit-table input {
+    margin: 0;
+    padding: 0;
+    font-size: inherit;
+    border: none;
+    min-width: 200px;
+    width: 100%;
+}
+
+/* TH */
+
+.edit-table th {
+    position: relative;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.edit-table th:hover .tooltip {
+    visibility: visible;
+}
+
+.name-th:hover .tooltip {
+    visibility: visible;
+}
+
+.name-th {
+    border-width: 3px 3px 3px 3px;
+    border-style: solid;
+    border-radius: 8px 8px 0 0;
+}
+
+.type-th {
+    text-align: center;
+    border-width: 0 3px 3px 3px;
+    border-style: solid;
+    border-radius: 0 0 8px 8px;
+}
+
+.edit-table-light th {
+    border-color: var(--light-section);
+}
+
+.edit-table-dark th {
+    border-color: var(--dark-section);
+}
+
+.edit-table-light .name-th:focus-within {
+    border-width: 2px;
+    border-color: var(--light-details);
+}
+
+.edit-table-dark .name-th:focus-within {
+    border-width: 2px;
+    border-color: var(--dark-details);
+}
+
+/* ERROR INPUT */
+
+.error-input {
+    border-color: red !important;
+}
+
+/* SELECT IN TABLE */
+
+.edit-table select {
+    background-color: transparent;
+    color: inherit;
+    border-radius: 4px;
+    min-width: 120px;
+    cursor: pointer;
+    font-size: inherit;
+}
+
+.edit-table-light select {
+    border-color: transparent;
+}
+
+.edit-table-dark select {
+    border-color: transparent;
+}
+
+.edit-table-light select:hover {
+    background-color: var(--light-section);
+}
+
+.edit-table-dark select:hover {
+    background-color: var(--dark-section);
+}
+
+.edit-table-light select option {
+    background-color: var(--light-background);
+}
+
+.edit-table-dark select option {
+    background-color: var(--dark-background);
+}
+
+.table-context-menu {
+    visibility: hidden;
+    position: absolute;
+    z-index: 1;
+}

@@ -1,0 +1,176 @@
+import BinaryNode from "../binaryNode";
+import UnaryNode from "../unaryNode";
+import RATreeNode from "../raTreeNode";
+import {depthSearch, getTreeDepth} from "../raTreeTools";
+import Relation from "../../relation/relation";
+
+/**
+ * Testing binary node class. Used only for searching by index.
+ */
+class TestBinary extends BinaryNode {
+    constructor(readonly name: string, left: RATreeNode, right: RATreeNode) {
+        super(left, right);
+    }
+
+    eval(): void {
+    }
+
+    printInLine(): string {
+        return this.name;
+    }
+
+    getOperationName(): string {
+        return this.name;
+    }
+
+    fakeEval(cursorIndex: number): Relation | string[] {
+        return [];
+    }
+}
+
+/**
+ * Testing unary node class. Used only for searching by index.
+ */
+class TestUnary extends UnaryNode {
+    constructor(readonly name: string, subtree: RATreeNode) {
+        super(subtree);
+    }
+
+    eval(): void {
+    }
+
+    printInLine(): string {
+        return this.name;
+    }
+
+    getOperationName(): string {
+        return this.name;
+    }
+
+    fakeEval(cursorIndex: number): Relation | string[] {
+        return [];
+    }
+}
+
+/**
+ * Testing leaf node class. Used only for searching by index.
+ */
+class TestLeaf extends RATreeNode {
+    constructor(readonly name: string) {
+        super();
+    }
+
+    eval(): void {
+    }
+
+    printInLine(): string {
+        return this.name;
+    }
+
+    getOperationName(): string {
+        return this.name;
+    }
+
+    fakeEval(cursorIndex: number): Relation | string[] {
+        return [];
+    }
+}
+
+/**
+ * Symmetric tree with 11 nodes, width 4, depth 3.
+ */
+const treeA: RATreeNode = new TestBinary(
+    "Node 0",
+    new TestBinary(
+        "Node 1",
+        new TestUnary(
+            "Node 2",
+            new TestLeaf("Node 3")
+        ),
+        new TestUnary(
+            "Node 4",
+            new TestLeaf("Node 5")
+        )
+    ),
+    new TestBinary(
+        "Node 6",
+        new TestUnary(
+            "Node 7",
+            new TestLeaf("Node 8")
+        ),
+        new TestUnary(
+            "Node 9",
+            new TestLeaf("Node 10")
+        )
+    )
+);
+
+/**
+ * Tree with 1 node, width 0, depth 0.
+ */
+const treeB: RATreeNode = new TestLeaf("Node 0");
+
+/**
+ * Asymmetric tree with 8 nodes, width 4, depth 4.
+ */
+const treeC: RATreeNode = new TestBinary(
+    "Node 0",
+    new TestLeaf("Node 1"),
+    new TestBinary(
+        "Node 2",
+        new TestBinary(
+            "Node 3",
+            new TestBinary(
+                "Node 4",
+                new TestLeaf("Node 5"),
+                new TestLeaf("Node 6")
+            ),
+            new TestLeaf("Node 7")
+        ),
+        new TestLeaf("Node 8")
+    )
+);
+
+describe("depthSearch", () => {
+    describe("present index given", () => {
+        test.each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])("finds index %i in 11 nodes", (index) => {
+            // act
+            const result: RATreeNode | null = depthSearch(treeA, index);
+            // assert
+            expect(result).not.toBeNull();
+            expect(result?.getOperationName()).toStrictEqual("Node " + index);
+        });
+    });
+
+    describe("absent index given", () => {
+        test.each([-1, 11, 12, 9999999])("does not find index %i in 11 nodes", (index) => {
+            // act
+            const result: RATreeNode | null = depthSearch(treeA, index);
+            // assert
+            expect(result).toBeNull();
+        });
+    });
+});
+
+describe("getTreeDepth", () => {
+    test("symmetric tree (depth 3)", () => {
+        // act
+        const result: number = getTreeDepth(treeA);
+        // assert
+        expect(result).toBe(3);
+    });
+
+    test("one node tree (depth 0)", () => {
+        // act
+        const result: number = getTreeDepth(treeB);
+        // assert
+        expect(result).toBe(0);
+    });
+
+    test("asymmetric tree (depth 4)", () => {
+        // act
+        const result: number = getTreeDepth(treeC);
+        // assert
+        expect(result).toBe(4);
+    });
+});

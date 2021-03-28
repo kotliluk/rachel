@@ -1,0 +1,189 @@
+:root {
+    --x-textarea-font-size: 12px;
+    --x-textarea-font-family: monospace;
+    --x-textarea-line-height-px: 16px;
+    --x-textarea-line-height: 16; /* should be same is number above (without px) */
+
+    --error-highlight-color: red;
+}
+
+/* MODE INDEPENDENT */
+
+.x-textarea-div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid;
+    border-radius: 12px;
+    padding: 2px 2px 0 2px;
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+.x-textarea {
+    width: 100%;
+    min-height: 24px;
+    line-height: var(--x-textarea-line-height-px);
+    padding-left: 5px;
+    border-radius: 6px;
+    box-sizing: border-box;
+
+    font-size: var(--x-textarea-font-size);
+    font-family: var(--x-textarea-font-family);
+
+    white-space: pre; /* to not wrap long lines (split them to multiple lines) */
+    overflow-wrap: normal;
+    resize: vertical;
+    overflow: auto;
+}
+
+.x-textarea-table {
+    width: 100%;
+}
+
+.x-textarea-table-td2 {
+    vertical-align: top;
+    position: relative;
+}
+
+.x-textarea-err::selection {
+    background-color: var(--error-highlight-color);
+    color: white;
+}
+
+/* WHISPER DIV */
+
+.whisper-div {
+    width: auto;
+    height: auto;
+    position: absolute;
+    display: none;
+    z-index: 1;
+
+    text-align: left;
+    font-size: var(--x-textarea-font-size);
+    font-family: var(--x-textarea-font-family);
+    border: 1px solid;
+}
+
+.whisper-div div {
+    padding: 0 2px;
+}
+
+.whisper-div-dark {
+    border-color: white;
+    background-color: var(--dark-background);
+}
+
+.whisper-div-light {
+    border-color: #555;
+    background-color: var(--light-background);
+}
+
+.whisper-div-dark div {
+    background-color: var(--dark-background);
+}
+
+.whisper-div-light div {
+    background-color: var(--light-background);
+}
+
+.whisper-div-dark .selected-whisper {
+    background-color: var(--dark-details) !important; /* more important than dark/light mode background color */
+    color: white;
+}
+
+.whisper-div-light .selected-whisper {
+    background-color: var(--light-details) !important; /* more important than dark/light mode background color */
+    color: black;
+}
+
+/* HIGHLIGHT */
+
+.x-textarea-highlight {
+    height: 3px;
+    margin-top: -3px;
+    background-color: transparent;
+    border-bottom: 2px dotted red;
+    position: absolute;
+}
+
+.x-textarea-highlight:hover .highlight-tooltip {
+    visibility: visible;
+}
+
+.highlight-tooltip {
+    visibility: hidden;
+    width: max-content;
+    max-width: 400px;
+    position: absolute;
+    z-index: 1;
+    top: calc(100% + 2px);
+    left: 50%;
+    padding: 5px;
+
+    background-color: white;
+    border: 1px solid #555;
+    border-radius: 6px;
+
+    color: #555;
+    font-size: var(--x-textarea-font-size);
+    font-family: var(--x-textarea-font-family);
+    text-align: left;
+}
+
+/* COLORS */
+
+.x-textarea-div-light {
+    border-color: var(--light-section);
+    background-color: var(--light-section);
+}
+
+.x-textarea-div-dark {
+    border-color: var(--dark-section);
+    background-color: var(--dark-section);
+}
+
+.x-textarea-table-td1-light {
+    vertical-align: top;
+    width: 1px;
+    background-color: var(--light-section);
+}
+
+.x-textarea-table-td1-dark {
+    vertical-align: top;
+    width: 1px;
+    background-color: var(--dark-section);
+}
+
+.x-textarea-light {
+    border: 2px solid var(--light-section);
+    color: var(--text-color-light);
+    background-color: var(--light-area);
+}
+
+.x-textarea-dark {
+    border: 2px solid var(--dark-section);
+    color: var(--text-color-dark);
+    background-color: var(--dark-area);
+}
+
+.x-textarea-dark::placeholder {
+    color: var(--text-color-dark);
+}
+
+.x-textarea-light:focus {
+    border: 2px solid var(--light-details);
+}
+
+.x-textarea-dark:focus {
+    border: 2px solid var(--dark-details);
+}
+
+.canvas-light {
+    background-color: var(--light-section);
+}
+
+.canvas-dark {
+    background-color: var(--dark-section);
+}

@@ -1,0 +1,63 @@
+/* NAMES MENU */
+
+.relations-names-menu {
+    width: 100%;
+    height: calc(var(--button-height) + 2px);
+    margin-top: 4px;
+}
+
+.relations-names-menu button {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+.relations-names-menu button:hover {
+    overflow: visible;
+    width: auto;
+}
+
+.relations-names-menu .button-dark, .relations-names-menu .button-clicked-dark {
+    border: 1px solid var(--dark-background);
+}
+
+.relations-names-menu .button-light, .relations-names-menu .button-clicked-light {
+    border: 1px solid var(--light-background);
+}
+
+/* MANAGEMENT MENU */
+
+.relations-management-menu {
+    width: 100%;
+    height: calc(var(--button-height) + 8px);
+    padding: 4px;
+    box-sizing: border-box;
+}
+
+.relations-management-menu-left {
+    float: left;
+    width: 30%;
+    text-align: left;
+}
+
+.relations-management-menu-right {
+    float: left;
+    width: 70%;
+    text-align: right;
+}
+
+@media (max-width: 1400px) {
+    .relations-management-menu-left {
+        width: 100%;
+        text-align: center;
+    }
+    .relations-management-menu-right {
+        width: 100%;
+        text-align: center;
+    }
+    .relations-management-menu {
+        height: calc(2 * var(--button-height) + 12px);
+    }
+}
