@@ -5,17 +5,19 @@ import {computeFontSizeInPx} from "../tools/font";
 import {getStartOfWordBeforeIndex} from "../tools/whisper";
 
 interface XTextAreaProps {
+    // id of the component
     id: string;
+    // current text content of the textarea
     text: string;
-    placeholder?: string;
-    highlights: {start: number, end: number, msg: string}[];
-
-    whispers?: string[];
-
-    initRows: number;
-
+    // text to be shown as textarea placeholder
+    placeholder: string;
+    // error messages and ranges to be highlighted in text area
+    errors: {start: number, end: number, msg: string}[];
+    // strings whispered to the user to be added at the current position
+    whispers: string[];
+    // handler of text change
     onChange: (text: string, cursorIndex: number) => void;
-
+    // true if dark theme should be applied
     darkTheme: boolean;
 }
 
@@ -61,15 +63,15 @@ type ExtendedHTMLTextArea = HTMLTextAreaElement & {
     whisperDiv: WhisperDiv,
 
     /**
-     * Creates highlight elements for given ranges.
+     * Creates error div elements for given ranges.
      */
-    updateHighlights: (ranges: {start: number, end: number, msg: string}[]) => void,
+    updateErrors: (ranges: {start: number, end: number, msg: string}[]) => void,
     /**
-     * Moves highlight elements to current position.
+     * Moves error div elements to current position.
      */
-    moveHighlights: () => void,
+    moveErrors: () => void,
     // div elements for highlighting errors
-    highlights: HighlightDiv[]
+    errorDivs: ErrorDiv[]
 };
 
 /**
@@ -102,7 +104,7 @@ type WhisperDiv = HTMLDivElement & {
     getSelectedWhisper: () => string | undefined
 };
 
-type HighlightDiv = HTMLDivElement & {
+type ErrorDiv = HTMLDivElement & {
     startLine: number,
     startColumn: number,
     rangeLength: number,
@@ -125,16 +127,6 @@ const canvasWidth: number = 24;
 /**
  * TextArea extended by line numbers and text highlighting. The component is maintained by JavaScript HTML functions,
  * not by React.
- *
- * Props:
- * - id: string: id of the component (used to html getElementById in inner logic)
- * - text: string: current text content of the textarea
- * - placeholder?: string: text to be shown as textarea placeholder
- * - highlights: ErrorRangeWithMessage[]
- * - whispers: string[]: strings which should be whispered to the user to insert into the text area
- * - rows: number: initial number of rows (minimum is 3)
- * - onChange: (text: string, cursorIndex: number) => void: handler of text content change
- * - darkTheme: boolean: true if dark theme should be applied
  */
 export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
     // reference to XTextArea root React div element
@@ -200,12 +192,10 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         // @ts-ignore - extended later in componentDidMount
         const ta: ExtendedHTMLTextArea = document.createElement('textarea');
         ta.setAttribute('id', this.props.id + '-ta');
-        ta.setAttribute('rows', String(this.props.initRows > 3 ? this.props.initRows - 1 : 2));
+        ta.setAttribute('rows', '2');
         ta.setAttribute('spellcheck', 'false');
         ta.mouseIsDown = false;
-        if (this.props.placeholder !== undefined) {
-            ta.setAttribute('placeholder', this.props.placeholder);
-        }
+        ta.setAttribute('placeholder', this.props.placeholder);
         ta.classList.add('x-textarea');
         this.props.darkTheme ? ta.classList.add('x-textarea-dark', 'cursor-container-dark') :
                               ta.classList.add('x-textarea-light', 'cursor-container-light');
@@ -350,10 +340,10 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         }
 
         // TEXTAREA ERROR RANGE HIGHLIGHTS
-        ta.highlights = [];
+        ta.errorDivs = [];
 
-        ta.moveHighlights = function () {
-            this.highlights.forEach(highlight => {
+        ta.moveErrors = function () {
+            this.errorDivs.forEach(highlight => {
                 // computes position of the highlight relative to the text
                 const yPos: number = (highlight.startLine + 1) * lineHeight + 1 - this.scrollTop;
                 // shows the div at computed position if the line is visible
@@ -388,18 +378,18 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
             });
         }
 
-        ta.updateHighlights = function (ranges: {start: number, end: number, msg: string}[]) {
+        ta.updateErrors = function (ranges: {start: number, end: number, msg: string}[]) {
             // removes old highlight divs
-            this.highlights.forEach(highlight => {
+            this.errorDivs.forEach(highlight => {
                 highlight.remove();
             });
-            this.highlights = [];
+            this.errorDivs = [];
 
             // appends the highlight div as textarea child and adds it to highlights array
-            const pushHighlight = (highlight: HighlightDiv) => {
+            const pushHighlight = (highlight: ErrorDiv) => {
                 // @ts-ignore - adds it to the parent element
                 this.parentElement.appendChild(highlight);
-                this.highlights.push(highlight);
+                this.errorDivs.push(highlight);
             }
 
             ranges.forEach(range => {
@@ -427,19 +417,19 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
             });
 
             // moves highlight to current positions
-            this.moveHighlights();
+            this.moveErrors();
         }
 
         // handles whisper div position when scrolling on page
         window.addEventListener('scroll', () => ta.moveWhisper());
         window.addEventListener('resize', () => {
             ta.moveWhisper();
-            ta.moveHighlights();
+            ta.moveErrors();
         });
         ta.onscroll     = () => {
             ta.paintLineNumbers(this.props.darkTheme);
             ta.moveWhisper();
-            ta.moveHighlights();
+            ta.moveErrors();
         };
         ta.addEventListener("focusout", () => ta.hideWhisper());
         ta.onmousedown  = () => {
@@ -514,7 +504,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         // make sure numbers are painted
         ta.paintLineNumbers(this.props.darkTheme);
         // shows highlights
-        ta.updateHighlights(this.props.highlights);
+        ta.updateErrors(this.props.errors);
         this.textarea = ta;
     }
 
@@ -527,15 +517,15 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
             this.updateStyle();
         }
         // whispers
-        if (this.props.whispers !== undefined && this.props.whispers !== prevProps.whispers) {
+        if (this.props.whispers !== prevProps.whispers) {
             this.textarea.showWhisper(this.props.whispers);
         }
         // highlights error
-        if (this.props.highlights !== undefined) {
-            this.textarea.updateHighlights(this.props.highlights);
+        if (this.props.errors !== undefined) {
+            this.textarea.updateErrors(this.props.errors);
         }
         // first undefined highlight removes 'x-textarea-err' from textarea.className to show selection with blue color
-        else if (this.props.highlights !== prevProps.highlights) {
+        else if (this.props.errors !== prevProps.errors) {
             this.textarea.classList.remove('x-textarea-err');
         }
     }
@@ -617,9 +607,9 @@ function getLineLength(text: string, line: number): number {
  *
  */
 function createHighlightDiv(startLine: number, startColumn: number, rangeLength: number, msg: string,
-                            textarea: ExtendedHTMLTextArea): HighlightDiv {
+                            textarea: ExtendedHTMLTextArea): ErrorDiv {
     // @ts-ignore
-    const highlight: HighlightDiv = document.createElement('div');
+    const highlight: ErrorDiv = document.createElement('div');
     highlight.classList.add("x-textarea-highlight");
     highlight.startLine = startLine;
     highlight.startColumn = startColumn;

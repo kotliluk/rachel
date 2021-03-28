@@ -7,7 +7,7 @@
     font-size: 14px;
 
     border-radius: 12px;
-    padding-right: 2px;
+    padding: 2px;
     margin-left: 4px;
     margin-right: 4px;
 }
@@ -31,8 +31,6 @@
     max-width: 100%;
     background-color: transparent;
     border-spacing: 0;
-    padding-left: 2px;
-    padding-top: 2px;
     text-align: left;
     table-layout: auto;
 }
@@ -180,7 +178,9 @@
     background-color: var(--dark-background);
 }
 
-.table-context-menu {
+/* MENU SHOWN ON RIGHT-CLICK */
+
+.table-right-click-menu {
     visibility: hidden;
     position: absolute;
     z-index: 1;

@@ -3,19 +3,30 @@ import {CsvValueSeparatorChar} from "../tools/csvSupport";
 import {SupportedLanguage} from "../tools/supportedLanguage";
 
 interface ManagementSectionProps {
+    // handler of batch processing
     onBatch: (onDone: (msg: string) => void) => void,
 
+    // handler of project import
     onImportProject: (onDone: (msg: string) => void) => void,
+    // handler of project export
     onExportProject: (onDone: (msg: string) => void) => void,
 
+    // current selected value separator in csv files
     csvValueSeparator: CsvValueSeparatorChar,
+    // current selected language of the application
     language: SupportedLanguage,
+    // current selected null values support
     nullValuesSupport: boolean,
+    // true if dark theme should be applied
     darkTheme: boolean,
 
+    // handler of change of the current selected value separator in csv files
     onCsvValueSeparatorChange: (csvValueSeparator: CsvValueSeparatorChar) => void,
+    // handler of change of the current selected language of the application
     onLanguageChange: (language: SupportedLanguage) => void,
+    // handler of change of the current selected null values support
     onNullValuesSupportChange: (nullValuesSupport: boolean) => void,
+    // handler of change of the current selected theme
     onDarkModeChange: (darkTheme: boolean) => void
 }
 
@@ -27,23 +38,7 @@ interface ManagementSectionState {
 }
 
 /**
- * Section to manage batch processing, importing/exporting the project, and changing settings.
- *
- * Props:
- * - onBatch: (onDone: (msg: string) => void) => void: handler of batch processing,
- * it accepts the callback function onDone to send message once it is done
- * - onImportProject: (onDone: (msg: string) => void) => void: handler of project import,
- * it accepts the callback function onDone to send message once it is done
- * - onExportProject: (onDone: (msg: string) => void) => void: handler of project export,
- * it accepts the callback function onDone to send message once it is done
- * - csvValueSeparator: csvValueSeparatorType: current selected value separator in csv files
- * - csvLineSeparator: csvLineSeparatorType: current selected line separator in csv files
- * - language: SupportedLanguage: current selected language of the application
- * - nullValuesSupport: boolean: current selected support of null values
- * - onCsvValueSeparatorChange: (csvValueSeparator: csvValueSeparatorType) => void: handler of change of the current selected value separator in csv files
- * - onCsvLineSeparatorChange: (csvLineSeparator: csvLineSeparatorType) => void: handler of change of the current selected line separator in csv files
- * - onLanguageChange: (language: SupportedLanguage) => void: handler of change of the current selected language of the application
- * - onNullValuesSupportChange: (nullValuesSupport: boolean) => void: handler of change of the current selected support of null values
+ * Section to manage batch processing, importing/exporting the project, and settings.
  */
 export class ManagementSection extends React.Component<ManagementSectionProps, ManagementSectionState> {
 

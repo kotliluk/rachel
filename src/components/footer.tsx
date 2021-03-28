@@ -3,7 +3,9 @@ import {SupportedLanguage} from "../tools/supportedLanguage";
 import "./css/footer.css"
 
 interface FooterProps {
+    // language of the application
     language: SupportedLanguage,
+    // true if dark theme should be applied
     darkTheme: boolean
 }
 
@@ -11,6 +13,9 @@ interface FooterState {
 
 }
 
+/**
+ * Footer of the page with contact links.
+ */
 export class Footer extends React.Component<FooterProps, FooterState> {
 
     render() {

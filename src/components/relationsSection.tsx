@@ -11,35 +11,57 @@ import {getForbiddenRelationNames} from "../tools/keywords";
 import Parser from "../tools/parser";
 
 interface RelationsSectionProps {
+    // all stored relations
     storedRelations: StoredRelation[],
+    // index of the current selected relation
     storedRelationIndex: number,
 
+    // all currently loaded relations in the application
     loadedRelations: Relation[],
 
+    // handler of change of the name of the current selected relation
     onRelationNameChange: (newName: string) => void,
+    // handler of change of the name of the column at given index in the current selected relation
     onColumnNameChange: (columnName: string, columnIndex: number) => void,
+    // handler of change of the type of the column at given index in the current selected relation
     onColumnTypeChange: (columnType: SupportedColumnType, columnIndex: number) => void,
+    // handler of change of the row input at given column/row index in the current selected relation
     onRowInputChange: (input: string, columnIndex: number, rowIndex: number) => void,
+    // handler of adding a new row in the current selected relation
     onNewRow: (onDone: () => void) => void,
+    // handler of adding a new column in the current selected relation
     onNewColumn: (onDone: () => void) => void,
+    // handler of deleting the row on given index
     onDeleteRow: (rowIndex: number) => void,
+    // handler of deleting the column on given index
     onDeleteColumn: (columnIndex: number) => void,
 
+    // handler of loading the current selected relation into the application
     onLoadRelation: (onDone: (msg: string) => void) => void,
+    // handler of loading all valid relations into the application
     onLoadAllRelations: (onDone: (msg: string) => void) => void,
 
+    // handler of selecting a different relation as current
     onSelectDifferentRelation: (newIndex: number) => void,
+    // handler of creating a new relation
     onNewRelation: () => void,
+    // handler of deleting the current stored relation
     onDeleteStoredRelation: () => void,
 
+    // handler of deleting the loaded relation with specific name or all loaded relations if specific = false
     onDeleteLoadedRelation: (specific: string | false, onDone: (msg: string) => void) => void,
 
+    // handler of saving the stored relations into the files
     onExportRelations: (onDone: (msg: string) => void) => void,
+    // handler of loading new relations from files
     onImportRelations: (onDone: (msg: string) => void) => void,
 
+    // handler of unexpected errors
     onUnexpectedError: (err: Error) => void,
 
+    // whether to support null values
     nullValuesSupport: boolean,
+    // true if dark theme should be applied
     darkTheme: boolean
 }
 
@@ -53,34 +75,6 @@ interface RelationsSectionState {
 
 /**
  * Section to type the RA expression. It contains textarea for relations definition and control buttons.
- *
- * Props:
- * - storedRelations: StoredRelation[]: array of all stored relations
- * - storedRelationIndex: number: index of the current selected relation
- * - loadedRelations: Relation[]: array of all relations loaded in the application
- * - onRelationNameChange: (newName: string) => void: handler of change of the name of the current selected relation
- * - onColumnNameChange: (columnName: string, columnIndex: number) => void: handler of change of the name of the column
- * at given index in the current selected relation
- * - onColumnTypeChange: (columnType: SupportedColumnType, columnIndex: number) => void: handler of change of the type
- * of the column at given index in the current selected relation
- * - onRowInputChange: (input: string, columnIndex: number, rowIndex: number) => void: handler of change of the row
- * input at given column/row index in the current selected relation
- * - onNewRow: (onDone: () => void) => void: handler of adding a new row in the current selected relation
- * - onNewColumn: (onDone: () => void) => void: handler of adding a new column in the current selected relation
- * - onDeleteRow: (rowIndex: number) => void: handler of deleting the row on given index
- * - onDeleteColumn: (columnIndex: number) => void: handler of deleting the column on given index
- * - onLoadRelation: (onDone: (msg: string) => void) => void: handler of loading the current selected relation into the application
- * - onLoadAllRelations: (onDone: (msg: string) => void) => void: handler of loading all valid relations into the application
- * - onSelectDifferentRelation: (newIndex: number) => void: handler of selecting a different relation as current
- * - onNewRelation: () => void: handler of creating a new relation
- * - onDeleteStoredRelation: () => void: handler of deleting the current stored relation
- * - onDeleteLoadedRelation: (specific: string | false, onDone: (msg: string) => void) => void:
- * handler of deleting the loaded relation with specific name or all loaded relations if specific = false
- * - onExportRelations: (onDone: (msg: string) => void) => void: handler of saving the stored relations into the files
- * - onImportRelations: (onDone: (msg: string) => void) => void: handler of loading new relations from files
- * - onUnexpectedError: (e: Error) => void: handler of unexpected errors
- * - nullValuesSupport: boolean: whether to support null values
- * - darkTheme: boolean: true if dark theme should be applied
  */
 export class RelationsSection extends React.Component<RelationsSectionProps, RelationsSectionState> {
 

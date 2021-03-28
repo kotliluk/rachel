@@ -14,20 +14,18 @@ import Relation from "../relation/relation";
 import {computeFontSizeInPx} from "../tools/font";
 
 interface EvaluationTreeProps {
+    // root of the evaluation tree to be displayed
     tree: RATreeNode,
+    // index of the current selected node (with respect to depth first search)
     selected: number,
+    // handler of click on nodes, it receives the index of the clicked node (with respect to depth first search)
     onClick: (index: number) => void,
+    // true if dark theme should be applied
     darkTheme: boolean
 }
 
 /**
  * Component displaying an evaluation tree. The tree is interactive and handles clicking on the nodes.
- *
- * Props:
- * - tree: RATreeNode: root of the evaluation tree to be displayed
- * - selected: number: index of the current selected node (with respect to depth first search)
- * - onClick: (index: number) => void: handler of click on nodes, it receives the index of the clicked node (with
- * respect to depth first search)
  */
 export class EvaluationTree extends React.Component<EvaluationTreeProps, {}> {
     render() {

@@ -1,14 +1,22 @@
 import React from "react";
 
 interface TextInputProps {
+    // label before the input
     label: string,
+    // initial value for the input
     value: string,
+    // text on the submit button
     buttonText: string,
+    // handler of input submit
     onSubmit: (text: string) => void,
+    // function which returns true for forbidden inputs which cannot be submitted
     forbidden: (text: string) => boolean,
 
+    // id of the input
     id: string,
+    // true if dark theme should be applied
     darkTheme: boolean,
+    // additional styling properties applied on root div container
     style?: React.CSSProperties
 }
 
@@ -19,16 +27,6 @@ interface TextInputState {
 
 /**
  * Basic text input with submit button. The input cannot be submit if the current value is forbidden.
- *
- * Props:
- * - label: string: label before the input
- * - value: string: initial value for the input
- * - buttonText: string: text on the submit button
- * - onSubmit: (text: string) => void: handler of input submit
- * - forbidden: (text: string) => boolean: returns true for forbidden inputs
- * - id: string: id of the input
- * - darkTheme: boolean: true if dark theme should be applied
- * - style?: React.CSSProperties: additional styling properties applied on root div container
  */
 export class TextInput extends React.Component<TextInputProps, TextInputState> {
 

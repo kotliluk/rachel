@@ -1,19 +1,18 @@
 import React from "react";
 
 interface MessageLabelProps {
+    // message to be shown
     message: string,
-    darkTheme: boolean,
-    error: boolean
+    // when true, the message is highlighted as error
+    error: boolean,
+    // true if dark theme should be applied
+    darkTheme: boolean
 }
 
 interface MessageLabelState {}
 
 /**
  * Label to show a message in a paragraph.
- *
- * Props:
- * - message: string: message to be shown
- * - color: string: color of the font
  */
 export class MessageLabel extends React.Component<MessageLabelProps, MessageLabelState> {
 

@@ -14,22 +14,35 @@ import ErrorWithTextRange from "../error/errorWithTextRange";
 import RATreeNode from "../ratree/raTreeNode";
 
 interface ExpressionSectionProps {
+    // available expressions
     expressions: Expression[],
+    // index of the current selected expression in the expression list
     currentExpressionIndex: number,
 
+    // loaded relations user as sources for expression evaluation
     relations: Map<string, Relation>,
 
+    // handler of selecting different expression as current
     onSelectDifferentExpression: (newIndex: number) => void,
+    // handler of creating the new expression
     onNewExpression: () => void,
+    // handler of deleting the current expression
     onDeleteExpression: (onDone: () => void) => void,
+    // handler of saving the expressions
     onExportExpressions: (onDone: (msg: string) => void) => void,
+    // handler of loading the expressions
     onImportExpressions: (onDone: (msg: string) => void) => void,
 
+    // handler of change in the current selected expression
     onChange: (name: string, text: string) => void,
+    // handler of evaluation, it accepts the parsed tree from the expression text
     onEval: (tree: RATreeNode) => void,
+    // handler of unexpected errors
     onUnexpectedError: (e: Error) => void,
 
+    // whether to support null values
     nullValuesSupport: boolean,
+    // true if dark theme should be applied
     darkTheme: boolean
 }
 
@@ -57,23 +70,6 @@ interface OpButtonProps {
 
 /**
  * Section to edit, manage, and eval relational algebra expressions.
- *
- * Props:
- * - currentExpressionText: string: the text of the current expression
- * - currentExpressionPosition: number: the position of the current expression in the expression list
- * - relations: Map<string, Relation>: actual relations (used to find Relations and Columns, which are not defined)
- * - onSelectDifferentExpression: (newIndex: number) => void: handler of selecting different expression as current
- * - onNewExpression: () => void: handler of creating the new expression
- * - onDeleteExpression: () => void: handler of deleting the current expression
- * - onExportExpressions: (onDone: (msg: string) => void) => void: handler of saving the expressions, it accepts the callback
- to display the saving status messages
- * - onImportExpressions: (onDone: (msg: string) => void) => void: handler of loading the expressions, it accepts the callback
- to display the loading status messages
- * - onChange: (text: string) => void: handler of change in expression text, it accepts the new text value
- * - onEval: (tree: RATreeNode) => void: handler of evaluation, it accepts the parsed tree from the expression text
- * - onUnexpectedError: (e: Error) => void: handler of unexpected errors
- * - nullValuesSupport: boolean: whether to support null values
- * - darkTheme: boolean: true if dark theme should be applied
  */
 export class ExpressionSection extends React.Component<ExpressionSectionProps, ExpressionSectionState> {
 
@@ -394,10 +390,8 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                     id="expression-section-textarea"
                     text={this.getCurExpr().text}
                     placeholder="Write RA expression here..."
-                    highlights={this.state.errors}
+                    errors={this.state.errors}
                     whispers={this.state.whispers}
-
-                    initRows={3}
 
                     onChange={this.handleExprChange}
 

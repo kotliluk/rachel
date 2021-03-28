@@ -5,17 +5,27 @@ import {SupportedColumnType} from "../relation/columnType";
 import {RCToStringMap} from "../tools/rcToStringMap";
 
 interface EditRelationTableProps {
+    // storing representation of the relation to be edited
     relation: StoredRelation,
+    // true when the displayed relation may be editable by the user, false otherwise
     editable: boolean,
 
+    // handler of column name change
     onColumnNameChange: (columnName: string, columnIndex: number) => void,
+    // handler of column type change
     onColumnTypeChange: (columnType: SupportedColumnType, columnIndex: number) => void,
+    // handler of row input change
     onRowInputChange: (input: string, columnIndex: number, rowIndex: number) => void,
+    // handler of adding new row
     onNewRow: (onDone: () => void) => void,
+    // handler of adding new column
     onNewColumn: (onDone: () => void) => void,
+    // handler of deleting the row of given index
     onDeleteRow: (rowIndex: number) => void,
+    // handler of deleting the column of given index
     onDeleteColumn: (columnIndex: number) => void,
 
+    // true if dark theme should be applied
     darkTheme: boolean
 }
 
@@ -27,18 +37,6 @@ interface EditRelationTableState {
 /**
  * Table for editing a relation relation. It supports adding new columns and rows and editing all relation (column names,
  * column types and row inputs).
- *
- * Props:
- * - relation: StoredRelation: storing representation of the relation to be edited
- * - editable: boolean: whether the displayed relation may be edited by the user
- * - onColumnNameChange: (columnName: string, columnIndex: number) => void: handler of column name change
- * - onColumnTypeChange: (columnType: SupportedColumnType, columnIndex: number) => void: handler of column type change
- * - onRowInputChange: (input: string, columnIndex: number, rowIndex: number) => void: handler of row input change
- * - onNewRow: () => void: handler of adding new row
- * - onNewColumn: () => void: handler of adding new column
- * - onDeleteRow: (rowIndex: number) => void: handler of deleting the row on given index
- * - onDeleteColumn: (columnIndex: number) => void: handler of deleting the column on given index
- * - darkTheme: boolean: true if dark theme should be applied
  */
 export default class EditRelationTable extends React.Component<EditRelationTableProps, EditRelationTableState> {
 
@@ -447,11 +445,11 @@ export default class EditRelationTable extends React.Component<EditRelationTable
 
         let divClassName = "edit-table-container edit-table-container-light cursor-container-light";
         let tableClassName = "edit-table edit-table-light";
-        let contextButtonClassName = "table-context-menu button-light";
+        let contextButtonClassName = "table-right-click-menu button-light";
         if (this.props.darkTheme) {
             divClassName = "edit-table-container edit-table-container-dark cursor-container-dark";
             tableClassName = "edit-table edit-table-dark";
-            contextButtonClassName = "table-context-menu button-dark";
+            contextButtonClassName = "table-right-click-menu button-dark";
         }
 
         return (

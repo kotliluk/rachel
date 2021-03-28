@@ -14,13 +14,20 @@ import {RelationStoreManager} from "../relation/relationStoreManager";
 import {StoredRelation} from "../relation/storedRelation";
 
 interface ResultSectionProps {
+    // the root of the current evaluation tree to display
     evaluationTreeRoot: RATreeNode,
+    // name of the evaluated expression
     expressionName: string,
 
+    // handler of adding the selected relation with given name to defined relations
     onAddResult: (name: string, relation: Relation, onSuccess: () => void, onError: (msg: string) => void) => void,
+
+    // handler of unexpected errors
     onUnexpectedError: (e: Error) => void,
 
+    // current selected value separator in csv files
     csvValueSeparator: CsvValueSeparatorChar
+    // true if dark theme should be applied
     darkTheme: boolean,
 }
 
@@ -35,15 +42,6 @@ interface ResultSectionState {
 /**
  * Section to show the evaluation result. It contains a table with a result and text input and buttons to save it.
  * The component is hidden if given resultRelation is null.
- *
- * Props:
- * - evaluationTreeRoot: RATreeNode: the root of the current evaluation tree to display
- * - expressionName: string: name of the evaluated expression
- * - onAddResult: (name: string, relation: Relation, onSuccess: () => void, onError: (msg: string) => void) => void:
- * handler of adding the selected relation with given name to defined relations
- * - onUnexpectedError: (e: Error) => void: handler of unexpected errors
- * - csvValueSeparator: csvValueSeparatorType: current selected value separator in csv files
- * - darkTheme: boolean: true if dark theme should be applied
  */
 export class ResultSection extends React.Component<ResultSectionProps, ResultSectionState> {
 

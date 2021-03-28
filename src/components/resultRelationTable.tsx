@@ -4,7 +4,9 @@ import './css/resultRelationTable.css'
 import Row from "../relation/row";
 
 interface RelationTableProps {
+    // relation to be shown
     relation: Relation,
+    // true if dark theme should be applied
     darkTheme: boolean
 }
 
@@ -19,10 +21,6 @@ interface RelationTableState {
  * Table which shows given relation. The relation cannot be edited
  * Rows can be ordered by column values when the column header is clicked.
  * When the same column header is clicked for the second time, the order direction is changed (asc, des, asc, des, ...).
- *
- * Props:
- * - className: string: class name to modify css
- * - resultRelation: Relation: relation to be shown
  */
 export class ResultRelationTable extends React.Component<RelationTableProps, RelationTableState> {
 
