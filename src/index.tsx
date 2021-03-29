@@ -90,13 +90,6 @@ document.body.classList.toggle('body-light', !LocalStorage.getDarkMode());
 document.body.classList.toggle('cursor-container-dark', LocalStorage.getDarkMode());
 document.body.classList.toggle('cursor-container-light', !LocalStorage.getDarkMode());
 
-document.title = "Rachel - Relational algebra evaluator"
-// @ts-ignore
-document.querySelector('meta[name="description"]').setAttribute("content",
-    "Relational algebra expression definition, verification and evaluation.");
-document.head.insertAdjacentHTML("afterbegin", `<meta name="author" content="Lukáš Kotlík">
-    <meta name="keywords" content="relational algebra, evaluation, relation query, teaching tool, online app">`);
-
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA

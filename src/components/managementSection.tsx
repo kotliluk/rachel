@@ -152,7 +152,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
         return (
             <section>
                 <p>
-                    Import or export project's data (i.e., project settings, relation definition text, and text of every expression).
+                    Import or export project's data (i.e., stored relations, all expressions and null values support flag).
                 </p>
                 <button
                     onClick={() => this.props.onImportProject((msg: string) => this.setState({projectMessage: msg}))}
