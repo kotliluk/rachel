@@ -212,8 +212,10 @@ export default class EditRelationTable extends React.Component<EditRelationTable
     /**
      * Passes the change of the column name, column type or row input to the parent element.
      * When row = "types", it is expected that value is of SupportedColumnType type.
+     * Tabulators are replaced by 4 spaces.
      */
     private handleChange = (value: string, column: number, row: "names" | "types" | number): void => {
+        value = value.replace(/\t/g, "    ");
         if (row === "names") {
             this.props.onColumnNameChange(value, column);
         }

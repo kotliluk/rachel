@@ -137,6 +137,13 @@ In the expression section, we can use:
 - Ctrl+Shift+A = add new expression
 - Ctrl+Shift+D = delete the edited expression
 
+### Tips
+
+You can use standard C-style one-line comments in expressions (rest of the line after //).
+
+All tabulators in the application are replaced by 4 spaces. In case you are editing the files outside
+Rachel, we commend to use spaces as well to ensure expected indenting.
+
 ## Relational algebra
 
 ### Notation

@@ -274,6 +274,15 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
     }
 
     /**
+     * Handles current text after text insertion - replaces tabs with 4 spaces.
+     */
+    private handleTextInsert = () => {
+        const processedText = this.getCurExpr().text.replace(/\t/g, "    ");
+        this.props.onChange(this.getCurExpr().name, processedText);
+        this.lastChange = Date.now();
+    }
+
+    /**
      * Shows current whispers and errors, if the text area is focused and there was a text change after last update.
      */
     private updateWhispersAndErrors = () => {
@@ -394,6 +403,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                     whispers={this.state.whispers}
 
                     onChange={this.handleExprChange}
+                    onTextInserted={this.handleTextInsert}
 
                     darkTheme={this.props.darkTheme}
                 />

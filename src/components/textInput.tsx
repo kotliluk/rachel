@@ -27,6 +27,7 @@ interface TextInputState {
 
 /**
  * Basic text input with submit button. The input cannot be submit if the current value is forbidden.
+ * All inserted tabulators are replaced by 4 spaces.
  */
 export class TextInput extends React.Component<TextInputProps, TextInputState> {
 
@@ -48,6 +49,7 @@ export class TextInput extends React.Component<TextInputProps, TextInputState> {
     }
 
     private handleChange = (value: string): void => {
+        value = value.replace(/\t/g, "    ");
         const disable: boolean = this.props.forbidden(value);
         this.setState({
             value: value,

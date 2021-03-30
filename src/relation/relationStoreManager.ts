@@ -86,7 +86,9 @@ export class RelationStoreManager {
             throw Error();
         }
 
-        text = text.trim().replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        text = text.trim().replace(/\r\n/g, '\n')
+            .replace(/\r/g, '\n').replace(/\t/g, "    ");
+
         const lines: string[] = text.split('\n');
 
         if (lines.length < 2) {

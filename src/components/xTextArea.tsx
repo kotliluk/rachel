@@ -17,6 +17,8 @@ interface XTextAreaProps {
     whispers: string[];
     // handler of text change
     onChange: (text: string, cursorIndex: number) => void;
+    // handler of inserting a text by Ctrl+V - called after onChange with inserted text
+    onTextInserted: () => void;
     // true if dark theme should be applied
     darkTheme: boolean;
 }
@@ -498,6 +500,9 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                     this.props.onChange(ta.value, cursor);
                     // keeps default behaviour
                 }
+            }
+            if (ev.ctrlKey && ev.key.toLowerCase() === "v") {
+                setTimeout(() => this.props.onTextInserted(), 1);
             }
         }
 

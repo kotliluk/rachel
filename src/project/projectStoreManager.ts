@@ -24,7 +24,8 @@ export class ProjectStoreManager {
                 }
                 else if (file.name.match(/\.json$/)) {
                     // replaces line separators to expected '\n'
-                    file.text = file.text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+                    file.text = file.text.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+                        .replace(/\t/g, "    ");
                     let obj = JSON.parse(file.text);
                     const result: string = isProjectObject(obj);
                     if (result === "OK") {

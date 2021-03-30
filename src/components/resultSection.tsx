@@ -133,7 +133,7 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
      * @param event event with the new name
      */
     private handleRelationNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        this.setState({relationName: event.target.value})
+        this.setState({relationName: event.target.value.replace(/\t/g, "    ")})
     }
 
     /**
