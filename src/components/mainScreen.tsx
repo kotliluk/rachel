@@ -10,7 +10,6 @@ import {CsvValueSeparatorChar} from "../tools/csvSupport";
 import {ProjectStoreManager} from "../project/projectStoreManager";
 import {SupportedLanguage} from "../tools/supportedLanguage";
 import {LocalStorage} from "../tools/localStorage";
-import {Footer} from "./footer";
 import {BatchProcessor} from "../tools/batchProcessor";
 import {Expression} from "../expression/expression";
 import {RelationsSection} from "./relationsSection";
@@ -580,7 +579,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
         }
 
         return (
-        <div style={{height: "100%" /* for correct position of the footer*/}}>
+        <div>
             <main>
                 <ManagementSection
                     onBatch={this.handleBatch}
@@ -627,8 +626,6 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
                         onExportRelations={this.handleExportRelations}
                         onImportRelations={this.handleImportRelations}
 
-                        onUnexpectedError={this.reportUnexpectedError}
-
                         nullValuesSupport={this.state.nullValuesSupport}
                         darkTheme={this.state.darkTheme}
                     />
@@ -656,10 +653,6 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
                 </div>
                 {resultSection}
             </main>
-            <Footer
-                language={this.state.language}
-                darkTheme={this.state.darkTheme}
-            />
         </div>
         );
     }

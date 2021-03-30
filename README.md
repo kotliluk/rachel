@@ -122,6 +122,8 @@ null values in relations and expressions
 - CSV separator - semicolon/comma - used value separator in downloaded CSV files
 - Theme - light/dark - theme of the application
 
+The About button navigates to the application GitHub.
+
 ### Shortcuts
 
 In the relation section, we can use:

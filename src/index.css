@@ -41,7 +41,6 @@ html::-webkit-scrollbar-thumb {
 /* BODY */
 
 body {
-  height: 100%;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -146,7 +145,7 @@ main {
   text-align: center;
   width: 70%;
   left: 15%;
-  min-height: calc(100vh - var(--footer-heigth));
+  padding-bottom: 1px;
   position: relative;
 }
 

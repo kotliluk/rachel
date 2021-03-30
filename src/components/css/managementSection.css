@@ -1,0 +1,16 @@
+/* FAKES LINK TO APPEAR AS A BUTTON */
+
+.button-like-link {
+    -webkit-appearance: button;
+    text-decoration: none;
+    font: 400 13.3333px Arial;
+    padding: 1px 6px;
+    display: inline-block;
+    box-sizing: border-box;
+
+    border: 2px solid transparent;
+    border-radius: 5px;
+    margin: 1px;
+    height: var(--button-height);
+    font-size: var(--button-font-size);
+}

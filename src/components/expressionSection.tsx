@@ -325,7 +325,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
         else {
             this.props.onUnexpectedError(err);
             this.showMessage("UNEXPECTED ERROR: " + err.message + "\n" +
-                "Please, report it with your last actions to kotliluk@fel.cvut.cz, thank you!", true);
+                "Please, report it with your last actions, thank you!", true);
         }
     }
 

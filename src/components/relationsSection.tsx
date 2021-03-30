@@ -56,9 +56,6 @@ interface RelationsSectionProps {
     // handler of loading new relations from files
     onImportRelations: (onDone: (msg: string) => void) => void,
 
-    // handler of unexpected errors
-    onUnexpectedError: (err: Error) => void,
-
     // whether to support null values
     nullValuesSupport: boolean,
     // true if dark theme should be applied

@@ -1,6 +1,7 @@
 import React from "react";
 import {CsvValueSeparatorChar} from "../tools/csvSupport";
 import {SupportedLanguage} from "../tools/supportedLanguage";
+import "./css/managementSection.css"
 
 interface ManagementSectionProps {
     // handler of batch processing
@@ -73,7 +74,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
      *
      * @param toState clicked button state
      */
-    private handleStateChange = (toState: "batch" | "project" | "settings") => {
+    private handleStateChange = (toState: "batch" | "project" | "settings" | "hidden") => {
         // clears states messages
         this.setState({
             batchMessage: "",
@@ -96,6 +97,17 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                     onClick={() => this.handleStateChange(changeTo)}
                     className={className}
                 >{text}</button>);
+        }
+        const createAboutButton = () => {
+            const className: string = "button-like-link " + (this.props.darkTheme ? "button-dark" : "button-light");
+            return (
+                <a
+                    href="https://github.com/kotliluk/rachel"
+                    target="_blank"
+                    rel="noreferrer"
+                    className={className}
+                >About</a>
+            );
         }
 
         let openState = null;
@@ -122,6 +134,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                     {createButtonChangeState("Batch processing", "batch")}
                     {createButtonChangeState("Project", "project")}
                     {createButtonChangeState("Settings", "settings")}
+                    {createAboutButton()}
                 </div>
 
                 {openState}
