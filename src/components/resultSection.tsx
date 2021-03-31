@@ -224,7 +224,7 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
                     darkTheme={this.props.darkTheme}
                 />
 
-                <footer>
+                <div>
                     <input
                         type='text'
                         className={this.props.darkTheme ? 'text-input-dark' : 'text-input-light'}
@@ -240,7 +240,7 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
                         darkTheme={this.props.darkTheme}
                         error={this.state.isMessageError}
                     />
-                </footer>
+                </div>
             </section>
         );
     }

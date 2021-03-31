@@ -579,7 +579,6 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
         }
 
         return (
-        <div>
             <main>
                 <ManagementSection
                     onBatch={this.handleBatch}
@@ -598,62 +597,60 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
                     onDarkModeChange={this.handleDarkModeChange}
                 />
 
-                <div /*className={this.state.darkTheme ? "section-border-dark" : "section-border-light"}*/>
-                    <RelationsSection
-                        storedRelations={this.state.storedRelations}
-                        storedRelationIndex={this.state.selectedRelation}
+                <RelationsSection
+                    storedRelations={this.state.storedRelations}
+                    storedRelationIndex={this.state.selectedRelation}
 
-                        loadedRelations={[...this.state.loadedRelations.values()]}
+                    loadedRelations={[...this.state.loadedRelations.values()]}
 
-                        onRelationNameChange={this.handleRelationNameChange}
-                        onColumnNameChange={this.handleRelationColumnNameChange}
-                        onColumnTypeChange={this.handleRelationColumnTypeChange}
-                        onRowInputChange={this.handleRelationRowInputChange}
-                        onNewRow={this.handleRelationNewRow}
-                        onNewColumn={this.handleRelationNewColumn}
-                        onDeleteRow={this.handleRelationDeleteRow}
-                        onDeleteColumn={this.handleRelationDeleteColumn}
+                    onRelationNameChange={this.handleRelationNameChange}
+                    onColumnNameChange={this.handleRelationColumnNameChange}
+                    onColumnTypeChange={this.handleRelationColumnTypeChange}
+                    onRowInputChange={this.handleRelationRowInputChange}
+                    onNewRow={this.handleRelationNewRow}
+                    onNewColumn={this.handleRelationNewColumn}
+                    onDeleteRow={this.handleRelationDeleteRow}
+                    onDeleteColumn={this.handleRelationDeleteColumn}
 
-                        onLoadRelation={this.handleLoadRelation}
-                        onLoadAllRelations={this.handleLoadAllRelations}
+                    onLoadRelation={this.handleLoadRelation}
+                    onLoadAllRelations={this.handleLoadAllRelations}
 
-                        onSelectDifferentRelation={this.handleSelectDifferentRelation}
-                        onNewRelation={this.handleCreateNewRelation}
-                        onDeleteStoredRelation={this.handleDeleteRelation}
+                    onSelectDifferentRelation={this.handleSelectDifferentRelation}
+                    onNewRelation={this.handleCreateNewRelation}
+                    onDeleteStoredRelation={this.handleDeleteRelation}
 
-                        onDeleteLoadedRelation={this.handleDeleteLoadedRelation}
+                    onDeleteLoadedRelation={this.handleDeleteLoadedRelation}
 
-                        onExportRelations={this.handleExportRelations}
-                        onImportRelations={this.handleImportRelations}
+                    onExportRelations={this.handleExportRelations}
+                    onImportRelations={this.handleImportRelations}
 
-                        nullValuesSupport={this.state.nullValuesSupport}
-                        darkTheme={this.state.darkTheme}
-                    />
+                    nullValuesSupport={this.state.nullValuesSupport}
+                    darkTheme={this.state.darkTheme}
+                />
 
-                    <ExpressionSection
-                        ref={this.expressionSectionRef}
+                <ExpressionSection
+                    ref={this.expressionSectionRef}
 
-                        expressions={this.state.expressions}
-                        currentExpressionIndex={this.state.selectedExpression}
-                        relations={this.state.loadedRelations}
+                    expressions={this.state.expressions}
+                    currentExpressionIndex={this.state.selectedExpression}
+                    relations={this.state.loadedRelations}
 
-                        onChange={this.handleExprTextChange}
-                        onEval={this.handleExprEval}
+                    onChange={this.handleExprTextChange}
+                    onEval={this.handleExprEval}
 
-                        onSelectDifferentExpression={this.handleSelectDifferentExpression}
-                        onNewExpression={this.handleCreateNewExpression}
-                        onDeleteExpression={this.handleDeleteExpression}
-                        onExportExpressions={this.handleExportExpressions}
-                        onImportExpressions={this.handleImportExpressions}
+                    onSelectDifferentExpression={this.handleSelectDifferentExpression}
+                    onNewExpression={this.handleCreateNewExpression}
+                    onDeleteExpression={this.handleDeleteExpression}
+                    onExportExpressions={this.handleExportExpressions}
+                    onImportExpressions={this.handleImportExpressions}
 
-                        onUnexpectedError={this.reportUnexpectedError}
-                        nullValuesSupport={this.state.nullValuesSupport}
-                        darkTheme={this.state.darkTheme}
-                    />
-                </div>
+                    onUnexpectedError={this.reportUnexpectedError}
+                    nullValuesSupport={this.state.nullValuesSupport}
+                    darkTheme={this.state.darkTheme}
+                />
+
                 {resultSection}
             </main>
-        </div>
         );
     }
 }

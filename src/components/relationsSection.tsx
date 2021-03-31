@@ -334,12 +334,12 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
             return !Parser.isName(text);
         }
 
-        let sectionClassName = "relation-section ";
+        let sectionClassName;
         if (this.state.sectionClicked) {
-            sectionClassName += this.props.darkTheme ? "section-border-dark-clicked" : "section-border-light-clicked";
+            sectionClassName = this.props.darkTheme ? "section-border-dark-clicked" : "section-border-light-clicked";
         }
         else {
-            sectionClassName += this.props.darkTheme ? "section-border-dark" : "section-border-light";
+            sectionClassName = this.props.darkTheme ? "section-border-dark" : "section-border-light";
         }
         return (
             <section
@@ -364,19 +364,20 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                     darkTheme={this.props.darkTheme}
                 />
 
-                <div className="relations-management-menu">
-                    <div className="relations-management-menu-left">
-                        <TextInput
-                            label=""
-                            value={this.getCurRel().getName()}
-                            buttonText="Rename"
-                            onSubmit={this.handleRelationNameChange}
-                            forbidden={forbiddenNamesFunction}
-                            id="relation-name-input"
-                            darkTheme={this.props.darkTheme}
-                            style={this.isShowingStored() ? {} : {visibility: "hidden"}}
-                        />
-                    </div>
+                <menu className="relations-management-menu">
+                    {this.isShowingStored() ?
+                        (<div
+                             className="relations-management-menu-left">
+                            <TextInput
+                                label=""
+                                value={this.getCurRel().getName()}
+                                buttonText="Rename"
+                                onSubmit={this.handleRelationNameChange}
+                                forbidden={forbiddenNamesFunction}
+                                id="relation-name-input"
+                                darkTheme={this.props.darkTheme}
+                            />
+                        </div>) : null}
 
                     <div className="relations-management-menu-right">
                         {createButton("Load", this.loadRelation, "Loads the relation into the application",
@@ -400,7 +401,7 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                         {createButton("Import", this.importRelations, "Adds new relations from files")}
                         {createButton("Export", this.exportRelations, "Saves stored relations to files")}
                     </div>
-                </div>
+                </menu>
 
                 <MessageLabel
                     message={this.state.messageText}

@@ -130,12 +130,13 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                 ref={this.sectionRef}
                 className={sectionClassName}
                 style={{paddingTop: "5px", paddingBottom: "5px", marginTop: "5px"}}>
-                <div>
+                <menu
+                className={"management-buttons-menu"}>
                     {createButtonChangeState("Batch processing", "batch")}
                     {createButtonChangeState("Project", "project")}
                     {createButtonChangeState("Settings", "settings")}
                     {createAboutButton()}
-                </div>
+                </menu>
 
                 {openState}
             </header>

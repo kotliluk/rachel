@@ -169,11 +169,15 @@ export class ResultRelationTable extends React.Component<RelationTableProps, Rel
         const headerRow = this.createHeaderRow(columns);
         const rows = this.createRows(columns);
 
-        let divClassName = "result-table-container result-table-container-light cursor-container-light";
-        let tableClassName = "result-table result-table-light";
+        let divClassName;
+        let tableClassName;
         if (this.props.darkTheme) {
             divClassName = "result-table-container result-table-container-dark cursor-container-dark";
             tableClassName = "result-table result-table-dark";
+        }
+        else {
+            divClassName = "result-table-container result-table-container-light cursor-container-light";
+            tableClassName = "result-table result-table-light";
         }
 
         return (

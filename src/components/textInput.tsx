@@ -15,9 +15,7 @@ interface TextInputProps {
     // id of the input
     id: string,
     // true if dark theme should be applied
-    darkTheme: boolean,
-    // additional styling properties applied on root div container
-    style?: React.CSSProperties
+    darkTheme: boolean
 }
 
 interface TextInputState {
@@ -76,7 +74,7 @@ export class TextInput extends React.Component<TextInputProps, TextInputState> {
 
     public render() {
         return (
-            <div style={this.props.style}>
+            <>
                 <label htmlFor={this.props.id}>{this.props.label}</label>
                 <input
                     ref={this.inputRef}
@@ -94,7 +92,7 @@ export class TextInput extends React.Component<TextInputProps, TextInputState> {
                     disabled={this.state.buttonDisable}
                     className={this.props.darkTheme ? "button-dark" : "button-light"}
                 >{this.props.buttonText}</button>
-            </div>
+            </>
         );
     }
 }

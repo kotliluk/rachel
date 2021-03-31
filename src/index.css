@@ -170,6 +170,13 @@ main {
   }
 }
 
+/* MENU */
+
+menu {
+  margin: 0;
+  padding: 0;
+}
+
 /* BUTTON */
 
 button {

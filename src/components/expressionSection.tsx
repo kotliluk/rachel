@@ -390,9 +390,9 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
             <section
                 ref={this.sectionRef}
                 className={sectionClassName}>
-                <div className="expressions-list-menu">
+                <menu className="expressions-list-menu">
                     {createExprMenuButtons()}
-                </div>
+                </menu>
 
                 <XTextArea
                     ref={this.textAreaRef}
@@ -408,13 +408,13 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                     darkTheme={this.props.darkTheme}
                 />
 
-                <div>
+                <menu>
                     {createOpButtons(this.buttonPropsFirstPart)}
                     {this.props.nullValuesSupport ? createOpButtons(this.nullSupportRequiredButtonProps) : null}
                     {createOpButtons(this.buttonPropsSecondPart)}
-                </div>
+                </menu>
 
-                <div className="expressions-management-menu">
+                <menu className="expressions-management-menu">
                     <div className="expressions-management-menu-left">
                         <TextInput
                             label=""
@@ -434,7 +434,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                         {createButton("Import", this.loadExpressions, "Loads expressions from a file")}
                         {createButton("Export", this.saveExpressions, "Saves expressions to a file")}
                     </div>
-                </div>
+                </menu>
 
                 <MessageLabel
                     message={this.state.messageText}
