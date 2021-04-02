@@ -15,7 +15,7 @@
   --light-background: white;
   --light-section: #bbbbbb;
   --light-area: var(--light-background);
-  --light-details: #89a4ff;
+  --light-details: #7289da; /* #89a4ff */
 
   --text-color-light: black;
 }

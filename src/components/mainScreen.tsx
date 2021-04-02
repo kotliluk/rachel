@@ -13,14 +13,18 @@ import {LocalStorage} from "../tools/localStorage";
 import {BatchProcessor} from "../tools/batchProcessor";
 import {Expression} from "../expression/expression";
 import {RelationsSection} from "./relationsSection";
-import {StoredRelation, StoredRelationData} from "../relation/storedRelation";
+import {StoredRelation} from "../relation/storedRelation";
 import {SupportedColumnType} from "../relation/columnType";
 import {RelationStoreManager} from "../relation/relationStoreManager";
 import {PostMail} from "../tools/postMail";
+import {Project} from "../project/project";
+import {getSamples} from "../project/samples";
 
 interface MainScreenProps {}
 
 interface MainScreenState {
+    samples: { name: string, project: Project }[],
+
     loadedRelations: Map<string, Relation>,
     storedRelations: StoredRelation[],
     selectedRelation: number,
@@ -47,47 +51,14 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
     constructor(props: MainScreenProps) {
         super(props);
 
-        const sR1Data: StoredRelationData = {
-            name: "Car",
-            columnNames: ["Id", "Owner", "Color", "Electric"],
-            columnTypes: ["number", "number", "string", "boolean"],
-            rows: [
-                ['1', '1', '"Blue"', 'true'],
-                ['2', '1', '"Green"', 'false'],
-                ['3', '2', '"Blue"', 'false'],
-                ['4', '3', '"Black"', 'true']
-            ],
-            columnCount: 4,
-            rowCount: 4
-        }
-        const sR2Data: StoredRelationData = {
-            name: "Owner",
-            columnNames: ["Id", "Name"],
-            columnTypes: ["number", "string"],
-            rows: [
-                ['1', '"Lukáš Kotlík"'],
-                ['2', '"Karel IV."'],
-                ['3', '"Eminem"']
-            ],
-            columnCount: 2,
-            rowCount: 3
-        }
-        const sR1 = StoredRelation.fromData(sR1Data, true);
-        const sR2 = StoredRelation.fromData(sR2Data, true);
-
         this.state = {
+            samples: getSamples(),
+
             loadedRelations: new Map<string, Relation>(),
-            storedRelations: [
-                sR1,
-                sR2
-            ],
+            storedRelations: [ StoredRelation.new("Relation", true) ],
             selectedRelation: 0,
 
-            expressions: [
-                {name: "Expression 1", text: "Car"},
-                {name: "Expression 2", text: "Car*Owner"},
-                {name: "Expression 3", text: "Owner(Id = 1)"}
-            ],
+            expressions: [ {name: "Expression 1", text: ""} ],
             selectedExpression: 0,
 
             evaluationTreeRoot: null,
@@ -148,52 +119,53 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
     /**
      * Processes multiple selected files with expressions by the user and saves the reports of the evaluation in textual
      * files.
-     *
-     * @param onDone callback function to show the message
      */
-    private handleBatch = (onDone: (msg: string) => void) => {
+    private handleBatch = () => {
         const processor: BatchProcessor = new BatchProcessor();
-        processor.process('rachel-eval-results').then(onDone).catch(onDone);
+        processor.process('rachel-eval-results').then(console.log).catch(console.warn);
     }
 
     /**
-     * Imports the project relation from the JSON file selected by the user.
+     * Overwrites the current project data with the given one.
      *
-     * @param onDone callback function to show the message
+     * @param project
      */
-    private handleImportProject = (onDone: (msg: string) => void): void => {
-        ProjectStoreManager.load().then(project => {
-            this.setState({
-                loadedRelations: new Map<string, Relation>(),
-                storedRelations: project.relations.map(r => StoredRelation.fromData(r, project.nullValuesSupport)),
-                expressions: project.expressions,
-                nullValuesSupport: project.nullValuesSupport,
-                selectedExpression: 0,
-                evaluationTreeRoot: null,
-                evaluatedExpressionName: ""
-            }, () => {
-                onDone("Project loaded.");
-                this.updateExpressionsErrors();
-            });
-        }).catch(onDone);
+    private loadProject = (project: Project): void => {
+        this.setState({
+            loadedRelations: new Map<string, Relation>(),
+            storedRelations: project.relations.map(r => StoredRelation.fromData(r, project.nullValuesSupport)),
+            expressions: project.expressions,
+            nullValuesSupport: project.nullValuesSupport,
+            selectedExpression: 0,
+            evaluationTreeRoot: null,
+            evaluatedExpressionName: ""
+        }, () => {
+            console.log("Project loaded.");
+            this.updateExpressionsErrors();
+        });
     }
 
     /**
-     * Exports the project relation to the JSON file.
-     *
-     * @param onDone callback function to show the message
+     * Opens a file dialog and lets the user choose a .rachel (JSON) file with project to load.
      */
-    private handleExportProject = (onDone: (msg: string) => void): void => {
+    private handleLoadProject = (): void => {
+        ProjectStoreManager.load().then(this.loadProject).catch(console.warn);
+    }
+
+    /**
+     * Saves the project relation to the .rachel (JSON) file.
+     */
+    private handleSaveProject = (): void => {
         try {
             ProjectStoreManager.save({
                 relations: this.state.storedRelations.map(sr => sr.toDataObject()),
                 expressions: this.state.expressions,
                 nullValuesSupport: this.state.nullValuesSupport
                 }, "rachel_project");
-            onDone("Project saved.");
+            console.log("Project saved.");
         }
         catch (err) {
-            onDone("Project saving failed: " + err.message);
+            console.warn("Project saving failed: " + err.message);
         }
     }
 
@@ -582,9 +554,9 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
             <main>
                 <ManagementSection
                     onBatch={this.handleBatch}
-
-                    onImportProject={this.handleImportProject}
-                    onExportProject={this.handleExportProject}
+                    onLoadProject={this.handleLoadProject}
+                    onSaveProject={this.handleSaveProject}
+                    onLoadSample={this.loadProject}
 
                     csvValueSeparator={this.state.csvValueSeparator}
                     language={this.state.language}

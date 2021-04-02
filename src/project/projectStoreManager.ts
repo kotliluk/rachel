@@ -8,7 +8,7 @@ import {saveAs} from "file-saver";
 export class ProjectStoreManager {
 
     /**
-     * Loads asynchronously the project from a JSON file selected by the user.
+     * Loads asynchronously the project from a .rachel (JSON) file selected by the user.
      * The file must contain the representation of the project object: {
      * relations: StoredRelationData[],
      * expressionTexts: string[],
@@ -18,11 +18,11 @@ export class ProjectStoreManager {
      */
     public static load(): Promise<Project> {
         return new Promise<Project>((resolve, reject) => {
-            FileDialog.openFile(".json").then(file => {
+            FileDialog.openFile(".rachel").then(file => {
                 if (file.text === null) {
                     reject("Reading of the content of the file " + file.name + " failed.");
                 }
-                else if (file.name.match(/\.json$/)) {
+                else if (file.name.match(/\.rachel$/)) {
                     // replaces line separators to expected '\n'
                     file.text = file.text.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
                         .replace(/\t/g, "    ");
@@ -44,13 +44,13 @@ export class ProjectStoreManager {
     }
 
     /**
-     * Saves the given Project into the JSON file.
+     * Saves the given Project into the .rachel (JSON) file.
      *
      * @param project the Project object with all project relation
      * @param filename name of the downloaded file (without extension)
      */
     public static save(project: Project, filename: string): void {
         const blob = new Blob([JSON.stringify(project)], {type: "text/plain;charset=utf-8"});
-        saveAs(blob, filename + '.json');
+        saveAs(blob, filename + '.rachel');
     }
 }

@@ -1,12 +1,50 @@
+.management-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* LIST MENU */
+
+.management-section div:hover .list-menu {
+    visibility: visible;
+}
+
+.list-menu {
+    list-style-type: none;
+    visibility: hidden;
+    position: absolute;
+    z-index: 1;
+    cursor: default;
+
+    top: 110%;
+    left: 0;
+    padding: 5px;
+    margin: 0;
+    width: 250px;
+    border-radius: 5px;
+}
+
+.list-menu-dark {
+    background-color: var(--dark-section);
+    border: 2px solid var(--dark-details);
+}
+
+.list-menu-light {
+    background-color: var(--light-section);
+    border: 2px solid var(--light-details);
+}
+
 /* FAKES LINK TO APPEAR AS A BUTTON */
 
-.button-like-link {
+.button-like {
     -webkit-appearance: button;
     text-decoration: none;
     font: 400 13.3333px Arial;
     padding: 1px 6px;
     display: inline-block;
     box-sizing: border-box;
+    cursor: pointer;
 
     border: 2px solid transparent;
     border-radius: 5px;

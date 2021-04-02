@@ -2,15 +2,20 @@ import React from "react";
 import {CsvValueSeparatorChar} from "../tools/csvSupport";
 import {SupportedLanguage} from "../tools/supportedLanguage";
 import "./css/managementSection.css"
+import {getSamples} from "../project/samples";
+import {Project} from "../project/project";
 
 interface ManagementSectionProps {
     // handler of batch processing
-    onBatch: (onDone: (msg: string) => void) => void,
+    onBatch: () => void,
 
-    // handler of project import
-    onImportProject: (onDone: (msg: string) => void) => void,
-    // handler of project export
-    onExportProject: (onDone: (msg: string) => void) => void,
+    // handler of project loading
+    onLoadProject: () => void,
+    // handler of project saving
+    onSaveProject: () => void,
+
+    //
+    onLoadSample: (sample: Project) => void,
 
     // current selected value separator in csv files
     csvValueSeparator: CsvValueSeparatorChar,
@@ -32,10 +37,7 @@ interface ManagementSectionProps {
 }
 
 interface ManagementSectionState {
-    sectionClicked: boolean,
-    state: "hidden" | "batch" | "project" | "settings",
-    batchMessage: string,
-    projectMessage: string
+    sectionClicked: boolean
 }
 
 /**
@@ -49,10 +51,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
     constructor(props: ManagementSectionProps) {
         super(props);
         this.state = {
-            sectionClicked: false,
-            state: "hidden",
-            batchMessage: "",
-            projectMessage: ""
+            sectionClicked: false
         }
         this.sectionRef = React.createRef<HTMLDivElement>();
     }
@@ -69,200 +68,151 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
         }, true); // useCapture = true for overwriting by section listener
     }
 
-    /**
-     * Changes displayed tools after button click.
-     *
-     * @param toState clicked button state
-     */
-    private handleStateChange = (toState: "batch" | "project" | "settings" | "hidden") => {
-        // clears states messages
-        this.setState({
-            batchMessage: "",
-            projectMessage: ""
-        });
-        // hides after second click
-        if (this.state.state === toState) {
-            return this.setState({state: "hidden"});
-        }
-        this.setState({state: toState});
-    };
-
     render() {
-        const createButtonChangeState = (text: string, changeTo: "batch" | "project" | "settings") => {
-            const className: string = (this.props.darkTheme ?
-                (this.state.state === changeTo ? "button-clicked-dark" : "button-dark") :
-                (this.state.state === changeTo ? "button-clicked-light" : "button-light"));
+        const createBatchButton = () => {
+            const className: string = this.props.darkTheme ? "button-dark" : "button-light";
             return (
                 <button
-                    onClick={() => this.handleStateChange(changeTo)}
+                    onClick={this.props.onBatch}
                     className={className}
-                >{text}</button>);
+                >Batch</button>);
+        }
+        const createLoadProjectButton = () => {
+            const className: string = this.props.darkTheme ? "button-dark" : "button-light";
+            return (
+                <button
+                    onClick={this.props.onLoadProject}
+                    className={className}
+                >Load</button>);
+        }
+        const createSaveProjectButton = () => {
+            const className: string = this.props.darkTheme ? "button-dark" : "button-light";
+            return (
+                <button
+                    onClick={this.props.onSaveProject}
+                    className={className}
+                >Save</button>);
+        }
+        const createSettingsButton = () => {
+            const buttonClassName: string = this.props.darkTheme ? "button-dark" : "button-light";
+            const menuClassName: string = "list-menu " + (this.props.darkTheme ? "list-menu-dark" : "list-menu-light");
+            const settingsMenu = (
+                <ul className={menuClassName}>
+                    <li>
+                        Null values:
+                        <input
+                            type="radio"
+                            name="null_values_support"
+                            value="allowed"
+                            id="null_values_support_allowed"
+                            checked={this.props.nullValuesSupport}
+                            onClick={() => this.props.onNullValuesSupportChange(true)} />
+                        <label htmlFor="null_values_support_allowed">allowed</label>
+                        <input
+                            type="radio"
+                            name="null_values_support"
+                            value="forbidden"
+                            id="null_values_support_forbid"
+                            checked={!this.props.nullValuesSupport}
+                            onClick={() => this.props.onNullValuesSupportChange(false)} />
+                        <label htmlFor="null_values_support_forbid">forbidden</label>
+                    </li>
+                    <li>
+                        CSV separator:
+                        <input
+                            type="radio"
+                            name="value_separator"
+                            value="semicolon"
+                            id="value_separator_semi"
+                            checked={this.props.csvValueSeparator === ";"}
+                            onClick={() => this.props.onCsvValueSeparatorChange(";")}/>
+                        <label htmlFor="value_separator_semi">semicolon</label>
+                        <input
+                            type="radio"
+                            name="value_separator"
+                            value="comma"
+                            id="value_separator_comma"
+                            checked={this.props.csvValueSeparator === ","}
+                            onClick={() => this.props.onCsvValueSeparatorChange(",")}/>
+                        <label htmlFor="value_separator_comma">comma</label>
+                    </li>
+                    <li>
+                        Theme:
+                        <input
+                            type="radio"
+                            name="dark_mode"
+                            value="on"
+                            id="dark_mode_on"
+                            checked={!this.props.darkTheme}
+                            onClick={() => this.props.onDarkModeChange(false)} />
+                        <label htmlFor="dark_mode_on">light</label>
+                        <input
+                            type="radio"
+                            name="dark_mode"
+                            value="off"
+                            id="dark_mode_off"
+                            checked={this.props.darkTheme}
+                            onClick={() => this.props.onDarkModeChange(true)} />
+                        <label htmlFor="dark_mode_off">dark</label>
+                    </li>
+                </ul>
+            );
+            return (
+                <div className={"button-like " + buttonClassName}
+                >Settings{settingsMenu}</div>);
+        }
+        const createSamplesButton = () => {
+            const buttonClassName: string = this.props.darkTheme ? "button-dark" : "button-light";
+            const menuClassName: string = "list-menu " + (this.props.darkTheme ? "list-menu-dark" : "list-menu-light");
+            const settingsMenu = (
+            <ul className={menuClassName}>
+                {getSamples().map((sample, i) => {
+                    return (
+                        <li key={i}>
+                            <button
+                                onClick={() => this.props.onLoadSample(sample.project)}
+                                className={buttonClassName}
+                            >{sample.name}</button>
+                        </li>
+                    );
+                })}
+            </ul>
+            );
+            return (
+                <div className={"button-like " + buttonClassName}
+                >Samples{settingsMenu}</div>);
         }
         const createAboutButton = () => {
-            const className: string = "button-like-link " + (this.props.darkTheme ? "button-dark" : "button-light");
+            const className: string = this.props.darkTheme ? "button-dark" : "button-light";
             return (
                 <a
                     href="https://github.com/kotliluk/rachel"
                     target="_blank"
                     rel="noreferrer"
-                    className={className}
+                    className={"button-like " + className}
                 >About</a>
             );
         }
 
-        let openState = null;
-        if (this.state.state === "batch") {
-            openState = this.createBatch();
-        }
-        else if (this.state.state === "project") {
-            openState = this.createProject();
-        }
-        else if (this.state.state === "settings") {
-            openState = this.createSettings();
-        }
-
-        let sectionClassName = this.props.darkTheme ? "section-border-dark" : "section-border-light";
+        let sectionClassName = "management-section ";
         if (this.state.sectionClicked) {
-            sectionClassName = this.props.darkTheme ? "section-border-dark-clicked" : "section-border-light-clicked";
+            sectionClassName += this.props.darkTheme ? "section-border-dark-clicked" : "section-border-light-clicked";
+        }
+        else {
+            sectionClassName += this.props.darkTheme ? "section-border-dark" : "section-border-light";
         }
         return (
             <header
                 ref={this.sectionRef}
                 className={sectionClassName}
                 style={{paddingTop: "5px", paddingBottom: "5px", marginTop: "5px"}}>
-                <menu
-                className={"management-buttons-menu"}>
-                    {createButtonChangeState("Batch processing", "batch")}
-                    {createButtonChangeState("Project", "project")}
-                    {createButtonChangeState("Settings", "settings")}
-                    {createAboutButton()}
-                </menu>
-
-                {openState}
+                {createBatchButton()}
+                {createLoadProjectButton()}
+                {createSaveProjectButton()}
+                {createSamplesButton()}
+                {createSettingsButton()}
+                {createAboutButton()}
             </header>
-        );
-    }
-
-    private createBatch = () => {
-        return (
-            <section>
-                <p>
-                    Select multiple input files with expressions. The expressions will be evaluated and the reports will be generated.
-                    Please be patient, the action freezes the application for couple of seconds.
-                    You can see progress in the browser console (F12).
-                </p>
-                <button
-                    onClick={() => this.props.onBatch((msg: string) => this.setState({batchMessage: msg}))}
-                    className={this.props.darkTheme ? 'button-dark' : 'button-light'}
-                >Select files and evaluate</button>
-                <p>
-                    {this.state.batchMessage}
-                </p>
-            </section>
-        );
-    }
-
-    private createProject = () => {
-        return (
-            <section>
-                <p>
-                    Import or export project's data (i.e., stored relations, all expressions and null values support flag).
-                </p>
-                <button
-                    onClick={() => this.props.onImportProject((msg: string) => this.setState({projectMessage: msg}))}
-                    className={this.props.darkTheme ? 'button-dark' : 'button-light'}
-                >Import</button>
-                <button
-                    onClick={() => this.props.onExportProject((msg: string) => this.setState({projectMessage: msg}))}
-                    className={this.props.darkTheme ? 'button-dark' : 'button-light'}
-                >Export</button>
-                <p>
-                    {this.state.projectMessage}
-                </p>
-            </section>
-        );
-    }
-
-    private createSettings = () => {
-        return (
-            <ul style={{listStyleType: "none"}}>
-                <li>
-                    Null values:
-                    <input
-                        type="radio"
-                        name="null_values_support"
-                        value="allowed"
-                        id="null_values_support_allowed"
-                        checked={this.props.nullValuesSupport}
-                        onClick={() => this.props.onNullValuesSupportChange(true)} />
-                    <label htmlFor="null_values_support_allowed">allowed</label>
-                    <input
-                        type="radio"
-                        name="null_values_support"
-                        value="forbidden"
-                        id="null_values_support_forbid"
-                        checked={!this.props.nullValuesSupport}
-                        onClick={() => this.props.onNullValuesSupportChange(false)} />
-                    <label htmlFor="null_values_support_forbid">forbidden</label>
-                </li>
-                <li>
-                    CSV separator:
-                    <input
-                        type="radio"
-                        name="value_separator"
-                        value="semicolon"
-                        id="value_separator_semi"
-                        checked={this.props.csvValueSeparator === ";"}
-                        onClick={() => this.props.onCsvValueSeparatorChange(";")}/>
-                    <label htmlFor="value_separator_semi">semicolon</label>
-                    <input
-                        type="radio"
-                        name="value_separator"
-                        value="comma"
-                        id="value_separator_comma"
-                        checked={this.props.csvValueSeparator === ","}
-                        onClick={() => this.props.onCsvValueSeparatorChange(",")}/>
-                    <label htmlFor="value_separator_comma">comma</label>
-                </li>
-                {/*<li> // NOT SUPPORTED YET
-                    Language:
-                    <input
-                        type="radio"
-                        name="language"
-                        value="eng"
-                        id="language_eng"
-                        checked={this.props.language === "ENG"}
-                        onClick={() => this.props.onLanguageChange("ENG")} />
-                    <label htmlFor="language_eng">ENG</label>
-                    <input
-                        type="radio"
-                        name="language"
-                        value="cze"
-                        id="language_cze"
-                        checked={this.props.language === "CZE"}
-                        onClick={() => this.props.onLanguageChange("CZE")} />
-                    <label htmlFor="language_cze">CZE</label>
-                </li>*/}
-                <li>
-                    Theme:
-                    <input
-                        type="radio"
-                        name="dark_mode"
-                        value="on"
-                        id="dark_mode_on"
-                        checked={!this.props.darkTheme}
-                        onClick={() => this.props.onDarkModeChange(false)} />
-                    <label htmlFor="dark_mode_on">light</label>
-                    <input
-                        type="radio"
-                        name="dark_mode"
-                        value="off"
-                        id="dark_mode_off"
-                        checked={this.props.darkTheme}
-                        onClick={() => this.props.onDarkModeChange(true)} />
-                    <label htmlFor="dark_mode_off">dark</label>
-                </li>
-            </ul>
         );
     }
 }
