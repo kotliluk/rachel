@@ -73,10 +73,14 @@ export default class CartesianProductNode extends BinaryNode {
     }
 
     public printInLine(): string {
-        return "Cartesian product of {" + this.leftSubtree.printInLine() + "} and {" + this.rightSubtree.printInLine() + "}";
+        return "(" + this.leftSubtree.printInLine() + this.getOperationSymbol() + this.rightSubtree.printInLine() + ")";
     }
 
     public getOperationName(): string {
         return "Cartesian product";
+    }
+
+    public getOperationSymbol(): string {
+        return "⨯";
     }
 }

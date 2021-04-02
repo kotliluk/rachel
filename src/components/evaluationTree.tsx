@@ -4,13 +4,12 @@ import { Cluster, hierarchy } from '@visx/hierarchy';
 import { HierarchyPointNode, HierarchyPointLink } from '@visx/hierarchy/lib/types';
 import { LinkVertical } from '@visx/shape';
 import ParentSize from "@visx/responsive/lib/components/ParentSize";
-import {useTooltip, useTooltipInPortal} from '@visx/tooltip';
+import {useTooltip} from '@visx/tooltip';
 import './css/evaluationTree.css';
 import RATreeNode from "../ratree/raTreeNode";
 import UnaryNode from "../ratree/unaryNode";
 import BinaryNode from "../ratree/binaryNode";
 import {getTreeDepth} from "../ratree/raTreeTools";
-import Relation from "../relation/relation";
 import {computeFontSizeInPx} from "../tools/font";
 
 interface EvaluationTreeProps {
@@ -49,8 +48,9 @@ const cssConstants: CSSStyleDeclaration = getComputedStyle(document.querySelecto
 const fontSize: string = cssConstants.getPropertyValue('--eval-tree-font-size');
 const fontFamily: string = cssConstants.getPropertyValue('--eval-tree-font-family');
 const {fontWidth, fontHeight} = computeFontSizeInPx(fontFamily, fontSize);
-const nodePaddingX2: number = 20;
-const nodeHeight = fontHeight + nodePaddingX2;
+const nodePaddingX2: number = 24;
+const nodeHeight = 2 * fontHeight + nodePaddingX2;
+const maxNodeTextLength = 30;
 
 const backgroundColorLight = cssConstants.getPropertyValue('--light-background');
 const backgroundColorDark = cssConstants.getPropertyValue('--dark-background');
@@ -63,7 +63,7 @@ const unselectedNodeColorDark = cssConstants.getPropertyValue('--dark-section');
 
 interface DisplayTreeNode {
     title: string;
-    tooltip: string,
+    symbol: string,
     index: number;
     children?: this[];
 }
@@ -77,16 +77,15 @@ interface DisplayTreeNode {
 function parseTreeForDisplay(tree: RATreeNode): DisplayTreeNode {
     let indexes = 0;
     function parseTreeForDisplayHelper(node: RATreeNode): DisplayTreeNode {
-        const relation: Relation = node.getResult();
-        // @ts-ignore
-        const param: string = node.getParameter !== undefined ? "\n\n" + node.getParameter() : "";
-        const tooltip: string = relation.getName() + param + "\n\n" + relation.getColumnsCount() + " columns\n" +
-            relation.getRowsCount() + " rows";
+        let symbol: string = node.getOperationSymbol();
+        if (symbol.length > maxNodeTextLength) {
+            symbol = symbol.slice(0, maxNodeTextLength - 4) + "..." + symbol.charAt(symbol.length - 1);
+        }
 
         if (node instanceof UnaryNode) {
             return {
                 title: node.getOperationName(),
-                tooltip: tooltip,
+                symbol: symbol,
                 index: indexes++,
                 children: [
                     parseTreeForDisplayHelper(node.getSubtree())
@@ -96,7 +95,7 @@ function parseTreeForDisplay(tree: RATreeNode): DisplayTreeNode {
         else if (node instanceof BinaryNode) {
             return {
                 title: node.getOperationName(),
-                tooltip: tooltip,
+                symbol: symbol,
                 index: indexes++,
                 children: [
                     parseTreeForDisplayHelper(node.getLeftSubtree()),
@@ -107,7 +106,7 @@ function parseTreeForDisplay(tree: RATreeNode): DisplayTreeNode {
         else /* (tree instanceof RelationNode) */ {
             return {
                 title: node.getOperationName(),
-                tooltip: tooltip,
+                symbol: symbol,
                 index: indexes++
             };
         }
@@ -127,26 +126,20 @@ function parseTreeForDisplay(tree: RATreeNode): DisplayTreeNode {
 function TreeNodeComponent({ node, selected, onClick, darkTheme }:
                                { node: HierarchyPointNode<DisplayTreeNode>, selected: boolean, onClick: (index: number) => void, darkTheme: boolean }): JSX.Element {
     const {
-        tooltipLeft,
-        tooltipTop,
         tooltipOpen, // true when mouse is over
         showTooltip,
         hideTooltip
     } = useTooltip();
-
-    // https://airbnb.io/visx/docs/tooltip
-    const { containerRef, TooltipInPortal } = useTooltipInPortal({
-        detectBounds: true,
-        scroll: true,
-    });
 
     const handleMouseOver = () => {
         showTooltip({ tooltipLeft: 0, tooltipTop: 0 });
     };
 
     // computes node width with respect to the text length and asserts it wider than taller
-    let nodeWidth = node.data.title.length * fontWidth + nodePaddingX2;
-    nodeWidth = nodeWidth > nodeHeight ? nodeWidth : nodeHeight;
+    let nodeWidth = Math.max(node.data.title.length, node.data.symbol.length) * fontWidth + nodePaddingX2;
+    if (nodeWidth < nodeHeight) {
+        nodeWidth = nodeHeight;
+    }
 
     return (
         // top=y, left=x for vertical layout; top=x, left=y for horizontal layout
@@ -160,30 +153,20 @@ function TreeNodeComponent({ node, selected, onClick, darkTheme }:
                 onClick={() => {
                     onClick(node.data.index);
                 }}
-                ref={containerRef}
                 cursor="pointer"
                 onMouseOver={handleMouseOver}
                 onMouseOut={hideTooltip}
-            >
-                {tooltipOpen && (
-                    <TooltipInPortal
-                        key={Math.random()}
-                        top={tooltipTop === undefined ? tooltipTop : tooltipTop + 20}
-                        left={tooltipLeft}
-                    >
-                        {node.data.tooltip}
-                    </TooltipInPortal>
-                )}
-            </rect>
+            />
             <text
                 dy=".33em"
                 fontSize={fontSize}
                 fontFamily={fontFamily}
                 textAnchor="middle"
-                style={{ pointerEvents: 'none' }}
+                style={{ pointerEvents: "none"}}
                 fill={darkTheme ? textColorDark : textColorLight}
             >
-                {node.data.title}
+                <tspan x="0" dy="0">{node.data.title}</tspan>
+                <tspan x="0" dy="1.2em">{node.data.symbol}</tspan>
             </text>
         </Group>
     );

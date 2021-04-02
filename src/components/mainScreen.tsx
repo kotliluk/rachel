@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import Relation from '../relation/relation';
 import RATreeNode from "../ratree/raTreeNode";
-import Parser from "../tools/parser";
 import {ExpressionSection} from "./expressionSection";
 import {ResultSection} from "./resultSection";
 import {ExpressionStoreManager} from "../expression/expressionStoreManager";
@@ -516,19 +515,20 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
      *
      * @return message and its color (red for errors, black for information)
      */
-    private addResultRelation = (name: string, relation: Relation, onSuccess: () => void, onError: (msg: string) => void): void => {
-        if (name === "") {
-            return onError("Relation name cannot be empty.");
-        }
-        if (!Parser.isName(name)) {
-            return onError("\"" + name + "\" is not a valid name.");
-        }
+    private addResultRelation = (relation: Relation): void => {
+        let name = "Result";
+        const storedRelation = StoredRelation.fromRelation(name, relation, this.state.nullValuesSupport);
+        // renames existing names
         if (this.state.storedRelations.map(sr => sr.getName()).indexOf(name) > -1) {
-            return onError("Name \"" + name + "\" is already used.");
+            for (let i = 2; true; ++i) {
+                if (this.state.storedRelations.map(sr => sr.getName()).indexOf(name + i) === -1) {
+                    storedRelation.setName(name + i);
+                    break;
+                }
+            }
         }
-        this.state.storedRelations.push(StoredRelation.fromRelation(name, relation, this.state.nullValuesSupport));
+        this.state.storedRelations.push(storedRelation);
         this.setState({selectedRelation: this.state.storedRelations.length - 1});
-        onSuccess();
     }
 
     /***************************************************** RENDER *****************************************************/

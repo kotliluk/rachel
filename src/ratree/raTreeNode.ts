@@ -61,4 +61,12 @@ export default abstract class RATreeNode {
      * @return name of the RA operation of the node
      */
     public abstract getOperationName(): string;
+
+    /**
+     * Return the symbolic representation of the RA operation of the node.
+     * Example: returns "(some + expr = 15)" for SelectionNode.
+     *
+     * @return name of the RA operation of the node
+     */
+    public abstract getOperationSymbol(): string;
 }

@@ -30,4 +30,8 @@ export default class RelationNode extends RATreeNode {
         // @ts-ignore
         return this.resultRelation.getName();
     }
+
+    public getOperationSymbol(): string {
+        return "";
+    }
 }

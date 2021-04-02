@@ -2,9 +2,6 @@ import React from "react";
 import Relation from "../relation/relation";
 import {ResultRelationTable} from "./resultRelationTable";
 import {TooltipButton} from "./tooltipButton";
-import {MessageLabel} from "./messageLabel";
-import RASyntaxError from "../error/raSyntaxError";
-import RASemanticError from "../error/raSemanticError";
 import RATreeNode from "../ratree/raTreeNode";
 import {CsvValueSeparatorChar} from "../tools/csvSupport";
 import {EvaluationTree} from "./evaluationTree";
@@ -20,8 +17,8 @@ interface ResultSectionProps {
     // name of the evaluated expression
     expressionName: string,
 
-    // handler of adding the selected relation with given name to defined relations
-    onAddResult: (name: string, relation: Relation, onSuccess: () => void, onError: (msg: string) => void) => void,
+    // handler of adding the given relation to defined relations
+    onAddResult: (relation: Relation) => void,
 
     // handler of unexpected errors
     onUnexpectedError: (e: Error) => void,
@@ -33,11 +30,7 @@ interface ResultSectionProps {
 }
 
 interface ResultSectionState {
-    sectionClicked: boolean,
-    selectedIndex: number,
-    relationName: string,
-    messageText: string,
-    isMessageError: boolean
+    selectedIndex: number
 }
 
 /**
@@ -52,25 +45,9 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
     constructor(props: ResultSectionProps) {
         super(props);
         this.state = {
-            sectionClicked: false,
-            selectedIndex: 0,
-            relationName: 'ResultRelation',
-            messageText: "",
-            isMessageError: false
+            selectedIndex: 0
         }
         this.sectionRef = React.createRef<HTMLDivElement>();
-    }
-
-    componentDidMount() {
-        const section = this.sectionRef.current;
-        if (section !== null) {
-            section.addEventListener("click", () => {
-                this.setState({sectionClicked: true});
-            }, true); // useCapture = true for overwriting the window listener
-        }
-        window.addEventListener("click", () => {
-            this.setState({sectionClicked: false});
-        }, true); // useCapture = true for overwriting by section listener
     }
 
     componentDidUpdate(prevProps: Readonly<ResultSectionProps>) {
@@ -108,33 +85,19 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
     /**
      * Saves the current selected relation to a file.
      */
-    private saveResultRelation = (): void => {
+    private exportResultRelation = (): void => {
         if (this.getCurrentRelation() === null) {
-            this.showError(ErrorFactory.codeError(CodeErrorCodes.resultSection_saveResultRelation_nullRelationToSave));
-            return;
-        }
-        const name: string = this.state.relationName;
-        if (name === "") {
-            this.showMessage("Relation name cannot be empty.", true);
+            this.props.onUnexpectedError(ErrorFactory.codeError(CodeErrorCodes.resultSection_saveResultRelation_nullRelationToSave));
             return;
         }
         try {
-            RelationStoreManager.save([StoredRelation.fromRelation(name, this.getCurrentRelation() as Relation, true)],
-                name, this.props.csvValueSeparator);
-            this.showMessage("Relation saved to file.", false);
+            RelationStoreManager.save(
+                [StoredRelation.fromRelation("rachel_result", this.getCurrentRelation() as Relation, true)],
+                "rachel_result", this.props.csvValueSeparator);
         }
         catch (err) {
-            this.showMessage("Saving error: " + err, true);
+            console.warn("Saving error: " + err, true);
         }
-    }
-
-    /**
-     * Updates resultRelationName.
-     *
-     * @param event event with the new name
-     */
-    private handleRelationNameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        this.setState({relationName: event.target.value.replace(/\t/g, "    ")})
     }
 
     /**
@@ -142,44 +105,11 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
      */
     private handleAddRelation = (): void => {
         if (this.getCurrentRelation() === null) {
-            this.showError(ErrorFactory.codeError(CodeErrorCodes.resultSection_handleAddRelation_nullRelationToAdd));
+            this.props.onUnexpectedError(ErrorFactory.codeError(CodeErrorCodes.resultSection_handleAddRelation_nullRelationToAdd));
             return;
         }
         // @ts-ignore
-        this.props.onAddResult(this.state.relationName, this.getCurrentRelation(),
-            () => this.showMessage("Relation \"" + this.state.relationName + "\" was added to definitions."),
-            (msg: string) => this.showMessage(msg, true));
-    }
-
-    /**
-     * Shows the given message.
-     *
-     * @param msg message to be shown
-     * @param isError whether the message is error
-     */
-    private showMessage = (msg: string, isError: boolean = false) => {
-        this.setState({
-            messageText: msg,
-            isMessageError: isError
-        });
-    }
-
-    /**
-     * Handles and shows the given error. If the error is not of RASyntaxError or RASemanticError class, it is passed
-     * to the parent as unexpected error.
-     *
-     * @param err the error to handle
-     */
-    private showError = (err: Error) => {
-        // common user's errors
-        if (err instanceof RASyntaxError || err instanceof RASemanticError) {
-            this.showMessage(err.message, true);
-        }
-        else {
-            this.props.onUnexpectedError(err);
-            this.showMessage("UNEXPECTED ERROR: " + err.message + "\n" +
-                "Please, report it with your last actions, thank you!", true);
-        }
+        this.props.onAddResult(this.getCurrentRelation());
     }
 
     render() {
@@ -199,7 +129,7 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
             />);
         }
         const selectedNode: RATreeNode | null = depthSearch(this.props.evaluationTreeRoot, this.state.selectedIndex);
-        const tableTitle: string | null = selectedNode === null ? null : selectedNode.getResult().getName();
+        const tableTitle: string | null = selectedNode === null ? null : selectedNode.printInLine();
 
         return (
             <section
@@ -208,10 +138,10 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
                 <header>
                     <h2>Result</h2>
                     {createButton("Add", this.handleAddRelation, "Adds given relation to stored ones")}
-                    {createButton("Save", this.saveResultRelation, "Saves given relation to a file")}
+                    {createButton("Export", this.exportResultRelation, "Saves given relation to a file")}
                 </header>
 
-                <p><strong>{'Evaluation tree of "' + this.props.expressionName + '":'}</strong></p>
+                <p><strong>{'Evaluation tree of ' + this.props.evaluationTreeRoot.printInLine() + ':'}</strong></p>
 
                 <EvaluationTree
                     tree={this.props.evaluationTreeRoot}
@@ -220,30 +150,12 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
                     darkTheme={this.props.darkTheme}
                 />
 
-                <p><strong>{tableTitle}:</strong></p>
+                <p><strong>Relation {tableTitle}:</strong></p>
 
                 <ResultRelationTable
                     relation={this.getCurrentRelation() as Relation}
                     darkTheme={this.props.darkTheme}
                 />
-
-                <div>
-                    <input
-                        type='text'
-                        className={this.props.darkTheme ? 'text-input-dark' : 'text-input-light'}
-                        spellCheck={false}
-                        value={this.state.relationName}
-                        onChange={this.handleRelationNameChange}
-                    />
-                    {createButton("Add", this.handleAddRelation, "Adds given relation to stored ones")}
-                    {createButton("Save", this.saveResultRelation, "Saves given relation to a file")}
-
-                    <MessageLabel
-                        message={this.state.messageText}
-                        darkTheme={this.props.darkTheme}
-                        style={{marginLeft: "10px", ...(this.state.isMessageError ? {color: "red"} : {})}}
-                    />
-                </div>
             </section>
         );
     }

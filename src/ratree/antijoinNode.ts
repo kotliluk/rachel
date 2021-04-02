@@ -74,10 +74,14 @@ export default class AntijoinNode extends BinaryNode {
     }
 
     public printInLine(): string {
-        return this.getOperationName() + " of {" + this.leftSubtree.printInLine() + "} and {" + this.rightSubtree.printInLine() + "}";
+        return "(" + this.leftSubtree.printInLine() + this.getOperationSymbol() + this.rightSubtree.printInLine() + ")";
     }
 
     public getOperationName(): string {
         return this.type === AntijoinType.left ? "Left antijoin" : "Right antijoin";
+    }
+
+    public getOperationSymbol(): string {
+        return this.type;
     }
 }

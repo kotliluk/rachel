@@ -3,7 +3,6 @@ import RATreeNode from "./raTreeNode";
 import Parser from "../tools/parser";
 import Relation from "../relation/relation";
 import Row from "../relation/row";
-import {ParameterizedNode} from "./parameterizedNode";
 import {getRange, IndexedString, isEmpty} from "../tools/indexedString";
 import {ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
 import ErrorWithTextRange from "../error/errorWithTextRange";
@@ -13,7 +12,7 @@ import ParserIndexed from "../tools/parserIndexed";
 /**
  * Projection node of the relational algebra syntactic tree.
  */
-export default class ProjectionNode extends UnaryNode implements ParameterizedNode {
+export default class ProjectionNode extends UnaryNode {
 
     private readonly projection: string | IndexedString;
     private readonly stringRange: { start: number, end: number } | undefined;
@@ -139,14 +138,14 @@ export default class ProjectionNode extends UnaryNode implements ParameterizedNo
     }
 
     printInLine(): string {
-        return "Projection of " + this.projection.replace(/\s/g, '') + " from {" + this.subtree.printInLine() + "}";
+        return this.subtree.printInLine() + this.getOperationSymbol();
     }
 
     public getOperationName(): string {
         return "Projection";
     }
 
-    public getParameter(): string {
-        return this.projection.replace(/\s/g, '');
+    public getOperationSymbol(): string {
+        return this.projection.replace(/\s+/g, ' ');
     }
 }

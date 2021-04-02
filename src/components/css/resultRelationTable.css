@@ -2,7 +2,6 @@
 
 .result-table-container {
     max-width: 100%;
-    resize: vertical;
     overflow: auto;
     border-radius: 12px;
     padding-right: 2px;
@@ -24,6 +23,7 @@
     width: 100%;
     max-width: 100%;
     max-height: fit-content;
+    text-align: center;
 }
 
 .result-table-light {

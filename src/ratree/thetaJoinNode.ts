@@ -4,7 +4,6 @@ import Relation from "../relation/relation";
 import Row from "../relation/row";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
 import {VETreeNode} from "../vetree/veTreeNode";
-import {ParameterizedNode} from "./parameterizedNode";
 import {getRange, IndexedString} from "../tools/indexedString";
 import ValueParser from "../expression/valueParser";
 import {ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
@@ -22,7 +21,7 @@ export enum ThetaJoinType {
 /**
  * Theta join or theta semijoin node of the relational algebra syntactic tree.
  */
-export default class ThetaJoinNode extends BinaryNode implements ParameterizedNode {
+export default class ThetaJoinNode extends BinaryNode {
 
     private readonly type: ThetaJoinType;
     private readonly condition: string | IndexedString;
@@ -154,7 +153,7 @@ export default class ThetaJoinNode extends BinaryNode implements ParameterizedNo
     }
 
     public printInLine(): string {
-        return this.getOperationName() + " of {" + this.leftSubtree.printInLine() + "} and {" + this.rightSubtree.printInLine() + "}";
+        return "(" + this.leftSubtree.printInLine() + this.getOperationSymbol() + this.rightSubtree.printInLine() + ")";
     }
 
     public getOperationName(): string {
@@ -169,8 +168,8 @@ export default class ThetaJoinNode extends BinaryNode implements ParameterizedNo
         }
     }
 
-    public getParameter(): string {
-        return this.condition.replace(/\s+/g, " ");
+    public getOperationSymbol(): string {
+        return this.condition.replace(/\s+/g, ' ');
     }
 
     public getType(): ThetaJoinType {

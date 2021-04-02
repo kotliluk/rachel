@@ -102,10 +102,14 @@ export default class DivisionNode extends BinaryNode {
     }
 
     public printInLine(): string {
-        return "Division of {" + this.leftSubtree.printInLine() + "} and {" + this.rightSubtree.printInLine() + "}";
+        return "(" + this.leftSubtree.printInLine() + this.getOperationSymbol() + this.rightSubtree.printInLine() + ")";
     }
 
     public getOperationName(): string {
         return "Division";
+    }
+
+    public getOperationSymbol(): string {
+        return "÷";
     }
 }

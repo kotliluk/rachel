@@ -4,7 +4,6 @@ import Parser from "../tools/parser";
 import Relation from "../relation/relation";
 import {SupportedColumnType} from "../relation/columnType";
 import Row from "../relation/row";
-import {ParameterizedNode} from "./parameterizedNode";
 import {getRange, IndexedString, isEmpty} from "../tools/indexedString";
 import {ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
 import {isForbiddenColumnName} from "../tools/keywords";
@@ -14,7 +13,7 @@ import {ISSToISSMap} from "../tools/issToISSMap";
 /**
  * Renaming node of the relational algebra syntactic tree.
  */
-export default class RenameNode extends UnaryNode implements ParameterizedNode {
+export default class RenameNode extends UnaryNode {
 
     private readonly rename: string | IndexedString;
     private readonly stringRange: { start: number, end: number } | undefined;
@@ -199,14 +198,14 @@ export default class RenameNode extends UnaryNode implements ParameterizedNode {
     }
 
     public printInLine(): string {
-        return "Projection of " + this.rename.replace(/\s+/g, "") + " from {" + this.subtree.printInLine() + "}";
+        return this.subtree.printInLine() + this.getOperationSymbol();
     }
 
     public getOperationName(): string {
         return "Rename";
     }
 
-    public getParameter(): string {
-        return this.rename.replace(/\s+/g, " ");
+    public getOperationSymbol(): string {
+        return this.rename.replace(/\s+/g, ' ');
     }
 }

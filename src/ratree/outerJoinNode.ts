@@ -95,7 +95,7 @@ export default class OuterJoinNode extends BinaryNode {
     }
 
     public printInLine(): string {
-        return this.getOperationName() + " of {" + this.leftSubtree.printInLine() + "} and {" + this.rightSubtree.printInLine() + "}";
+        return "(" + this.leftSubtree.printInLine() + this.getOperationSymbol() + this.rightSubtree.printInLine() + ")";
     }
 
     public getOperationName(): string {
@@ -110,5 +110,9 @@ export default class OuterJoinNode extends BinaryNode {
             typeStr = "Full";
         }
         return typeStr + " outer join";
+    }
+
+    public getOperationSymbol(): string {
+        return this.type;
     }
 }

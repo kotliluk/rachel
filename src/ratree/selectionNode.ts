@@ -3,7 +3,6 @@ import RATreeNode from "./raTreeNode";
 import Relation from "../relation/relation";
 import {VETreeNode} from "../vetree/veTreeNode";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
-import {ParameterizedNode} from "./parameterizedNode";
 import {getRange, IndexedString} from "../tools/indexedString";
 import ValueParser from "../expression/valueParser";
 import {ErrorFactory, SyntaxErrorCodes} from "../error/errorFactory";
@@ -12,7 +11,7 @@ import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithText
 /**
  * Selection node of the relational algebra syntactic tree.
  */
-export default class SelectionNode extends UnaryNode implements ParameterizedNode {
+export default class SelectionNode extends UnaryNode {
 
     private readonly selection: string | IndexedString;
     private readonly stringRange: { start: number, end: number } | undefined;
@@ -94,14 +93,14 @@ export default class SelectionNode extends UnaryNode implements ParameterizedNod
     }
 
     public printInLine(): string {
-        return "Selection of " + this.selection.replace(/\s+/g, " ") + " from {" + this.subtree.printInLine() + "}";
+        return this.subtree.printInLine() + this.getOperationSymbol();
     }
 
     public getOperationName(): string {
         return "Selection";
     }
 
-    public getParameter(): string {
-        return this.selection.replace(/\s+/g, " ");
+    public getOperationSymbol(): string {
+        return this.selection.replace(/\s+/g, ' ');
     }
 }

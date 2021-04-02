@@ -79,7 +79,7 @@ export default class NaturalJoinNode extends BinaryNode {
     }
 
     public printInLine(): string {
-        return this.getOperationName() + " of {" + this.leftSubtree.printInLine() + "} and {" + this.rightSubtree.printInLine() + "}";
+        return "(" + this.leftSubtree.printInLine() + this.getOperationSymbol() + this.rightSubtree.printInLine() + ")";
     }
 
     public getOperationName(): string {
@@ -92,6 +92,10 @@ export default class NaturalJoinNode extends BinaryNode {
         else {
             return "Natural join";
         }
+    }
+
+    public getOperationSymbol(): string {
+        return "*";
     }
 
     public getType(): NaturalJoinType {

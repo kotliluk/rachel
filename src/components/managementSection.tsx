@@ -14,7 +14,7 @@ interface ManagementSectionProps {
     // handler of project saving
     onSaveProject: () => void,
 
-    //
+    // handler of loading the selected sample project
     onLoadSample: (sample: Project) => void,
 
     // current selected value separator in csv files
@@ -45,27 +45,11 @@ interface ManagementSectionState {
  */
 export class ManagementSection extends React.Component<ManagementSectionProps, ManagementSectionState> {
 
-    // reference to this section element
-    private readonly sectionRef: React.RefObject<HTMLDivElement>;
-
     constructor(props: ManagementSectionProps) {
         super(props);
         this.state = {
             sectionClicked: false
         }
-        this.sectionRef = React.createRef<HTMLDivElement>();
-    }
-
-    componentDidMount() {
-        const section = this.sectionRef.current;
-        if (section !== null) {
-            section.addEventListener("click", () => {
-                this.setState({sectionClicked: true});
-            }, true); // useCapture = true for overwriting the window listener
-        }
-        window.addEventListener("click", () => {
-            this.setState({sectionClicked: false});
-        }, true); // useCapture = true for overwriting by section listener
     }
 
     render() {
@@ -106,7 +90,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                             value="allowed"
                             id="null_values_support_allowed"
                             checked={this.props.nullValuesSupport}
-                            onClick={() => this.props.onNullValuesSupportChange(true)} />
+                            onChange={() => this.props.onNullValuesSupportChange(true)} />
                         <label htmlFor="null_values_support_allowed">allowed</label>
                         <input
                             type="radio"
@@ -114,7 +98,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                             value="forbidden"
                             id="null_values_support_forbid"
                             checked={!this.props.nullValuesSupport}
-                            onClick={() => this.props.onNullValuesSupportChange(false)} />
+                            onChange={() => this.props.onNullValuesSupportChange(false)} />
                         <label htmlFor="null_values_support_forbid">forbidden</label>
                     </li>
                     <li>
@@ -125,7 +109,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                             value="semicolon"
                             id="value_separator_semi"
                             checked={this.props.csvValueSeparator === ";"}
-                            onClick={() => this.props.onCsvValueSeparatorChange(";")}/>
+                            onChange={() => this.props.onCsvValueSeparatorChange(";")}/>
                         <label htmlFor="value_separator_semi">semicolon</label>
                         <input
                             type="radio"
@@ -133,7 +117,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                             value="comma"
                             id="value_separator_comma"
                             checked={this.props.csvValueSeparator === ","}
-                            onClick={() => this.props.onCsvValueSeparatorChange(",")}/>
+                            onChange={() => this.props.onCsvValueSeparatorChange(",")}/>
                         <label htmlFor="value_separator_comma">comma</label>
                     </li>
                     <li>
@@ -144,7 +128,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                             value="on"
                             id="dark_mode_on"
                             checked={!this.props.darkTheme}
-                            onClick={() => this.props.onDarkModeChange(false)} />
+                            onChange={() => this.props.onDarkModeChange(false)} />
                         <label htmlFor="dark_mode_on">light</label>
                         <input
                             type="radio"
@@ -152,7 +136,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                             value="off"
                             id="dark_mode_off"
                             checked={this.props.darkTheme}
-                            onClick={() => this.props.onDarkModeChange(true)} />
+                            onChange={() => this.props.onDarkModeChange(true)} />
                         <label htmlFor="dark_mode_off">dark</label>
                     </li>
                 </ul>
@@ -195,9 +179,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
         }
 
         return (
-            <header
-                ref={this.sectionRef}
-                className="management-section">
+            <header className="management-section">
                 <h1>RACHEL</h1>
                 {createBatchButton()}
                 {createLoadProjectButton()}
