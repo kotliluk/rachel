@@ -349,7 +349,6 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                     text={expr.name}
                     onClick={() => this.handleSelectDifferentExpression(i)}
                     className={className}
-                    style={{width: (98 / this.props.expressions.length) + "%"}}
                     tooltip={expr.name}
                     tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
                 />);
@@ -382,16 +381,19 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
             });
         }
 
-        let sectionClassName = this.props.darkTheme ? "section-border-dark" : "section-border-light";
-        if (this.state.sectionClicked) {
-            sectionClassName = this.props.darkTheme ? "section-border-dark-clicked" : "section-border-light-clicked";
-        }
         return (
             <section
                 ref={this.sectionRef}
-                className={sectionClassName}>
-                <menu className="expressions-list-menu">
+                className="page-section">
+                <header>
+                    <h2>Expressions</h2>
+                    {createButton("Import", this.loadExpressions, "Loads expressions from a file")}
+                    {createButton("Export", this.saveExpressions, "Saves expressions to a file")}
+                </header>
+
+                <menu className="page-section-tab-menu">
                     {createExprMenuButtons()}
+                    {createButton("+", this.newExpression, "Creates a new RA expression", {minWidth: "0", marginLeft: "10px"})}
                 </menu>
 
                 <XTextArea
@@ -408,14 +410,13 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                     darkTheme={this.props.darkTheme}
                 />
 
-                <menu>
+                <menu className="expressions-operators-menu">
                     {createOpButtons(this.buttonPropsFirstPart)}
                     {this.props.nullValuesSupport ? createOpButtons(this.nullSupportRequiredButtonProps) : null}
                     {createOpButtons(this.buttonPropsSecondPart)}
                 </menu>
 
-                <menu className="expressions-management-menu">
-                    <div className="expressions-management-menu-left">
+                <menu className="page-section-management-menu">
                         <TextInput
                             label=""
                             value={this.getCurExpr().name}
@@ -425,24 +426,15 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                             id="expression-name-input"
                             darkTheme={this.props.darkTheme}
                         />
-                    </div>
-
-                    <div className="expressions-management-menu-right">
-                        {createButton("Evaluate", this.evalExpr, "Evaluates given RA expression", {marginRight: "20px"})}
-                        {createButton("New", this.newExpression, "Creates a new RA expression")}
-                        {createButton("Delete", this.deleteExpression, "Deletes current RA expression", {marginRight: "20px"})}
-                        {createButton("Import", this.loadExpressions, "Loads expressions from a file")}
-                        {createButton("Export", this.saveExpressions, "Saves expressions to a file")}
-                    </div>
+                        {createButton("Evaluate", this.evalExpr, "Evaluates given RA expression")}
+                        {createButton("Delete", this.deleteExpression, "Deletes current RA expression")}
                 </menu>
 
                 <MessageLabel
                     message={this.state.messageText}
                     darkTheme={this.props.darkTheme}
-                    error={this.state.isMessageError}
+                    style={{marginLeft: "10px", ...(this.state.isMessageError ? {color: "red"} : {})}}
                 />
-
-                <div style={{clear: "both"}}/>
             </section>
         );
     }

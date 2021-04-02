@@ -1,5 +1,4 @@
 import React from "react";
-import "./css/relationSection.css"
 import Relation from "../relation/relation";
 import {TooltipButton} from "./tooltipButton";
 import {MessageLabel} from "./messageLabel";
@@ -276,13 +275,12 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                 const className: string = (this.props.darkTheme ?
                     (this.props.storedRelationIndex === i ? "button-clicked-dark" : "button-dark") :
                     (this.props.storedRelationIndex === i ? "button-clicked-light" : "button-light"));
-                const actuality: string = rel.isActual() ? "" : " *";
+                const actuality: string = rel.isActual() ? "" : "*";
                 const actualityTooltip: string = rel.isActual() ? " (loaded)" : " (NOT loaded)";
-                const width: string = (96 / this.props.storedRelations.length) + "%";
-                const style = rel.isValid() ? {width: width} : {width: width, border: "2px solid red"};
+                const style = rel.isValid() ? {} : {border: "2px solid red"};
                 return (<TooltipButton
                     key={i}
-                    text={rel.getName() + actuality}
+                    text={actuality + rel.getName()}
                     onClick={() => this.handleSelectDifferentRelation(i)}
                     className={className}
                     style={style}
@@ -334,20 +332,30 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
             return !Parser.isName(text);
         }
 
-        let sectionClassName;
-        if (this.state.sectionClicked) {
-            sectionClassName = this.props.darkTheme ? "section-border-dark-clicked" : "section-border-light-clicked";
-        }
-        else {
-            sectionClassName = this.props.darkTheme ? "section-border-dark" : "section-border-light";
-        }
         return (
             <section
                 ref={this.sectionRef}
-                className={sectionClassName}>
-                <div className="relations-names-menu">
+                className="page-section">
+                <header>
+                    <h2>Relations</h2>
+                    {createButton("Load all", this.loadAllRelations, "Loads all valid relations into the application",
+                        this.isShowingStored() ? {} : {visibility: "hidden"})}
+                    {createButton(this.isShowingStored() ? "Show loaded" : "Show stored",
+                        this.changeContentToShow,
+                        this.isShowingStored() ? "Shows relations currently loaded in the application" :
+                            "Shows relations currently stored for editing"
+                    )}
+                    {createButton("Delete loaded", this.deleteAllLoadedRelations,
+                        "Deletes relations loaded in the application")}
+                    {createButton("Import", this.importRelations, "Adds new relations from files")}
+                    {createButton("Export", this.exportRelations, "Saves stored relations to files")}
+                </header>
+
+                <menu className="page-section-tab-menu">
                     {this.createRelationMenuButtons()}
-                </div>
+                    {createButton("+", this.newRelation, "Creates a new relation",
+                        {minWidth: "0", marginLeft: "10px", ...(this.isShowingStored() ? {} : {visibility: "hidden"})})}
+                </menu>
 
                 <EditRelationTable
                     relation={this.getCurRel()}
@@ -364,11 +372,9 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                     darkTheme={this.props.darkTheme}
                 />
 
-                <menu className="relations-management-menu">
+                <menu className="page-section-management-menu">
                     {this.isShowingStored() ?
-                        (<div
-                             className="relations-management-menu-left">
-                            <TextInput
+                        (<TextInput
                                 label=""
                                 value={this.getCurRel().getName()}
                                 buttonText="Rename"
@@ -376,40 +382,21 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                                 forbidden={forbiddenNamesFunction}
                                 id="relation-name-input"
                                 darkTheme={this.props.darkTheme}
-                            />
-                        </div>) : null}
-
-                    <div className="relations-management-menu-right">
+                            />) : null}
                         {createButton("Load", this.loadRelation, "Loads the relation into the application",
                             this.isShowingStored() ? undefined : {visibility: "hidden"})}
-                        {createButton("Load all", this.loadAllRelations, "Loads all valid relations into the application",
-                            this.isShowingStored() ? {marginRight: "20px"} : {visibility: "hidden"})}
-                        {createButton("New", this.newRelation, "Creates a new relation",
-                            this.isShowingStored() ? {} : {visibility: "hidden"})}
                         {createButton("Delete",
                             this.deleteRelation,
                             this.isShowingStored() ? "Deletes current selected stored relation" :
                                                             "Deletes current selected loaded relation",
                             {marginRight: "20px"})}
-                        {createButton(this.isShowingStored() ? "Show loaded" : "Show stored",
-                            this.changeContentToShow,
-                            this.isShowingStored() ? "Shows relations currently loaded in the application" :
-                                                            "Shows relations currently stored for editing"
-                        )}
-                        {createButton("Delete loaded", this.deleteAllLoadedRelations,
-                            "Deletes relations loaded in the application", {marginRight: "20px"})}
-                        {createButton("Import", this.importRelations, "Adds new relations from files")}
-                        {createButton("Export", this.exportRelations, "Saves stored relations to files")}
-                    </div>
                 </menu>
 
                 <MessageLabel
                     message={this.state.messageText}
                     darkTheme={this.props.darkTheme}
-                    error={this.state.isMessageError}
+                    style={{marginLeft: "10px", ...(this.state.isMessageError ? {color: "red"} : {})}}
                 />
-
-                <div style={{clear: "both"}}/>
             </section>
         );
     }

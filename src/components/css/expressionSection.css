@@ -1,64 +1,8 @@
-/* LIST MENU */
+/* OPERATORS MENU */
 
-.expressions-list-menu {
-    width: 100%;
-    height: calc(var(--button-height) + 2px);
-    margin-top: 4px;
-}
-
-.expressions-list-menu button {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    box-sizing: border-box;
-    margin: 0;
-    border-width: 1px;
-}
-
-.expressions-list-menu .button-light, .expressions-list-menu .button-clicked-light {
-    border-color: var(--light-background);
-}
-
-.expressions-list-menu .button-dark, .expressions-list-menu .button-clicked-dark {
-    border-color: var(--dark-background);
-}
-
-.expressions-list-menu button:hover {
-    overflow: visible;
-    width: auto;
-}
-
-/* MANAGEMENT MENU */
-
-.expressions-management-menu {
-    width: 100%;
-    height: calc(var(--button-height) + 8px);
-    padding: 4px;
-    box-sizing: border-box;
-}
-
-.expressions-management-menu-left {
-    float: left;
-    width: 45%;
-    text-align: left;
-}
-
-.expressions-management-menu-right {
-    float: left;
-    width: 55%;
-    text-align: right;
-}
-
-@media (max-width: 800px) {
-    .expressions-management-menu-left {
-        width: 100%;
-        text-align: center;
-    }
-    .expressions-management-menu-right {
-        width: 100%;
-        text-align: center;
-    }
-    .expressions-management-menu {
-        height: calc(2 * var(--button-height) + 12px);
-    }
+.expressions-operators-menu {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 5px var(--left-text-margin);
 }

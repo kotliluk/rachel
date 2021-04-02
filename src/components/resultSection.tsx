@@ -12,6 +12,7 @@ import {depthSearch} from "../ratree/raTreeTools";
 import {CodeErrorCodes, ErrorFactory} from "../error/errorFactory";
 import {RelationStoreManager} from "../relation/relationStoreManager";
 import {StoredRelation} from "../relation/storedRelation";
+import "./css/resultSection.css"
 
 interface ResultSectionProps {
     // the root of the current evaluation tree to display
@@ -200,14 +201,16 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
         const selectedNode: RATreeNode | null = depthSearch(this.props.evaluationTreeRoot, this.state.selectedIndex);
         const tableTitle: string | null = selectedNode === null ? null : selectedNode.getResult().getName();
 
-        let sectionClassName = this.props.darkTheme ? "section-border-dark" : "section-border-light";
-        if (this.state.sectionClicked) {
-            sectionClassName = this.props.darkTheme ? "section-border-dark-clicked" : "section-border-light-clicked";
-        }
         return (
             <section
                 ref={this.sectionRef}
-                className={sectionClassName}>
+                className="page-section result-section">
+                <header>
+                    <h2>Result</h2>
+                    {createButton("Add", this.handleAddRelation, "Adds given relation to stored ones")}
+                    {createButton("Save", this.saveResultRelation, "Saves given relation to a file")}
+                </header>
+
                 <p><strong>{'Evaluation tree of "' + this.props.expressionName + '":'}</strong></p>
 
                 <EvaluationTree
@@ -238,7 +241,7 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
                     <MessageLabel
                         message={this.state.messageText}
                         darkTheme={this.props.darkTheme}
-                        error={this.state.isMessageError}
+                        style={{marginLeft: "10px", ...(this.state.isMessageError ? {color: "red"} : {})}}
                     />
                 </div>
             </section>

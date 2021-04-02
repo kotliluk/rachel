@@ -1,0 +1,5 @@
+/* PARAGRAPHS */
+
+.result-section > p {
+    margin: 5px 5px 5px var(--left-text-margin);
+}

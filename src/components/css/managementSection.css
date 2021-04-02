@@ -1,7 +1,18 @@
 .management-section {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
+    padding: 5px 0;
+    margin-left: var(--left-text-margin);
+    width: 100%;
+}
+
+/* APP NAME */
+
+.management-section h1 {
+    margin: 0 20px 0 0;
+    cursor: default;
+    color: var(--dark-details);
 }
 
 /* LIST MENU */
@@ -16,12 +27,13 @@
     position: absolute;
     z-index: 1;
     cursor: default;
+    text-align: left;
+    white-space: nowrap;
 
     top: 110%;
     left: 0;
     padding: 5px;
     margin: 0;
-    width: 250px;
     border-radius: 5px;
 }
 
@@ -35,12 +47,16 @@
     border: 2px solid var(--light-details);
 }
 
-/* FAKES LINK TO APPEAR AS A BUTTON */
+.list-menu span {
+    width: 110px;
+    display: inline-block;
+}
+
+/* FAKES ELEMENT TO APPEAR AS A BUTTON */
 
 .button-like {
     -webkit-appearance: button;
     text-decoration: none;
-    font: 400 13.3333px Arial;
     padding: 1px 6px;
     display: inline-block;
     box-sizing: border-box;
@@ -50,5 +66,5 @@
     border-radius: 5px;
     margin: 1px;
     height: var(--button-height);
-    font-size: var(--button-font-size);
+    font-size: var(--font-size);
 }

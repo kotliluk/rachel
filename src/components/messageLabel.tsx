@@ -3,10 +3,10 @@ import React from "react";
 interface MessageLabelProps {
     // message to be shown
     message: string,
-    // when true, the message is highlighted as error
-    error: boolean,
     // true if dark theme should be applied
-    darkTheme: boolean
+    darkTheme: boolean,
+    // inline styling for the message label
+    style?: React.CSSProperties
 }
 
 interface MessageLabelState {}
@@ -21,15 +21,8 @@ export class MessageLabel extends React.Component<MessageLabelProps, MessageLabe
         if (this.props.message === '') {
             return null;
         }
-        let color: string;
-        if (this.props.darkTheme) {
-            color = this.props.error ? "red" : "white";
-        }
-        else {
-            color = this.props.error ? "red" : "black";
-        }
         return (
-            <p style={{color: color}}>
+            <p style={this.props.style}>
                 {this.props.message}
             </p>
         );

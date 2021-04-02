@@ -99,7 +99,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
             const settingsMenu = (
                 <ul className={menuClassName}>
                     <li>
-                        Null values:
+                        <span>Null values:</span>
                         <input
                             type="radio"
                             name="null_values_support"
@@ -118,7 +118,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                         <label htmlFor="null_values_support_forbid">forbidden</label>
                     </li>
                     <li>
-                        CSV separator:
+                        <span>CSV separator:</span>
                         <input
                             type="radio"
                             name="value_separator"
@@ -137,7 +137,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                         <label htmlFor="value_separator_comma">comma</label>
                     </li>
                     <li>
-                        Theme:
+                        <span>Theme:</span>
                         <input
                             type="radio"
                             name="dark_mode"
@@ -194,18 +194,11 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
             );
         }
 
-        let sectionClassName = "management-section ";
-        if (this.state.sectionClicked) {
-            sectionClassName += this.props.darkTheme ? "section-border-dark-clicked" : "section-border-light-clicked";
-        }
-        else {
-            sectionClassName += this.props.darkTheme ? "section-border-dark" : "section-border-light";
-        }
         return (
             <header
                 ref={this.sectionRef}
-                className={sectionClassName}
-                style={{paddingTop: "5px", paddingBottom: "5px", marginTop: "5px"}}>
+                className="management-section">
+                <h1>RACHEL</h1>
                 {createBatchButton()}
                 {createLoadProjectButton()}
                 {createSaveProjectButton()}
