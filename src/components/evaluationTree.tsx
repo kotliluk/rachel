@@ -146,7 +146,7 @@ function TreeNodeComponent({ node, selected, onClick, darkTheme }:
         <Group top={node.y} left={node.x}>
             <rect
                 height={nodeHeight} width={nodeWidth}
-                y={-nodeHeight / 2} x={-nodeWidth / 2} rx={10}
+                y={-nodeHeight / 2} x={-nodeWidth / 2} rx={20}
                 fill={darkTheme ?
                     (selected ? selectedNodeColorDark : (tooltipOpen ? selectedNodeColorDark : unselectedNodeColorDark)) :
                     (selected ? selectedNodeColorLight : (tooltipOpen ? selectedNodeColorLight : unselectedNodeColorLight))}
@@ -158,15 +158,20 @@ function TreeNodeComponent({ node, selected, onClick, darkTheme }:
                 onMouseOut={hideTooltip}
             />
             <text
-                dy=".33em"
+                y="-4px"
+                dy=".2em"
                 fontSize={fontSize}
                 fontFamily={fontFamily}
                 textAnchor="middle"
                 style={{ pointerEvents: "none"}}
                 fill={darkTheme ? textColorDark : textColorLight}
             >
-                <tspan x="0" dy="0">{node.data.title}</tspan>
-                <tspan x="0" dy="1.2em">{node.data.symbol}</tspan>
+                {node.data.symbol === "" ?
+                    <tspan x="0" dy=".5em">{node.data.title}</tspan> :
+                    (<>
+                        <tspan x="0" dy="0">{node.data.title}</tspan>
+                        <tspan x="0" dy="1.2em">{node.data.symbol}</tspan>
+                    </>)}
             </text>
         </Group>
     );

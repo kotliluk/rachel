@@ -1,8 +1,8 @@
 :root {
-    --x-textarea-font-size: 12px;
+    --x-textarea-font-size: 16px;
     --x-textarea-font-family: monospace;
-    --x-textarea-line-height-px: 16px;
-    --x-textarea-line-height: 16; /* should be same is number above (without px) */
+    --x-textarea-line-height-px: 20px;
+    --x-textarea-line-height: 20; /* should be same is number above (without px) */
 
     --error-highlight-color: red;
 }
@@ -22,7 +22,7 @@
 
 .x-textarea {
     width: 100%;
-    min-height: 24px;
+    /*min-height: 24px;*/
     line-height: var(--x-textarea-line-height-px);
     padding-left: 5px;
     border-radius: 6px;
@@ -31,10 +31,10 @@
     font-size: var(--x-textarea-font-size);
     font-family: var(--x-textarea-font-family);
 
-    white-space: pre; /* to not wrap long lines (split them to multiple lines) */
+    white-space: pre;
     overflow-wrap: normal;
-    resize: vertical;
-    overflow: auto;
+    resize: none;
+    overflow: visible;
 }
 
 .x-textarea-table {

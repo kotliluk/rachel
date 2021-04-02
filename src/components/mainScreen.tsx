@@ -113,17 +113,6 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
         console.error('Unexpected error: ' + err.stack);
     }
 
-    /****************************************** MANAGEMENT SECTION HANDLERS ******************************************/
-
-    /**
-     * Processes multiple selected files with expressions by the user and saves the reports of the evaluation in textual
-     * files.
-     */
-    private handleBatch = () => {
-        const processor: BatchProcessor = new BatchProcessor();
-        processor.process('rachel-eval-results').then(console.log).catch(console.warn);
-    }
-
     /**
      * Overwrites the current project data with the given one.
      *
@@ -142,6 +131,17 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
             console.log("Project loaded.");
             this.updateExpressionsErrors();
         });
+    }
+
+    /****************************************** MANAGEMENT SECTION HANDLERS ******************************************/
+
+    /**
+     * Processes multiple selected files with expressions by the user and saves the reports of the evaluation in textual
+     * files.
+     */
+    private handleBatch = () => {
+        const processor: BatchProcessor = new BatchProcessor();
+        processor.process('rachel-eval-results').then(console.log).catch(console.warn);
     }
 
     /**
@@ -166,6 +166,13 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
         catch (err) {
             console.warn("Project saving failed: " + err.message);
         }
+    }
+
+    /**
+     * Handles loading a sample project.
+     */
+    private handleLoadSampleProject = (sample: Project): void => {
+        this.loadProject(JSON.parse(JSON.stringify(sample)));
     }
 
     /**
@@ -556,7 +563,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
                     onBatch={this.handleBatch}
                     onLoadProject={this.handleLoadProject}
                     onSaveProject={this.handleSaveProject}
-                    onLoadSample={this.loadProject}
+                    onLoadSample={this.handleLoadSampleProject}
 
                     csvValueSeparator={this.state.csvValueSeparator}
                     language={this.state.language}

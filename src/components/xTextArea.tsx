@@ -41,6 +41,13 @@ type ExtendedHTMLTextArea = HTMLTextAreaElement & {
     mouseIsDown: boolean,
 
     /**
+     * Updates textarea content to the given value. Updates number of lines.
+     */
+    update: (value: string, darkTheme: boolean) => void,
+    // number of lines in the textarea
+    linesCount: number,
+
+    /**
      * Whispers given array of strings to the user at the current cursor position.
      *
      * @param toWhisper
@@ -194,7 +201,6 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         // @ts-ignore - extended later in componentDidMount
         const ta: ExtendedHTMLTextArea = document.createElement('textarea');
         ta.setAttribute('id', this.props.id + '-ta');
-        ta.setAttribute('rows', '2');
         ta.setAttribute('spellcheck', 'false');
         ta.mouseIsDown = false;
         ta.setAttribute('placeholder', this.props.placeholder);
@@ -257,18 +263,31 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                 ctx.fillRect(0, 0, canvasWidth + 2, this.scrollHeight + 1);
                 ctx.fillStyle = darkTheme ? numsColorDark : numsColorLight;
                 ctx.font = fontSize + " " + fontFamily;
-                const startIndex = Math.floor(this.scrollTop / lineHeight);
-                const endIndex = startIndex + Math.floor(this.clientHeight / lineHeight);
-                for (let i = startIndex; i <= endIndex; i++) {
-                    const y = 16 - this.scrollTop + (i * lineHeight);
-                    const text = '' + (i + 1);  // line number
-                    ctx.fillText(text,canvasWidth - (text.length * 6), y);
+                for (let i = 0; i < this.linesCount; i++) {
+                    const text = "" + (i + 1);  // line number
+                    ctx.fillText(text,canvasWidth - (text.length * 8), 19 + (i * lineHeight));
                 }
             }
             catch(e) {
                 console.log('XTextArea paintLineNumbers error: ' + e);
             }
         };
+
+        ta.update = function (value: string, darkTheme: boolean) {
+            this.value = value;
+            let lines: number = 1;
+            for (let i = 0; i < value.length; ++i) {
+                if (value.charAt(i) === "\n") {
+                    ++lines;
+                }
+            }
+            this.linesCount = lines;
+            this.style.height = (lines * lineHeight + 8) + "px";
+            if (this.scrollHeight > this.clientHeight) {
+                this.style.height = (this.scrollHeight + lineHeight + 8) + "px";
+            }
+            this.paintLineNumbers(darkTheme);
+        }
 
         ta.showWhisper = function (whispers: string[]): void {
             if (whispers.length === 0) {
@@ -517,7 +536,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
      * Updates text content and component style.
      */
     componentDidUpdate(prevProps: Readonly<XTextAreaProps>) {
-        this.textarea.value = this.props.text;
+        this.textarea.update(this.props.text, this.props.darkTheme);
         if (prevProps.darkTheme !== this.props.darkTheme) {
             this.updateStyle();
         }
@@ -584,7 +603,7 @@ function getPositionLineAndColumn(text: string, position: number): {line: number
 }
 
 /**
- *
+ * Returns number of characters on the given line.
  */
 function getLineLength(text: string, line: number): number {
     let newLinesFound = 0;
@@ -609,7 +628,7 @@ function getLineLength(text: string, line: number): number {
 }
 
 /**
- *
+ * Creates a div for highlighting text in the given textarea.
  */
 function createHighlightDiv(startLine: number, startColumn: number, rangeLength: number, msg: string,
                             textarea: ExtendedHTMLTextArea): ErrorDiv {

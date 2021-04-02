@@ -1,4 +1,4 @@
 :root {
-    --eval-tree-font-size: 12px;
-    --eval-tree-font-family: monospace;
+    --eval-tree-font-size: var(--x-textarea-font-size);
+    --eval-tree-font-family: var(--x-textarea-font-family);
 }
