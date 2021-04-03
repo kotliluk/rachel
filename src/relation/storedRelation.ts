@@ -58,6 +58,7 @@ export class StoredRelation {
     }
 
     private name: string;
+    private lastLoadedName: string;
     private readonly columnNames: string[];
     private readonly columnTypes: SupportedColumnType[];
     private rows: string[][];
@@ -73,6 +74,7 @@ export class StoredRelation {
     constructor(name: string, columnNames: string[], columnTypes: SupportedColumnType[],
                         rows: string[][], nullValuesSupport: boolean) {
         this.name = name;
+        this.lastLoadedName = "";
         this.columnNames = columnNames;
         this.columnTypes = columnTypes;
         this.rows = rows;
@@ -353,6 +355,13 @@ export class StoredRelation {
         return this.name;
     }
 
+    /**
+     * Returns the name of the relation when it was loaded for the last time or empty string, when it was not loaded.
+     */
+    public getLastLoadedName(): string {
+        return this.lastLoadedName;
+    }
+
     public getColumnNames(): string[] {
         return this.columnNames;
     }
@@ -393,9 +402,16 @@ export class StoredRelation {
 
     /**
      * Sets current StoredRelation state as actual. Any change sets the state as not actual automatically.
+     * If it is set to actual, the last loaded name is set to current name. Otherwise, it is set to empty string.
      */
     public setActual(actual: boolean): void {
         this.actual = actual;
+        if (actual) {
+            this.lastLoadedName = this.name;
+        }
+        else {
+            this.lastLoadedName = "";
+        }
     }
 }
 

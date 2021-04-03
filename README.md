@@ -24,26 +24,26 @@ The common work flow is:
 ### Relation section
 
 We define relations for the application in a table in upper part of the screen.
-We distinguish two states of relations in the application:
+To use a relation in the expressions, we need to load it to application. The relation must be
+in a valid state to be loaded. After loading, we can continue editing the relation while 
+the last loaded (valid) state is still available for the expressions.
 
-- stored relations
-- loaded relations
+There are 4 buttons in the header menu, which affect all relations:
+- The **Load all** button loads all valid relations into the application memory.
+If any loaded relation with the same name exists, it is overwritten. Invalid relations are skipped.
+- The **Delete loaded** button deletes all loaded relations (editable relations are not changed).
+- The **Import** button enables us to import new editable relations from CSV files.
+- The **Export** button saves all editable relations in CSV files. The saved relations can be
+in invalid state.
 
-Stored relations are relations which can be edited and are stored in exported project
-file. When being edited, they often happen to be in invalid state. This is the reason,
-why loaded relations exist. When a stored relation contains no errors, it can be loaded
-in the application memory and used in expressions. This enables editing of relations
-while last loaded (valid) state is still accessible in expressions.
+In the menu above the table, we can choose from editable relations the current edited one.
+A star (*) before the relation name shows changed relations since last load.
+We can add a new relation by the "+" button.
 
-In upper menu, we can choose from stored relations the current edited one. A star (*) after the
-relation name.
-
-In the first row of the table, we define the column names. Column names cannot be
+In the first row of the table, we define the column names and types. Column names cannot be
 duplicit inside one relation and must contain letters, numbers and underscores only and not
 start with a number. Also, column names "null", "true" and "false" are forbidden.
-
-In the second row, we define the column types. There are 3 supported column types in Rachel:
-number, string, and boolean.
+There are 3 supported column types in Rachel: number, string, and boolean.
 
 Buttons in last column and last row adds a new column or row, respectively.
 
@@ -55,31 +55,15 @@ valid in all column types.
 When the first or second row is right-clicked, the clicked column can be deleted. Right-click
 in other rows can be used to delete the clicked row.
 
-Rename text field renames the edited stored relation. The name cannot be changed to any
-existing stored relation name. Allowed characters are the same as
+There are 3 buttons in the menu under the table, which affect the selected relation:
+- **Rename** text field renames the relation. The name cannot be changed to any
+existing editable relation name. Allowed characters are the same as
 in the column names, but the forbidden words are "F", "L", and "R".
-
-The **Load** button loads the edited stored relation into the application memory. If any loaded
+- The **Load** button loads the relation into the application memory. If any loaded
 relation with the same name exists, it is overwritten. 
-
-The **Load all** button loads all valid stored relations into the application memory. Again,
-loaded relation with the same names are overwritten.
-
-The **New** button adds a new relation.
-
-The **Delete** button deletes the edited stored relation.
-
-The **Import** button enables us to load new (stored) relations from CSV files.
-
-The **Export** button saves all stored relations in CSV files. The saved relations can be in invalid
-state.
-
-We can manage loaded relations as well. The **Delete loaded** button deletes all loaded relations.
-The **Show loaded** button changes displayed content if any relations are loaded. If so, 
-the section displays
-all current loaded relations. The relations cannot be edited, but we can choose a specific relation
-to delete by the **Delete** button. With the **Show stored** button, we can switch back to
-edit the stored relations.
+- The **Delete** button deletes the relation.
+- The **Revert** button changes the editable relation to the state of a loaded relation with
+the same name as the name of the editable relation was at its last loading time.
 
 ### Expression section
 

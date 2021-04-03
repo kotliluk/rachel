@@ -122,6 +122,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
         this.setState({
             loadedRelations: new Map<string, Relation>(),
             storedRelations: project.relations.map(r => StoredRelation.fromData(r, project.nullValuesSupport)),
+            selectedRelation: 0,
             expressions: project.expressions,
             nullValuesSupport: project.nullValuesSupport,
             selectedExpression: 0,
@@ -132,6 +133,8 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
             this.updateExpressionsErrors();
         });
     }
+
+    // TODO - extract hledani volneho jmena
 
     /****************************************** MANAGEMENT SECTION HANDLERS ******************************************/
 
@@ -324,22 +327,27 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
     }
 
     /**
-     * Deletes the specific relation or all relations loaded in the application.
-     *
-     * @param specific
-     * @param onDone
+     * Reverts the current selected stored relation to its last loaded state (if it is still loaded).
      */
-    private handleDeleteLoadedRelation = (specific: string | false, onDone: (msg: string) => void): void => {
-        if (specific === false) {
-            this.state.loadedRelations.clear();
-            this.state.storedRelations.forEach(sr => sr.setActual(false));
-            onDone("All loaded relations deleted.");
+    private handleRevertRelation = (): void => {
+        const selected = this.state.selectedRelation;
+        const prev = this.state.loadedRelations.get(this.state.storedRelations[selected].getLastLoadedName());
+        if (prev !== undefined) {
+            this.setState(state => {
+                const storedRelations = state.storedRelations;
+                storedRelations[selected] = StoredRelation.fromRelation(prev.getName(), prev, state.nullValuesSupport);
+                return {storedRelations};
+            });
         }
-        else {
-            this.state.loadedRelations.delete(specific);
-            this.state.storedRelations.filter(sr => sr.getName() === specific).forEach(sr => sr.setActual(false));
-            onDone('Relation "' + specific + '" deleted from loaded relations.');
-        }
+    }
+
+    /**
+     * Deletes all relations loaded in the application.
+     */
+    private handleDeleteLoadedRelations = (onDone: (msg: string) => void): void => {
+        this.state.loadedRelations.clear();
+        this.state.storedRelations.forEach(sr => sr.setActual(false));
+        onDone("All loaded relations deleted.");
         // forces update
         this.setState({}, this.updateExpressionsErrors);
     }
@@ -393,9 +401,11 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
         const currRelation: StoredRelation = this.state.storedRelations[this.state.selectedRelation];
         currRelation.setActual(true);
         this.state.loadedRelations.set(currRelation.getName(), currRelation.createRelation());
-        onDone("Relation loaded to application.\n" +
+        const msgPart2: string = this.state.loadedRelations.size === 0 ?
+            "No relations loaded in the application at the moment." :
             "All current loaded relations (" + this.state.loadedRelations.size + "): " +
-            [...this.state.loadedRelations.keys()].join(', ') + ".");
+            [...this.state.loadedRelations.keys()].join(', ') + ".";
+        onDone("Relation loaded to application.\n" + msgPart2);
         // forces update
         this.setState({}, this.updateExpressionsErrors);
     }
@@ -413,9 +423,11 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
                 ++skipped;
             }
         });
-        onDone(loaded + " relations loaded to application, " + skipped + " skipped.\n" +
+        const msgPart2: string = this.state.loadedRelations.size === 0 ?
+            "No relations loaded in the application at the moment." :
             "All current loaded relations (" + this.state.loadedRelations.size + "): " +
-            [...this.state.loadedRelations.keys()].join(', ') + ".");
+            [...this.state.loadedRelations.keys()].join(', ') + ".";
+        onDone(loaded + " relations loaded to application, " + skipped + " skipped for errors.\n" + msgPart2);
         // forces update
         this.setState({}, this.updateExpressionsErrors);
     }
@@ -591,15 +603,14 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
                     onDeleteRow={this.handleRelationDeleteRow}
                     onDeleteColumn={this.handleRelationDeleteColumn}
 
-                    onLoadRelation={this.handleLoadRelation}
-                    onLoadAllRelations={this.handleLoadAllRelations}
-
                     onSelectDifferentRelation={this.handleSelectDifferentRelation}
                     onNewRelation={this.handleCreateNewRelation}
+                    onLoadRelation={this.handleLoadRelation}
                     onDeleteStoredRelation={this.handleDeleteRelation}
+                    onRevertRelation={this.handleRevertRelation}
 
-                    onDeleteLoadedRelation={this.handleDeleteLoadedRelation}
-
+                    onLoadAllRelations={this.handleLoadAllRelations}
+                    onDeleteLoadedRelations={this.handleDeleteLoadedRelations}
                     onExportRelations={this.handleExportRelations}
                     onImportRelations={this.handleImportRelations}
 

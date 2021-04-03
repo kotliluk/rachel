@@ -35,21 +35,21 @@ interface RelationsSectionProps {
     // handler of deleting the column on given index
     onDeleteColumn: (columnIndex: number) => void,
 
-    // handler of loading the current selected relation into the application
-    onLoadRelation: (onDone: (msg: string) => void) => void,
-    // handler of loading all valid relations into the application
-    onLoadAllRelations: (onDone: (msg: string) => void) => void,
-
     // handler of selecting a different relation as current
     onSelectDifferentRelation: (newIndex: number) => void,
     // handler of creating a new relation
     onNewRelation: () => void,
+    // handler of loading the current selected relation into the application
+    onLoadRelation: (onDone: (msg: string) => void) => void,
     // handler of deleting the current stored relation
     onDeleteStoredRelation: () => void,
 
-    // handler of deleting the loaded relation with specific name or all loaded relations if specific = false
-    onDeleteLoadedRelation: (specific: string | false, onDone: (msg: string) => void) => void,
+    onRevertRelation: () => void,
 
+    // handler of loading all valid relations into the application
+    onLoadAllRelations: (onDone: (msg: string) => void) => void,
+    // handler of deleting the loaded relations
+    onDeleteLoadedRelations: (onDone: (msg: string) => void) => void,
     // handler of saving the stored relations into the files
     onExportRelations: (onDone: (msg: string) => void) => void,
     // handler of loading new relations from files
@@ -63,8 +63,6 @@ interface RelationsSectionProps {
 
 interface RelationsSectionState {
     sectionClicked: boolean,
-    contentToShow: "stored" | "loaded",
-    loadedRelationIndex: number,
     messageText: string,
     isMessageError: boolean
 }
@@ -81,8 +79,6 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
         super(props);
         this.state = {
             sectionClicked: false,
-            contentToShow: "stored",
-            loadedRelationIndex: 0,
             messageText: "",
             isMessageError: false
         }
@@ -102,11 +98,12 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
         }, true); // useCapture = true for overwriting by section listener
         window.addEventListener("keydown", (event) => {
             if (this.state.sectionClicked && event.ctrlKey) {
-                if (event.key === "Enter" && this.isShowingStored()) {
+                if (event.key === "Enter") {
                     this.loadRelation();
                     event.preventDefault();
                 }
-                else if (event.shiftKey && event.key.toLowerCase() === "a" && this.isShowingStored()) {
+                else if (event.shiftKey && event.key.toLowerCase() === "a") {
+                    console.log("aaa")
                     this.newRelation();
                     event.preventDefault();
                 }
@@ -119,59 +116,18 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
     }
 
     /**
-     * Returns true if the relation section now displays stored relations.
-     */
-    private isShowingStored = (): boolean => {
-        return this.state.contentToShow === "stored";
-    }
-
-    /**
-     * Returns selected stored relation if isShowingStored = true. Otherwise, returns selected loaded relation
-     * changed to StoredRelation type.
+     * Returns selected stored relation.
      */
     private getCurRel = (): StoredRelation => {
-        if (this.isShowingStored()) {
-            return this.props.storedRelations[this.props.storedRelationIndex];
-        }
-        else {
-            const loadedRelation: Relation = [...this.props.loadedRelations.values()][this.state.loadedRelationIndex];
-            return StoredRelation.fromRelation(loadedRelation.name, loadedRelation, this.props.nullValuesSupport);
-        }
-    }
-
-    /**
-     * Changes content to display between stored and loaded relations.
-     */
-    private changeContentToShow = (): void => {
-        if (this.isShowingStored()) {
-            if (this.props.loadedRelations.length === 0) {
-                this.showMessage("No relations loaded in the application at the moment.");
-            }
-            else {
-                this.setState({
-                    contentToShow: "loaded",
-                    loadedRelationIndex: 0
-                });
-            }
-        }
-        else {
-            this.setState({
-                contentToShow: "stored"
-            });
-        }
+        return this.props.storedRelations[this.props.storedRelationIndex];
     }
 
     /**
      * Passes change to the parent element if isShowingStored = true. Otherwise, changes the state.loadedRelationIndex.
      */
     private handleSelectDifferentRelation(index: number): void {
-        if (this.isShowingStored()) {
-            this.props.onSelectDifferentRelation(index);
-            this.showMessage("");
-        }
-        else {
-            this.setState({loadedRelationIndex: index});
-        }
+        this.props.onSelectDifferentRelation(index);
+        this.showMessage("");
     }
 
     /**
@@ -215,26 +171,14 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
     }
 
     /**
-     * If isShowingStored = true, passes the call to delete current selected stored relation.
-     * If isShowingStored = false, passes the call to delete current selected loaded relation.
+     * Passes the call to delete current selected stored relation.
      */
     private deleteRelation = () => {
-        if (this.isShowingStored()) {
-            this.props.onDeleteStoredRelation();
-        }
-        else {
-            const nameToDelete: string = this.props.loadedRelations[this.state.loadedRelationIndex].getName();
-            let upgrade = {};
-            // if there is only one loaded relation, content to show is needed to be changed to stored after deleting
-            if (this.props.loadedRelations.length <= 1) {
-                upgrade = {contentToShow: "stored"};
-            }
-            // if the last relation in the menu list is selected
-            else if (this.state.loadedRelationIndex === this.props.loadedRelations.length - 1) {
-                upgrade = {loadedRelationIndex: this.state.loadedRelationIndex - 1};
-            }
-            this.setState(upgrade, () => this.props.onDeleteLoadedRelation(nameToDelete, this.showMessage));
-        }
+        this.props.onDeleteStoredRelation();
+    }
+
+    private revertRelation = () => {
+        this.props.onRevertRelation();
     }
 
     /**
@@ -248,8 +192,7 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
      * Passes the delete all loaded relations call to the parent.
      */
     private deleteAllLoadedRelations = () => {
-        // does not show loaded relations after deleting them
-        this.setState({contentToShow: "stored"}, () => this.props.onDeleteLoadedRelation(false, this.showMessage));
+        this.props.onDeleteLoadedRelations(this.showMessage);
     }
 
     /**
@@ -270,13 +213,12 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
      * button for each loaded relation. Buttons for stored relations with errors are highlighted.
      */
     private createRelationMenuButtons = () => {
-        if (this.isShowingStored()) {
             return this.props.storedRelations.map((rel, i) => {
                 const className: string = (this.props.darkTheme ?
                     (this.props.storedRelationIndex === i ? "button-clicked-dark" : "button-dark") :
                     (this.props.storedRelationIndex === i ? "button-clicked-light" : "button-light"));
                 const actuality: string = rel.isActual() ? "" : "*";
-                const actualityTooltip: string = rel.isActual() ? " (loaded)" : " (NOT loaded)";
+                const actualityTooltip: string = rel.isActual() ? "" : " (changed)";
                 const style = rel.isValid() ? {} : {border: "2px solid red"};
                 return (<TooltipButton
                     key={i}
@@ -288,23 +230,6 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                     tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
                 />);
             });
-        }
-        else {
-            return this.props.loadedRelations.map((rel, i) => {
-                const className: string = (this.props.darkTheme ?
-                    (this.state.loadedRelationIndex === i ? "button-clicked-dark" : "button-dark") :
-                    (this.state.loadedRelationIndex === i ? "button-clicked-light" : "button-light"));
-                return (<TooltipButton
-                    key={i}
-                    text={rel.getName()}
-                    onClick={() => this.handleSelectDifferentRelation(i)}
-                    className={className}
-                    style={{width: (96 / this.props.loadedRelations.length) + "%"}}
-                    tooltip={rel.getName() + " (current version loaded)"}
-                    tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
-                />);
-            });
-        }
     }
 
     public render() {
@@ -332,34 +257,30 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
             return !Parser.isName(text);
         }
 
+        // true, when the current relation is not actual and its previous version is loaded in the application
+        const showRevert: boolean = !this.getCurRel().isActual() &&
+            this.props.loadedRelations.some(r => r.getName() === this.getCurRel().getLastLoadedName());
+
         return (
             <section
                 ref={this.sectionRef}
                 className="page-section">
                 <header>
                     <h2>Relations</h2>
-                    {createButton("Load all", this.loadAllRelations, "Loads all valid relations into the application",
-                        this.isShowingStored() ? {} : {visibility: "hidden"})}
-                    {createButton(this.isShowingStored() ? "Show loaded" : "Show stored",
-                        this.changeContentToShow,
-                        this.isShowingStored() ? "Shows relations currently loaded in the application" :
-                            "Shows relations currently stored for editing"
-                    )}
-                    {createButton("Delete loaded", this.deleteAllLoadedRelations,
-                        "Deletes relations loaded in the application")}
+                    {createButton("Load all", this.loadAllRelations, "Loads all valid relations into the application")}
+                    {createButton("Delete loaded", this.deleteAllLoadedRelations, "Deletes relations loaded in the application")}
                     {createButton("Import", this.importRelations, "Adds new relations from files")}
                     {createButton("Export", this.exportRelations, "Saves stored relations to files")}
                 </header>
 
                 <menu className="page-section-tab-menu">
                     {this.createRelationMenuButtons()}
-                    {createButton("+", this.newRelation, "Creates a new relation",
-                        {minWidth: "0", marginLeft: "10px", ...(this.isShowingStored() ? {} : {visibility: "hidden"})})}
+                    {createButton("+", this.newRelation, "Creates a new relation", {minWidth: "0", marginLeft: "10px"})}
                 </menu>
 
                 <EditRelationTable
                     relation={this.getCurRel()}
-                    editable={this.isShowingStored()}
+                    editable={true}
 
                     onColumnNameChange={this.props.onColumnNameChange}
                     onColumnTypeChange={this.props.onColumnTypeChange}
@@ -373,23 +294,19 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                 />
 
                 <menu className="page-section-management-menu">
-                    {this.isShowingStored() ?
-                        (<TextInput
-                                label=""
-                                value={this.getCurRel().getName()}
-                                buttonText="Rename"
-                                onSubmit={this.handleRelationNameChange}
-                                forbidden={forbiddenNamesFunction}
-                                id="relation-name-input"
-                                darkTheme={this.props.darkTheme}
-                            />) : null}
-                        {createButton("Load", this.loadRelation, "Loads the relation into the application",
-                            this.isShowingStored() ? undefined : {visibility: "hidden"})}
-                        {createButton("Delete",
-                            this.deleteRelation,
-                            this.isShowingStored() ? "Deletes current selected stored relation" :
-                                                            "Deletes current selected loaded relation",
-                            {marginRight: "20px"})}
+                    <TextInput
+                        label=""
+                        value={this.getCurRel().getName()}
+                        buttonText="Rename"
+                        onSubmit={this.handleRelationNameChange}
+                        forbidden={forbiddenNamesFunction}
+                        id="relation-name-input"
+                        darkTheme={this.props.darkTheme}
+                    />
+                    {createButton("Load", this.loadRelation, "Loads the relation into the application")}
+                    {createButton("Delete", this.deleteRelation,"Deletes current selected stored relation")}
+                    {showRevert && createButton("Revert", this.revertRelation,
+                        "Reverts the relation to last loaded state (" + this.getCurRel().getLastLoadedName() + ")")}
                 </menu>
 
                 <MessageLabel
