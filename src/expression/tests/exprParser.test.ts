@@ -1,11 +1,8 @@
 import Relation from "../../relation/relation";
 import {
-    UnaryOperatorToken,
-    BinaryOperatorToken,
-    ClosingParentheses,
-    OpeningParentheses,
+    BinaryOperatorToken, ClosingParentheses, OpeningParentheses,
     ExprToken,
-    RelationToken
+    RelationToken, UnaryOperatorToken
 } from "../exprTokens";
 import {ExprParser} from "../exprParser";
 import RATreeNode from "../../ratree/raTreeNode";
@@ -128,14 +125,14 @@ describe("parseTokens", () => {
         expect(actual).toStrictEqual(expected);
     });
 
-    test('A<}A{>A*F*A*L*A*R*A<*A*>A*A\u2a2fA\u222aA\u2229A\\A\u22b2A\u22b3A\u00f7A', () => {
+    test('A<]A[>A*F*A*L*A*R*A<*A*>A*A\u2a2fA\u222aA\u2229A\\A\u22b2A\u22b3A\u00f7A', () => {
         // arrange
-        const str: string = 'A<}A{>A*F*A*L*A*R*A<*A*>A*A\u2a2fA\u222aA\u2229A\\A\u22b2A\u22b3A\u00f7A';
+        const str: string = 'A<]A[>A*F*A*L*A*R*A<*A*>A*A\u2a2fA\u222aA\u2229A\\A\u22b2A\u22b3A\u00f7A';
         const expected: ExprToken[] = [
             new RelationToken("A"),
-            BinaryOperatorToken.leftThetaSemijoin('<}'),
+            BinaryOperatorToken.leftThetaSemijoin('<]'),
             new RelationToken("A"),
-            BinaryOperatorToken.rightThetaSemijoin('{>'),
+            BinaryOperatorToken.rightThetaSemijoin('[>'),
             new RelationToken("A"),
             BinaryOperatorToken.fullOuterJoin('*F*'),
             new RelationToken("A"),
@@ -170,7 +167,7 @@ describe("parseTokens", () => {
         expect(actual).toStrictEqual(expected);
     });
 
-    /*describe("distinguishes projection and theta join", () => {
+    describe("distinguishes projection and theta join", () => {
         test("Auto[Id]", () => {
             // arrange
             const str: string = 'Auto[Id]';
@@ -235,7 +232,7 @@ describe("parseTokens", () => {
             // assert
             expect(actual).toStrictEqual(expected);
         });
-    });*/
+    });
 
     describe("distinguishes parentheses and selection", () => {
         test("Auto[Id, Majitel](Id = 1)", () => {
@@ -252,16 +249,16 @@ describe("parseTokens", () => {
             expect(actual).toStrictEqual(expected);
         });
 
-        test("Auto[Id, Majitel]{theta join}(Auto {theta join} Majitel(selection))", () => {
+        test("Auto[Id, Majitel][theta join](Auto [theta join] Majitel(selection))", () => {
             // arrange
-            const str: string = 'Auto[Id, Majitel]{theta join}(Auto {theta join} Majitel(selection))';
+            const str: string = 'Auto[Id, Majitel][theta join](Auto [theta join] Majitel(selection))';
             const expected: ExprToken[] = [
                 new RelationToken("Auto"),
                 UnaryOperatorToken.projection("[Id, Majitel]"),
-                BinaryOperatorToken.thetaJoin("{theta join}"),
+                BinaryOperatorToken.thetaJoin("[theta join]"),
                 new OpeningParentheses('('),
                 new RelationToken("Auto"),
-                BinaryOperatorToken.thetaJoin("{theta join}"),
+                BinaryOperatorToken.thetaJoin("[theta join]"),
                 new RelationToken("Majitel"),
                 UnaryOperatorToken.selection("(selection)"),
                 new ClosingParentheses(')')
@@ -526,6 +523,18 @@ describe("assertValidInfixTokens", () => {
                 UnaryOperatorToken.selection("(selection)"),
                 new OpeningParentheses('('),
                 new RelationToken("Auto"),
+                new ClosingParentheses(')')
+            ];
+            // assert
+            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+        });
+
+        test("Auto*)", () => {
+            // arrange
+            const input: ExprToken[] = [
+                new RelationToken("Auto"),
+                BinaryOperatorToken.naturalJoin('*'),
                 new ClosingParentheses(')')
             ];
             // assert
@@ -1099,7 +1108,7 @@ describe('parse and indexedParse', () => {
             const expected: RATreeNode = new NaturalJoinNode(NaturalJoinType.leftSemi,
                 new RelationNode(auto),
                 new RelationNode(majitel));
-            
+
             const actual: RATreeNode = exprParser.parse(input);
             const actualIndexed: RATreeNode = exprParser.indexedParse(input);
             expect(actual).toStrictEqual(expected);
@@ -1123,7 +1132,7 @@ describe('parse and indexedParse', () => {
             const expected: RATreeNode = new AntijoinNode(AntijoinType.left,
                 new RelationNode(auto),
                 new RelationNode(majitel));
-            
+
             const actual: RATreeNode = exprParser.parse(input);
             const actualIndexed: RATreeNode = exprParser.indexedParse(input);
             expect(actual).toStrictEqual(expected);
@@ -1135,7 +1144,7 @@ describe('parse and indexedParse', () => {
             const expected: RATreeNode = new AntijoinNode(AntijoinType.right,
                 new RelationNode(auto),
                 new RelationNode(majitel));
-            
+
             const actual: RATreeNode = exprParser.parse(input);
             const actualIndexed: RATreeNode = exprParser.indexedParse(input);
             expect(actual).toStrictEqual(expected);
@@ -1226,7 +1235,7 @@ describe('parse and indexedParse', () => {
                     new NaturalJoinNode(NaturalJoinType.natural,
                         new RelationNode(auto),
                         new RelationNode(auto)));
-            
+
             const actual: RATreeNode = exprParser.parse(input);
             const actualIndexed: RATreeNode = exprParser.indexedParse(input);
             expect(actual).toStrictEqual(expected);

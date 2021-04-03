@@ -10,9 +10,11 @@ import {
     UnaryOperatorToken
 } from "./exprTokens";
 import Parser from "../tools/parser";
+import CodeError from "../error/codeError";
 import RATreeNode from "../ratree/raTreeNode";
 import RelationNode from "../ratree/relationNode";
 import {
+    containsAny,
     getRange,
     IndexedString,
     isEmpty,
@@ -142,6 +144,8 @@ export class ExprParser {
      */
     public parseTokens(expr: string | IndexedString, selectionExpected: boolean = false): ExprToken[] {
         let tokens: ExprToken[] = [];
+        // alternative solution in case of finding "[...]"
+        let alternativeTokens: ExprToken[] = [];
         let rest: string | IndexedString = expr;
 
         while (!isEmpty(rest)) {
@@ -151,7 +155,6 @@ export class ExprParser {
                 const split = nextBorderedPart(rest, '(', ')');
                 // whole "(...)" part pushed as selection
                 if (selectionExpected) {
-                    //tokens.push(new SelectionToken(split.first));
                     tokens.push(UnaryOperatorToken.selection(split.first));
                 }
                 // inner of "(...)" part parsed as parentheses structure
@@ -163,24 +166,72 @@ export class ExprParser {
                 }
                 rest = split.second;
             }
+            // '[' can be a projection, theta join, or right theta semi join
             else if (rest.startsWith("[")) {
-                const split = nextBorderedPart(rest, '[', ']');
-                //tokens.push(new ProjectionToken(split.first));
-                tokens.push(UnaryOperatorToken.projection(split.first));
-                selectionExpected = true;
-                rest = split.second;
-            }
-            else if (rest.startsWith("{")) {
-                const split = nextBorderedPart(rest, '{', '}>');
+                const split = nextBorderedPart(rest, '[', ']>');
                 // right theta semijoin found
                 if (split.first.endsWith('>')) {
                     tokens.push(BinaryOperatorToken.rightThetaSemijoin(split.first));
+                    selectionExpected = false;
+                    rest = split.second;
                 }
+                // the expression cannot end with a theta join (right source expected)
+                else if (isEmpty(split.second)) {
+                    tokens.push(UnaryOperatorToken.projection(split.first));
+                    break;
+                }
+                // it is no known yet whether it is a projection or a theta join, recursively tries both possibilities
                 else {
-                    tokens.push(BinaryOperatorToken.thetaJoin(split.first));
+                    let errorAlternative: Error | undefined;
+                    let error: Error | undefined;
+
+                    // 1: treat as Theta join (it must copy tokens first)
+                    try {
+                        alternativeTokens.push(...tokens);
+                        alternativeTokens.push(BinaryOperatorToken.thetaJoin(split.first));
+                        alternativeTokens.push(...this.parseTokens(split.second, false));
+                    }
+                    catch (err) {
+                        if (err instanceof CodeError) {
+                            throw err;
+                        }
+                        errorAlternative = err;
+                    }
+
+                    // 2: treat as Projection
+                    try {
+                        tokens.push(UnaryOperatorToken.projection(split.first));
+                        tokens.push(...this.parseTokens(split.second, true));
+                    }
+                    catch (err) {
+                        if (err instanceof CodeError) {
+                            throw err;
+                        }
+                        error = err;
+                    }
+
+                    // both branches have error - reports it to user
+                    if (errorAlternative !== undefined && error !== undefined) {
+                        // when errors were the same, throws one of them
+                        if (errorAlternative.message === error.message) {
+                            throw error;
+                        }
+                        // when errors were different, joins them
+                        throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_parseTokens_bothBranchesError,
+                            undefined, split.first.toString(), error.message, errorAlternative.message);
+                    }
+                    // does not use alternative tokens after error
+                    if (errorAlternative !== undefined) {
+                        alternativeTokens = [];
+                    }
+                    // uses alternative tokens after error in second branch
+                    if (error !== undefined) {
+                        tokens = alternativeTokens;
+                        alternativeTokens = [];
+                    }
+                    // breaks the while - the rest was parsed recursively
+                    break;
                 }
-                selectionExpected = false;
-                rest = split.second;
             }
             // BINARY OPERATORS
             else if (rest.startsWith("*F*") || rest.startsWith("*L*") || rest.startsWith("*R*")) {
@@ -215,41 +266,50 @@ export class ExprParser {
                 rest = rest.slice(2);
                 selectionExpected = false;
             }
-            // operators of 1 character
-            else if ("*\u2a2f\u222a\u2229\\\u22b3\u22b2\u00f7".indexOf(rest.charAt(0)) > -1) {
-                const operator: string | IndexedString = rest.slice(0, 1);
-                if (rest.startsWith("*")) {
-                    tokens.push(BinaryOperatorToken.naturalJoin(operator));
-                }
-                else if (rest.startsWith("\u2a2f")) {
-                    tokens.push(BinaryOperatorToken.cartesianProduct(operator));
-                }
-                else if (rest.startsWith("\u222a")) {
-                    tokens.push(BinaryOperatorToken.union(operator));
-                }
-                else if (rest.startsWith("\u2229")) {
-                    tokens.push(BinaryOperatorToken.intersection(operator));
-                }
-                else if (rest.startsWith("\\")) {
-                    tokens.push(BinaryOperatorToken.difference(operator));
-                }
-                else if (rest.startsWith("\u22b3")) {
-                    tokens.push(BinaryOperatorToken.leftAntijoin(operator));
-                }
-                else if (rest.startsWith("\u22b2")) {
-                    tokens.push(BinaryOperatorToken.rightAntijoin(operator));
-                }
-                else if (rest.startsWith("\u00f7")) {
-                    tokens.push(BinaryOperatorToken.division(operator));
-                }
+            else if (rest.startsWith("*")) {
+                tokens.push(BinaryOperatorToken.naturalJoin(rest.slice(0, 1)));
+                rest = rest.slice(1);
+                selectionExpected = false;
+            }
+            else if (rest.startsWith("\u2a2f")) {
+                tokens.push(BinaryOperatorToken.cartesianProduct(rest.slice(0, 1)));
+                rest = rest.slice(1);
+                selectionExpected = false;
+            }
+            else if (rest.startsWith("\u222a")) {
+                tokens.push(BinaryOperatorToken.union(rest.slice(0, 1)));
+                rest = rest.slice(1);
+                selectionExpected = false;
+            }
+            else if (rest.startsWith("\u2229")) {
+                tokens.push(BinaryOperatorToken.intersection(rest.slice(0, 1)));
+                rest = rest.slice(1);
+                selectionExpected = false;
+            }
+            else if (rest.startsWith("\\")) {
+                tokens.push(BinaryOperatorToken.difference(rest.slice(0, 1)));
+                rest = rest.slice(1);
+                selectionExpected = false;
+            }
+            else if (rest.startsWith("\u22b3")) {
+                tokens.push(BinaryOperatorToken.leftAntijoin(rest.slice(0, 1)));
+                rest = rest.slice(1);
+                selectionExpected = false;
+            }
+            else if (rest.startsWith("\u22b2")) {
+                tokens.push(BinaryOperatorToken.rightAntijoin(rest.slice(0, 1)));
+                rest = rest.slice(1);
+                selectionExpected = false;
+            }
+            else if (rest.startsWith("\u00f7")) {
+                tokens.push(BinaryOperatorToken.division(rest.slice(0, 1)));
                 rest = rest.slice(1);
                 selectionExpected = false;
             }
             // '<' can be a rename or left theta semi join - this "if" must be after <* and *>
             else if (rest.startsWith('<')) {
-                const split = nextBorderedPart(rest, '<', '>}', '-');
+                const split = nextBorderedPart(rest, '<', '>]', '-');
                 if (split.first.endsWith('>')) {
-                    //tokens.push(new RenameToken(split.first));
                     tokens.push(UnaryOperatorToken.rename(split.first));
                     selectionExpected = true;
                 }
@@ -273,6 +333,17 @@ export class ExprParser {
                     getRange(split.first), split.first.toString());
             }
         }
+        // checks whether alternative tokens are valid when used
+        if (alternativeTokens.length > 0) {
+            try {
+                // assert not strict validity (because this can be in nested recursion call where some rules are not held)
+                this.assertValidInfixTokens(alternativeTokens, AssertType.THROW_NOT_STRICT, []);
+                // if error not thrown, returns alternative tokens
+                return alternativeTokens;
+            }
+            catch (ignored) {}
+        }
+        // when alternative tokens are not set or valid, returns tokens
         return tokens;
     }
 
@@ -286,10 +357,10 @@ export class ExprParser {
      * was a relation or an unary operator (default false)
      */
     public fakeParseTokens(expr: IndexedString, cursorIndex: number, selectionExpected: boolean = false):
-            { whispersFound: boolean, tokens: ExprToken[], whispers: string[], errors: ErrorWithTextRange[] } {
+        { tokens: ExprToken[], whispers: string[], errors: ErrorWithTextRange[] } {
         // found whispers
-        let whispersFound: boolean = false;
         let whispers: string[] = [];
+
         let tokens: ExprToken[] = [];
         let errors: ErrorWithTextRange[] = [];
         let rest: IndexedString = expr;
@@ -298,7 +369,6 @@ export class ExprParser {
             // checks whether the cursor was reached
             const restStartIndex: number | undefined = rest.getFirstNonNaNIndex();
             if (restStartIndex === cursorIndex) {
-                whispersFound = true;
                 whispers = [...this.relations.keys()];
             }
 
@@ -320,15 +390,12 @@ export class ExprParser {
                         // it fakes the unclosed expression part as a selection operator
                         // pushes space with valid index and parentheses with NaN index for expected behavior (error
                         // indexing) in fakeEval in selection/theta join nodes and fakeEval in ValueParser
-                        //tokens.push(new SelectionToken(rest.concat(IndexedString.newFromArray([
-                        //    {char: ' ', index: rest.getNextIndexOrNaN()}, {char: ')', index: NaN}]))));
                         tokens.push(UnaryOperatorToken.selection(rest.concat(IndexedString.newFromArray([
                             {char: ' ', index: rest.getNextIndexOrNaN()}, {char: ')', index: NaN}]))));
                     }
                     else {
                         // checks whether the cursor was reached after the opening parentheses
                         if (restStartIndex === cursorIndex - 1) {
-                            whispersFound = true;
                             whispers = [...this.relations.keys()];
                         }
 
@@ -337,10 +404,7 @@ export class ExprParser {
                         // parses inner part between parentheses
                         const recursiveReturn = this.fakeParseTokens(rest.slice(1), cursorIndex);
                         errors.push(...recursiveReturn.errors);
-                        if (recursiveReturn.whispersFound) {
-                            whispersFound = true;
-                            whispers = recursiveReturn.whispers;
-                        }
+                        whispers.push(...recursiveReturn.whispers);
                         tokens.push(...recursiveReturn.tokens);
                         // gives invalid index (NaN for not reporting errors with this imaginary parentheses
                         tokens.push(new ClosingParentheses(IndexedString.new(')', NaN)));
@@ -351,7 +415,6 @@ export class ExprParser {
 
                 // whole "(...)" part pushed as selection
                 if (selectionExpected) {
-                    //tokens.push(new SelectionToken(split.first));
                     tokens.push(UnaryOperatorToken.selection(split.first));
                 }
                 // inner of "(...)" part parsed as parentheses structure
@@ -359,73 +422,63 @@ export class ExprParser {
                     tokens.push(new OpeningParentheses(split.first.slice(0, 1)));
                     const recursiveReturn = this.fakeParseTokens(split.first.slice(1, -1), cursorIndex);
                     errors.push(...recursiveReturn.errors);
-                    if (recursiveReturn.whispersFound) {
-                        whispersFound = true;
-                        whispers = recursiveReturn.whispers;
-                    }
+                    whispers.push(...recursiveReturn.whispers);
                     tokens.push(...recursiveReturn.tokens);
                     tokens.push(new ClosingParentheses(split.first.slice(-1)));
                     selectionExpected = true;
                 }
                 rest = split.second;
             }
-            // projection found
+            // '[' can be a projection, theta join, or right theta semi join
             else if (rest.startsWith("[")) {
                 let split: {first: IndexedString, second: IndexedString};
+                let error: boolean = false;
                 try {
-                    split = ParserIndexed.nextBorderedPart(rest, '[', ']');
-                    //tokens.push(new ProjectionToken(split.first));
-                    tokens.push(UnaryOperatorToken.projection(split.first));
-                    rest = split.second;
-                    // checks whether the cursor was reached
-                    const operatorEndIndex: number | undefined = split.first.getLastNonNaNIndex();
-                    if (operatorEndIndex === cursorIndex - 1) {
-                        whispersFound = true;
-                        whispers = [...this.relations.keys()];
-                    }
+                    split = ParserIndexed.nextBorderedPart(rest, '[', ']>');
                 }
-                // catches error from nextBorderedPart
+                    // catches error from nextBorderedPart
                 catch (err) {
                     // saves error
                     if (err instanceof ErrorWithTextRange) {
                         errors.push(err);
                     }
                     // it fakes the unclosed expression part as a projection operator
-                    //tokens.push(new ProjectionToken(rest.concat(IndexedString.new(']', rest.getNextIndexOrNaN()))));
-                    tokens.push(UnaryOperatorToken.projection(rest.concat(IndexedString.new(']', rest.getNextIndexOrNaN()))));
+                    //tokens.push(UnaryOperatorToken.projection(rest.concat(IndexedString.new(']', rest.getNextIndexOrNaN()))));
                     // breaks the while cycle because the whole rest was used
-                    break;
+                    //break;
+                    error = true;
+                    split = {first: rest.concat(IndexedString.new(']', rest.getNextIndexOrNaN())), second: IndexedString.empty()};
                 }
-            }
-            // theta join or right theta join found
-            else if (rest.startsWith("{")) {
-                let split: {first: IndexedString, second: IndexedString};
-                try {
-                    split = ParserIndexed.nextBorderedPart(rest, '{', '}>');
-                    if (split.first.endsWith('>')) {
-                        tokens.push(BinaryOperatorToken.rightThetaSemijoin(split.first));
-                    }
-                    else {
-                        tokens.push(BinaryOperatorToken.thetaJoin(split.first));
-                    }
+
+                // checks whether the cursor was reached
+                const operatorEndIndex: number | undefined = split.first.getLastNonNaNIndex();
+                if (!error && operatorEndIndex === cursorIndex - 1) {
+                    whispers = [...this.relations.keys()];
+                }
+
+                // right theta semijoin found "[...>"
+                if (split.first.endsWith('>')) {
+                    tokens.push(BinaryOperatorToken.rightThetaSemijoin(split.first));
+                    selectionExpected = false;
                     rest = split.second;
-                    // checks whether the cursor was reached
-                    const operatorEndIndex: number | undefined = split.first.getLastNonNaNIndex();
-                    if (operatorEndIndex === cursorIndex - 1) {
-                        whispersFound = true;
-                        whispers = [...this.relations.keys()];
-                    }
                 }
-                // catches error from nextBorderedPart
-                catch (err) {
-                    // saves error
-                    if (err instanceof ErrorWithTextRange) {
-                        errors.push(err);
-                    }
-                    // it fakes the unclosed expression part as a theta join operator
-                    tokens.push(BinaryOperatorToken.thetaJoin(rest.concat(IndexedString.new('}', rest.getNextIndexOrNaN()))));
+                // the expression cannot end with a theta join (theta join expects right source)
+                else if (split.second.isEmpty()) {
+                    tokens.push(UnaryOperatorToken.projection(split.first));
                     // breaks the while cycle because the whole rest was used
                     break;
+                }
+                // if the next part contains any character from =<>+/*&|~"()! it cannot be a valid Projection
+                else if (containsAny(split.first, '=<>+/*&|~"()!')) {
+                    tokens.push(BinaryOperatorToken.thetaJoin(split.first));
+                    selectionExpected = false;
+                    rest = split.second;
+                }
+                // else suppose it is a projection
+                else {
+                    tokens.push(UnaryOperatorToken.projection(split.first));
+                    selectionExpected = true;
+                    rest = split.second;
                 }
             }
             // BINARY OPERATORS
@@ -434,7 +487,6 @@ export class ExprParser {
                 // checks whether the cursor was reached
                 const operatorEndIndex: number | undefined = operator.getLastNonNaNIndex();
                 if (operatorEndIndex === cursorIndex - 1) {
-                    whispersFound = true;
                     whispers = [...this.relations.keys()];
                 }
 
@@ -456,7 +508,6 @@ export class ExprParser {
                 // checks whether the cursor was reached
                 const operatorEndIndex: number | undefined = operator.getLastNonNaNIndex();
                 if (operatorEndIndex === cursorIndex - 1) {
-                    whispersFound = true;
                     whispers = [...this.relations.keys()];
                 }
 
@@ -475,7 +526,6 @@ export class ExprParser {
                 // checks whether the cursor was reached
                 const operatorEndIndex: number | undefined = operator.getLastNonNaNIndex();
                 if (operatorEndIndex === cursorIndex - 1) {
-                    whispersFound = true;
                     whispers = [...this.relations.keys()];
                 }
 
@@ -509,17 +559,15 @@ export class ExprParser {
             // '<' can be a rename or left theta semi join - this "if" must be after <*
             else if (rest.startsWith('<')) {
                 try {
-                    const split = ParserIndexed.nextBorderedPart(rest, '<', '>}', '-');
+                    const split = ParserIndexed.nextBorderedPart(rest, '<', '>]', '-');
                     // found rename
                     if (split.first.endsWith('>')) {
                         // checks whether the cursor was reached - after unary rename operator it does not whisper
                         const operatorEndIndex: number | undefined = split.first.getLastNonNaNIndex();
                         if (operatorEndIndex === cursorIndex - 1) {
-                            whispersFound = true;
                             whispers = [];
                         }
 
-                        //tokens.push(new RenameToken(split.first));
                         tokens.push(UnaryOperatorToken.rename(split.first));
                         selectionExpected = true;
                     }
@@ -528,7 +576,6 @@ export class ExprParser {
                         // checks whether the cursor was reached
                         const operatorEndIndex: number | undefined = split.first.getLastNonNaNIndex();
                         if (operatorEndIndex === cursorIndex - 1) {
-                            whispersFound = true;
                             whispers = [...this.relations.keys()];
                         }
 
@@ -537,10 +584,9 @@ export class ExprParser {
                     }
                     rest = split.second;
                 }
-                // catches error from nextBorderedPart
+                    // catches error from nextBorderedPart
                 catch (e) {
                     // it fakes the unclosed expression part as a rename operator
-                    //tokens.push(new RenameToken(rest.concat(IndexedString.new('>', rest.getNextIndexOrNaN()))));
                     tokens.push(UnaryOperatorToken.rename(rest.concat(IndexedString.new('>', rest.getNextIndexOrNaN()))));
                     // breaks the while cycle as all was used
                     break;
@@ -555,7 +601,6 @@ export class ExprParser {
                 const relationEndIndex: number | undefined = split.first.getLastNonNaNIndex();
                 if (typeof relationStartIndex === "number" && typeof relationEndIndex === "number" &&
                     relationStartIndex <= cursorIndex - 1 && cursorIndex - 1 <= relationEndIndex) {
-                    whispersFound = true;
                     whispers = [...this.relations.keys()];
                 }
 
@@ -572,11 +617,7 @@ export class ExprParser {
                 rest = rest.slice(split.first.length());
             }
         }
-        // when whispers were found, returns them
-        if (whispersFound) {
-            return { whispersFound, tokens, whispers, errors };
-        }
-        return { whispersFound, tokens: tokens, whispers: [], errors: errors };
+        return { tokens, whispers, errors };
     }
 
     /**

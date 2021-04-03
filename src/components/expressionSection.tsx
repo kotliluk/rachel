@@ -90,9 +90,9 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
         {key: 'inner_d', char: '*>',      text: '*>',     tooltip: 'Right semijoin',          shift: 0},
         {key: 'inner_e', char: '\u22b3',  text: '\u22b3', tooltip: 'Left antijoin',           shift: 0},
         {key: 'inner_f', char: '\u22b2',  text: '\u22b2', tooltip: 'Right antijoin',          shift: 0},
-        {key: 'inner_g', char: '{}',      text: '{}',     tooltip: 'Theta join',              shift: 1},
-        {key: 'inner_h', char: '<}',      text: '<}',     tooltip: 'Left theta semijoin',     shift: 1},
-        {key: 'inner_i', char: '{>',      text: '{>',     tooltip: 'Right theta semijoin',    shift: 1},
+        {key: 'inner_g', char: '[]',      text: '[]',     tooltip: 'Theta join',              shift: 1},
+        {key: 'inner_h', char: '<]',      text: '<]',     tooltip: 'Left theta semijoin',     shift: 1},
+        {key: 'inner_i', char: '[>',      text: '[>',     tooltip: 'Right theta semijoin',    shift: 1},
     ];
     private readonly outerJoinsButtons: Array<OpButtonProps> = [
         {key: 'outer_a', char: '*F*', text: '*F*', tooltip: 'Full outer join',  shift: 0},

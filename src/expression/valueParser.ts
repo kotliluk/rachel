@@ -171,11 +171,8 @@ export default class ValueParser {
                 rest = rest.slice(1);
             }
             // LOGICAL OPERATORS
-            else if (rest.startsWith('!')) {     // NOTE: needs to be after '!=' check
-                tokens.push(new LogicalNotToken(rest.slice(0, 1)));
-                rest = rest.slice(1);
-            }
-            else if (rest.startsWith('~')) {
+            else if (rest.startsWith('!') || rest.startsWith('~')
+                || rest.startsWith('\u00ac')) { // NOTE: needs to be after '!=' check
                 tokens.push(new LogicalNotToken(rest.slice(0, 1)));
                 rest = rest.slice(1);
             }
@@ -183,7 +180,7 @@ export default class ValueParser {
                 tokens.push(new LogicalAndToken(rest.slice(0, 2)));
                 rest = rest.slice(2);
             }
-            else if (rest.startsWith('&')) {     // NOTE: needs to be after '&&' check
+            else if (rest.startsWith('&') || rest.startsWith('\u2227')) { // NOTE: needs to be after '&&' check
                 tokens.push(new LogicalAndToken(rest.slice(0, 1)));
                 rest = rest.slice(1);
             }
@@ -191,7 +188,7 @@ export default class ValueParser {
                 tokens.push(new LogicalOrToken(rest.slice(0, 2)));
                 rest = rest.slice(2);
             }
-            else if (rest.startsWith('|')) {     // NOTE: needs to be after '||' check
+            else if (rest.startsWith('|') || rest.startsWith('\u2228')) { // NOTE: needs to be after '||' check
                 tokens.push(new LogicalOrToken(rest.slice(0, 1)));
                 rest = rest.slice(1);
             }

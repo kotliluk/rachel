@@ -154,10 +154,6 @@ Example - projection of columns Name and Address of a relation Human:
 - simplified notation: Human\[Name, Address\]
 - scientific notation: pi<sub>Name, Address</sub>(Human)
 
-Notation in RA is not standardized. Although, we want to emphasize used operators for
-theta joins, which may be unexpected: A{theta join}B, A<left theta semijoin}B,
-A{right theta semijoin>B.
-
 ### Null values
 
 In strict original relational algebra, null values are not allowed. In newer versions, null values
@@ -179,10 +175,10 @@ Unary:
 Binary:
 - **natural join** (precedence 2): A*B
 - **cartesian product** (precedence 2): A⨯B
-- **theta join** (precedence 2): A\{condition\}B
+- **theta join** (precedence 2): A\[condition\]B
 - **left/right semijoin** (precedence 3): A<\*B, A\*>B
 - **left/right antijoin** (precedence 3): A⊳B, A⊲B
-- **left/right theta join** (precedence 3): A<condition\}B, A\{condition>B
+- **left/right theta join** (precedence 3): A<condition\]B, A\[condition>B
 - **full/left/right outer join** (precedence 4): A\*F\*B, A\*L\*B, A\*R\*B
 - **division** (precedence 5): A÷B
 
@@ -226,8 +222,8 @@ it holds "!column == false", "column && boolean == false",
 "column || boolean == boolean". When number, string, or
 null constant is given, an error is triggered.
 
-- negation (! or ~): !boolean
-- and (&& or &): boolean && boolean
-- or (|| or |): boolean || boolean
+- negation (! or ~ or U+00AC): !boolean, ...
+- and (&& or & or U+2227): boolean && boolean, ...
+- or (|| or | or U+2228): boolean || boolean, ...
 
 ## Implementation details
