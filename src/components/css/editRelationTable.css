@@ -41,6 +41,64 @@
 .edit-table-dark {
 }
 
+/* ROW NUMBER TD */
+
+.edit-table .row-number-td {
+    width: 40px;
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.edit-table thead .row-number-td {
+    border-color: transparent;
+}
+
+.edit-table-light tbody .row-number-td {
+    border-color: var(--light-background);
+    background-color: var(--light-section);
+}
+
+.edit-table-dark tbody .row-number-td {
+    border-color: var(--dark-background);
+    background-color: var(--dark-section);
+}
+
+.row-number-td:hover .delete-row-or-column-button {
+    visibility: visible;
+}
+
+/* BUTTON FOR ROW OR COLUMN DELETE */
+
+.delete-row-or-column-button {
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    visibility: hidden;
+    padding: 0;
+    margin: -4px 0 0 0;
+
+    border: none;
+    background-color: transparent;
+}
+
+.delete-row-or-column-button:hover {
+    transform: scale(1.1);
+}
+
+/* BUTTON FOR ROW ADDITION */
+
+.add-row-td {
+    border: none !important;
+    padding: 1px !important;
+    width: 40px;
+}
+
+.add-row-td button {
+    width: 100%;
+    height: 100%;
+}
+
 /* TD */
 
 .edit-table td {
@@ -103,7 +161,7 @@
     border-width: 2px 2px 0 2px;
     border-style: solid;
     border-radius: 8px 8px 0 0;
-    padding: 2px 4px 3px 6px;
+    padding: 2px 4px 4px 6px;
     box-sizing: border-box;
 }
 
@@ -112,6 +170,10 @@
     border-style: solid;
     border-radius: 0 0 8px 8px;
     padding: 0 4px 2px 2px;
+}
+
+.type-th:hover .delete-row-or-column-button {
+    visibility: visible;
 }
 
 .edit-table-light th {
@@ -126,22 +188,25 @@
 
 .edit-table-light .name-th:focus-within {
     border-width: 2px;
-    padding-bottom: 1px;
+    padding-bottom: 2px;
     border-color: var(--light-details);
+    border-radius: 8px;
 }
 
 .edit-table-dark .name-th:focus-within {
     border-width: 2px;
-    padding-bottom: 1px;
+    padding-bottom: 2px;
     border-color: var(--dark-details);
+    border-radius: 8px;
 }
 
 /* ERROR INPUT */
 
 .name-th.error-input {
     border-width: 2px;
-    padding-bottom: 1px;
+    padding-bottom: 2px;
     border-color: red !important;
+    border-radius: 8px;
 }
 
 td.error-input {

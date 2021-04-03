@@ -152,34 +152,6 @@ export default class EditRelationTable extends React.Component<EditRelationTable
     }
 
     /**
-     * Displays the delete button at the right click position if the table is editable.
-     * If the given row is "names" or "types", the button is set to delete the column.
-     * Otherwise, it is set to delete the given data row.
-     */
-    private handleRightClick = (e: React.MouseEvent, column: number | undefined, row: "names" | "types" | number | undefined) => {
-        const button = this.deleteButtonRef.current;
-        if (button !== null) {
-            if ((row === "names" || row === "types") && column !== undefined) {
-                button.onclick = (e) => this.handleDeleteColumn(e, column);
-                button.innerText = "Delete column " + this.props.relation.getColumnNames()[column];
-                button.style.top = e.clientY + "px";
-                // @ts-ignore
-                button.style.left = (e.clientX - this.containerRef.current.getBoundingClientRect().left) + "px";
-                button.style.visibility = "visible";
-            }
-            else if (typeof row === "number") {
-                button.onclick = (e) => this.handleDeleteRow(e, row);
-                button.innerText = "Delete row " + (row + 1);
-                button.style.top = e.clientY + "px";
-                // @ts-ignore
-                button.style.left = (e.clientX - this.containerRef.current.getBoundingClientRect().left) + "px";
-                button.style.visibility = "visible";
-            }
-            e.preventDefault();
-        }
-    }
-
-    /**
      * Catches key inputs with special effects in tht table.
      */
     private handleKeyDown = (event: React.KeyboardEvent): void => {
@@ -244,41 +216,17 @@ export default class EditRelationTable extends React.Component<EditRelationTable
     }
 
     /**
-     * Deletes the given column if really = true. Otherwise, asks for confirmation and prepares callback to itself with
-     * really = true.
+     * Deletes the column at given index.
      */
-    private handleDeleteColumn = (e: MouseEvent, column: number, really: boolean = false): void => {
-        // @ts-ignore
-        const button: HTMLButtonElement = this.deleteButtonRef.current;
-        if (really) {
-            this.props.onDeleteColumn(column);
-            button.style.visibility = "hidden";
-        }
-        else {
-            button.onclick = (e) => this.handleDeleteColumn(e, column, true);
-            button.innerText = "Really delete this column?";
-        }
-        e.stopPropagation();
-        e.preventDefault();
+    private handleDeleteColumn = (column: number): void => {
+        this.props.onDeleteColumn(column);
     }
 
     /**
-     * Deletes the given row if really = true. Otherwise, asks for confirmation and prepares callback to itself with
-     * really = true.
+     * Deletes the row at given index.
      */
-    private handleDeleteRow = (e: MouseEvent, row: number, really: boolean = false): void => {
-        // @ts-ignore
-        const button: HTMLButtonElement = this.deleteButtonRef.current;
-        if (really) {
-            this.props.onDeleteRow(row);
-            button.style.visibility = "hidden";
-        }
-        else {
-            button.onclick = (e) => this.handleDeleteRow(e, row, true);
-            button.innerText = "Really delete this row?";
-        }
-        e.stopPropagation();
-        e.preventDefault();
+    private handleDeleteRow = (row: number): void => {
+        this.props.onDeleteRow(row);
     }
 
     /**
@@ -310,6 +258,13 @@ export default class EditRelationTable extends React.Component<EditRelationTable
     }
 
     /**
+     * Creates a button for deleting rows or columns.
+     */
+    private createDeleteButton = (callback: () => void) => {
+        return (<button className="delete-row-or-column-button" onClick={callback}>&#10060;</button>);
+    }
+
+    /**
      * Creates a first row of the table with column names. If the table is editable and "names" row is selected,
      * the entry in selected column is changed to text input. Otherwise, plain text is displayed.
      * If the table is editable, additional blank column is added for "add column" button in next rows.
@@ -332,7 +287,6 @@ export default class EditRelationTable extends React.Component<EditRelationTable
                     key={columnIndex}
                     className={className}
                     onClick={() => this.setSelectedInput(columnIndex, "names")}
-                    onContextMenu={(e) => this.handleRightClick(e, columnIndex, "names")}
                 >{content}{span}</th>
             )});
         // pushes "add column" button in last column
@@ -346,7 +300,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
                     style={{width: "100%", height: "100%"}}><strong>+</strong></button>
             </td>);
         return (
-            <tr>{rowData}</tr>
+            <tr><td className="row-number-td"/>{rowData}</tr>
         );
     }
 
@@ -369,11 +323,10 @@ export default class EditRelationTable extends React.Component<EditRelationTable
             return (
                 <th key={columnIndex}
                     className="type-th"
-                    onContextMenu={(e) => this.handleRightClick(e, columnIndex, "types")}
-                >{content}</th>
+                >{content}{this.createDeleteButton(() => this.handleDeleteColumn(columnIndex))}</th>
             )});
         return (
-            <tr>{rowData}</tr>
+            <tr><td className="row-number-td"/>{rowData}</tr>
         );
     }
 
@@ -389,8 +342,11 @@ export default class EditRelationTable extends React.Component<EditRelationTable
         const rows: string[][] = this.props.relation.getRows();
         // creates all rows if any
         return rows.map((row, rowIndex) => (
-            <tr key={rowIndex}
-                onContextMenu={(e) => this.handleRightClick(e, undefined, rowIndex)}>
+            <tr key={rowIndex}>
+                <td className="row-number-td">
+                    {rowIndex + 1}
+                    {this.createDeleteButton(() => this.handleDeleteRow(rowIndex))}
+                </td>
                 {row.map((value, columnIndex) => {
                     let content: string | JSX.Element = value;
                     if (this.state.selectedColumn === columnIndex && this.state.selectedRow === rowIndex) {
@@ -421,11 +377,11 @@ export default class EditRelationTable extends React.Component<EditRelationTable
         return (
             <tr key='add-row'>
                 <td key='add-row-column'
-                    style={{border: "none", padding: "2px"}}>
+                    className="add-row-td">
                     <button
                         onClick={this.handleNewRow}
                         className={this.props.darkTheme ? "button-dark" : "button-light"}
-                        style={{width: "100%", height: "100%"}}><strong>+</strong></button>
+                        ><strong>+</strong></button>
                 </td>
             </tr>
         );

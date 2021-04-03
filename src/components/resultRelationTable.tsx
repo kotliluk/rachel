@@ -74,6 +74,7 @@ export class ResultRelationTable extends React.Component<RelationTableProps, Rel
     private createHeaderRow(columns: string[]) {
         return (
             <tr>
+                <td className="row-number-td"/>
                 {columns.map((columnName, index) => {
                     const text: string = this.state.orderBy === index ?
                         (columnName + this.getOrderByText()) : columnName;
@@ -154,6 +155,9 @@ export class ResultRelationTable extends React.Component<RelationTableProps, Rel
         // creates all rows if any
         return rows.map((row, index) => (
             <tr key={index}>
+                <td className="row-number-td">
+                    {index + 1}
+                </td>
                 {row.getOrderedValues(columns).map((value, index) => (
                     <td key={index}>
                         {String(value)}
