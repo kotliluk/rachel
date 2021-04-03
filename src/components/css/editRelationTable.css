@@ -2,9 +2,11 @@
 
 .edit-table-container {
     min-height: 80px;
-    resize: vertical;
+    width: fit-content;
+    max-width: 100%;
+    box-sizing: border-box;
+    /*resize: vertical;*/
     overflow: auto;
-    font-size: 14px;
 
     border-radius: 12px;
     padding: 2px;
@@ -27,7 +29,6 @@
 /* TABLE */
 
 .edit-table {
-    width: 100%;
     max-width: 100%;
     background-color: transparent;
     border-spacing: 0;
@@ -109,7 +110,7 @@
 .edit-table td {
     position: relative;
     height: 21px;
-    padding: 0 4px 0 4px;
+    padding: 2px 4px 0 4px;
     white-space: nowrap;
     border-radius: 6px;
 }
@@ -138,7 +139,7 @@
 
 .edit-table input {
     margin: 0;
-    padding: 0;
+    padding: 0 0 0 2px;
     font-size: inherit;
     border: none;
     min-width: 200px;
@@ -251,12 +252,4 @@ td.error-input {
 
 .edit-table-dark select option {
     background-color: var(--dark-background);
-}
-
-/* MENU SHOWN ON RIGHT-CLICK */
-
-.table-right-click-menu {
-    visibility: hidden;
-    position: absolute;
-    z-index: 1;
 }

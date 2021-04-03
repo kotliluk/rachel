@@ -1,5 +1,9 @@
 /* PARAGRAPHS */
 
-.result-section > p {
-    margin: 5px 5px 5px var(--left-text-margin);
+.result-section > .upper-p {
+    margin: 5px 5px 20px var(--left-text-margin);
+}
+
+.result-section > .lower-p {
+    margin: 20px 5px 0 var(--left-text-margin);
 }

@@ -117,17 +117,7 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
         if (this.getCurrentRelation() === null) {
             return null;
         }
-        // one place to style buttons
-        const createButton = (text: string, onClick: () => void, tooltip: string) => {
-            return (
-                <TooltipButton
-                    text={text}
-                    onClick={onClick}
-                    className={this.props.darkTheme ? "button-dark" : "button-light"}
-                    tooltip={tooltip}
-                    tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
-            />);
-        }
+        const relationType: string = this.state.selectedIndex === 0 ? "Result" : "Intermediate"
         const selectedNode: RATreeNode | null = depthSearch(this.props.evaluationTreeRoot, this.state.selectedIndex);
         const tableTitle: string | null = selectedNode === null ? null : selectedNode.printInLine();
 
@@ -137,11 +127,11 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
                 className="page-section result-section">
                 <header>
                     <h2>Result</h2>
-                    {createButton("Add", this.handleAddRelation, "Adds given relation to stored ones")}
-                    {createButton("Export", this.exportResultRelation, "Saves given relation to a file")}
                 </header>
 
-                <p><strong>{'Evaluation tree of ' + this.props.evaluationTreeRoot.printInLine() + ':'}</strong></p>
+                <p className="upper-p">
+                    <strong>{'Evaluation tree of ' + this.props.evaluationTreeRoot.printInLine() + ':'}</strong>
+                </p>
 
                 <EvaluationTree
                     tree={this.props.evaluationTreeRoot}
@@ -150,7 +140,24 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
                     darkTheme={this.props.darkTheme}
                 />
 
-                <p><strong>Relation {tableTitle}:</strong></p>
+                <p className="lower-p"><strong>{relationType} relation {tableTitle}:</strong></p>
+
+                <menu className="page-section-tab-menu">
+                    <TooltipButton
+                        text="Add"
+                        onClick={this.handleAddRelation}
+                        className={this.props.darkTheme ? "button-dark" : "button-light"}
+                        tooltip={"Adds given relation to stored ones"}
+                        tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                    />
+                    <TooltipButton
+                        text="Export"
+                        onClick={this.exportResultRelation}
+                        className={this.props.darkTheme ? "button-dark" : "button-light"}
+                        tooltip={"Saves given relation to a file"}
+                        tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                    />
+                </menu>
 
                 <ResultRelationTable
                     relation={this.getCurrentRelation() as Relation}

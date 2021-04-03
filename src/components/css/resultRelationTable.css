@@ -1,8 +1,11 @@
 /* TABLE CONTAINER */
 
 .result-table-container {
+    width: fit-content;
     max-width: 100%;
+    box-sizing: border-box;
     overflow: auto;
+
     border-radius: 12px;
     padding: 2px;
     margin-left: 4px;
@@ -20,7 +23,7 @@
 /* TABLE */
 
 .result-table {
-    width: 100%;
+    /*width: 100%;*/
     max-width: 100%;
     max-height: fit-content;
     text-align: center;
@@ -37,6 +40,7 @@
 
 .result-table .row-number-td {
     width: 40px;
+    min-width: 20px;
     border-radius: 8px;
 }
 
@@ -57,10 +61,11 @@
 /* TH */
 
 .result-table th {
+    min-width: 100px;
     border-width: 2px;
     border-style: solid;
     border-radius: 8px;
-    padding: 2px;
+    padding: 2px 5px;
 }
 
 .result-table th:hover {
@@ -92,6 +97,8 @@
 
 .result-table td {
     border-radius: 6px;
+    height: 21px;
+    padding: 2px 4px 0 4px;
 }
 
 .result-table-dark td {

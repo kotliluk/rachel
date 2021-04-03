@@ -287,7 +287,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
             this.style.height = (lines * lineHeight + 8) + "px";
             // if the horizontal scrollbar is visible, fits it into the height
             if (this.scrollHeight > this.clientHeight) {
-                this.style.height = (this.scrollHeight + lineHeight + 8) + "px";
+                this.style.height = (this.scrollHeight + lineHeight + 10) + "px";
             }
             this.paintLineNumbers(darkTheme);
         }

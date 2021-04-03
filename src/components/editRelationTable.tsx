@@ -42,7 +42,6 @@ interface EditRelationTableState {
 export default class EditRelationTable extends React.Component<EditRelationTableProps, EditRelationTableState> {
 
     private readonly containerRef: React.RefObject<HTMLDivElement>;
-    private readonly deleteButtonRef: React.RefObject<HTMLButtonElement>;
 
     constructor(props: EditRelationTableProps) {
         super(props);
@@ -51,26 +50,6 @@ export default class EditRelationTable extends React.Component<EditRelationTable
             selectedRow: undefined
         }
         this.containerRef = React.createRef<HTMLDivElement>();
-        this.deleteButtonRef = React.createRef<HTMLButtonElement>();
-    }
-
-    /**
-     * Adds listeners on window object to hide delete button
-     */
-    componentDidMount() {
-        window.addEventListener("click", () => {
-            if (this.deleteButtonRef.current !== null) {
-                this.deleteButtonRef.current.style.visibility = "hidden";
-            }
-        });
-        window.addEventListener("keydown", (ev) => {
-            if (ev.key === "Escape" || ev.key === "Esc") {
-                if (this.deleteButtonRef.current !== null) {
-                    this.deleteButtonRef.current.style.visibility = "hidden";
-                }
-                this.setSelectedInput(undefined, undefined);
-            }
-        });
     }
 
     /**
@@ -396,16 +375,13 @@ export default class EditRelationTable extends React.Component<EditRelationTable
     public render() {
         let divClassName: string;
         let tableClassName: string;
-        let contextButtonClassName: string;
         if (this.props.darkTheme) {
             divClassName = "edit-table-container edit-table-container-dark cursor-container-dark";
             tableClassName = "edit-table edit-table-dark";
-            contextButtonClassName = "table-right-click-menu button-dark";
         }
         else {
             divClassName = "edit-table-container edit-table-container-light cursor-container-light";
             tableClassName = "edit-table edit-table-light";
-            contextButtonClassName = "table-right-click-menu button-light";
         }
 
         return (
@@ -413,7 +389,6 @@ export default class EditRelationTable extends React.Component<EditRelationTable
                 className={divClassName}
                 ref={this.containerRef}
                 onKeyDown={this.handleKeyDown}>
-                <button className={contextButtonClassName} ref={this.deleteButtonRef}/>
                 <table
                     className={tableClassName}
                     onBlur={() => this.setSelectedInput(undefined, undefined)}>

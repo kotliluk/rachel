@@ -531,7 +531,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
      * @return message and its color (red for errors, black for information)
      */
     private addResultRelation = (relation: Relation): void => {
-        let name = "Result";
+        let name = "Evaluated";
         const storedRelation = StoredRelation.fromRelation(name, relation, this.state.nullValuesSupport);
         // renames existing names
         if (this.state.storedRelations.map(sr => sr.getName()).indexOf(name) > -1) {

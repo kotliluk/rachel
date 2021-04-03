@@ -12,17 +12,21 @@
 .x-textarea-div {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+
+    width: 688px;
+    max-width: 100%;
+    box-sizing: border-box;
+
     border: 2px solid;
     border-radius: 12px;
-    padding: 2px 2px 0 2px;
+    padding: 2px 4px 0 2px;
     margin-left: 4px;
     margin-right: 4px;
 }
 
 .x-textarea {
     width: 100%;
-    /*min-height: 24px;*/
     line-height: var(--x-textarea-line-height-px);
     padding-left: 5px;
     border-radius: 6px;
