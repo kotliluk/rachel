@@ -3,6 +3,7 @@
 .expressions-operators-menu {
     display: flex;
     justify-content: flex-start;
+    flex-wrap: wrap;
     align-items: center;
-    margin: 5px var(--left-text-margin);
+    margin: 15px 0 10px var(--left-text-margin);
 }

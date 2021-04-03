@@ -307,14 +307,11 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                 const className: string = (this.props.darkTheme ?
                     (this.props.currentExpressionIndex === i ? "button-clicked-dark" : "button-dark") :
                     (this.props.currentExpressionIndex === i ? "button-clicked-light" : "button-light"));
-                return (<TooltipButton
+                return (<button
                     key={i}
-                    text={expr.name}
                     onClick={() => this.handleSelectDifferentExpression(i)}
                     className={className}
-                    tooltip={expr.name}
-                    tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
-                />);
+                >{expr.name}</button>);
             });
         }
 
@@ -324,7 +321,6 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                 text={text}
                 onClick={onClick}
                 className={this.props.darkTheme ? "button-dark" : "button-light"}
-                // @ts-ignore
                 style={style}
                 tooltip={tooltip}
                 tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
@@ -336,7 +332,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
          */
         const createOpButtons = (buttonProps: Array<OpButtonProps>) => {
             return buttonProps.map((prop, i) => {
-                const style = i === buttonProps.length - 1 ? {marginRight: "10px"} : {};
+                const style = i === buttonProps.length - 1 ? {marginRight: "10px"} : undefined;
                 return (<TooltipButton
                     key={prop.key}
                     text={prop.text}

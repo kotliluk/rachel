@@ -1,5 +1,6 @@
 .management-section {
     display: flex;
+    flex-wrap: wrap;
     justify-content: flex-start;
     align-items: center;
     padding: 5px 0 10px 0;

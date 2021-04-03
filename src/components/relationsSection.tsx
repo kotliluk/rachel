@@ -188,23 +188,21 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
      * button for each loaded relation. Buttons for stored relations with errors are highlighted.
      */
     private createRelationMenuButtons = () => {
-            return this.props.storedRelations.map((rel, i) => {
-                const className: string = (this.props.darkTheme ?
-                    (this.props.storedRelationIndex === i ? "button-clicked-dark" : "button-dark") :
-                    (this.props.storedRelationIndex === i ? "button-clicked-light" : "button-light"));
-                const actuality: string = rel.isActual() ? "" : "*";
-                const actualityTooltip: string = rel.isActual() ? "" : " (changed)";
-                const style = rel.isValid() ? {} : {border: "2px solid red"};
-                return (<TooltipButton
+        return this.props.storedRelations.map((rel, i) => {
+            const className: string = (this.props.darkTheme ?
+                (this.props.storedRelationIndex === i ? "button-clicked-dark" : "button-dark") :
+                (this.props.storedRelationIndex === i ? "button-clicked-light" : "button-light"));
+            const actuality: string = rel.isActual() ? "" : "*";
+            const style = rel.isValid() ? {} : {border: "2px solid red"};
+            return (
+                <button
                     key={i}
-                    text={actuality + rel.getName()}
                     onClick={() => this.handleSelectDifferentRelation(i)}
                     className={className}
                     style={style}
-                    tooltip={rel.getName() + actualityTooltip}
-                    tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
-                />);
-            });
+                >{actuality + rel.getName()}</button>
+            );
+        });
     }
 
     public render() {
@@ -279,9 +277,9 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                         darkTheme={this.props.darkTheme}
                     />
                     {createButton("Load", this.loadRelation, "Loads the relation into the application")}
-                    {createButton("Delete", this.deleteRelation,"Deletes current selected stored relation")}
+                    {createButton("Delete", this.deleteRelation,"Deletes the relation")}
                     {this.getCurRel().canRevert() && createButton("Revert", this.revertRelation,
-                        "Reverts the relation to last loaded state (" + this.getCurRel().getRevertName() + ")")}
+                        "Reverts to last loaded state (" + this.getCurRel().getRevertName() + ")")}
                 </menu>
 
                 <MessageLabel

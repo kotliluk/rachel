@@ -173,6 +173,7 @@ menu {
 
 .page-section > header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-start;
   align-items: center;
   padding: 5px 0;
@@ -188,9 +189,10 @@ menu {
 
 .page-section-tab-menu {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-start;
   align-items: center;
-  margin: 5px 0 5px var(--left-text-margin);
+  margin: 15px 0 15px var(--left-text-margin);
 }
 
 .page-section-tab-menu button {
@@ -199,7 +201,7 @@ menu {
   white-space: nowrap;
   box-sizing: border-box;
   min-width: 100px;
-  max-width: 200px;
+  /*max-width: 200px;*/
 }
 
 .page-section-tab-menu button:hover {
@@ -211,6 +213,7 @@ menu {
 
 .page-section-management-menu {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-start;
   align-items: center;
   margin: 5px 0 5px var(--left-text-margin);
@@ -224,6 +227,7 @@ button {
   margin: 1px;
   height: var(--button-height);
   font-size: var(--font-size);
+  white-space: nowrap;
 }
 
 .button-light {
