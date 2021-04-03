@@ -72,9 +72,6 @@ interface RelationsSectionState {
  */
 export class RelationsSection extends React.Component<RelationsSectionProps, RelationsSectionState> {
 
-    // reference to this section element
-    private readonly sectionRef: React.RefObject<HTMLDivElement>;
-
     constructor(props: RelationsSectionProps) {
         super(props);
         this.state = {
@@ -82,37 +79,6 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
             messageText: "",
             isMessageError: false
         }
-        this.sectionRef = React.createRef<HTMLDivElement>();
-    }
-
-    componentDidMount() {
-        // adds listeners for loading on Ctrl+Enter
-        const section = this.sectionRef.current;
-        if (section !== null) {
-            section.addEventListener("click", () => {
-                this.setState({sectionClicked: true});
-            }, true); // useCapture = true for overwriting the window listener
-        }
-        window.addEventListener("click", () => {
-            this.setState({sectionClicked: false});
-        }, true); // useCapture = true for overwriting by section listener
-        window.addEventListener("keydown", (event) => {
-            if (this.state.sectionClicked && event.ctrlKey) {
-                if (event.key === "Enter") {
-                    this.loadRelation();
-                    event.preventDefault();
-                }
-                else if (event.shiftKey && event.key.toLowerCase() === "a") {
-                    console.log("aaa")
-                    this.newRelation();
-                    event.preventDefault();
-                }
-                else if (event.shiftKey && event.key.toLowerCase() === "d") {
-                    this.deleteRelation();
-                    event.preventDefault();
-                }
-            }
-        });
     }
 
     /**
@@ -196,6 +162,15 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
     }
 
     /**
+     * Handles input with Ctrl key pressed from relation table.
+     */
+    private handleCtrlInput = (event: React.KeyboardEvent) => {
+        if (event.key === "Enter") {
+            this.props.onLoadRelation(this.showMessage);
+        }
+    }
+
+    /**
      * Shows the given message.
      *
      * @param msg message to be shown
@@ -258,9 +233,7 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
         }
 
         return (
-            <section
-                ref={this.sectionRef}
-                className="page-section">
+            <section className="page-section">
                 <header>
                     <h2>Relations</h2>
                     {createButton("Load all", this.loadAllRelations, "Loads all valid relations into the application")}
@@ -271,7 +244,12 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
 
                 <menu className="page-section-tab-menu">
                     {this.createRelationMenuButtons()}
-                    {createButton("+", this.newRelation, "Creates a new relation", {minWidth: "0", marginLeft: "10px"})}
+                    <button
+                        onClick={this.newRelation}
+                        className={this.props.darkTheme ? "button-dark" : "button-light"}
+                        style={{minWidth: "0", marginLeft: "10px", padding: "2px 5px 1px 6px"}}>
+                        <strong>+</strong>
+                    </button>
                 </menu>
 
                 <EditRelationTable
@@ -284,6 +262,8 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                     onNewColumn={this.props.onNewColumn}
                     onDeleteRow={this.props.onDeleteRow}
                     onDeleteColumn={this.props.onDeleteColumn}
+
+                    onCtrlInput={this.handleCtrlInput}
 
                     darkTheme={this.props.darkTheme}
                 />

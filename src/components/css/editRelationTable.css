@@ -48,6 +48,7 @@
     display: inline-flex;
     justify-content: space-between;
     align-items: center;
+    padding-right: 1px;
 }
 
 .edit-table thead .row-number-td {
@@ -76,14 +77,18 @@
     border-radius: 10px;
     visibility: hidden;
     padding: 0;
-    margin: -4px 0 0 0;
+    margin: -2px 0 0 0;
 
     border: none;
     background-color: transparent;
+    color: var(--dark-details);
+    transform: scale(1.2);
 }
 
 .delete-row-or-column-button:hover {
-    transform: scale(1.1);
+    transition: ease-in-out;
+    transform: scale(1.4);
+    margin: -4px 0 0 0;
 }
 
 /* BUTTON FOR ROW ADDITION */

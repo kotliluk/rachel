@@ -114,8 +114,6 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
     private lastWhisperAndErrorsUpdate: number = 0;
     // update rate of whispers and errors (in ms)
     private readonly whispersAndErrorsUpdateRate: number = 200;
-    // reference to this section element
-    private readonly sectionRef: React.RefObject<HTMLDivElement>;
 
     constructor(props: ExpressionSectionProps) {
         super(props);
@@ -128,38 +126,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
             isMessageError: false
         }
         this.textAreaRef = React.createRef<XTextArea>();
-        this.sectionRef = React.createRef<HTMLDivElement>();
         setInterval(() => this.updateWhispersAndErrors(), this.whispersAndErrorsUpdateRate);
-    }
-
-    componentDidMount() {
-        // adds listeners for evaluating on Ctrl+Enter
-        const section = this.sectionRef.current;
-        if (section !== null) {
-            section.addEventListener("click", () => {
-                this.setState({sectionClicked: true});
-            }, true); // useCapture = true for overwriting the window listener
-        }
-        window.addEventListener("click", () => {
-            this.setState({sectionClicked: false});
-        }, true); // useCapture = true for overwriting by section listener
-        window.addEventListener("keydown", (event) => {
-            if (this.state.sectionClicked && event.ctrlKey) {
-                if (event.key === "Enter") {
-                    this.evalExpr();
-                    event.preventDefault();
-                }
-                else if (event.shiftKey && event.key.toLowerCase() === "a") {
-                    this.newExpression();
-                    event.preventDefault();
-                }
-                else if (event.shiftKey && event.key.toLowerCase() === "d") {
-                    this.deleteExpression();
-                    event.preventDefault();
-                }
-            }
-        });
-        this.updateErrors();
     }
 
     /**
@@ -263,19 +230,19 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
      * @param cursorIndex
      * @param onDone callback after updating the state
      */
-    private handleExprChange = (text: string, cursorIndex: number, onDone: () => void = () => {}) => {
+    private handleExprChange = (text: string, cursorIndex: number, onDone: () => void = () => {}): void => {
         this.props.onChange(this.getCurExpr().name, text);  // must be called before setState for proper functionality of XTextArea
         this.setState({cursorIndex: cursorIndex}, onDone);
         this.lastChange = Date.now();
     }
 
     /**
-     * Handles current text after text insertion - replaces tabs with 4 spaces.
+     * Handles input with Ctrl key pressed from textarea.
      */
-    private handleTextInsert = () => {
-        const processedText = this.getCurExpr().text.replace(/\t/g, "    ");
-        this.props.onChange(this.getCurExpr().name, processedText);
-        this.lastChange = Date.now();
+    private handleCtrlInput = (ev: KeyboardEvent): void => {
+        if (ev.key === "Enter") {
+            this.evalExpr();
+        }
     }
 
     /**
@@ -383,9 +350,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
         }
 
         return (
-            <section
-                ref={this.sectionRef}
-                className="page-section">
+            <section className="page-section">
                 <header>
                     <h2>Expressions</h2>
                     {createButton("Import", this.loadExpressions, "Loads expressions from a file")}
@@ -394,7 +359,12 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
 
                 <menu className="page-section-tab-menu">
                     {createExprMenuButtons()}
-                    {createButton("+", this.newExpression, "Creates a new RA expression", {minWidth: "0", marginLeft: "10px"})}
+                    <button
+                        onClick={this.newExpression}
+                        className={this.props.darkTheme ? "button-dark" : "button-light"}
+                        style={{minWidth: "0", marginLeft: "10px", padding: "2px 5px 1px 6px"}}>
+                        <strong>+</strong>
+                    </button>
                 </menu>
 
                 <XTextArea
@@ -406,7 +376,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                     whispers={this.state.whispers}
 
                     onChange={this.handleExprChange}
-                    onTextInserted={this.handleTextInsert}
+                    onCtrlInput={this.handleCtrlInput}
 
                     darkTheme={this.props.darkTheme}
                 />

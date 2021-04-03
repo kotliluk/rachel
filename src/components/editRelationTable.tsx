@@ -23,6 +23,9 @@ interface EditRelationTableProps {
     // handler of deleting the column of given index
     onDeleteColumn: (columnIndex: number) => void,
 
+    // handler of input with Ctrl key
+    onCtrlInput: (ev: React.KeyboardEvent) => void,
+
     // true if dark theme should be applied
     darkTheme: boolean
 }
@@ -174,6 +177,9 @@ export default class EditRelationTable extends React.Component<EditRelationTable
             this.moveSelectedInputDown();
             event.preventDefault();
         }
+        if (event.ctrlKey) {
+            this.props.onCtrlInput(event);
+        }
     }
 
     /**
@@ -261,7 +267,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
      * Creates a button for deleting rows or columns.
      */
     private createDeleteButton = (callback: () => void) => {
-        return (<button className="delete-row-or-column-button" onClick={callback}>&#10060;</button>);
+        return (<button className="delete-row-or-column-button" onClick={callback}>&#10006;</button>);
     }
 
     /**

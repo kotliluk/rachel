@@ -96,37 +96,30 @@ We can assign a name to the displayed relation and add it to stored ones or save
 
 The last mentioned section is the upper one.
 
-In the Project tab, we can import or export the whole project by JSON files. The exported file
-contains all stored relations, all expressions and selected null values support.
+We can **Load** or **Save** the whole project using .rachel files. The saved file contains all
+editable relations, all expressions and selected null values support.
 
-In the Settings tab, we can set:
+We can load prepared sample projects by **Samples** button.
+
+In the **Settings**, we can set:
 
 - Null values support - allowed/forbidden - it determinates whether the application supports
 null values in relations and expressions
 - CSV separator - semicolon/comma - used value separator in downloaded CSV files
 - Theme - light/dark - theme of the application
 
-The About button navigates to the application GitHub.
-
-### Shortcuts
-
-In the relation section, we can use:
-- Ctrl+Enter = load the edited relation
-- Ctrl+Shift+A = add new relation
-- Ctrl+Shift+D = delete the edited expression
-- Ctrl+Arrows = navigation in the edit table
-
-In the expression section, we can use:
-- Ctrl+Enter = evaluate the edited expression
-- Ctrl+Shift+A = add new expression
-- Ctrl+Shift+D = delete the edited expression
+The **About** button navigates to the application GitHub.
 
 ### Tips
 
-You can use standard C-style one-line comments in expressions (rest of the line after //).
+You can use standard C-style one-line comments in expressions (rest of the line after '//').
 
-All tabulators in the application are replaced by 4 spaces. In case you are editing the files outside
-Rachel, we commend to use spaces as well to ensure expected indenting.
+You can use Ctrl+Enter in the relation table to load the current relation.
+In the expression textarea, you can use Ctrl-Enter to evaluate current expression.
+
+All tabulators loaded into the application in files are replaced by 4 spaces. In case you are editing
+the files outside Rachel, we recommend to use spaces as well to ensure expected indenting. Also, do not
+insert text with tabulators by Ctrl+V.
 
 ## Relational algebra
 

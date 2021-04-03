@@ -4,7 +4,7 @@
 
   --font-size: 16px;
 
-  --left-text-margin: 10px;
+  --left-text-margin: 14px;
 
   /* DARK COLORS */
   --dark-background: #36393f;
@@ -145,7 +145,7 @@ div {
 
 main {
   text-align: left;
-  padding: 5px;
+  padding: 10px;
   position: relative;
   display: flex;
   align-items: flex-start;
@@ -296,22 +296,23 @@ button:hover .tooltip {
 
 .tooltip {
   visibility: hidden;
-  min-width: 120px;
+  /*min-width: 120px;*/
+  width: auto;
   position: absolute;
   z-index: 1;
-  bottom: 100%;
-  left: 50%;
+
+  top: 100%;
+  left: 0;
+  margin-left: -2px;
+  margin-top: 4px;
 
   background-color: white;
   color: #555;
-  white-space: pre-wrap;
+  white-space: nowrap;
   border: 1px solid #555;
   border-radius: 6px;
-
   text-align: center;
-  padding: 5px 2px;
-  margin-left: -60px;
-  margin-bottom: 4px;
+  padding: 5px;
 }
 
 .tooltip-light {
