@@ -1,5 +1,5 @@
-import {Expression, isExpression} from "../expression/expression";
-import {isStoredRelationData, StoredRelationData} from "../relation/storedRelation";
+import {copyExpression, Expression, isExpression} from "../expression/expression";
+import {copyStoredRelationData, isStoredRelationData, StoredRelationData} from "../relation/storedRelation";
 
 /**
  * Project interface to store information about project relations and expressions relation.
@@ -33,4 +33,15 @@ export function isProjectObject(obj: any): string {
         return 'The file must contain the field "nullValuesSupport: boolean"';
     }
     return 'OK';
+}
+
+/**
+ * Creates a copy of the given project.
+ */
+export function copyProject(proj: Project): Project {
+    return {
+        relations: proj.relations.map(rel => copyStoredRelationData(rel)),
+        expressions: proj.expressions.map(expr => copyExpression(expr)),
+        nullValuesSupport: proj.nullValuesSupport
+    }
 }

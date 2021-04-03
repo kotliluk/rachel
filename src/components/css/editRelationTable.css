@@ -141,11 +141,11 @@
 .name-th.error-input {
     border-width: 2px;
     padding-bottom: 1px;
-    border-color: red;
+    border-color: red !important;
 }
 
 td.error-input {
-    border-color: red;
+    border-color: red !important;
 }
 
 /* SELECT IN TABLE */

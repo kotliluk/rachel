@@ -17,3 +17,10 @@ export function isExpression(obj: any): boolean {
     }
     return ("name" in obj) && (typeof obj.name === "string") && ("text" in obj) && (typeof obj.text === "string");
 }
+
+/**
+ * Creates a copy of the given expression.
+ */
+export function copyExpression(exp: Expression): Expression {
+    return {name: exp.name, text: exp.text};
+}

@@ -16,7 +16,7 @@ import {StoredRelation} from "../relation/storedRelation";
 import {SupportedColumnType} from "../relation/columnType";
 import {RelationStoreManager} from "../relation/relationStoreManager";
 import {PostMail} from "../tools/postMail";
-import {Project} from "../project/project";
+import {copyProject, Project} from "../project/project";
 import {getSamples} from "../project/samples";
 
 interface MainScreenProps {}
@@ -175,7 +175,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
      * Handles loading a sample project.
      */
     private handleLoadSampleProject = (sample: Project): void => {
-        this.loadProject(JSON.parse(JSON.stringify(sample)));
+        this.loadProject(copyProject(sample));
     }
 
     /**
@@ -327,18 +327,14 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
     }
 
     /**
-     * Reverts the current selected stored relation to its last loaded state (if it is still loaded).
+     * Reverts the current selected stored relation to its last loaded state.
      */
     private handleRevertRelation = (): void => {
-        const selected = this.state.selectedRelation;
-        const prev = this.state.loadedRelations.get(this.state.storedRelations[selected].getLastLoadedName());
-        if (prev !== undefined) {
-            this.setState(state => {
-                const storedRelations = state.storedRelations;
-                storedRelations[selected] = StoredRelation.fromRelation(prev.getName(), prev, state.nullValuesSupport);
-                return {storedRelations};
-            });
-        }
+        this.setState(state => {
+            const storedRelations = state.storedRelations;
+            storedRelations[this.state.selectedRelation].revert();
+            return {storedRelations};
+        });
     }
 
     /**

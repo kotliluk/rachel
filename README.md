@@ -62,8 +62,8 @@ in the column names, but the forbidden words are "F", "L", and "R".
 - The **Load** button loads the relation into the application memory. If any loaded
 relation with the same name exists, it is overwritten. 
 - The **Delete** button deletes the relation.
-- The **Revert** button changes the editable relation to the state of a loaded relation with
-the same name as the name of the editable relation was at its last loading time.
+- The **Revert** button reverts the relation to the last saved state - the state is saved after
+creation (adding or importing a new one) or after loading it.
 
 ### Expression section
 

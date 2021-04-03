@@ -257,10 +257,6 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
             return !Parser.isName(text);
         }
 
-        // true, when the current relation is not actual and its previous version is loaded in the application
-        const showRevert: boolean = !this.getCurRel().isActual() &&
-            this.props.loadedRelations.some(r => r.getName() === this.getCurRel().getLastLoadedName());
-
         return (
             <section
                 ref={this.sectionRef}
@@ -304,8 +300,8 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                     />
                     {createButton("Load", this.loadRelation, "Loads the relation into the application")}
                     {createButton("Delete", this.deleteRelation,"Deletes current selected stored relation")}
-                    {showRevert && createButton("Revert", this.revertRelation,
-                        "Reverts the relation to last loaded state (" + this.getCurRel().getLastLoadedName() + ")")}
+                    {this.getCurRel().canRevert() && createButton("Revert", this.revertRelation,
+                        "Reverts the relation to last loaded state (" + this.getCurRel().getRevertName() + ")")}
                 </menu>
 
                 <MessageLabel

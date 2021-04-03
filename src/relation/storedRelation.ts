@@ -18,6 +18,20 @@ export interface StoredRelationData {
 }
 
 /**
+ * Creates a copy of the given stored relation data.
+ */
+export function copyStoredRelationData(data: StoredRelationData): StoredRelationData {
+    return {
+        name: data.name,
+        columnNames: [...data.columnNames],
+        columnTypes: [...data.columnTypes],
+        rows: data.rows.map(row => [...row]),
+        columnCount: data.columnCount,
+        rowCount: data.rowCount
+    }
+}
+
+/**
  * String representation of the relation for its storing. The relation may happen to be in inconsistent state.
  */
 export class StoredRelation {
@@ -57,16 +71,28 @@ export class StoredRelation {
         return new StoredRelation(name, columnNames, columnTypes, rows, nullValuesSupport);
     }
 
+    /**
+     * Creates a new relation with the same name, columns, rows a null values support.
+     */
+    static copy(relation: StoredRelation): StoredRelation {
+        const name = relation.name;
+        const columnNames = [...relation.columnNames];
+        const columnTypes = [...relation.columnTypes];
+        const rows = relation.rows.map(row => [...row]);
+        const nullValuesSupport = relation.nullValuesSupport;
+        return new StoredRelation(name, columnNames, columnTypes, rows, nullValuesSupport);
+    }
+
     private name: string;
-    private lastLoadedName: string;
-    private readonly columnNames: string[];
-    private readonly columnTypes: SupportedColumnType[];
+    private columnNames: string[];
+    private columnTypes: SupportedColumnType[];
     private rows: string[][];
     private columnCount: number;
     private rowCount: number;
     private readonly errors: RCToStringMap;
     private nullValuesSupport: boolean;
     private actual: boolean;
+    private revertState: StoredRelationData;
 
     /**
      * Creates new relation with given name, one default column and no rows.
@@ -74,7 +100,6 @@ export class StoredRelation {
     constructor(name: string, columnNames: string[], columnTypes: SupportedColumnType[],
                         rows: string[][], nullValuesSupport: boolean) {
         this.name = name;
-        this.lastLoadedName = "";
         this.columnNames = columnNames;
         this.columnTypes = columnTypes;
         this.rows = rows;
@@ -83,6 +108,7 @@ export class StoredRelation {
         this.errors = new RCToStringMap();
         this.nullValuesSupport = nullValuesSupport;
         this.actual = false;
+        this.revertState = this.toDataObject();
         this.recomputeErrors();
     }
 
@@ -209,9 +235,9 @@ export class StoredRelation {
     public toDataObject(): StoredRelationData {
         return {
             name: this.name,
-            columnNames: this.columnNames,
-            columnTypes: this.columnTypes,
-            rows: this.rows,
+            columnNames: [...this.columnNames],
+            columnTypes: [...this.columnTypes],
+            rows: this.rows.map(row => [...row]),
             columnCount: this.columnCount,
             rowCount: this.rowCount
         }
@@ -355,13 +381,6 @@ export class StoredRelation {
         return this.name;
     }
 
-    /**
-     * Returns the name of the relation when it was loaded for the last time or empty string, when it was not loaded.
-     */
-    public getLastLoadedName(): string {
-        return this.lastLoadedName;
-    }
-
     public getColumnNames(): string[] {
         return this.columnNames;
     }
@@ -402,15 +421,48 @@ export class StoredRelation {
 
     /**
      * Sets current StoredRelation state as actual. Any change sets the state as not actual automatically.
-     * If it is set to actual, the last loaded name is set to current name. Otherwise, it is set to empty string.
+     * If it is set to actual, the current state is saved as the revert state.
      */
     public setActual(actual: boolean): void {
         this.actual = actual;
         if (actual) {
-            this.lastLoadedName = this.name;
+            this.revertState = this.toDataObject();
+        }
+    }
+
+    /**
+     * Returns true if the relation has saved previous state.
+     */
+    public canRevert(): boolean {
+        return this.revertState !== undefined;
+    }
+
+    /**
+     * Returns name of the saved relation state to revert or empty string.
+     */
+    public getRevertName(): string {
+        if (this.revertState !== undefined) {
+            return this.revertState.name;
         }
         else {
-            this.lastLoadedName = "";
+            return "";
+        }
+    }
+
+    /**
+     * Reverts the current relation to its last loaded state (if any exists, call canRevert() to check).
+     * The relation is set as not actual, null values support and saved revert state is not reverted.
+     */
+    public revert(): void {
+        if (this.revertState !== undefined) {
+            this.name = this.revertState.name;
+            this.columnNames = [...this.revertState.columnNames];
+            this.columnTypes = [...this.revertState.columnTypes];
+            this.rows = this.revertState.rows.map(row => [...row]);
+            this.columnCount = this.revertState.columnCount;
+            this.rowCount = this.revertState.rowCount;
+            this.actual = false;
+            this.recomputeErrors();
         }
     }
 }
