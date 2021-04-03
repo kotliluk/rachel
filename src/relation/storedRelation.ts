@@ -355,10 +355,9 @@ export class StoredRelation {
                 this.errors.delete(row, column);
             }
             // updates row index for errors in rows under deleted one
-            else if (row > rowIndex) {
+            else if (typeof row === "number" && row > rowIndex) {
                 this.errors.delete(row, column);
-                // @ts-ignore "key.row > rowIndex" is true only for numbers
-                this.errors.set({column: key.column, row: key.row - 1}, value);
+                this.errors.set(row - 1, column, value);
             }
         });
         this.actual = false;

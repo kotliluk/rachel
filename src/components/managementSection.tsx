@@ -150,9 +150,11 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
             const menuClassName: string = "list-menu " + (this.props.darkTheme ? "list-menu-dark" : "list-menu-light");
             const settingsMenu = (
             <ul className={menuClassName}>
+                {"Prepared sample projects"}
                 {getSamples().map((sample, i) => {
                     return (
                         <li key={i}>
+                            {"- "}
                             <button
                                 onClick={() => this.props.onLoadSample(sample.project)}
                                 className={buttonClassName}

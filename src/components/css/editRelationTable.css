@@ -96,13 +96,14 @@
 
 .add-row-td {
     border: none !important;
-    padding: 1px !important;
+    padding: 1px 1px 0 1px !important;
     width: 40px;
 }
 
 .add-row-td button {
     width: 100%;
     height: 100%;
+    padding: 1px 6px 0 6px;
 }
 
 /* TD */
