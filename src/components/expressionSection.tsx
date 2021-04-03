@@ -73,41 +73,37 @@ interface OpButtonProps {
  */
 export class ExpressionSection extends React.Component<ExpressionSectionProps, ExpressionSectionState> {
 
-    // buttons for inserting RA operations supported without null values
-    private readonly buttonPropsFirstPart: Array<OpButtonProps> = [
-        // unary
-        {key: 'unary_a', char: '()',        text: '()', tooltip: 'Selection (P1)',   shift: 1},
-        {key: 'unary_b', char: '[]',        text: '[]', tooltip: 'Projection (P1)',  shift: 1},
-        {key: 'unary_c', char: '< -> >',    text: '<>', tooltip: 'Rename (P1)',      shift: 5},
-        // binary (precedence A)
-        {key: 'a', char: '*',       text: '*',      tooltip: 'Natural join (P2)',            shift: 0},
-        {key: 'b', char: '\u2a2f',  text: '\u2a2f', tooltip: 'Cartesian product (P2)',       shift: 0},
-        {key: 'c', char: '{}',      text: '{}',     tooltip: 'Theta join (P2)',              shift: 1},
-        // binary (precedence B)
-        {key: 'd', char: '<*',      text: '<*',     tooltip: 'Left semijoin (P3)',           shift: 0},
-        {key: 'e', char: '*>',      text: '*>',     tooltip: 'Right semijoin (P3)',          shift: 0},
-        {key: 'f', char: '\u22b3',  text: '\u22b3', tooltip: 'Left antijoin (P3)',           shift: 0},
-        {key: 'g', char: '\u22b2',  text: '\u22b2', tooltip: 'Right antijoin (P3)',          shift: 0},
-        {key: 'h', char: '<}',      text: '<}',     tooltip: 'Left theta semijoin (P3)',     shift: 1},
-        {key: 'i', char: '{>',      text: '{>',     tooltip: 'Right theta semijoin (P3)',    shift: 1},
+    private readonly unaryButtons: Array<OpButtonProps> = [
+        {key: 'unary_a', char: '()',        text: '()', tooltip: 'Selection',   shift: 1},
+        {key: 'unary_b', char: '[]',        text: '[]', tooltip: 'Projection',  shift: 1},
+        {key: 'unary_c', char: '< -> >',    text: '<>', tooltip: 'Rename',      shift: 5}
     ];
-    // buttons for inserting RA operations supported without null values
-    private readonly buttonPropsSecondPart: Array<OpButtonProps> = [
-        // binary (precedence D)
-        {key: 'j', char: '\u00f7',  text: '\u00f7', tooltip: 'Division (P5)',                shift: 0},
-        // binary (precedence E)
-        {key: 'k', char: '\u2229',  text: '\u2229', tooltip: 'Intersection (P6)',            shift: 0},
-        // binary (precedence F)
-        {key: 'l', char: '\\',      text: '\\',     tooltip: 'Difference (P7)',              shift: 0},
-        // binary (precedence G)
-        {key: 'm', char: '\u222a',  text: '\u222a', tooltip: 'Union (P8)',                   shift: 0},
+    private readonly setOperatorsButtons: Array<OpButtonProps> = [
+        {key: 'set_a', char: '\u222a',  text: '\u222a', tooltip: 'Union',         shift: 0},
+        {key: 'set_b', char: '\u2229',  text: '\u2229', tooltip: 'Intersection',  shift: 0},
+        {key: 'set_c', char: '\\',      text: '\\',     tooltip: 'Difference',    shift: 0},
     ];
-    // buttons for inserting RA operations supported with null values only
-    private readonly nullSupportRequiredButtonProps: Array<OpButtonProps> = [
-        // binary (precedence C)
-        {key: 'null_a', char: '*F*', text: '*F*', tooltip: 'Full outer join (P4)',  shift: 0},
-        {key: 'null_b', char: '*L*', text: '*L*', tooltip: 'Left outer join (P4)',  shift: 0},
-        {key: 'null_c', char: '*R*', text: '*R*', tooltip: 'Right outer join (P4)', shift: 0}
+    private readonly innerJoinsButtons: Array<OpButtonProps> = [
+        {key: 'inner_a', char: '*',       text: '*',      tooltip: 'Natural join',            shift: 0},
+        {key: 'inner_b', char: '\u2a2f',  text: '\u2a2f', tooltip: 'Cartesian product',       shift: 0},
+        {key: 'inner_c', char: '<*',      text: '<*',     tooltip: 'Left semijoin',           shift: 0},
+        {key: 'inner_d', char: '*>',      text: '*>',     tooltip: 'Right semijoin',          shift: 0},
+        {key: 'inner_e', char: '\u22b3',  text: '\u22b3', tooltip: 'Left antijoin',           shift: 0},
+        {key: 'inner_f', char: '\u22b2',  text: '\u22b2', tooltip: 'Right antijoin',          shift: 0},
+        {key: 'inner_g', char: '{}',      text: '{}',     tooltip: 'Theta join',              shift: 1},
+        {key: 'inner_h', char: '<}',      text: '<}',     tooltip: 'Left theta semijoin',     shift: 1},
+        {key: 'inner_i', char: '{>',      text: '{>',     tooltip: 'Right theta semijoin',    shift: 1},
+    ];
+    private readonly outerJoinsButtons: Array<OpButtonProps> = [
+        {key: 'outer_a', char: '*F*', text: '*F*', tooltip: 'Full outer join',  shift: 0},
+        {key: 'outer_b', char: '*L*', text: '*L*', tooltip: 'Left outer join',  shift: 0},
+        {key: 'outer_c', char: '*R*', text: '*R*', tooltip: 'Right outer join', shift: 0}
+    ];
+    private readonly divisionButton: Array<OpButtonProps> = [
+        {key: 'division', char: '\u00f7',  text: '\u00f7', tooltip: 'Division', shift: 0}
+    ];
+    private readonly specialButtons: Array<OpButtonProps> = [
+        {key: 'special_a', char: '//',  text: '//', tooltip: 'Comment', shift: 0}
     ];
 
     // reference to child textarea element
@@ -368,8 +364,12 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
             />);
         }
 
+        /**
+         * Creates buttons for inserting given operators and adds margin after them.
+         */
         const createOpButtons = (buttonProps: Array<OpButtonProps>) => {
-            return buttonProps.map(prop => {
+            return buttonProps.map((prop, i) => {
+                const style = i === buttonProps.length - 1 ? {marginRight: "10px"} : {};
                 return (<TooltipButton
                     key={prop.key}
                     text={prop.text}
@@ -377,6 +377,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                     className={this.props.darkTheme ? "button-dark" : "button-light"}
                     tooltip={prop.tooltip}
                     tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                    style={style}
                 />);
             });
         }
@@ -411,9 +412,12 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                 />
 
                 <menu className="expressions-operators-menu">
-                    {createOpButtons(this.buttonPropsFirstPart)}
-                    {this.props.nullValuesSupport ? createOpButtons(this.nullSupportRequiredButtonProps) : null}
-                    {createOpButtons(this.buttonPropsSecondPart)}
+                    {createOpButtons(this.unaryButtons)}
+                    {createOpButtons(this.setOperatorsButtons)}
+                    {createOpButtons(this.innerJoinsButtons)}
+                    {this.props.nullValuesSupport ? createOpButtons(this.outerJoinsButtons) : null}
+                    {createOpButtons(this.divisionButton)}
+                    {createOpButtons(this.specialButtons)}
                 </menu>
 
                 <menu className="page-section-management-menu">

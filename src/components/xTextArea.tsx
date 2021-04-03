@@ -275,6 +275,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
 
         ta.update = function (value: string, darkTheme: boolean) {
             this.value = value;
+            // computes lines count
             let lines: number = 1;
             for (let i = 0; i < value.length; ++i) {
                 if (value.charAt(i) === "\n") {
@@ -282,7 +283,9 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                 }
             }
             this.linesCount = lines;
+            // set height to fit all lines
             this.style.height = (lines * lineHeight + 8) + "px";
+            // if the horizontal scrollbar is visible, fits it into the height
             if (this.scrollHeight > this.clientHeight) {
                 this.style.height = (this.scrollHeight + lineHeight + 8) + "px";
             }
