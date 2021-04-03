@@ -48,13 +48,7 @@
     height: 21px;
     padding: 0 4px 0 4px;
     white-space: nowrap;
-}
-
-.edit-table td button {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 0;
+    border-radius: 6px;
 }
 
 .edit-table td:hover .tooltip {
@@ -92,7 +86,6 @@
 
 .edit-table th {
     position: relative;
-    padding-left: 4px;
     padding-right: 4px;
     font-weight: bold;
     white-space: nowrap;
@@ -107,40 +100,52 @@
 }
 
 .name-th {
-    border-width: 3px 3px 3px 3px;
+    border-width: 2px 2px 0 2px;
     border-style: solid;
     border-radius: 8px 8px 0 0;
+    padding: 2px 4px 3px 6px;
+    box-sizing: border-box;
 }
 
 .type-th {
-    text-align: center;
-    border-width: 0 3px 3px 3px;
+    border-width: 0 2px 2px 2px;
     border-style: solid;
     border-radius: 0 0 8px 8px;
+    padding: 0 4px 2px 2px;
 }
 
 .edit-table-light th {
-    border-color: var(--light-section);
+    background-color: var(--light-section);
+    border-color: var(--light-background);
 }
 
 .edit-table-dark th {
-    border-color: var(--dark-section);
+    background-color: var(--dark-section);
+    border-color: var(--dark-background);
 }
 
 .edit-table-light .name-th:focus-within {
     border-width: 2px;
+    padding-bottom: 1px;
     border-color: var(--light-details);
 }
 
 .edit-table-dark .name-th:focus-within {
     border-width: 2px;
+    padding-bottom: 1px;
     border-color: var(--dark-details);
 }
 
 /* ERROR INPUT */
 
-.error-input {
-    border-color: red !important;
+.name-th.error-input {
+    border-width: 2px;
+    padding-bottom: 1px;
+    border-color: red;
+}
+
+td.error-input {
+    border-color: red;
 }
 
 /* SELECT IN TABLE */
@@ -149,7 +154,7 @@
     background-color: transparent;
     color: inherit;
     border-radius: 4px;
-    min-width: 120px;
+    min-width: 80px;
     cursor: pointer;
     font-size: inherit;
 }
@@ -163,11 +168,11 @@
 }
 
 .edit-table-light select:hover {
-    background-color: var(--light-section);
+    background-color: var(--light-details);
 }
 
 .edit-table-dark select:hover {
-    background-color: var(--dark-section);
+    background-color: var(--dark-details);
 }
 
 .edit-table-light select option {

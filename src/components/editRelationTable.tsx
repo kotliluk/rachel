@@ -7,8 +7,6 @@ import {RCToStringMap} from "../tools/rcToStringMap";
 interface EditRelationTableProps {
     // storing representation of the relation to be edited
     relation: StoredRelation,
-    // true when the displayed relation may be editable by the user, false otherwise
-    editable: boolean,
 
     // handler of column name change
     onColumnNameChange: (columnName: string, columnIndex: number) => void,
@@ -83,12 +81,10 @@ export default class EditRelationTable extends React.Component<EditRelationTable
      * Sets selected input column and row to given values.
      */
     private setSelectedInput = (column: number | undefined, row: "names" | "types" | number | undefined): void => {
-        if (this.props.editable) {
-            this.setState({
-                selectedColumn: column,
-                selectedRow: row
-            });
-        }
+        this.setState({
+            selectedColumn: column,
+            selectedRow: row
+        });
     }
 
     /**
@@ -161,9 +157,8 @@ export default class EditRelationTable extends React.Component<EditRelationTable
      * Otherwise, it is set to delete the given data row.
      */
     private handleRightClick = (e: React.MouseEvent, column: number | undefined, row: "names" | "types" | number | undefined) => {
-        if (this.props.editable) {
-            // @ts-ignore
-            const button: HTMLButtonElement = this.deleteButtonRef.current;
+        const button = this.deleteButtonRef.current;
+        if (button !== null) {
             if ((row === "names" || row === "types") && column !== undefined) {
                 button.onclick = (e) => this.handleDeleteColumn(e, column);
                 button.innerText = "Delete column " + this.props.relation.getColumnNames()[column];
@@ -322,7 +317,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
     private createNamesRow() {
         const rowData = this.props.relation.getColumnNames().map((columnName, columnIndex) => {
             let content: string | JSX.Element = columnName;
-            if (this.state.selectedColumn === columnIndex && this.state.selectedRow === "names" && this.props.editable) {
+            if (this.state.selectedColumn === columnIndex && this.state.selectedRow === "names") {
                 content = this.createInput(columnName, columnIndex, "names");
             }
             let span: null | JSX.Element = null;
@@ -340,8 +335,16 @@ export default class EditRelationTable extends React.Component<EditRelationTable
                     onContextMenu={(e) => this.handleRightClick(e, columnIndex, "names")}
                 >{content}{span}</th>
             )});
-        // pushes empty input to create a new column for "add column" button (if the table is editable)
-        this.props.editable && rowData.push(<td key="add-column-column" style={{width: "20px", border: "none"}}/>);
+        // pushes "add column" button in last column
+        rowData.push(
+            <td key='add-column'
+                rowSpan={2}
+                style={{width: "24px", border: "none", padding: "1px"}}>
+                <button
+                    onClick={this.handleNewColumn}
+                    className={this.props.darkTheme ? "button-dark" : "button-light"}
+                    style={{width: "100%", height: "100%"}}><strong>+</strong></button>
+            </td>);
         return (
             <tr>{rowData}</tr>
         );
@@ -354,7 +357,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
      */
     private createTypesRow() {
         const rowData = this.props.relation.getColumnTypes().map((columnType, columnIndex) => {
-            const content = !this.props.editable ? columnType : (
+            const content = (
                 <select
                     value={columnType}
                     onChange={(e) => this.handleChange(e.target.value, columnIndex, "types")}>
@@ -369,16 +372,6 @@ export default class EditRelationTable extends React.Component<EditRelationTable
                     onContextMenu={(e) => this.handleRightClick(e, columnIndex, "types")}
                 >{content}</th>
             )});
-        // pushes "add column" button in last column (if the table is editable)
-        this.props.editable && rowData.push(
-            <td key='add-column'
-                rowSpan={this.props.relation.getRowCount() + 1}
-                style={{width: "20px", border: "none", padding: "1px"}}>
-                <button
-                    onClick={this.handleNewColumn}
-                    className={this.props.darkTheme ? "button-dark" : "button-light"}
-                    style={{width: "100%", height: "100%"}}><strong>+</strong></button>
-            </td>);
         return (
             <tr>{rowData}</tr>
         );
@@ -400,7 +393,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
                 onContextMenu={(e) => this.handleRightClick(e, undefined, rowIndex)}>
                 {row.map((value, columnIndex) => {
                     let content: string | JSX.Element = value;
-                    if (this.state.selectedColumn === columnIndex && this.state.selectedRow === rowIndex && this.props.editable) {
+                    if (this.state.selectedColumn === columnIndex && this.state.selectedRow === rowIndex) {
                         content = this.createInput(value, columnIndex, rowIndex);
                     }
                     let span: null | JSX.Element = null;
@@ -428,7 +421,6 @@ export default class EditRelationTable extends React.Component<EditRelationTable
         return (
             <tr key='add-row'>
                 <td key='add-row-column'
-                    colSpan={this.props.relation.getColumnCount()}
                     style={{border: "none", padding: "2px"}}>
                     <button
                         onClick={this.handleNewRow}
@@ -440,18 +432,18 @@ export default class EditRelationTable extends React.Component<EditRelationTable
     }
 
     public render() {
-        const namesRow = this.createNamesRow();
-        const typesRow = this.createTypesRow();
-        const rows = this.createRows();
-        const addRow = this.props.editable ? this.createAddRow() : null;
-
-        let divClassName = "edit-table-container edit-table-container-light cursor-container-light";
-        let tableClassName = "edit-table edit-table-light";
-        let contextButtonClassName = "table-right-click-menu button-light";
+        let divClassName: string;
+        let tableClassName: string;
+        let contextButtonClassName: string;
         if (this.props.darkTheme) {
             divClassName = "edit-table-container edit-table-container-dark cursor-container-dark";
             tableClassName = "edit-table edit-table-dark";
             contextButtonClassName = "table-right-click-menu button-dark";
+        }
+        else {
+            divClassName = "edit-table-container edit-table-container-light cursor-container-light";
+            tableClassName = "edit-table edit-table-light";
+            contextButtonClassName = "table-right-click-menu button-light";
         }
 
         return (
@@ -464,12 +456,12 @@ export default class EditRelationTable extends React.Component<EditRelationTable
                     className={tableClassName}
                     onBlur={() => this.setSelectedInput(undefined, undefined)}>
                     <thead>
-                        {namesRow}
+                        {this.createNamesRow()}
+                        {this.createTypesRow()}
                     </thead>
                     <tbody>
-                        {typesRow}
-                        {rows}
-                        {addRow}
+                        {this.createRows()}
+                        {this.createAddRow()}
                     </tbody>
                 </table>
             </div>

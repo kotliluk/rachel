@@ -280,7 +280,6 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
 
                 <EditRelationTable
                     relation={this.getCurRel()}
-                    editable={true}
 
                     onColumnNameChange={this.props.onColumnNameChange}
                     onColumnTypeChange={this.props.onColumnTypeChange}
