@@ -27,13 +27,12 @@ import {Expression} from "../expression/expression";
 export class BatchProcessor {
 
     /**
-     * Opens file dialog and processes files selected by the user. For each JSON file creates a textual evaluation
+     * Opens file dialog and processes files selected by the user. For each .rachel file creates a textual evaluation
      * report. Files are expected to contain valid project data. Returns promise with string message about process.
      */
     public process(filename: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
-            // TODO na rachel
-            FileDialog.openFiles(".json").then(files => {
+            FileDialog.openFiles(".rachel").then(files => {
                 console.log(files.length + ' files loaded to BatchProcessor');
                 console.time("Batch duration");
                 let reports: {name: string, text: string}[] = [];
@@ -41,18 +40,25 @@ export class BatchProcessor {
                 let skipped: number = 0;
                 files.forEach(file => {
                     if (file.text === null) {
-                        console.log('null read from ' + file.name);
+                        reports.push({
+                            name: file.name + '-eval-report.txt',
+                            text: "ERROR: Source file cannot be loaded."
+                        });
                         skipped += 1;
+                        console.warn('Null read from ' + file.name);
                     }
-                    else if (file.name.match(/\.json$/)) {
+                    else if (file.name.match(/\.rachel$/)) {
                         // @ts-ignore - file.text cannot be null now
                         reports.push(this.processFile(file));
                         processed += 1;
                     }
                     else {
-                        // TODO push
-                        console.log('Unsupported filetype: ' + file.name);
+                        reports.push({
+                            name: file.name + '-eval-report.txt',
+                            text: "ERROR: Source file is not a .rachel file, but: " + file.name
+                        });
                         skipped += 1;
+                        console.warn('Unsupported filetype: ' + file.name);
                     }
                     console.log("Batch in progress... " + (processed + skipped) + "/" + files.length);
                 });
