@@ -5,6 +5,9 @@
     --x-textarea-line-height: 20; /* should be same is number above (without px) */
 
     --error-highlight-color: red;
+
+    --whisper-dark-text-color: white;
+    --whisper-light-text-color: black;
 }
 
 /* MODE INDEPENDENT */
@@ -63,15 +66,19 @@
     position: absolute;
     display: none;
     z-index: 1;
+    cursor: default;
 
     text-align: left;
     font-size: var(--x-textarea-font-size);
     font-family: var(--x-textarea-font-family);
+    font-weight: lighter;
     border: 1px solid;
+    border-radius: 6px;
 }
 
 .whisper-div div {
     padding: 0 2px;
+    border-radius: 4px;
 }
 
 .whisper-div-dark {
@@ -94,12 +101,32 @@
 
 .whisper-div-dark .selected-whisper {
     background-color: var(--dark-details) !important; /* more important than dark/light mode background color */
-    color: white;
+    color: var(--whisper-dark-text-color);
 }
 
 .whisper-div-light .selected-whisper {
     background-color: var(--light-details) !important; /* more important than dark/light mode background color */
-    color: black;
+    color: var(--whisper-light-text-color);
+}
+
+.whisper-div .whisper-matched-word {
+    font-weight: 1000;
+}
+
+.whisper-div-dark .whisper-rejected-word {
+    color: #888888;
+}
+
+.whisper-div-light .whisper-rejected-word {
+    color: #666666;
+}
+
+.whisper-div-dark .selected-whisper .whisper-rejected-word {
+    color: var(--whisper-dark-text-color);
+}
+
+.whisper-div-light .selected-whisper .whisper-rejected-word {
+    color: var(--whisper-light-text-color);
 }
 
 /* HIGHLIGHT */

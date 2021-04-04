@@ -37,8 +37,8 @@ If any loaded relation with the same name exists, it is overwritten. Invalid rel
 in invalid state.
 
 In the menu above the table, we can choose from editable relations the current edited one.
-A star (*) before the relation name shows changed relations since last load.
-We can add a new relation by the "+" button.
+A star (\*) before the relation name shows changed relations since last load.
+We can add a new relation by the "**+**" button.
 
 In the first row of the table, we define the column names and types. Column names cannot be
 duplicit inside one relation and must contain letters, numbers and underscores only and not
@@ -55,33 +55,33 @@ If null values are supported, empty inputs are valid in all column types and are
 When the mouse is over the first row or the first column, a button for deleting a column/row appears.
 
 There are 4 buttons in the menu under the table, which affect the selected relation:
-- **Rename** text field renames the relation. The name cannot be changed to any
-existing editable relation name. Allowed characters are the same as
-in the column names, but the forbidden words are "F", "L", and "R".
 - The **Load** button loads the relation into the application memory. If any loaded
 relation with the same name exists, it is overwritten. 
+- The **Rename** text field renames the relation. The name cannot be changed to any
+existing editable relation name. Allowed characters are the same as
+in the column names, but the forbidden words are "F", "L", and "R".
 - The **Delete** button deletes the relation.
 - The **Revert** button reverts the relation to the last saved state - the state is saved after
 creation (adding or importing a new one) or after loading it.
 
 ### Expression section
 
-We can have multiple named expressions loaded in the application at the time. Again, we use the upper
-menu for choosing the current edited one.
-
-In the text area, we define the expression itself. We can use buttons to insert RA operators.
-
-Rename text field renames the edited expression. There are no restrictions on expression names.
-
-The Evaluate button evaluates the edited expression and updates the result section.
-
-The **New** button adds a new expression.
-
-The **Delete** button deletes the edited expression.
-
 The **Import** button enables us to load new expressions from textual files.
 
 The **Export** button saves all expressions in a textual file.
+
+We can have multiple named expressions loaded in the application at the time. Again, we use the upper
+menu for choosing the current edited expression, and the **+** button for adding a new one.
+
+In the text area, we define the expression itself. We can use buttons to insert RA operators. While
+typing, Rachel whispers available relation or column names on the cursor position. You can use
+arrows + Enter/Tab or mouse to insert the whisper. Ctrl+Space hides or displays the whisper menu.
+
+There are 3 buttons in the menu under the table, which affect the selected expression:
+- The **Evaluate** button evaluates the edited expression and updates the result section.
+- The **Rename** text field renames the edited expression. There are no restrictions on expression
+names.
+- The **Delete** button deletes the edited expression.
 
 ### Result section
 

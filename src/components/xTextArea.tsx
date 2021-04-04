@@ -52,7 +52,7 @@ type ExtendedHTMLTextArea = HTMLTextAreaElement & {
      *
      * @param toWhisper
      */
-    showWhisper: (whispers: string[]) => void,
+    createWhisper: (whispers: string[]) => void,
     /**
      * Moves the WhisperDiv to be located next to the current cursor position.
      * The WhisperDiv is moved only if the whisperDiv.isShown is true.
@@ -178,8 +178,9 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
      * The component is build by JavaScript HTML functions after mount of the empty div in render function.
      */
     componentDidMount() {
+        const props: Readonly<XTextAreaProps> = this.props;
         // @ts-ignore - gets parent div
-        const div: HTMLDivElement = document.getElementById(this.props.id);
+        const div: HTMLDivElement = document.getElementById(props.id);
         div.classList.add(this.props.darkTheme ? "x-textarea-div-dark" : "x-textarea-div-light");
 
         // LAYOUT (table with 1 row and 2 columns)
@@ -189,8 +190,8 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         table.classList.add('x-textarea-table');
         const tr = document.createElement('tr');
         const td1 = document.createElement('td');
-        td1.setAttribute('id', this.props.id + '-td1');
-        td1.classList.add(this.props.darkTheme ? 'x-textarea-table-td1-dark' : 'x-textarea-table-td1-light');
+        td1.setAttribute('id', props.id + '-td1');
+        td1.classList.add(props.darkTheme ? 'x-textarea-table-td1-dark' : 'x-textarea-table-td1-light');
         const td2 = document.createElement('td');
         td2.classList.add('x-textarea-table-td2');
         tr.appendChild(td1);
@@ -200,19 +201,19 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         // TEXTAREA
         // @ts-ignore - extended later in componentDidMount
         const ta: ExtendedHTMLTextArea = document.createElement('textarea');
-        ta.setAttribute('id', this.props.id + '-ta');
+        ta.setAttribute('id', props.id + '-ta');
         ta.setAttribute('spellcheck', 'false');
         ta.mouseIsDown = false;
         ta.setAttribute('placeholder', this.props.placeholder);
         ta.classList.add('x-textarea');
-        this.props.darkTheme ? ta.classList.add('x-textarea-dark', 'cursor-container-dark') :
-                              ta.classList.add('x-textarea-light', 'cursor-container-light');
-        ta.value = this.props.text;
+        props.darkTheme ? ta.classList.add('x-textarea-dark', 'cursor-container-dark') :
+                          ta.classList.add('x-textarea-light', 'cursor-container-light');
+        ta.value = props.text;
 
         // TEXTAREA NUMBERS (Canvas)
         const canvas = document.createElement('canvas');
         canvas.width = canvasWidth + 4;    // must not set width & height in css !!!
-        canvas.classList.add(this.props.darkTheme ? 'canvas-dark' : 'canvas-light');
+        canvas.classList.add(props.darkTheme ? 'canvas-dark' : 'canvas-light');
         ta.canvasLines = canvas;
         td1.appendChild(canvas);
         td2.appendChild(ta);
@@ -221,7 +222,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         // TEXTAREA WHISPER DIV
         // @ts-ignore - extended later in componentDidMount
         const whisperDiv: WhisperDiv = document.createElement('div');
-        whisperDiv.classList.add('whisper-div', this.props.darkTheme ? 'whisper-div-dark' : 'whisper-div-light');
+        whisperDiv.classList.add('whisper-div', props.darkTheme ? 'whisper-div-dark' : 'whisper-div-light');
         whisperDiv.isShown = false;
         whisperDiv.selectedIndex = -1;
         whisperDiv.changeSelected = function (indexDiff: number) {
@@ -292,22 +293,29 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
             this.paintLineNumbers(darkTheme);
         }
 
-        ta.showWhisper = function (whispers: string[]): void {
+        ta.createWhisper = function (whispers: string[]): void {
             if (whispers.length === 0) {
                 this.hideWhisper();
             }
             else {
-                const prevCount: number = this.whisperDiv.childElementCount;
-                // inserts given whispers (rewrites innerHTML)
-                this.whisperDiv.innerHTML = whispers.map(whisper => `<div>${whisper}</div>`).join('');
-                if (this.whisperDiv.childElementCount !== prevCount) {
-                    // sets selected index to 0 when whispers count has changed
-                    this.whisperDiv.setSelected(0);
-                }
-                else {
-                    // forces highlight of current selection
-                    this.whisperDiv.changeSelected(0);
-                }
+                this.whisperDiv.innerHTML = "";
+                whispers.forEach((whisper, i) => {
+                    const div = document.createElement("div");
+                    div.innerHTML = whisper;
+                    div.onclick = event => {
+                        this.focus();
+                        this.whisperDiv.setSelected(i);
+                        event.stopPropagation();
+                    };
+                    div.ondblclick = event => {
+                        this.focus();
+                        this.insertCurrentSelectedWhisper(props.onChange);
+                        event.stopPropagation();
+                    };
+                    this.whisperDiv.appendChild(div);
+                });
+                // selects the first whisper after change
+                this.whisperDiv.setSelected(0);
                 // needs to be set to true before moveWhisper call
                 this.whisperDiv.isShown = true;
                 // sets the div position
@@ -345,7 +353,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         }
 
         ta.hideWhisper = function () {
-            whisperDiv.innerHTML = '';
+            //whisperDiv.innerHTML = '';
             this.whisperDiv.setAttribute('style', 'display: none;');
             this.whisperDiv.isShown = false;
         }
@@ -450,15 +458,16 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
             ta.moveWhisper();
             ta.moveErrors();
         });
+        window.addEventListener('click', () => ta.hideWhisper());
         ta.onscroll     = () => {
             ta.paintLineNumbers(this.props.darkTheme);
             ta.moveWhisper();
             ta.moveErrors();
         };
-        ta.addEventListener("focusout", () => ta.hideWhisper());
-        ta.onmousedown  = () => {
+        //ta.addEventListener("focusout", () => ta.hideWhisper());
+        ta.onmousedown  = event => {
             ta.mouseIsDown = true;
-            ta.hideWhisper();
+            event.stopPropagation();
         }
         ta.onmouseup    = () => {
             ta.mouseIsDown = false;
@@ -473,12 +482,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         }
         // prevents default behavior of special keys input when whisperDiv is shown, passes key event to the parent
         ta.onkeydown    = (ev) => {
-            // if the ctrl key is pressed, hides whisperDiv and keeps default behaviour
-            if (ta.whisperDiv.isShown && ev.ctrlKey) {
-                ta.hideWhisper();
-            }
-            // if the ctrl key is not pressed, changes whisper and key default behaviour
-            else if (ta.whisperDiv.isShown) {
+            if (ta.whisperDiv.isShown) {
                 if (ev.key === "ArrowDown") {
                     ta.whisperDiv.changeSelected(1);
                     ev.preventDefault();
@@ -492,7 +496,6 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                     ta.whisperDiv.setSelected(-1);
                     ev.preventDefault();
                 }
-
                 if (ev.key === "PageUp") {
                     // moves selected whisper to top
                     ta.whisperDiv.setSelected(0);
@@ -506,7 +509,16 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                     ta.hideWhisper();
                     ev.preventDefault();
                 }
-                if (ev.key === "Enter" || ev.key === "Tab") {
+                if (ev.key === "Enter" && !ev.ctrlKey) {
+                    ta.insertCurrentSelectedWhisper(this.props.onChange);
+                    ev.preventDefault();
+                }
+                if (ev.key === "Enter" && ev.ctrlKey) {
+                    console.log("aaa")
+                    ta.hideWhisper();
+                    ev.preventDefault();
+                }
+                if (ev.key === "Tab") {
                     ta.insertCurrentSelectedWhisper(this.props.onChange);
                     ev.preventDefault();
                 }
@@ -524,6 +536,14 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                 }
             }
             if (ev.ctrlKey) {
+                if (ev.key === " ") {
+                    if (ta.whisperDiv.isShown) {
+                        ta.hideWhisper();
+                    }
+                    else {
+                        this.props.onChange(ta.value, ta.selectionStart);
+                    }
+                }
                 this.props.onCtrlInput(ev);
             }
         }
@@ -545,7 +565,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         }
         // whispers
         if (this.props.whispers !== prevProps.whispers) {
-            this.textarea.showWhisper(this.props.whispers);
+            this.textarea.createWhisper(this.props.whispers);
         }
         // highlights error
         if (this.props.errors !== undefined) {

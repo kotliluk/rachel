@@ -253,12 +253,12 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
         if (textArea !== null && textArea.isFocused() && this.lastChange > this.lastWhisperAndErrorsUpdate) {
             const text = this.getCurExpr().text;
             const exprParser: ExprParser = new ExprParser(this.props.relations, this.props.nullValuesSupport);
-            const { whispers, errors } = exprParser.fakeParse(text, this.state.cursorIndex);
+            const fakeParseResult = exprParser.fakeParse(text, this.state.cursorIndex);
             const wordBeforeCursor: string = text.slice(getStartOfWordBeforeIndex(text, this.state.cursorIndex), this.state.cursorIndex);
-            sortWhispers(whispers, wordBeforeCursor);
+            const whispers = sortWhispers(fakeParseResult.whispers, wordBeforeCursor);
             this.setState({
                 whispers: whispers,
-                errors: errors.filter(err => err.range !== undefined)
+                errors: fakeParseResult.errors.filter(err => err.range !== undefined)
                     // @ts-ignore
                     .map(err => {return {start: err.range.start, end: err.range.end + 1, msg: err.message}})
             });
