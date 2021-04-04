@@ -195,8 +195,9 @@ export default class ValueParser {
             // LITERALS
             else if (rest.startsWith('"')) {
                 try {
-                    let split = nextBorderedPart(rest, '"', '"', '\\');
-                    tokens.push(new LiteralToken(split.first, split.first.toString(), "string"));
+                    const split = nextBorderedPart(rest, '"', '"', '\\');
+                    const str = split.first.slice(1, -1);
+                    tokens.push(new LiteralToken(str, str.toString(), "string"));
                     rest = split.second;
                 }
                 catch (err) {

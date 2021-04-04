@@ -52,7 +52,7 @@ describe('parseTokens', () => {
             expected.push(new LogicalAndToken('&&'));
             expected.push(new ReferenceToken('Name'));
             expected.push(new ComparingToken(ComparingOperatorType.equal, '=='));
-            expected.push(new LiteralToken("\"Lukas \\\".55\"", "\"Lukas \\\".55\"", "string"));
+            expected.push(new LiteralToken("Lukas \\\".55", "Lukas \\\".55", "string"));
             expected.push(new ClosingParentheses(')'));
             expected.push(new LogicalOrToken('||'));
             expected.push(new ReferenceToken('Id'));

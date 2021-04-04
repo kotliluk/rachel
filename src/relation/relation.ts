@@ -161,7 +161,7 @@ export default class Relation {
     public contentString(): string {
         const names = this.columnNames.join(', ') + '\n';
         const types = this.columnNames.map((name) => this.columns.get(name)).join(', ') + '\n';
-        const rows = [...this.rows].map(row => row.getOrderedValues(this.columnNames).join(', ')).join('\n');
+        const rows = [...this.rows].map(row => row.getOrderedPrintValues(this.columnNames).join(', ')).join('\n');
         return names + types + rows;
     }
 

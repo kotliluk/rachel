@@ -94,9 +94,8 @@ export class ResultRelationTable extends React.Component<RelationTableProps, Rel
         if (this.props.relation.getRowsCount() === 0) {
             return (
                 <tr key='1'>
-                    <td key='1' colSpan={columns.length}>
-                        {'<<NO ROWS>>'}
-                    </td>
+                    <td className="row-number-td"/>
+                    <td key='1' colSpan={columns.length}>{'<<NO ROWS>>'}</td>
                 </tr>
             );
         }
@@ -155,13 +154,9 @@ export class ResultRelationTable extends React.Component<RelationTableProps, Rel
         // creates all rows if any
         return rows.map((row, index) => (
             <tr key={index}>
-                <td className="row-number-td">
-                    {index + 1}
-                </td>
-                {row.getOrderedValues(columns).map((value, index) => (
-                    <td key={index}>
-                        {String(value)}
-                    </td>
+                <td className="row-number-td">{index + 1}</td>
+                {row.getOrderedPrintValues(columns).map((value, index) => (
+                    <td key={index}>{value}</td>
                 ))}
             </tr>
         ));

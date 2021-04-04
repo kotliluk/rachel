@@ -72,7 +72,7 @@ export default class Parser {
 
     /**
      * Checks whether the given string starts and ends with double quotes and all double quotes used inside it are
-     * escaped by '\'.
+     * escaped by '\\'.
      */
     public static isStringLiteral(str: string): boolean {
         if (str.length < 2 || str[0] !== '"') {

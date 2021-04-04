@@ -10,17 +10,17 @@ source.addColumn("Majitel", "string");
 source.addColumn("Kola", "number");
 const s1a: Row = new Row(source.getColumns());
 s1a.addValue("Id", 1);
-s1a.addValue("Majitel", "\"Lukas\"");
+s1a.addValue("Majitel", "Lukas");
 s1a.addValue("Kola", 4);
 source.addRow(s1a);
 const s1b: Row = new Row(source.getColumns());
 s1b.addValue("Id", 2);
-s1b.addValue("Majitel", "\"Lukas\"");
+s1b.addValue("Majitel", "Lukas");
 s1b.addValue("Kola", 4);
 source.addRow(s1b);
 const s1c: Row = new Row(source.getColumns());
 s1c.addValue("Id", 3);
-s1c.addValue("Majitel", "\"Pepa\"");
+s1c.addValue("Majitel", "Pepa");
 s1c.addValue("Kola", 4);
 source.addRow(s1c);
 
@@ -34,7 +34,7 @@ describe('eval', () => {
             expected.addColumn("Kola", "number");
             const e1a: Row = new Row(expected.getColumns());
             e1a.addValue("Id", 1);
-            e1a.addValue("Majitel", "\"Lukas\"");
+            e1a.addValue("Majitel", "Lukas");
             e1a.addValue("Kola", 4);
             expected.addRow(e1a);
 
@@ -44,14 +44,14 @@ describe('eval', () => {
         });
 
         test('(Id != 1 + 0 && Majitel == "Lukas")', () => {
-            const expr: string = "(Id != 1 && Majitel == \"Lukas\")";
+            const expr: string = '(Id != 1 && Majitel == "Lukas")';
             const expected: Relation = new Relation("Auto(...)");
             expected.addColumn("Id", "number");
             expected.addColumn("Majitel", "string");
             expected.addColumn("Kola", "number");
             const e1a: Row = new Row(expected.getColumns());
             e1a.addValue("Id", 2);
-            e1a.addValue("Majitel", "\"Lukas\"");
+            e1a.addValue("Majitel", "Lukas");
             e1a.addValue("Kola", 4);
             expected.addRow(e1a);
 

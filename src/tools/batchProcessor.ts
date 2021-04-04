@@ -32,6 +32,7 @@ export class BatchProcessor {
      */
     public process(filename: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
+            // TODO na rachel
             FileDialog.openFiles(".json").then(files => {
                 console.log(files.length + ' files loaded to BatchProcessor');
                 console.time("Batch duration");
@@ -49,6 +50,7 @@ export class BatchProcessor {
                         processed += 1;
                     }
                     else {
+                        // TODO push
                         console.log('Unsupported filetype: ' + file.name);
                         skipped += 1;
                     }

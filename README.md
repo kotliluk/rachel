@@ -47,15 +47,14 @@ There are 3 supported column types in Rachel: number, string, and boolean.
 
 Buttons in last column and last row adds a new column or row, respectively.
 
-Other table inputs define data itself. Numbers can be integers or decimals.
-String values must be enclosed in quotes ("). To use quote character inside a string, it must be
-escaped by a backslash (\\). If null values are supported, null keywords or empty inputs are
-valid in all column types.
+Other table inputs define data itself. Numbers can be integers or decimals. Boolean values can be
+true or false. String values can be any character sequence. Note that margin whitespaces are trimmed
+before loading to application, so string " a b c " is loaded as "a b c".
+If null values are supported, empty inputs are valid in all column types and are loaded as "null".
 
-When the first or second row is right-clicked, the clicked column can be deleted. Right-click
-in other rows can be used to delete the clicked row.
+When the mouse is over the first row or the first column, a button for deleting a column/row appears.
 
-There are 3 buttons in the menu under the table, which affect the selected relation:
+There are 4 buttons in the menu under the table, which affect the selected relation:
 - **Rename** text field renames the relation. The name cannot be changed to any
 existing editable relation name. Allowed characters are the same as
 in the column names, but the forbidden words are "F", "L", and "R".

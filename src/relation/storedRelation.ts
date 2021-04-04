@@ -66,7 +66,7 @@ export class StoredRelation {
             columnTypes.push(type);
         });
         const rows: string[][] = relation.getRows().map(row => {
-            return row.getOrderedValues(columnNames).map(value => String(value));
+            return row.getOrderedPrintValues(columnNames);
         });
         return new StoredRelation(name, columnNames, columnTypes, rows, nullValuesSupport);
     }
@@ -156,37 +156,29 @@ export class StoredRelation {
      * Checks whether the row input on given index is valid and updates error map.
      */
     private checkRowInput(columnIndex: number, rowIndex: number): void {
+        this.errors.delete(rowIndex, columnIndex);
         const input: string = this.rows[rowIndex][columnIndex].trim();
-        const lower = input.toLowerCase();
         // empty input = null
-        if (lower === "" || lower === "null") {
+        if (input === "") {
             if (this.nullValuesSupport) {
                 this.errors.delete(rowIndex, columnIndex);
             }
             else {
                 this.errors.set(rowIndex, columnIndex, "Null values are not supported");
             }
-            return;
         }
-        if (this.columnTypes[columnIndex] === "number") {
+        else if (this.columnTypes[columnIndex] === "number") {
             if (!Parser.isNumber(input.replace(/\s/g, ""))) {
                 this.errors.set(rowIndex, columnIndex, "Given string is not a number");
-                return;
             }
         }
-        else if (this.columnTypes[columnIndex] === "string") {
-            if (!Parser.isStringLiteral(input)) {
-                this.errors.set(rowIndex, columnIndex, "Given string is not a string literal");
-                return;
-            }
-        }
-        else /* this.columnTypes[columnIndex] === "boolean" */ {
+        else if (this.columnTypes[columnIndex] === "boolean") {
+            const lower = input.toLowerCase();
             if (lower !== "true" && lower !== "t" && lower !== "false" && lower !== "f") {
                 this.errors.set(rowIndex, columnIndex, "Given string is not a boolean");
-                return;
             }
         }
-        this.errors.delete(rowIndex, columnIndex);
+        /* STRING COLUMNS CANNOT BE INVALID */
     }
 
     /**
@@ -213,6 +205,9 @@ export class StoredRelation {
                     row.addValue(this.columnNames[c], null);
                 }
                 else if (this.columnTypes[c] === "string") {
+                    // changes input representation to expected in inner relations
+                    // replaces all used '\' by two '\\' and all used '"' by '\"'
+                    input = input.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
                     row.addValue(this.columnNames[c], input);
                 }
                 else if (this.columnTypes[c] === "number") {

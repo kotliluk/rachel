@@ -15,10 +15,10 @@ const samples: ProjectSample[] = [
                     columnNames: ["Id", "Owner", "Color", "Electric"],
                     columnTypes: ["number", "number", "string", "boolean"],
                     rows: [
-                        ['1', '1', '"Blue"', 'true'],
-                        ['2', '1', '"Green"', 'false'],
-                        ['3', '2', '"Blue"', 'false'],
-                        ['4', '3', '"Black"', 'true']
+                        ['1', '1', 'Blue', 'true'],
+                        ['2', '1', 'Green', 'false'],
+                        ['3', '2', 'Blue', 'false'],
+                        ['4', '3', 'Black', 'true']
                     ],
                     columnCount: 4,
                     rowCount: 4
@@ -28,9 +28,9 @@ const samples: ProjectSample[] = [
                     columnNames: ["Id", "Name"],
                     columnTypes: ["number", "string"],
                     rows: [
-                        ['1', '"George"'],
-                        ['2', '"Adam"'],
-                        ['3', '"Michael"'],
+                        ['1', 'George Smith'],
+                        ['2', 'Adam "Driver /\\" Jackson'],
+                        ['3', 'Michael Trueman'],
                         ['Fix errors', 'before loading'],
                         ['Or delete', 'invalid rows']
                     ],
@@ -71,6 +71,18 @@ const samples: ProjectSample[] = [
                         ""
                 },
                 {
+                    name: "Escapes",
+                    text:
+                        "// Strings in expressions are enclosed in quotes\n" +
+                        "// To use quotes inside a string, you must escape them by a backslash '\\\"'\n" +
+                        "// To use backslash inside a string, you must escape it with second one '\\\\'\n" +
+                        "\n" +
+                        'Owner(Name == "Adam \\"Driver /\\\\\\" Jackson")\n' +
+                        '\n' +
+                        '// This does not work: Owner(Name == "Adam "Driver /\\" Jackson")\n' +
+                        ""
+                },
+                {
                     name: "Example",
                     text:
                         "// Errors are highlighted by red underline - hover mouse over it to see details\n" +
@@ -86,7 +98,11 @@ const samples: ProjectSample[] = [
                     text:
                         "// One possible expression is like this...\n" +
                         "\n" +
-                        "(Car*Owner< Id -> Owner >)[Id, Name]\n" +
+                        "(\n" +
+                        "  Car\n" +
+                        "  *\n" +
+                        "  Owner< Id -> Owner >\n" +
+                        ")[Id, Name]\n" +
                         "\n" +
                         "// For more detailed manual click 'About' button in the page header\n" +
                         ""

@@ -66,7 +66,7 @@ export default class Row {
             return false;
         }
         let givenType = typeof value;
-        // null can be set to both string and number columns
+        // null can be set all column types
         if (value !== null && givenType !== this.types.get(name)) {
             return false;
         }
@@ -113,21 +113,29 @@ export default class Row {
     }
 
     /**
-     * Gets values of all columns ordered by given array of column names. OrderedColumns are expected to be from the
-     * relation that contains the row.
+     * Returns values of all columns ordered by given array of column names. OrderedColumns are expected to be from the
+     * relation that contains the row. The returned values are converted to string type. String column values are
+     * changed to printing representation - escaped '\\' and '"' are returned without the escape '\\'.
      *
      * @param orderedColumns order of columns to be returned
      * @return ordered array of values
      */
-    public getOrderedValues(orderedColumns: string[]): Array<ColumnContent> {
-        let ret = new Array<ColumnContent>();
+    public getOrderedPrintValues(orderedColumns: string[]): string[] {
+        let ret: string[] = [];
         orderedColumns.forEach(column => {
             const value = this.values.get(column);
+            const type = this.types.get(column);
             // should be handled before call
-            if (value === undefined) {
+            if (value === undefined || type === undefined) {
                 throw ErrorFactory.codeError(CodeErrorCodes.row_getOrderedValues_absentColumn, column, [...this.types.values()].join(', '));
             }
-            ret.push(value);
+            if (type === "string") {
+                const str = String(value).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+                ret.push(str);
+            }
+            else {
+                ret.push(String(value));
+            }
         });
         return ret;
     }
