@@ -113,12 +113,12 @@ export class ExprParser {
     public fakeParse(expr: string, cursorIndex: number): {whispers: string[], errors: ErrorWithTextRange[]} {
         const indexedExpr = ParserIndexed.deleteCommentLines(IndexedString.new(expr));
         if (indexedExpr.trim().isEmpty()) {
-            return {whispers: [], errors: []};
+            return {whispers: [...this.relations.keys()], errors: []};
         }
         const {whispers, tokens, errors} = this.fakeParseTokens(indexedExpr, cursorIndex);
         // prevent errors in creation of RPN
         if (tokens.length === 0) {
-            return {whispers: [], errors: errors};
+            return {whispers: [...this.relations.keys()], errors: errors};
         }
         // fakes found errors to valid parse
         this.assertValidInfixTokens(tokens, AssertType.NOT_THROW, errors);
@@ -358,13 +358,29 @@ export class ExprParser {
      */
     public fakeParseTokens(expr: IndexedString, cursorIndex: number, selectionExpected: boolean = false):
         { tokens: ExprToken[], whispers: string[], errors: ErrorWithTextRange[] } {
-        // found whispers
         let whispers: string[] = [];
-
         let tokens: ExprToken[] = [];
         let errors: ErrorWithTextRange[] = [];
-        let rest: IndexedString = expr;
 
+        // tries to find a cursor in a starting whitespace sequence (because it is trimmed in main while)
+        let i = 0;
+        const len = expr.length()
+        while (i < len && expr.charAt(i).match(/\s/)) {
+            if (expr.indexAt(i) === cursorIndex - 1) {
+                whispers = [...this.relations.keys()];
+            }
+            ++i;
+        }
+        // tries to find a cursor in an ending whitespace sequence (because it is trimmed in main while)
+        i = len - 1;
+        while (i >= 0 && expr.charAt(i).match(/\s/)) {
+            if (expr.indexAt(i) === cursorIndex - 1) {
+                whispers = [...this.relations.keys()];
+            }
+            --i;
+        }
+
+        let rest: IndexedString = expr;
         while (!rest.isEmpty()) {
             // checks whether the cursor was reached
             const restStartIndex: number | undefined = rest.getFirstNonNaNIndex();
@@ -436,17 +452,14 @@ export class ExprParser {
                 try {
                     split = ParserIndexed.nextBorderedPart(rest, '[', ']>');
                 }
-                    // catches error from nextBorderedPart
+                // catches error from nextBorderedPart
                 catch (err) {
+                    error = true;
                     // saves error
                     if (err instanceof ErrorWithTextRange) {
                         errors.push(err);
                     }
                     // it fakes the unclosed expression part as a projection operator
-                    //tokens.push(UnaryOperatorToken.projection(rest.concat(IndexedString.new(']', rest.getNextIndexOrNaN()))));
-                    // breaks the while cycle because the whole rest was used
-                    //break;
-                    error = true;
                     split = {first: rest.concat(IndexedString.new(']', rest.getNextIndexOrNaN())), second: IndexedString.empty()};
                 }
 
@@ -461,12 +474,6 @@ export class ExprParser {
                     tokens.push(BinaryOperatorToken.rightThetaSemijoin(split.first));
                     selectionExpected = false;
                     rest = split.second;
-                }
-                // the expression cannot end with a theta join (theta join expects right source)
-                else if (split.second.isEmpty()) {
-                    tokens.push(UnaryOperatorToken.projection(split.first));
-                    // breaks the while cycle because the whole rest was used
-                    break;
                 }
                 // if the next part contains any character from =<>+/*&|~"()! it cannot be a valid Projection
                 else if (containsAny(split.first, '=<>+/*&|~"()!')) {
@@ -560,25 +567,18 @@ export class ExprParser {
             else if (rest.startsWith('<')) {
                 try {
                     const split = ParserIndexed.nextBorderedPart(rest, '<', '>]', '-');
+                    // checks whether the cursor was reached
+                    const operatorEndIndex: number | undefined = split.first.getLastNonNaNIndex();
+                    if (operatorEndIndex === cursorIndex - 1) {
+                        whispers = [...this.relations.keys()];
+                    }
                     // found rename
                     if (split.first.endsWith('>')) {
-                        // checks whether the cursor was reached - after unary rename operator it does not whisper
-                        const operatorEndIndex: number | undefined = split.first.getLastNonNaNIndex();
-                        if (operatorEndIndex === cursorIndex - 1) {
-                            whispers = [];
-                        }
-
                         tokens.push(UnaryOperatorToken.rename(split.first));
                         selectionExpected = true;
                     }
                     // found left theta semi join
                     else {
-                        // checks whether the cursor was reached
-                        const operatorEndIndex: number | undefined = split.first.getLastNonNaNIndex();
-                        if (operatorEndIndex === cursorIndex - 1) {
-                            whispers = [...this.relations.keys()];
-                        }
-
                         tokens.push(BinaryOperatorToken.leftThetaSemijoin(split.first));
                         selectionExpected = false;
                     }

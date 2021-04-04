@@ -71,23 +71,6 @@ export default class Parser {
     }
 
     /**
-     * Checks whether the given string starts and ends with double quotes and all double quotes used inside it are
-     * escaped by '\\'.
-     */
-    public static isStringLiteral(str: string): boolean {
-        if (str.length < 2 || str[0] !== '"') {
-            return false;
-        }
-        try {
-            const split = Parser.nextBorderedPart(str, '"', '"', '\\');
-            return split.first.length === str.length;
-        }
-        catch (err) {
-            return false;
-        }
-    }
-
-    /**
      * Splits given string to a starting sequence of letters and its rest and returns these parts in a pair.
      * NOTE: if the string does not start with a letter, as a word is returned an empty string.
      *
@@ -296,25 +279,28 @@ export default class Parser {
     }
 
     /**
-     * Deletes all lines, where two first non-whitespace characters are '//'.
+     * Deletes all line contents after '//'.
      *
      * @param str string to be deleted comments in
      */
     public static deleteCommentLines(str: string) {
         return str.split('\n').map(line => {
             let insideQuotes: boolean = false;
+            let backslashes: number = 0;
             for (let i = 0; i < line.length; ++i) {
+                const curChar = line.charAt(i);
                 // quotes found
-                if (line.charAt(i) === '"') {
-                    if (insideQuotes && line.charAt(i - 1) !== '\\') {
-                        insideQuotes = false;
-                    }
-                    else if (!insideQuotes) {
-                        insideQuotes = true;
-                    }
+                if (curChar === '"' && (backslashes % 2) === 0) {
+                    insideQuotes = !insideQuotes;
+                }
+                if (insideQuotes && curChar === '\\') {
+                    ++backslashes;
+                }
+                else {
+                    backslashes = 0;
                 }
                 // double-backslash found outside quotes
-                if (!insideQuotes && line.charAt(i) === '/' && i > 0 && line.charAt(i - 1) === '/') {
+                if (!insideQuotes && curChar === '/' && i > 0 && line.charAt(i - 1) === '/') {
                     return line.slice(0, i - 1);
                 }
             }

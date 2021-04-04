@@ -427,8 +427,8 @@ export function nextBorderedPart(str: string | IndexedString, start: string, end
  * @param chars
  */
 export function containsAny(str: string | IndexedString, chars: string): boolean {
-    for (let char in chars.split('')) {
-        if (str.indexOf(char) > -1) {
+    for (let i = 0; i < chars.length; ++i) {
+        if (str.indexOf(chars[i]) > -1) {
             return true;
         }
     }

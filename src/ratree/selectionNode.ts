@@ -7,6 +7,7 @@ import {getRange, IndexedString} from "../tools/indexedString";
 import ValueParser from "../expression/valueParser";
 import {ErrorFactory, SyntaxErrorCodes} from "../error/errorFactory";
 import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
+import {isInRangeAndNotInQuotes} from "./raTreeTools";
 
 /**
  * Selection node of the relational algebra syntactic tree.
@@ -76,8 +77,8 @@ export default class SelectionNode extends UnaryNode {
             newResult.addColumn(name, type);
         });
         result = newResult;
-        // checks whether the cursor is in this selection block - saves current available columns
-        if (this.stringRange !== undefined && this.stringRange.start < cursorIndex && cursorIndex <= this.stringRange.end) {
+        // checks whether the cursor is in this selection block (and not in the string) - saves current available columns
+        if (isInRangeAndNotInQuotes(cursorIndex, this.stringRange, this.selection)) {
             whispers = result.getColumnNames();
         }
         // checks empty selection input

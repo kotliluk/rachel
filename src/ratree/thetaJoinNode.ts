@@ -8,6 +8,7 @@ import {getRange, IndexedString} from "../tools/indexedString";
 import ValueParser from "../expression/valueParser";
 import {ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
 import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
+import {isInRangeAndNotInQuotes} from "./raTreeTools";
 
 /**
  * Types of theta join node.
@@ -123,9 +124,9 @@ export default class ThetaJoinNode extends BinaryNode {
         if (this.type === ThetaJoinType.right || this.type === ThetaJoinType.full) {
             right.result.forEachColumn((type, name) => result.addColumn(name, type));
         }
-        // checks whether the cursor is in this condition block - saves current available columns
+        // checks whether the cursor is in this condition block (and not in the string) - saves current available columns
         let whispers = left.whispers.length !== 0 ? left.whispers : right.whispers;
-        if (this.stringRange !== undefined && this.stringRange.start < cursorIndex && cursorIndex <= this.stringRange.end) {
+        if (isInRangeAndNotInQuotes(cursorIndex, this.stringRange, this.condition)) {
             whispers = sourceColumns;
         }
         // adds errors from current expression

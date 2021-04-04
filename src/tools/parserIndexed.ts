@@ -167,18 +167,21 @@ export default class ParserIndexed {
     public static deleteCommentLines(str: IndexedString) {
         const toJoin: IndexedString[] = str.split('\n').map(line => {
             let insideQuotes: boolean = false;
+            let backslashes: number = 0;
             for (let i = 0; i < line.length(); ++i) {
+                const curChar = line.charAt(i);
                 // quotes found
-                if (line.charAt(i) === '"') {
-                    if (insideQuotes && line.charAt(i - 1) !== '\\') {
-                        insideQuotes = false;
-                    }
-                    else if (!insideQuotes) {
-                        insideQuotes = true;
-                    }
+                if (curChar === '"' && (backslashes % 2) === 0) {
+                    insideQuotes = !insideQuotes;
+                }
+                if (insideQuotes && curChar === '\\') {
+                    ++backslashes;
+                }
+                else {
+                    backslashes = 0;
                 }
                 // double-backslash found outside quotes
-                if (!insideQuotes && line.charAt(i) === '/' && i > 0 && line.charAt(i - 1) === '/') {
+                if (!insideQuotes && curChar === '/' && i > 0 && line.charAt(i - 1) === '/') {
                     return line.slice(0, i - 1);
                 }
             }

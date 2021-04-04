@@ -120,6 +120,10 @@ All tabulators loaded into the application in files are replaced by 4 spaces. In
 the files outside Rachel, we recommend to use spaces as well to ensure expected indenting. Also, do not
 insert text with tabulators by Ctrl+V.
 
+In formal Relational algebra all conditions must contain comparison (==, >, <, ...). In Rachel, boolean
+values can be used directly (e.g., "BooleanColumn", not "BooleanColumn == true"). Anyway, we recommend
+using the full comparison in theta joins to receive expected whispers behavior.
+
 ## Relational algebra
 
 ### Notation

@@ -4,8 +4,6 @@
  * @param str
  * @param index
  */
-import {assertParamsCount} from "../error/errorFactory";
-
 export function getStartOfWordBeforeIndex(str: string, index: number): number {
     const prefixText: string = str.slice(0, index);
     let i: number = prefixText.length - 1;

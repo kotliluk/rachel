@@ -514,7 +514,6 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                     ev.preventDefault();
                 }
                 if (ev.key === "Enter" && ev.ctrlKey) {
-                    console.log("aaa")
                     ta.hideWhisper();
                     ev.preventDefault();
                 }

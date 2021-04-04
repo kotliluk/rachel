@@ -194,40 +194,6 @@ describe('isNumber', () => {
     });
 });
 
-describe('isStringLiteral', () => {
-    test('true valid strings', () => {
-        const w1: string = `""`;
-        const w2: string = `"Some string"`;
-        const w3: string = `"Some string with .[;[;,/'2345"`;
-        const w4: string = `"Inner escaped double \\"quotes\\""`;
-        const w5: string = `"Inner single 'quotes'"`;
-
-        expect(Parser.isStringLiteral(w1)).toBeTruthy();
-        expect(Parser.isStringLiteral(w2)).toBeTruthy();
-        expect(Parser.isStringLiteral(w3)).toBeTruthy();
-        expect(Parser.isStringLiteral(w4)).toBeTruthy();
-        expect(Parser.isStringLiteral(w5)).toBeTruthy();
-    });
-
-    test('false for invalid string', () => {
-        const w1: string = ``;
-        const w2: string = ` `;
-        const w3: string = `"`;
-        const w4: string = `"Some string`;
-        const w5: string = `Some string"`;
-        const w6: string = `"Some" string`;
-        const w7: string = `"Not escaped " double quote"`;
-
-        expect(Parser.isStringLiteral(w1)).toBeFalsy();
-        expect(Parser.isStringLiteral(w2)).toBeFalsy();
-        expect(Parser.isStringLiteral(w3)).toBeFalsy();
-        expect(Parser.isStringLiteral(w4)).toBeFalsy();
-        expect(Parser.isStringLiteral(w5)).toBeFalsy();
-        expect(Parser.isStringLiteral(w6)).toBeFalsy();
-        expect(Parser.isStringLiteral(w7)).toBeFalsy();
-    });
-});
-
 describe('nextWord', () => {
     test('word', () => {
         const input: string = "word";
@@ -787,14 +753,14 @@ describe('skipWhitespacesAndChar', () => {
 
 describe('deleteCommentLines', () => {
     test('', () => {
-        const input: string = '//comment before relation\n' +
+        const input: string = '// comment before relation\n' +
             '\n' +
             'Auto = {\n' +
-            '    //comment 1 in a relation\n' +
+            '    // comment 1 in a relation\n' +
             'Id: number, Barva: string   // comment after a line...\n' +
             '\n' +
             '//comment 2 in a relation\n' +
-            '         1,     "Cervena"\n' +
+            '         1,     "Cervena\\" \\\\"   // comment after a line with quotes\n' +
             '      null,          null\n' +
             '          ,   ",{}\\"..."\n' +
             '}\n' +
@@ -814,7 +780,7 @@ describe('deleteCommentLines', () => {
             'Id: number, Barva: string   \n' +
             '\n' +
             '\n' +
-            '         1,     "Cervena"\n' +
+            '         1,     "Cervena\\" \\\\"   \n' +
             '      null,          null\n' +
             '          ,   ",{}\\"..."\n' +
             '}\n' +

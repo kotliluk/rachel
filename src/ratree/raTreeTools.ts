@@ -1,6 +1,7 @@
 import RATreeNode from "./raTreeNode";
 import UnaryNode from "./unaryNode";
 import BinaryNode from "./binaryNode";
+import {IndexedString} from "../tools/indexedString";
 
 /**
  * Finds the root in the given tree with the given index with respect to depth first search. Root has index 0.
@@ -49,4 +50,37 @@ export function getTreeDepth(root: RATreeNode): number {
         return getTreeDepth(root.getSubtree()) + 1;
     }
     return 0;
+}
+
+/**
+ * Returns true, if the given cursor position is in the given range and it is not inside quotes.
+ * Note: given range is expected to be computed from given string.
+ */
+export function isInRangeAndNotInQuotes(cursor: number, range: { start: number, end: number } | undefined, str: string | IndexedString): boolean {
+    if (range !== undefined && str instanceof IndexedString && range.start < cursor && cursor <= range.end) {
+        const len = range.end - range.start;
+        const s = str.toString();
+        const cursorIndexInStr = cursor - range.start;
+        let insideQuotes: boolean = false;
+        let backslashes: number = 0;
+        for (let i = 0; i < len; ++i) {
+            const curChar = s.charAt(i);
+            // quotes found
+            if (curChar === '"' && (backslashes % 2) === 0) {
+                insideQuotes = !insideQuotes;
+            }
+            if (insideQuotes && curChar === '\\') {
+                ++backslashes;
+            }
+            else {
+                backslashes = 0;
+            }
+            if (i === cursorIndexInStr - 1) {
+                // when the cursor was reached, returns true, when it is not in quotes
+                return !insideQuotes;
+            }
+        }
+        console.warn("isInRangeAndNotInQuotes outside range")
+    }
+    return false;
 }
