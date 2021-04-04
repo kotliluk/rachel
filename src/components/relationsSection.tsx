@@ -267,6 +267,15 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                 />
 
                 <menu className="page-section-management-menu">
+                    <TooltipButton
+                        key="Load"
+                        text="Load"
+                        onClick={this.loadRelation}
+                        className={"action-button"}
+                        style={{marginRight: "40px"}}
+                        tooltip="Loads the relation into the application"
+                        tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                    />
                     <TextInput
                         label=""
                         value={this.getCurRel().getName()}
@@ -276,7 +285,6 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                         id="relation-name-input"
                         darkTheme={this.props.darkTheme}
                     />
-                    {createButton("Load", this.loadRelation, "Loads the relation into the application")}
                     {createButton("Delete", this.deleteRelation,"Deletes the relation")}
                     {this.getCurRel().canRevert() && createButton("Revert", this.revertRelation,
                         "Reverts to last loaded state (" + this.getCurRel().getRevertName() + ")")}

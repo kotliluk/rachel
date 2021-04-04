@@ -387,17 +387,25 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                 </menu>
 
                 <menu className="page-section-management-menu">
-                        <TextInput
-                            label=""
-                            value={this.getCurExpr().name}
-                            buttonText="Rename"
-                            onSubmit={this.handleExprNameChange}
-                            forbidden={() => false}
-                            id="expression-name-input"
-                            darkTheme={this.props.darkTheme}
-                        />
-                        {createButton("Evaluate", this.evalExpr, "Evaluates given RA expression")}
-                        {createButton("Delete", this.deleteExpression, "Deletes current RA expression")}
+                    <TooltipButton
+                        key="Evaluate"
+                        text="Evaluate"
+                        onClick={this.evalExpr}
+                        className={"action-button"}
+                        style={{marginRight: "40px"}}
+                        tooltip="Evaluates given RA expression"
+                        tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                    />
+                    <TextInput
+                        label=""
+                        value={this.getCurExpr().name}
+                        buttonText="Rename"
+                        onSubmit={this.handleExprNameChange}
+                        forbidden={() => false}
+                        id="expression-name-input"
+                        darkTheme={this.props.darkTheme}
+                    />
+                    {createButton("Delete", this.deleteExpression, "Deletes current RA expression")}
                 </menu>
 
                 <MessageLabel

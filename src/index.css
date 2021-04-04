@@ -1,10 +1,9 @@
 :root {
   /* CONSTANTS*/
   --button-height: 24px;
-
   --font-size: 16px;
-
-  --left-text-margin: 14px;
+  --left-text-margin: 15px;
+  --action-color: #43b581;
 
   /* DARK COLORS */
   --dark-background: #36393f;
@@ -165,7 +164,6 @@ menu {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 10px 0;
   border-top: 2px solid var(--dark-details);
 }
 
@@ -177,7 +175,7 @@ menu {
   justify-content: flex-start;
   align-items: center;
   padding: 5px 0;
-  margin-left: var(--left-text-margin);
+  margin: 10px 0 0 var(--left-text-margin);
 }
 
 .page-section > header > h2 {
@@ -216,7 +214,7 @@ menu {
   flex-wrap: wrap;
   justify-content: flex-start;
   align-items: center;
-  margin: 5px 0 5px var(--left-text-margin);
+  margin: 15px 0 15px var(--left-text-margin);
 }
 
 /* BUTTON */
@@ -294,6 +292,18 @@ button:hover .tooltip {
   background-color: var(--dark-details);
   border-color: var(--dark-details);
   color: var(--text-color-dark);
+}
+
+.action-button {
+  position: relative;
+  background-color: var(--action-color);
+  border-color: var(--action-color);
+  color: white;
+}
+
+.action-button:hover {
+  background-color: var(--dark-details);
+  border-color: var(--dark-details);
 }
 
 /* TOOLTIP */
