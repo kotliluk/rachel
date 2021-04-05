@@ -300,7 +300,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
             let className: string = "name-th";
             const error = this.getErrors().get("name", columnIndex);
             if (error !== undefined) {
-                span = this.createTooltip(error, {top: "120%", bottom: "auto"});
+                span = this.createTooltip(error, {top: "90%", bottom: "auto"});
                 className += " error-input";
             }
             return (

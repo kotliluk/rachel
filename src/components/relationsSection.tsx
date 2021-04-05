@@ -1,13 +1,13 @@
 import React from "react";
 import Relation from "../relation/relation";
 import {TooltipButton} from "./tooltipButton";
-import {MessageLabel} from "./messageLabel";
 import {SupportedColumnType} from "../relation/columnType";
 import EditRelationTable from "./editRelationTable";
 import {StoredRelation} from "../relation/storedRelation";
 import {TextInput} from "./textInput";
 import {getForbiddenRelationNames} from "../tools/keywords";
 import Parser from "../tools/parser";
+import {MessageBox} from "./messageBox";
 
 interface RelationsSectionProps {
     // all stored relations
@@ -62,9 +62,7 @@ interface RelationsSectionProps {
 }
 
 interface RelationsSectionState {
-    sectionClicked: boolean,
-    messageText: string,
-    isMessageError: boolean
+    sectionClicked: boolean
 }
 
 /**
@@ -75,9 +73,7 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
     constructor(props: RelationsSectionProps) {
         super(props);
         this.state = {
-            sectionClicked: false,
-            messageText: "",
-            isMessageError: false
+            sectionClicked: false
         }
     }
 
@@ -93,7 +89,6 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
      */
     private handleSelectDifferentRelation(index: number): void {
         this.props.onSelectDifferentRelation(index);
-        this.showMessage("");
     }
 
     /**
@@ -108,10 +103,10 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
      */
     private loadRelation = () => {
         if (this.getCurRel().isValid()) {
-            this.props.onLoadRelation(this.showMessage);
+            this.props.onLoadRelation(MessageBox.message);
         }
         else {
-            this.showMessage("Cannot use the invalid relation. Check errors and try again.", true);
+            MessageBox.error("Cannot use the invalid relation. Check errors and try again.");
         }
     }
 
@@ -119,21 +114,21 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
      * Passes the load all relations call to the parent.
      */
     private loadAllRelations = () => {
-        this.props.onLoadAllRelations(this.showMessage);
+        this.props.onLoadAllRelations(MessageBox.message);
     }
 
     /**
      * Passes the export stored relations call to the parent.
      */
     private exportRelations = () => {
-        this.props.onExportRelations(this.showMessage);
+        this.props.onExportRelations(MessageBox.message);
     }
 
     /**
      * Passes the import stored relations call to the parent.
      */
     private importRelations = () => {
-        this.props.onImportRelations(this.showMessage);
+        this.props.onImportRelations(MessageBox.message);
     }
 
     /**
@@ -158,7 +153,7 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
      * Passes the delete all loaded relations call to the parent.
      */
     private deleteAllLoadedRelations = () => {
-        this.props.onDeleteLoadedRelations(this.showMessage);
+        this.props.onDeleteLoadedRelations(MessageBox.message);
     }
 
     /**
@@ -166,21 +161,8 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
      */
     private handleCtrlInput = (event: React.KeyboardEvent) => {
         if (event.key === "Enter") {
-            this.props.onLoadRelation(this.showMessage);
+            this.props.onLoadRelation(MessageBox.message);
         }
-    }
-
-    /**
-     * Shows the given message.
-     *
-     * @param msg message to be shown
-     * @param isError whether the message is error
-     */
-    private showMessage = (msg: string, isError: boolean = false) => {
-        this.setState({
-            messageText: msg,
-            isMessageError: isError
-        });
     }
 
     /**
@@ -193,7 +175,7 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                 (this.props.storedRelationIndex === i ? "button-clicked-dark" : "button-dark") :
                 (this.props.storedRelationIndex === i ? "button-clicked-light" : "button-light"));
             const actuality: string = rel.isActual() ? "" : "*";
-            const style = rel.isValid() ? {} : {border: "2px solid red"};
+            const style = rel.isValid() ? {} : {border: "2px solid #fd3030"};
             return (
                 <button
                     key={i}
@@ -289,12 +271,6 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                     {this.getCurRel().canRevert() && createButton("Revert", this.revertRelation,
                         "Reverts to last loaded state (" + this.getCurRel().getRevertName() + ")")}
                 </menu>
-
-                <MessageLabel
-                    message={this.state.messageText}
-                    darkTheme={this.props.darkTheme}
-                    style={{marginLeft: "10px", ...(this.state.isMessageError ? {color: "red"} : {})}}
-                />
             </section>
         );
     }

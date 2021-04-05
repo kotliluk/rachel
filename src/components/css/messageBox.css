@@ -1,0 +1,57 @@
+:root {
+    --message-box-margin: 20px;
+    --message-box-margin-num: 20;
+    --message-box-padding: 10px;
+}
+
+.message-box {
+    position: fixed;
+    bottom: var(--message-box-margin);
+    left: var(--message-box-margin);
+    display: flex;
+    flex-direction: row;
+
+    padding: var(--message-box-padding);
+    box-sizing: border-box;
+    border-radius: 12px;
+
+    font-size: var(--font-size);
+    text-overflow: clip;
+}
+
+.message-box-message {
+    background-color: var(--light-section);
+    color: black;
+}
+
+.message-box-error {
+    background-color: var(--error-color);
+    color: black;
+}
+
+.message-box > p {
+    margin: 0 0 0 30px;
+    white-space: pre-wrap;
+}
+
+.message-box > button {
+    position: absolute;
+    top: var(--message-box-padding);
+    left: var(--message-box-padding);
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    padding: 0;
+    margin: -2px 0 0 0;
+
+    border: none;
+    background-color: transparent;
+    color: var(--dark-details);
+    transform: scale(1.2);
+}
+
+.message-box > button:hover {
+    transition: ease-in-out;
+    transform: scale(1.4);
+    margin: -3px 0 0 0;
+}

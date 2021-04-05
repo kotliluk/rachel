@@ -4,8 +4,6 @@
     --x-textarea-line-height-px: 20px;
     --x-textarea-line-height: 20; /* should be same is number above (without px) */
 
-    --error-highlight-color: red;
-
     --whisper-dark-text-color: white;
     --whisper-light-text-color: black;
 }
@@ -51,11 +49,6 @@
 .x-textarea-table-td2 {
     vertical-align: top;
     position: relative;
-}
-
-.x-textarea-err::selection {
-    background-color: var(--error-highlight-color);
-    color: white;
 }
 
 /* WHISPER DIV */
@@ -135,7 +128,7 @@
     height: 3px;
     margin-top: -3px;
     background-color: transparent;
-    border-bottom: 2px dotted red;
+    border-bottom: 2px dotted var(--error-color);
     position: absolute;
 }
 

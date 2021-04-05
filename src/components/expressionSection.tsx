@@ -2,7 +2,6 @@ import React from "react";
 import "./css/expressionSection.css"
 import Relation from "../relation/relation";
 import {TooltipButton} from "./tooltipButton";
-import {MessageLabel} from "./messageLabel";
 import RASyntaxError from "../error/raSyntaxError";
 import RASemanticError from "../error/raSemanticError";
 import {XTextArea} from "./xTextArea";
@@ -12,6 +11,7 @@ import {Expression} from "../expression/expression";
 import {TextInput} from "./textInput";
 import ErrorWithTextRange from "../error/errorWithTextRange";
 import RATreeNode from "../ratree/raTreeNode";
+import {MessageBox} from "./messageBox";
 
 interface ExpressionSectionProps {
     // available expressions
@@ -50,9 +50,7 @@ interface ExpressionSectionState {
     sectionClicked: boolean,
     whispers: string[],
     errors: {start: number, end: number, msg: string}[],
-    cursorIndex: number,
-    messageText: string,
-    isMessageError: boolean
+    cursorIndex: number
 }
 
 interface OpButtonProps {
@@ -121,9 +119,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
             sectionClicked: false,
             whispers: [],
             errors: [],
-            cursorIndex: 0,
-            messageText: "",
-            isMessageError: false
+            cursorIndex: 0
         }
         this.textAreaRef = React.createRef<XTextArea>();
         setInterval(() => this.updateWhispersAndErrors(), this.whispersAndErrorsUpdateRate);
@@ -150,11 +146,9 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
     private handleSelectDifferentExpression(index: number): void {
         this.setState({errors: []});
         this.props.onSelectDifferentExpression(index);
-        this.showMessage("");
     }
 
     private evalExpr = (): void => {
-        this.showMessage("");
         try {
             const exprParser: ExprParser = new ExprParser(this.props.relations, this.props.nullValuesSupport);
             const tree = exprParser.indexedParse(this.props.expressions[this.props.currentExpressionIndex].text);
@@ -190,13 +184,13 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
     }
 
     private saveExpressions = (): void => {
-        this.props.onExportExpressions(this.showMessage);
+        this.props.onExportExpressions(MessageBox.message);
     }
 
     private loadExpressions = (): void => {
         this.setState({errors: []});
         this.props.onImportExpressions((msg) => {
-            this.showMessage(msg);
+            MessageBox.message(msg);
             this.updateErrors();
         });
     }
@@ -271,19 +265,6 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
     }
 
     /**
-     * Shows the given message.
-     *
-     * @param msg message to be shown
-     * @param isError whether the message is error
-     */
-    private showMessage = (msg: string, isError: boolean = false) => {
-        this.setState({
-            messageText: msg,
-            isMessageError: isError
-        });
-    }
-
-    /**
      * Handles and shows the given error. If the error is not of RASyntaxError or RASemanticError class, it is passed
      * to the parent as unexpected error.
      *
@@ -292,12 +273,12 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
     private showError = (err: Error) => {
         // common user's errors
         if (err instanceof RASyntaxError || err instanceof RASemanticError) {
-            this.showMessage(err.message, true);
+            MessageBox.error(err.message);
         }
         else {
             this.props.onUnexpectedError(err);
-            this.showMessage("UNEXPECTED ERROR: " + err.message + "\n" +
-                "Please, report it with your last actions, thank you!", true);
+            MessageBox.error("UNEXPECTED ERROR: " + err.message + "\n" +
+                "Please, report it with your last actions, thank you!");
         }
     }
 
@@ -407,12 +388,6 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                     />
                     {createButton("Delete", this.deleteExpression, "Deletes current RA expression")}
                 </menu>
-
-                <MessageLabel
-                    message={this.state.messageText}
-                    darkTheme={this.props.darkTheme}
-                    style={{marginLeft: "10px", ...(this.state.isMessageError ? {color: "red"} : {})}}
-                />
             </section>
         );
     }
