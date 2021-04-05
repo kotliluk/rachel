@@ -1,7 +1,7 @@
 /* PARAGRAPHS */
 
 .result-section > .upper-p {
-    margin: 5px 5px 20px var(--left-text-margin);
+    margin: 15px 5px 15px var(--left-text-margin);
 }
 
 .result-section > .lower-p {

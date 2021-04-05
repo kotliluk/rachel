@@ -1,10 +1,12 @@
 import React from "react";
+// @ts-ignore - type declaration is not needed for its short usage
+import downloadSVG from "export-svg-with-styles";
 import Relation from "../relation/relation";
 import {ResultRelationTable} from "./resultRelationTable";
 import {TooltipButton} from "./tooltipButton";
 import RATreeNode from "../ratree/raTreeNode";
 import {CsvValueSeparatorChar} from "../tools/csvSupport";
-import {EvaluationTree} from "./evaluationTree";
+import {evalTreeSVGId, EvaluationTree} from "./evaluationTree";
 import {depthSearch} from "../ratree/raTreeTools";
 import {CodeErrorCodes, ErrorFactory} from "../error/errorFactory";
 import {RelationStoreManager} from "../relation/relationStoreManager";
@@ -83,9 +85,26 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
     }
 
     /**
+     * Saves the displayed evaluation tree as png picture.
+     */
+    private exportEvalTreeAsPng = (): void => {
+        const svg = document.getElementById(evalTreeSVGId);
+        if (svg !== null) {
+            const rect = svg.getBoundingClientRect();
+            const options = {
+                width: rect.width * 3,
+                height: rect.height * 3,
+                svg: svg,
+                filename: this.props.expressionName + " - evaluation tree.png"
+            }
+            downloadSVG(options);
+        }
+    }
+
+    /**
      * Saves the current selected relation to a file.
      */
-    private exportResultRelation = (): void => {
+    private exportRelation = (): void => {
         if (this.getCurrentRelation() === null) {
             this.props.onUnexpectedError(ErrorFactory.codeError(CodeErrorCodes.resultSection_saveResultRelation_nullRelationToSave));
             return;
@@ -103,7 +122,7 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
     /**
      * Passes the current selected relation with the given name to the parent.
      */
-    private handleAddRelation = (): void => {
+    private addRelation = (): void => {
         if (this.getCurrentRelation() === null) {
             this.props.onUnexpectedError(ErrorFactory.codeError(CodeErrorCodes.resultSection_handleAddRelation_nullRelationToAdd));
             return;
@@ -127,6 +146,13 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
                 className="page-section result-section">
                 <header>
                     <h2>Result</h2>
+                    <TooltipButton
+                        text="Export"
+                        onClick={this.exportEvalTreeAsPng}
+                        className={this.props.darkTheme ? "button-dark" : "button-light"}
+                        tooltip={"Saves the evaluation tree as png"}
+                        tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                    />
                 </header>
 
                 <p className="upper-p">
@@ -145,14 +171,14 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
                 <menu className="page-section-tab-menu">
                     <TooltipButton
                         text="Add"
-                        onClick={this.handleAddRelation}
+                        onClick={this.addRelation}
                         className={this.props.darkTheme ? "button-dark" : "button-light"}
                         tooltip={"Adds given relation to stored ones"}
                         tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
                     />
                     <TooltipButton
                         text="Export"
-                        onClick={this.exportResultRelation}
+                        onClick={this.exportRelation}
                         className={this.props.darkTheme ? "button-dark" : "button-light"}
                         tooltip={"Saves given relation to a file"}
                         tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}

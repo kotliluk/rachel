@@ -1,6 +1,6 @@
 import React from "react";
 import { Group } from '@visx/group';
-import { Cluster, hierarchy } from '@visx/hierarchy';
+import { hierarchy, Tree } from '@visx/hierarchy';
 import { HierarchyPointNode, HierarchyPointLink } from '@visx/hierarchy/lib/types';
 import { LinkVertical } from '@visx/shape';
 import ParentSize from "@visx/responsive/lib/components/ParentSize";
@@ -11,6 +11,8 @@ import UnaryNode from "../ratree/unaryNode";
 import BinaryNode from "../ratree/binaryNode";
 import {getTreeDepth} from "../ratree/raTreeTools";
 import {computeFontSizeInPx} from "../tools/font";
+
+export const evalTreeSVGId: string = "eval-tree-svg";
 
 interface EvaluationTreeProps {
     // root of the evaluation tree to be displayed
@@ -190,22 +192,22 @@ function TreeNodeComponent({ node, selected, onClick, darkTheme }:
 function TreeComponent({raTree, selected, width, onClick, darkTheme}:
                            {raTree: RATreeNode, selected: number, width: number, onClick: (index: number) => void, darkTheme: boolean}): JSX.Element | null {
     const treeDepth: number = getTreeDepth(raTree);
-    const height = (treeDepth + 1) * nodeHeight * 1.5;
-    const margin = { top: nodeHeight / 2, left: 0 / 2, right: 0 / 2, bottom: nodeHeight / 2 };
+    // height = "nodes height" + "gaps between nodes" + "margin up and under"
+    const height = (treeDepth + 1) * nodeHeight + treeDepth * nodeHeight / 2 + nodeHeight;
+    const margin = { top: nodeHeight, left: 0 / 2, right: 0 / 2, bottom: nodeHeight };
     const yMax = height - margin.top - margin.bottom;
     const xMax = width - margin.left - margin.right;
 
     const tree: DisplayTreeNode = parseTreeForDisplay(raTree);
     const data = hierarchy<DisplayTreeNode>(tree);
 
-    // use Cluster for vertical tree layout, Tree for horizontal tree layout
     return width < 10 ? null : (
-        <svg width={width} height={height}>
+        <svg id="eval-tree-svg" width={width} height={height}>
             <rect width={width} height={height} rx={14} fill={darkTheme ? backgroundColorDark : backgroundColorLight} />
-            <Cluster<DisplayTreeNode> root={data} size={[xMax, yMax]}>
-                {cluster => (
+            <Tree<DisplayTreeNode> root={data} size={[xMax, yMax]}>
+                {tree => (
                     <Group top={margin.top} left={margin.left}>
-                        {cluster.links().map((link, i) => (
+                        {tree.links().map((link, i) => (
                             <LinkVertical<HierarchyPointLink<DisplayTreeNode>, HierarchyPointNode<DisplayTreeNode>>
                                 key={`cluster-link-${i}`}
                                 data={link}
@@ -215,7 +217,7 @@ function TreeComponent({raTree, selected, width, onClick, darkTheme}:
                                 fill="none"
                             />
                         ))}
-                        {cluster.descendants().map((node) => (
+                        {tree.descendants().map((node) => (
                             <TreeNodeComponent
                                 key={`node-${node.data.index}`}
                                 node={node}
@@ -226,7 +228,7 @@ function TreeComponent({raTree, selected, width, onClick, darkTheme}:
                         ))}
                     </Group>
                 )}
-            </Cluster>
+            </Tree>
         </svg>
     );
 }

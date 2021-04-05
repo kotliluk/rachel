@@ -50,6 +50,12 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
     constructor(props: MainScreenProps) {
         super(props);
 
+        // sets body template by settings from local storage
+        document.body.classList.toggle('body-dark', LocalStorage.getDarkMode());
+        document.body.classList.toggle('body-light', !LocalStorage.getDarkMode());
+        document.body.classList.toggle('cursor-container-dark', LocalStorage.getDarkMode());
+        document.body.classList.toggle('cursor-container-light', !LocalStorage.getDarkMode());
+
         this.state = {
             samples: getSamples(),
 

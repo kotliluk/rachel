@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 import MainScreen from "./components/mainScreen";
-import {LocalStorage} from "./tools/localStorage";
 
 /**
  * @license The software is Licensed under the MIT License
@@ -39,6 +38,11 @@ import {LocalStorage} from "./tools/localStorage";
  * visx/tooltip - version: 1.3.0
  * https://github.com/airbnb/visx
  * MIT License - Copyright (c) 2017-2018 Harrison Shoff
+ *
+ * export-svg-with-styles - Turn your SVGs to PNGs
+ * Version: 0.0.4
+ * https://www.npmjs.com/package/export-svg-with-styles
+ * MIT License - Copyright (c) 2019 Mathew Leland
  *
  * FileSaver.js - An HTML5 saveAs() FileSaver implementation
  * Version: 2.0.5
@@ -83,12 +87,6 @@ ReactDOM.render(
     </React.StrictMode>,
     document.getElementById('root')
 );
-
-// sets body template by settings from local storage
-document.body.classList.toggle('body-dark', LocalStorage.getDarkMode());
-document.body.classList.toggle('body-light', !LocalStorage.getDarkMode());
-document.body.classList.toggle('cursor-container-dark', LocalStorage.getDarkMode());
-document.body.classList.toggle('cursor-container-light', !LocalStorage.getDarkMode());
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

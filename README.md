@@ -86,10 +86,12 @@ names.
 ### Result section
 
 The result section appears after an evaluation of an expression. It displays the evaluation tree
-and the result relation. We can choose to display a relation from a different tree node. The rows
-in the relation can be sorted by the specific column.
+and the result relation. We can choose to display a relation from different tree nodes. The rows
+in the relation can be sorted by the specific column values. The **Export** button above the
+evaluation tree downloads the tree as a png picture.
 
-We can assign a name to the displayed relation and add it to stored ones or save it in a CSV file.
+We can add use the **Add** and **Export** buttons above the table to add the displayed relation
+to edited ones or to save it in a CSV file.
 
 ### Management section
 
