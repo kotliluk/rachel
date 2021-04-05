@@ -117,6 +117,11 @@ describe('parseTokens', () => {
             const str: string = '(Column < 5.5 && ?)';
             expect(() => ValueParser.parseTokens(str, true, true)).toThrow();
         });
+
+        test('(Column < 5.5 && A == "string over\nmore lines")', () => {
+            const str: string = '(Column < 5.5 && ?)';
+            expect(() => ValueParser.parseTokens(str, true, true)).toThrow();
+        });
     });
 });
 

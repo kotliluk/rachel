@@ -22,7 +22,7 @@ import {
     ValueToken
 } from "./valueTokens"
 import {VETreeNode} from "../vetree/veTreeNode";
-import {getRange, IndexedString, isEmpty, length, nextBorderedPart} from "../tools/indexedString";
+import {getRange, IndexedString, isEmpty, length, nextBorderedPart, nextQuotedString} from "../tools/indexedString";
 import ParserIndexed from "../tools/parserIndexed";
 import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {CodeErrorCodes, ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
@@ -194,16 +194,14 @@ export default class ValueParser {
             }
             // LITERALS
             else if (rest.startsWith('"')) {
-                try {
-                    const split = nextBorderedPart(rest, '"', '"', '\\');
-                    const str = split.first.slice(1, -1);
-                    tokens.push(new LiteralToken(str, str.toString(), "string"));
-                    rest = split.second;
+                const split = nextQuotedString(rest);
+                if (split.error !== undefined) {
+                    handleError(split.error);
                 }
-                catch (err) {
-                    handleError(err);
-                    break;
-                }
+                const end = length(split.first) > 1 ? -1 : undefined;
+                const str = split.first.slice(1, end);
+                tokens.push(new LiteralToken(str, str.toString(), "string"));
+                rest = split.second;
             }
             else if (Parser.isDigit(rest.charAt(0))) {
                 let split = (rest instanceof IndexedString) ? ParserIndexed.nextNumber(rest) : Parser.nextNumber(rest);

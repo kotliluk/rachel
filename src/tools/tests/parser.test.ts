@@ -532,17 +532,78 @@ describe('nextNumber', () => {
     });
 });
 
+describe('nextQuotedString', () => {
+    describe('valid strings', () => {
+        test('"Quoted"String', () => {
+            const input: string = '"Quoted"String';
+            const expectedBordered: string = '"Quoted"';
+            const expectedRest: string = "String";
+
+            const result = Parser.nextQuotedString(input);
+            expect(result.first).toBe(expectedBordered);
+            expect(result.second).toBe(expectedRest);
+            expect(result.error).toBeUndefined();
+        });
+
+        test('"Quoted with \\" character"String', () => {
+            const input: string = '"Quoted with \\" character"String';
+            const expectedBordered: string = '"Quoted with \\" character"';
+            const expectedRest: string = "String";
+
+            const result = Parser.nextQuotedString(input);
+            expect(result.first).toBe(expectedBordered);
+            expect(result.second).toBe(expectedRest);
+            expect(result.error).toBeUndefined();
+        });
+
+        test('"Quoted with more \\\\ \\" character\\\\"String', () => {
+            const input: string = '"Quoted with more \\\\ \\" character\\\\"String';
+            const expectedBordered: string = '"Quoted with more \\\\ \\" character\\\\"';
+            const expectedRest: string = "String";
+
+            const result = Parser.nextQuotedString(input);
+            expect(result.first).toBe(expectedBordered);
+            expect(result.second).toBe(expectedRest);
+            expect(result.error).toBeUndefined();
+        });
+    });
+
+    describe('invalid strings', () => {
+        test('"Left quoted String', () => {
+            const input: string = '"Left quoted String';
+            const expectedBordered: string = '"Left quoted String';
+            const expectedRest: string = "";
+
+            const result = Parser.nextQuotedString(input);
+            expect(result.first).toBe(expectedBordered);
+            expect(result.second).toBe(expectedRest);
+            expect(result.error).not.toBeUndefined();
+        });
+
+        test('"End on the next\nline"', () => {
+            const input: string = '"End on the next\nline"';
+            const expectedBordered: string = '"End on the next\n';
+            const expectedRest: string = 'line"';
+
+            const result = Parser.nextQuotedString(input);
+            expect(result.first).toBe(expectedBordered);
+            expect(result.second).toBe(expectedRest);
+            expect(result.error).not.toBeUndefined();
+        });
+    });
+});
+
 describe('nextBorderedPart', () => {
     describe('valid strings with one ending character split correctly', () => {
         test('()String', () => {
             const input: string = "()String";
             const start: string = '(';
             const end: string = ')';
-            const expectedBoarder: string = "()";
+            const expectedBordered: string = "()";
             const expectedRest: string = "String";
 
             const result = Parser.nextBorderedPart(input, start, end);
-            expect(result.first).toBe(expectedBoarder);
+            expect(result.first).toBe(expectedBordered);
             expect(result.second).toBe(expectedRest);
         });
 
@@ -550,36 +611,11 @@ describe('nextBorderedPart', () => {
             const input: string = "((()))String";
             const start: string = '(';
             const end: string = ')';
-            const expectedBoarder: string = "((()))";
+            const expectedBordered: string = "((()))";
             const expectedRest: string = "String";
 
             const result = Parser.nextBorderedPart(input, start, end);
-            expect(result.first).toBe(expectedBoarder);
-            expect(result.second).toBe(expectedRest);
-        });
-
-        test('"Quoted"String', () => {
-            const input: string = '"Quoted"String';
-            const start: string = '"';
-            const end: string = '"';
-            const expectedBoarder: string = '"Quoted"';
-            const expectedRest: string = "String";
-
-            const result = Parser.nextBorderedPart(input, start, end);
-            expect(result.first).toBe(expectedBoarder);
-            expect(result.second).toBe(expectedRest);
-        });
-
-        test('"Quoted with \\" character"String', () => {
-            const input: string = '"Quoted with \\" character"String';
-            const start: string = '"';
-            const end: string = '"';
-            const escape: string = '\\';
-            const expectedBoarder: string = '"Quoted with \\" character"';
-            const expectedRest: string = "String";
-
-            const result = Parser.nextBorderedPart(input, start, end, escape);
-            expect(result.first).toBe(expectedBoarder);
+            expect(result.first).toBe(expectedBordered);
             expect(result.second).toBe(expectedRest);
         });
     });
@@ -589,11 +625,11 @@ describe('nextBorderedPart', () => {
             const input: string = "[((InnerString))]String";
             const start: string = '[';
             const end: string = ']>';
-            const expectedBoarder: string = "[((InnerString))]";
+            const expectedBordered: string = "[((InnerString))]";
             const expectedRest: string = "String";
 
             const result = Parser.nextBorderedPart(input, start, end);
-            expect(result.first).toBe(expectedBoarder);
+            expect(result.first).toBe(expectedBordered);
             expect(result.second).toBe(expectedRest);
         });
 
@@ -601,11 +637,11 @@ describe('nextBorderedPart', () => {
             const input: string = "[((InnerString))>String";
             const start: string = '[';
             const end: string = ']>';
-            const expectedBoarder: string = "[((InnerString))>";
+            const expectedBordered: string = "[((InnerString))>";
             const expectedRest: string = "String";
 
             const result = Parser.nextBorderedPart(input, start, end);
-            expect(result.first).toBe(expectedBoarder);
+            expect(result.first).toBe(expectedBordered);
             expect(result.second).toBe(expectedRest);
         });
 
@@ -614,11 +650,11 @@ describe('nextBorderedPart', () => {
             const start: string = '<';
             const end: string = ']>';
             const escape: string = '-';
-            const expectedBoarder: string = "< some -> rename >";
+            const expectedBordered: string = "< some -> rename >";
             const expectedRest: string = "AndSoOn";
 
             const result = Parser.nextBorderedPart(input, start, end, escape);
-            expect(result.first).toBe(expectedBoarder);
+            expect(result.first).toBe(expectedBordered);
             expect(result.second).toBe(expectedRest);
         });
     });
@@ -639,14 +675,6 @@ describe('nextBorderedPart', () => {
 
             expect(() => Parser.nextBorderedPart(input, start, end)).toThrow();
         });
-
-        test('"QuotedString', () => {
-            const input: string = '"QuotedString';
-            const start: string = '"';
-            const end: string = '"';
-
-            expect(() => Parser.nextBorderedPart(input, start, end)).toThrow();
-        });
     });
 
     describe('ignores special chars in quoted part', () => {
@@ -654,11 +682,11 @@ describe('nextBorderedPart', () => {
             const input: string = "(\")\")String";
             const start: string = '(';
             const end: string = ')';
-            const expectedBoarder: string = "(\")\")";
+            const expectedBordered: string = "(\")\")";
             const expectedRest: string = "String";
 
             const result = Parser.nextBorderedPart(input, start, end);
-            expect(result.first).toBe(expectedBoarder);
+            expect(result.first).toBe(expectedBordered);
             expect(result.second).toBe(expectedRest);
         });
 
@@ -666,11 +694,11 @@ describe('nextBorderedPart', () => {
             const input: string = '(some long expression with "inner quoted part with ) and \\", yeah")String';
             const start: string = '(';
             const end: string = ')';
-            const expectedBoarder: string = '(some long expression with "inner quoted part with ) and \\", yeah")';
+            const expectedBordered: string = '(some long expression with "inner quoted part with ) and \\", yeah")';
             const expectedRest: string = "String";
 
             const result = Parser.nextBorderedPart(input, start, end);
-            expect(result.first).toBe(expectedBoarder);
+            expect(result.first).toBe(expectedBordered);
             expect(result.second).toBe(expectedRest);
         });
     });
@@ -681,11 +709,11 @@ describe('nextBorderedPart', () => {
             const start: string = '"';
             const end: string = '"';
             const escape: string = '\\';
-            const expectedBoarder: string = '"A\\"B"';
+            const expectedBordered: string = '"A\\"B"';
             const expectedRest: string = 'abc';
 
             const result = Parser.nextBorderedPart(input, start, end, escape);
-            expect(result.first).toBe(expectedBoarder);
+            expect(result.first).toBe(expectedBordered);
             expect(result.second).toBe(expectedRest);
         });
 
@@ -694,11 +722,11 @@ describe('nextBorderedPart', () => {
             const start: string = '"';
             const end: string = '"';
             const escape: string = '\\';
-            const expectedBoarder: string = '"A\\\\"';
+            const expectedBordered: string = '"A\\\\"';
             const expectedRest: string = 'B"abc';
 
             const result = Parser.nextBorderedPart(input, start, end, escape);
-            expect(result.first).toBe(expectedBoarder);
+            expect(result.first).toBe(expectedBordered);
             expect(result.second).toBe(expectedRest);
         });
 
@@ -707,11 +735,11 @@ describe('nextBorderedPart', () => {
             const start: string = '"';
             const end: string = '"';
             const escape: string = '\\';
-            const expectedBoarder: string = '"A\\ \\" \\\\\\"B"';
+            const expectedBordered: string = '"A\\ \\" \\\\\\"B"';
             const expectedRest: string = 'abc';
 
             const result = Parser.nextBorderedPart(input, start, end, escape);
-            expect(result.first).toBe(expectedBoarder);
+            expect(result.first).toBe(expectedBordered);
             expect(result.second).toBe(expectedRest);
         });
     });

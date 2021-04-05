@@ -1,6 +1,7 @@
 import {IndexedString} from "./indexedString";
 import Parser from "./parser";
 import {insertRangeIfUndefined} from "../error/errorWithTextRange";
+import RASyntaxError from "../error/raSyntaxError";
 
 /**
  * IndexedParser providing general parsing helper functions for IndexedString. It wraps Parser methods for IndexedStrings.
@@ -114,11 +115,36 @@ export default class ParserIndexed {
     }
 
     /**
+     * Splits the given indexed string into starting quoted part and the rest. Quotes can be escaped by an odd count of
+     * backslashes.
+     * NOTE: When the closing quote is not found until the rest of the line, unclosed string is returned
+     * => the error is not thrown, it is only added to the return object.
+     * NOTE: First character of the string is expected to be '"'.
+     *
+     * @param str string to be split
+     * @return pair of the starting bordered part and the rest
+     */
+    static nextQuotedString(str: IndexedString): { first: IndexedString, second: IndexedString, error: RASyntaxError | undefined } {
+        const strParts: { first: string, second: string, error: RASyntaxError | undefined } = Parser.nextQuotedString(str.toString());
+        const startIndex = str.getFirstNonNaNIndex();
+        if (startIndex !== undefined) {
+            strParts.error = insertRangeIfUndefined(strParts.error, {start: startIndex, end: startIndex});
+        }
+        return {
+            first: str.slice(0, strParts.first.length),
+            second: str.slice(strParts.first.length),
+            error: strParts.error
+        };
+    }
+
+    /**
      * Splits the indexed string to the starting bordered part and the rest and returns these parts in a pair.
      * If there is only one ending character and it differs from the starting one, nested bordering is supported.
      * Characters after escape character are ignored and cannot start or end a bordered part.
      * Starting and ending characters in quoted part are ignored.
      * NOTE: First character of the string is expected to be 'start'.
+     * NOTE: Should not be used for slicing quoted strings, use nextQuotedString instead.
+     * NOTE: It is expected, that there are no comments in the given string.
      *
      * @param str indexed string to be split
      * @param start starting character of the string and also starting character of the bordered part (one character)

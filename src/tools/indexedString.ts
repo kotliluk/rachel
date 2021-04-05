@@ -1,5 +1,6 @@
 import ParserIndexed from "./parserIndexed";
 import Parser from "./parser";
+import RASyntaxError from "../error/raSyntaxError";
 
 /**
  * Immutable string representation with index of each character. Provides some usual string functions.
@@ -405,12 +406,20 @@ export function isEmpty(str: string | IndexedString): boolean {
 }
 
 /**
+ * Returns next quoted part of the given string. Returned parts are of the same type as the argument.
+ * See Parser.nextQuotedString for details.
+ */
+export function nextQuotedString(str: string | IndexedString): { first: string, second: string, error: RASyntaxError | undefined } |
+    { first: IndexedString, second: IndexedString, error: RASyntaxError | undefined } {
+    if (str instanceof IndexedString) {
+        return ParserIndexed.nextQuotedString(str);
+    }
+    return Parser.nextQuotedString(str);
+}
+
+/**
  * Returns next bordered part of the given string. Returned parts are of the same type as the argument.
- *
- * @param str
- * @param start
- * @param end
- * @param escape
+ * See Parser.nextBorderedPart for details.
  */
 export function nextBorderedPart(str: string | IndexedString, start: string, end: string, escape?: string):
     {first: IndexedString, second: IndexedString} | {first: string, second: string} {

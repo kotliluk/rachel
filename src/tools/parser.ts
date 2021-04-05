@@ -1,4 +1,5 @@
 import {ErrorFactory, SyntaxErrorCodes} from "../error/errorFactory";
+import RASyntaxError from "../error/raSyntaxError";
 
 /**
  * Parser providing general parsing helper functions.
@@ -187,11 +188,60 @@ export default class Parser {
     }
 
     /**
+     * Splits the given string into starting quoted part and the rest. Quotes can be escaped by an odd count of
+     * backslashes.
+     * NOTE: When the closing quote is not found until the rest of the line, unclosed string is returned
+     * => the error is not thrown, it is only added to the return object.
+     * NOTE: First character of the string is expected to be '"'.
+     *
+     * @param str string to be split
+     * @return pair of the starting bordered part and the rest
+     */
+    static nextQuotedString(str: string): { first: string, second: string, error: RASyntaxError | undefined } {
+        let i: number = 1;
+        // backslashes escape the quote character only in odd count
+        let backslashes: number = 0;
+        while (i < str.length) {
+            const curChar = str.charAt(i);
+            // increases index for using "i" in slicing
+            ++i;
+            // found quote - changes ignoring of special chars
+            if (curChar === '"' && (backslashes % 2) === 0) {
+                return { first: str.slice(0, i), second: str.slice(i), error: undefined };
+            }
+            // end of line breaks the string
+            if (curChar === '\n') {
+                return {
+                    first: str.slice(0, i),
+                    second: str.slice(i),
+                    error: ErrorFactory.syntaxError(SyntaxErrorCodes.parser_nextBorderedPart_missingClosingChar,
+                        undefined, '"', '"')
+                };
+            }
+            // updates backslash count
+            if (curChar === '\\') {
+                ++backslashes;
+            }
+            else {
+                backslashes = 0;
+            }
+        }
+        return {
+            first: str,
+            second: "",
+            error: ErrorFactory.syntaxError(SyntaxErrorCodes.parser_nextBorderedPart_missingClosingChar,
+                undefined, '"', '"')
+        };
+    }
+
+    /**
      * Splits the string to the starting bordered part and the rest and returns these parts in a pair.
      * If there is only one ending character and it differs from the starting one, nested bordering is supported.
      * Characters after an odd count of escape characters are ignored and cannot start or end a bordered part.
      * Starting and ending characters in quoted part are ignored, quotes can be escaped by an odd count of backslashes.
      * NOTE: First character of the string is expected to be 'start'.
+     * NOTE: Should not be used for slicing quoted strings, use nextQuotedString instead.
+     * NOTE: It is expected, that there are no comments in the given string.
      *
      * @param str string to be split
      * @param start starting character of the string and also starting character of the bordered part (one character)
@@ -238,11 +288,10 @@ export default class Parser {
             else {
                 backslashes = 0;
             }
+            // increases index for using "i" in slicing
             ++i;
             if (depth === 0) {
-                const partOne: string = str.substring(0, i);
-                let partTwo: string = (i < str.length) ? str.substring(i) : "";
-                return { first: partOne, second: partTwo };
+                return { first: str.slice(0, i), second: str.slice(i) };
             }
         }
         throw ErrorFactory.syntaxError(SyntaxErrorCodes.parser_nextBorderedPart_missingClosingChar, undefined,
