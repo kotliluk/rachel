@@ -5,9 +5,7 @@ import Row from "../relation/row";
 
 interface RelationTableProps {
     // relation to be shown
-    relation: Relation,
-    // true if dark theme should be applied
-    darkTheme: boolean
+    relation: Relation
 }
 
 interface RelationTableState {
@@ -168,20 +166,9 @@ export class ResultRelationTable extends React.Component<RelationTableProps, Rel
         const headerRow = this.createHeaderRow(columns);
         const rows = this.createRows(columns);
 
-        let divClassName;
-        let tableClassName;
-        if (this.props.darkTheme) {
-            divClassName = "result-table-container result-table-container-dark cursor-container-dark";
-            tableClassName = "result-table result-table-dark";
-        }
-        else {
-            divClassName = "result-table-container result-table-container-light cursor-container-light";
-            tableClassName = "result-table result-table-light";
-        }
-
         return (
-            <div className={divClassName}>
-                <table className={tableClassName}>
+            <div className="result-table-container">
+                <table className="result-table">
                     <thead>
                     {headerRow}
                     </thead>

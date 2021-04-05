@@ -111,10 +111,10 @@ export class ExprParser {
      * If a parsing error occurs, it is faked to work or ignored and reported in returning errors array.
      */
     public fakeParse(expr: string, cursorIndex: number): {whispers: string[], errors: ErrorWithTextRange[]} {
-        const indexedExpr = ParserIndexed.deleteCommentLines(IndexedString.new(expr));
-        if (indexedExpr.trim().isEmpty()) {
+        if (expr.trim() === "") {
             return {whispers: [...this.relations.keys()], errors: []};
         }
+        const indexedExpr = ParserIndexed.deleteCommentLines(IndexedString.new(expr));
         const {whispers, tokens, errors} = this.fakeParseTokens(indexedExpr, cursorIndex);
         // prevent errors in creation of RPN
         if (tokens.length === 0) {
@@ -362,7 +362,7 @@ export class ExprParser {
         let tokens: ExprToken[] = [];
         let errors: ErrorWithTextRange[] = [];
 
-        // tries to find a cursor in a starting whitespace sequence (because it is trimmed in main while)
+        /*// tries to find a cursor in a starting whitespace sequence (because it is trimmed in main while)
         let i = 0;
         const len = expr.length()
         while (i < len && expr.charAt(i).match(/\s/)) {
@@ -374,11 +374,12 @@ export class ExprParser {
         // tries to find a cursor in an ending whitespace sequence (because it is trimmed in main while)
         i = len - 1;
         while (i >= 0 && expr.charAt(i).match(/\s/)) {
-            if (expr.indexAt(i) === cursorIndex - 1) {
+            // checking !isNaN index to not whisper after deleted comments
+            if (expr.indexAt(i) === cursorIndex - 1 && !isNaN(expr.indexAt(i))) {
                 whispers = [...this.relations.keys()];
             }
             --i;
-        }
+        }*/
 
         let rest: IndexedString = expr;
         while (!rest.isEmpty()) {
@@ -388,7 +389,7 @@ export class ExprParser {
                 whispers = [...this.relations.keys()];
             }
 
-            rest = rest.trim();
+            //rest = rest.trim();
             // '(' can be a selection or a parentheses
             if (rest.startsWith("(")) {
                 let split: {first: IndexedString, second: IndexedString};
@@ -607,6 +608,13 @@ export class ExprParser {
                 tokens.push(new RelationToken(split.first));
                 rest = split.second;
                 selectionExpected = true;
+            }
+            //
+            else if (rest.charAt(0).match(/\s/)) {
+                if (rest.indexAt(0) === cursorIndex - 1) {
+                    whispers = [...this.relations.keys()];
+                }
+                rest = rest.slice(1);
             }
             // UNEXPECTED PART
             else {

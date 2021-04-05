@@ -3,9 +3,11 @@
     flex-wrap: wrap;
     justify-content: flex-start;
     align-items: center;
-    padding: 5px 0 10px 0;
-    margin-left: var(--left-text-margin);
+    padding: 10px 0 8px var(--left-text-margin);
     width: 100%;
+    box-sizing: border-box;
+    background-color: var(--light-color-c);
+    border-radius: 20px 20px 0 0;
 }
 
 /* APP NAME */
@@ -13,7 +15,21 @@
 .management-section h1 {
     margin: 0 20px 0 0;
     cursor: default;
-    color: var(--dark-details);
+    color: var(--light-color-e);
+}
+
+/* BUTTONS */
+
+/* light-theme version keeps default button colors */
+
+.body-dark .management-section button, .body-dark .management-section .button-like {
+    background-color: var(--dark-color-d);
+    border-color: var(--dark-color-d);
+}
+
+.body-dark .management-section button:hover, .body-dark .management-section .button-like:hover {
+    background-color: var(--dark-color-e);
+    border-color: var(--dark-color-e);
 }
 
 /* LIST MENU */
@@ -38,34 +54,27 @@
     border-radius: 5px;
 }
 
-.list-menu-dark {
-    background-color: var(--dark-section);
-    border: 2px solid var(--dark-details);
+.body-dark .list-menu {
+    background-color: var(--dark-color-b);
+    border: 2px solid var(--dark-color-d);
 }
 
-.list-menu-light {
-    background-color: var(--light-section);
-    border: 2px solid var(--light-details);
+.body-light .list-menu {
+    background-color: var(--light-color-b);
+    border: 2px solid var(--light-color-d);
+}
+
+.body-light .list-menu button {
+    background-color: var(--light-color-c);
+    border-color: var(--light-color-c);
+}
+
+.body-light .list-menu button:hover {
+    background-color: var(--light-color-d);
+    border-color: var(--light-color-d);
 }
 
 .list-menu span {
     width: 110px;
     display: inline-block;
-}
-
-/* FAKES ELEMENT TO APPEAR AS A BUTTON */
-
-.button-like {
-    -webkit-appearance: button;
-    text-decoration: none;
-    padding: 1px 6px;
-    display: inline-block;
-    box-sizing: border-box;
-    cursor: pointer;
-
-    border: 2px solid transparent;
-    border-radius: 5px;
-    margin: 1px;
-    height: var(--button-height);
-    font-size: var(--font-size);
 }

@@ -56,9 +56,7 @@ interface RelationsSectionProps {
     onImportRelations: (onDone: (msg: string) => void) => void,
 
     // whether to support null values
-    nullValuesSupport: boolean,
-    // true if dark theme should be applied
-    darkTheme: boolean
+    nullValuesSupport: boolean
 }
 
 interface RelationsSectionState {
@@ -166,14 +164,11 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
     }
 
     /**
-     * Creates menu buttons. If isShowingStored = true, creates button for each stored relation. Otherwise, creates
-     * button for each loaded relation. Buttons for stored relations with errors are highlighted.
+     * Creates menu buttons. Buttons for relations with errors are highlighted.
      */
     private createRelationMenuButtons = () => {
         return this.props.storedRelations.map((rel, i) => {
-            const className: string = (this.props.darkTheme ?
-                (this.props.storedRelationIndex === i ? "button-clicked-dark" : "button-dark") :
-                (this.props.storedRelationIndex === i ? "button-clicked-light" : "button-light"));
+            const className: string = (this.props.storedRelationIndex === i ? "button-clicked" : "");
             const actuality: string = rel.isActual() ? "" : "*";
             const style = rel.isValid() ? {} : {border: "2px solid #fd3030"};
             return (
@@ -193,10 +188,10 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                 key={text}
                 text={text}
                 onClick={onClick}
-                className={this.props.darkTheme ? "button-dark" : "button-light"}
+                className={""}
                 style={style}
                 tooltip={tooltip}
-                tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                tooltipClassName={"tooltip"}
             />);
         }
 
@@ -224,10 +219,8 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
 
                 <menu className="page-section-tab-menu">
                     {this.createRelationMenuButtons()}
-                    <button
-                        onClick={this.newRelation}
-                        className={this.props.darkTheme ? "button-dark" : "button-light"}
-                        style={{minWidth: "0", marginLeft: "10px", padding: "2px 5px 1px 6px"}}>
+                    <button onClick={this.newRelation}
+                        style={{minWidth: "0", marginLeft: "10px", padding: "2px 6px 1px 6px"}}>
                         <strong>+</strong>
                     </button>
                 </menu>
@@ -244,8 +237,6 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                     onDeleteColumn={this.props.onDeleteColumn}
 
                     onCtrlInput={this.handleCtrlInput}
-
-                    darkTheme={this.props.darkTheme}
                 />
 
                 <menu className="page-section-management-menu">
@@ -256,7 +247,7 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                         className={"action-button"}
                         style={{marginRight: "40px"}}
                         tooltip="Loads the relation into the application"
-                        tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                        tooltipClassName={"tooltip"}
                     />
                     <TextInput
                         label=""
@@ -265,7 +256,6 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                         onSubmit={this.handleRelationNameChange}
                         forbidden={forbiddenNamesFunction}
                         id="relation-name-input"
-                        darkTheme={this.props.darkTheme}
                     />
                     {createButton("Delete", this.deleteRelation,"Deletes the relation")}
                     {this.getCurRel().canRevert() && createButton("Revert", this.revertRelation,

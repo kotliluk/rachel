@@ -149,9 +149,9 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
                     <TooltipButton
                         text="Export"
                         onClick={this.exportEvalTreeAsPng}
-                        className={this.props.darkTheme ? "button-dark" : "button-light"}
+                        className={""}
                         tooltip={"Saves the evaluation tree as png"}
-                        tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                        tooltipClassName={"tooltip"}
                     />
                 </header>
 
@@ -172,22 +172,21 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
                     <TooltipButton
                         text="Add"
                         onClick={this.addRelation}
-                        className={this.props.darkTheme ? "button-dark" : "button-light"}
+                        className={""}
                         tooltip={"Adds given relation to stored ones"}
-                        tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                        tooltipClassName={"tooltip"}
                     />
                     <TooltipButton
                         text="Export"
                         onClick={this.exportRelation}
-                        className={this.props.darkTheme ? "button-dark" : "button-light"}
+                        className={""}
                         tooltip={"Saves given relation to a file"}
-                        tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                        tooltipClassName={"tooltip"}
                     />
                 </menu>
 
                 <ResultRelationTable
                     relation={this.getCurrentRelation() as Relation}
-                    darkTheme={this.props.darkTheme}
                 />
             </section>
         );

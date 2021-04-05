@@ -20,7 +20,7 @@
 }
 
 .message-box-message {
-    background-color: var(--light-section);
+    background-color: var(--light-color-b);
     color: black;
 }
 
@@ -45,8 +45,8 @@
     margin: -2px 0 0 0;
 
     border: none;
-    background-color: transparent;
-    color: var(--dark-details);
+    background-color: transparent !important;
+    color: var(--dark-color-d) !important;
     transform: scale(1.2);
 }
 

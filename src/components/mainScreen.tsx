@@ -53,14 +53,23 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
         // sets body template by settings from local storage
         document.body.classList.toggle('body-dark', LocalStorage.getDarkMode());
         document.body.classList.toggle('body-light', !LocalStorage.getDarkMode());
-        document.body.classList.toggle('cursor-container-dark', LocalStorage.getDarkMode());
-        document.body.classList.toggle('cursor-container-light', !LocalStorage.getDarkMode());
+
+        const initRelationData = {
+            name: "Relation",
+            columnNames: ["Column1", "Column2", "Column3"],
+            columnTypes: ["number", "string", "boolean"],
+            rows: [
+                ['', '', '']
+            ],
+            columnCount: 3,
+            rowCount: 1
+        };
 
         this.state = {
             samples: getSamples(),
 
             loadedRelations: new Map<string, Relation>(),
-            storedRelations: [ StoredRelation.new("Relation", true) ],
+            storedRelations: [ StoredRelation.fromData(initRelationData, true) ],
             selectedRelation: 0,
 
             expressions: [ {name: "Expression 1", text: ""} ],
@@ -224,9 +233,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
         LocalStorage.setDarkMode(darkTheme);
         this.setState({darkTheme: darkTheme});
         document.body.classList.toggle( 'body-dark', darkTheme);
-        document.body.classList.toggle( 'cursor-container-dark', darkTheme);
         document.body.classList.toggle( 'body-light', !darkTheme);
-        document.body.classList.toggle( 'cursor-container-light', !darkTheme);
     }
 
     /******************************************* RELATION SECTION HANDLERS *******************************************/
@@ -617,7 +624,6 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
                     onImportRelations={this.handleImportRelations}
 
                     nullValuesSupport={this.state.nullValuesSupport}
-                    darkTheme={this.state.darkTheme}
                 />
 
                 <ExpressionSection

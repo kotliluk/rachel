@@ -24,10 +24,7 @@ interface EditRelationTableProps {
     onDeleteColumn: (columnIndex: number) => void,
 
     // handler of input with Ctrl key
-    onCtrlInput: (ev: React.KeyboardEvent) => void,
-
-    // true if dark theme should be applied
-    darkTheme: boolean
+    onCtrlInput: (ev: React.KeyboardEvent) => void
 }
 
 interface EditRelationTableState {
@@ -256,7 +253,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
         return (
             <input
                 type='text'
-                className={this.props.darkTheme ? 'text-input-dark' : 'text-input-light'}
+                className={'text-input'}
                 spellCheck={false}
                 value={value}
                 onChange={(e) => {
@@ -274,7 +271,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
      */
     private createTooltip(text: string, style?: React.CSSProperties) {
         return (
-            <span className={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+            <span className={"tooltip"}
                 style={style}>{text}</span>
         )
     }
@@ -317,9 +314,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
             <td key='add-column'
                 rowSpan={2}
                 style={{width: "24px", border: "none", padding: "1px"}}>
-                <button
-                    onClick={this.handleNewColumn}
-                    className={this.props.darkTheme ? "button-dark" : "button-light"}
+                <button onClick={this.handleNewColumn}
                     style={{width: "100%", height: "100%"}}><strong>+</strong></button>
             </td>);
         return (
@@ -400,26 +395,15 @@ export default class EditRelationTable extends React.Component<EditRelationTable
             <tr key='add-row'>
                 <td key='add-row-column'
                     className="add-row-td">
-                    <button
-                        onClick={this.handleNewRow}
-                        className={this.props.darkTheme ? "button-dark" : "button-light"}
-                        ><strong>+</strong></button>
+                    <button onClick={this.handleNewRow}><strong>+</strong></button>
                 </td>
             </tr>
         );
     }
 
     public render() {
-        let divClassName: string;
-        let tableClassName: string;
-        if (this.props.darkTheme) {
-            divClassName = "edit-table-container edit-table-container-dark cursor-container-dark";
-            tableClassName = "edit-table edit-table-dark";
-        }
-        else {
-            divClassName = "edit-table-container edit-table-container-light cursor-container-light";
-            tableClassName = "edit-table edit-table-light";
-        }
+        let divClassName: string = "edit-table-container cursor-container";
+        let tableClassName: string = "edit-table";
 
         return (
             <div

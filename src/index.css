@@ -1,5 +1,4 @@
 :root {
-  /* CONSTANTS*/
   --button-height: 24px;
   --font-size: 16px;
   --left-text-margin: 15px;
@@ -7,20 +6,22 @@
   --error-color: #fd3030;
 
   /* DARK COLORS */
-  --dark-background: #36393f;
-  --dark-section: #202225;
-  --dark-area: var(--dark-background);
-  --dark-details: #7289da;
-
   --text-color-dark: white;
 
-  /* LIGHT COLORS */
-  --light-background: white;
-  --light-section: #bbbbbb;
-  --light-area: var(--light-background);
-  --light-details: #7289da; /* #89a4ff */
+  --dark-color-a: #36393f;
+  --dark-color-b: #202225;
+  --dark-color-c: #7586dc;
+  --dark-color-d: #4c60c2;
+  --dark-color-e: #141b39;
 
+  /* LIGHT COLORS */
   --text-color-light: black;
+
+  --light-color-a: #ffffff;
+  --light-color-b: #c6cdf1;
+  --light-color-c: #7586dc;
+  --light-color-d: #4c60c2;
+  --light-color-e: #141b39;
 }
 
 :focus {
@@ -29,16 +30,6 @@
 
 html {
   height: 100%;
-}
-
-html::-webkit-scrollbar-track {
-  background-color: var(--dark-area);
-}
-
-html::-webkit-scrollbar-thumb {
-  background-color: var(--light-section);
-  border-radius: 5px;
-  -webkit-box-shadow: inset 0 0 2px var(--light-area);
 }
 
 /* BODY */
@@ -52,93 +43,67 @@ body {
 }
 
 .body-light {
-  background-color: var(--light-background);
+  background-color: var(--light-color-a);
   color: var(--text-color-light);
 }
 
 .body-dark {
-  background-color: var(--dark-background);
+  background-color: var(--dark-color-a);
   color: var(--text-color-dark);
 }
 
 /* SCROLLBAR */
 
-.cursor-container-light::-webkit-scrollbar {
-  background-color: var(--light-area);
+.body-light .cursor-container::-webkit-scrollbar, .body-light::-webkit-scrollbar {
+  background-color: var(--light-color-a);
 }
 
-.cursor-container-dark::-webkit-scrollbar {
-  background-color: var(--dark-area);
+.body-dark .cursor-container::-webkit-scrollbar, .body-dark::-webkit-scrollbar {
+  background-color: var(--dark-color-a);
 }
 
-.cursor-container-light::-webkit-scrollbar-track {
-  background-color: var(--light-area);
+.body-light .cursor-container::-webkit-scrollbar-track, .body-light::-webkit-scrollbar-track {
+  background-color: var(--light-color-a);
 }
 
-.cursor-container-dark::-webkit-scrollbar-track {
-  background-color: var(--dark-area);
+.body-dark .cursor-container::-webkit-scrollbar-track, .body-dark::-webkit-scrollbar-track {
+  background-color: var(--dark-color-a);
 }
 
-.cursor-container-light::-webkit-scrollbar-thumb {
-  background-color: var(--light-section);
+.body-light .cursor-container::-webkit-scrollbar-thumb, .body-light::-webkit-scrollbar-thumb {
+  background-color: var(--light-color-b);
   border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 2px var(--light-area);
+  -webkit-box-shadow: inset 0 0 2px var(--light-color-a);
 }
 
-.cursor-container-dark::-webkit-scrollbar-thumb {
-  background-color: var(--dark-section);
+.body-dark .cursor-container::-webkit-scrollbar-thumb, .body-dark::-webkit-scrollbar-thumb {
+  background-color: var(--dark-color-b);
   border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 2px var(--dark-area);
+  -webkit-box-shadow: inset 0 0 2px var(--dark-color-a);
 }
 
-.cursor-container-light::-webkit-scrollbar-thumb:hover {
-  background-color: var(--light-details);
-  border-radius: 10px;
-}
-
-.cursor-container-dark::-webkit-scrollbar-thumb:hover {
-  background-color: var(--dark-details);
+.body-light .cursor-container::-webkit-scrollbar-thumb:hover, .body-light::-webkit-scrollbar-thumb:hover {
+  background-color: var(--light-color-d);
   border-radius: 10px;
 }
 
-.cursor-container-light::-webkit-scrollbar-corner {
-  background-color: var(--light-section);
+.body-dark .cursor-container::-webkit-scrollbar-thumb:hover, .body-dark::-webkit-scrollbar-thumb:hover {
+  background-color: var(--dark-color-d);
+  border-radius: 10px;
 }
 
-.cursor-container-dark::-webkit-scrollbar-corner {
-  background-color: var(--dark-section);
+.body-light .cursor-container::-webkit-scrollbar-corner, .body-light::-webkit-scrollbar-corner {
+  background-color: var(--light-color-b);
+}
+
+.body-dark .cursor-container::-webkit-scrollbar-corner, .body-dark::-webkit-scrollbar-corner {
+  background-color: var(--dark-color-b);
 }
 
 /* DIV */
 
 div {
   white-space: pre-wrap;  /* to use /n as new line in div */
-}
-
-/* SECTION BORDERS */
-
-.section-border-dark {
-  border: 6px solid var(--dark-section);
-  border-radius: 12px;
-  margin-bottom: 5px;
-}
-
-.section-border-light {
-  border: 6px solid var(--light-section);
-  border-radius: 12px;
-  margin-bottom: 3px;
-}
-
-.section-border-dark-clicked {
-  border: 6px solid var(--dark-details);
-  border-radius: 12px;
-  margin-bottom: 5px;
-}
-
-.section-border-light-clicked {
-  border: 6px solid var(--light-details);
-  border-radius: 12px;
-  margin-bottom: 3px;
 }
 
 /* MAIN */
@@ -165,7 +130,14 @@ menu {
   display: flex;
   flex-direction: column;
   width: 100%;
-  border-top: 2px solid var(--dark-details);
+}
+
+.body-light .page-section {
+  border-top: 2px solid var(--dark-color-c);
+}
+
+.body-dark .page-section {
+  border-top: 2px solid var(--dark-color-c);
 }
 
 /* PAGE SECTION HEADER (with heading and buttons) */
@@ -181,7 +153,14 @@ menu {
 
 .page-section > header > h2 {
   margin: 0 20px 0 0;
-  color: var(--dark-details);
+}
+
+.body-light .page-section > header > h2 {
+  color: var(--light-color-d);
+}
+
+.body-dark .page-section > header > h2 {
+  color: var(--light-color-c);
 }
 
 /* PAGE SECTION TAB MENU */
@@ -200,7 +179,6 @@ menu {
   white-space: nowrap;
   box-sizing: border-box;
   min-width: 100px;
-  /*max-width: 200px;*/
 }
 
 .page-section-tab-menu button:hover {
@@ -227,40 +205,39 @@ button {
   height: var(--button-height);
   font-size: var(--font-size);
   white-space: nowrap;
+  position: relative;
 }
 
-.button-light {
-  position: relative;
-  background-color: var(--light-section);
-  border-color: var(--light-section);
+.body-light button {
+  background-color: var(--light-color-b);
+  border-color: var(--light-color-b);
   color: var(--text-color-light);
 }
 
-.button-dark {
-  position: relative;
-  background-color: var(--dark-section);
-  border-color: var(--dark-section);
+.body-dark button {
+  background-color: var(--dark-color-b);
+  border-color: var(--dark-color-b);
   color: var(--text-color-dark);
 }
 
-.button-light:disabled {
-  background-color: var(--light-background) !important;
-  border-color: var(--light-background) !important;
+.body-light button:disabled {
+  background-color: transparent !important;
+  border-color: transparent !important;
   cursor: default;
 }
 
-.button-dark:disabled {
-  background-color: var(--dark-background) !important;
-  border-color: var(--dark-background) !important;
+.body-dark button:disabled {
+  background-color: transparent !important;
+  border-color: transparent !important;
   cursor: default;
 }
 
-.button-light:focus {
-  border-color: var(--light-details) !important;
+.body-light button:focus {
+  border-color: var(--light-color-d) !important;
 }
 
-.button-dark:focus {
-  border-color: var(--dark-details) !important;
+.body-dark button:focus {
+  border-color: var(--dark-color-d) !important;
 }
 
 button:hover {
@@ -271,47 +248,96 @@ button:hover .tooltip {
   visibility: visible;
 }
 
-.button-light:hover {
-  background-color: var(--light-details);
-  border-color: var(--light-details);
+.body-light button:hover {
+  background-color: var(--light-color-d);
+  border-color: var(--light-color-d);
 }
 
-.button-dark:hover {
-  background-color: var(--dark-details);
-  border-color: var(--dark-details);
+.body-dark button:hover {
+  background-color: var(--dark-color-d);
+  border-color: var(--dark-color-d);
 }
 
-.button-clicked-light {
+.body-light .button-clicked {
   position: relative;
-  background-color: var(--light-details);
-  border-color: var(--light-details);
+  background-color: var(--light-color-c);
+  border-color: var(--light-color-c);
   color: var(--text-color-light);
 }
 
-.button-clicked-dark {
+.body-light .button-clicked:hover {
+  background-color: var(--light-color-d);
+  border-color: var(--light-color-d);
+}
+
+.body-dark .button-clicked {
   position: relative;
-  background-color: var(--dark-details);
-  border-color: var(--dark-details);
+  background-color: var(--dark-color-c);
+  border-color: var(--dark-color-c);
   color: var(--text-color-dark);
+}
+
+.body-dark .button-clicked:hover {
+  background-color: var(--dark-color-d);
+  border-color: var(--dark-color-d);
 }
 
 .action-button {
   position: relative;
-  background-color: var(--action-color);
-  border-color: var(--action-color);
+  background-color: var(--action-color) !important;
+  border-color: var(--action-color) !important;
   color: white;
 }
 
 .action-button:hover {
-  background-color: var(--dark-details);
-  border-color: var(--dark-details);
+  background-color: var(--dark-color-d) !important;
+  border-color: var(--dark-color-d) !important;
+}
+
+/* FAKES ELEMENT TO APPEAR AS A BUTTON */
+
+.button-like {
+  -webkit-appearance: button;
+  text-decoration: none;
+  padding: 1px 6px;
+  display: inline-block;
+  box-sizing: border-box;
+  cursor: pointer;
+  position: relative;
+
+  border: 2px solid transparent;
+  border-radius: 5px;
+  margin: 1px;
+  height: var(--button-height);
+  font-size: var(--font-size);
+}
+
+.body-light .button-like {
+  background-color: var(--light-color-b);
+  border-color: var(--light-color-b);
+  color: var(--text-color-light);
+}
+
+.body-light .button-like:hover {
+  background-color: var(--light-color-d);
+  border-color: var(--light-color-d);
+}
+
+.body-dark .button-like {
+  background-color: var(--dark-color-b);
+  border-color: var(--dark-color-b);
+  color: var(--text-color-dark);
+}
+
+.body-dark .button-like:hover {
+  background-color: var(--dark-color-d);
+  border-color: var(--dark-color-d);
 }
 
 /* TOOLTIP */
 
 .tooltip {
   visibility: hidden;
-  /*min-width: 120px;*/
   width: auto;
   position: absolute;
   z-index: 1;
@@ -330,38 +356,30 @@ button:hover .tooltip {
   padding: 5px;
 }
 
-.tooltip-light {
-  /*border: 1px solid var(--light-section);*/
-}
-
-.tooltip-dark {
-  /*border: 1px solid var(--dark-section);*/
-}
-
 /* TEXT INPUT */
 
-.text-input-light {
-  background-color: var(--light-area);
-  border: 2px solid var(--light-section);
+.text-input {
   border-radius: 5px;
   padding: 2px;
   margin: 1px;
+}
+
+.body-light .text-input {
+  background-color: var(--light-color-a);
+  border: 2px solid var(--light-color-b);
   color: var(--text-color-light);
 }
 
-.text-input-light:focus {
-  border-color: var(--light-details);
+.body-light .text-input:focus {
+  border-color: var(--light-color-d);
 }
 
-.text-input-dark {
-  background-color: var(--dark-area);
-  border: 2px solid var(--dark-section);
-  border-radius: 5px;
-  padding: 2px;
-  margin: 1px;
+.body-dark .text-input {
+  background-color: var(--dark-color-a);
+  border: 2px solid var(--dark-color-b);
   color: var(--text-color-dark);
 }
 
-.text-input-dark:focus {
-  border-color: var(--dark-details);
+.body-dark .text-input:focus {
+  border-color: var(--dark-color-d);
 }

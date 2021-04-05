@@ -59,7 +59,7 @@ export class RelationStoreManager {
         }
         if (relations.length === 1) {
             const blob = new Blob([this.relationToCsv(relations[0], valueSeparator)], {type: "text/plain;charset=utf-8"});
-            saveAs(blob, filename + '.csv');
+            saveAs(blob, relations[0].getName() + '.csv');
             return;
         }
         const zip: JSZip = JSZip();

@@ -54,34 +54,17 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
 
     render() {
         const createBatchButton = () => {
-            const className: string = this.props.darkTheme ? "button-dark" : "button-light";
-            return (
-                <button
-                    onClick={this.props.onBatch}
-                    className={className}
-                >Batch</button>);
+            return (<button onClick={this.props.onBatch}>Batch</button>);
         }
         const createLoadProjectButton = () => {
-            const className: string = this.props.darkTheme ? "button-dark" : "button-light";
-            return (
-                <button
-                    onClick={this.props.onLoadProject}
-                    className={className}
-                >Load</button>);
+            return (<button onClick={this.props.onLoadProject} >Load</button>);
         }
         const createSaveProjectButton = () => {
-            const className: string = this.props.darkTheme ? "button-dark" : "button-light";
-            return (
-                <button
-                    onClick={this.props.onSaveProject}
-                    className={className}
-                >Save</button>);
+            return (<button onClick={this.props.onSaveProject} >Save</button>);
         }
         const createSettingsButton = () => {
-            const buttonClassName: string = this.props.darkTheme ? "button-dark" : "button-light";
-            const menuClassName: string = "list-menu " + (this.props.darkTheme ? "list-menu-dark" : "list-menu-light");
             const settingsMenu = (
-                <ul className={menuClassName}>
+                <ul className="list-menu">
                     <li>
                         <span>Null values:</span>
                         <input
@@ -141,41 +124,31 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                     </li>
                 </ul>
             );
-            return (
-                <div className={"button-like " + buttonClassName}
-                >Settings{settingsMenu}</div>);
+            return (<div className={"button-like"}>Settings{settingsMenu}</div>);
         }
         const createSamplesButton = () => {
-            const buttonClassName: string = this.props.darkTheme ? "button-dark" : "button-light";
-            const menuClassName: string = "list-menu " + (this.props.darkTheme ? "list-menu-dark" : "list-menu-light");
             const settingsMenu = (
-            <ul className={menuClassName}>
+            <ul className="list-menu">
                 {"Prepared sample projects"}
                 {getSamples().map((sample, i) => {
                     return (
                         <li key={i}>
                             {"- "}
-                            <button
-                                onClick={() => this.props.onLoadSample(sample.project)}
-                                className={buttonClassName}
+                            <button onClick={() => this.props.onLoadSample(sample.project)}
                             >{sample.name}</button>
                         </li>
                     );
                 })}
             </ul>
             );
-            return (
-                <div className={"button-like " + buttonClassName}
-                >Samples{settingsMenu}</div>);
+            return (<div className={"button-like"} >Samples{settingsMenu}</div>);
         }
         const createAboutButton = () => {
-            const className: string = this.props.darkTheme ? "button-dark" : "button-light";
             return (
-                <a
-                    href="https://github.com/kotliluk/rachel"
+                <a  href="https://github.com/kotliluk/rachel"
                     target="_blank"
                     rel="noreferrer"
-                    className={"button-like " + className}
+                    className={"button-like"}
                 >About</a>
             );
         }
@@ -183,7 +156,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
         return (
             <header className="management-section">
                 <h1>RACHEL</h1>
-                {createBatchButton()}
+                {/*createBatchButton()*/}
                 {createLoadProjectButton()}
                 {createSaveProjectButton()}
                 {createSamplesButton()}

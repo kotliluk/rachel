@@ -12,12 +12,12 @@
     margin-right: 4px;
 }
 
-.result-table-container-light {
-    border: 6px solid var(--light-section);
+.body-light .result-table-container {
+    border: 6px solid var(--light-color-b);
 }
 
-.result-table-container-dark {
-    border: 6px solid var(--dark-section);
+.body-dark .result-table-container {
+    border: 6px solid var(--dark-color-b);
 }
 
 /* TABLE */
@@ -30,10 +30,10 @@
     border-spacing: 0;
 }
 
-.result-table-light {
+.body-light .result-table {
 }
 
-.result-table-dark {
+.body-dark .result-table {
 }
 
 /* ROW NUMBER TD */
@@ -45,17 +45,17 @@
 }
 
 .result-table thead .row-number-td {
-    border-color: transparent;
+    border-color: transparent !important;
 }
 
-.result-table-light tbody .row-number-td {
-    border-color: var(--light-background);
-    background-color: var(--light-section);
+.body-light .result-table tbody .row-number-td {
+    border-color: var(--light-color-a);
+    background-color: var(--light-color-b);
 }
 
-.result-table-dark tbody .row-number-td {
-    border-color: var(--dark-background);
-    background-color: var(--dark-section);
+.body-dark .result-table tbody .row-number-td {
+    border-color: var(--dark-color-a);
+    background-color: var(--dark-color-b);
 }
 
 /* TH */
@@ -72,25 +72,25 @@
     cursor: pointer;
 }
 
-.result-table-light th {
+.body-light .result-table th {
     font-weight: bold;
-    border-color: var(--light-background);
-    background-color: var(--light-section);
+    border-color: var(--light-color-a);
+    background-color: var(--light-color-b);
 }
 
-.result-table-dark th {
+.body-dark .result-table th {
     font-weight: bold;
-    border-color: var(--dark-background);
-    background-color: var(--dark-section);
+    border-color: var(--dark-color-a);
+    background-color: var(--dark-color-b);
 }
 
-.result-table-light th:hover {
-    background-color: var(--light-details);
+.body-light .result-table th:hover {
+    background-color: var(--light-color-d);
 }
 
-.result-table-dark th:hover {
+.body-dark .result-table th:hover {
     font-weight: bold;
-    background-color: var(--dark-details);
+    background-color: var(--dark-color-d);
 }
 
 /* TD */
@@ -101,10 +101,10 @@
     padding: 2px 4px 0 4px;
 }
 
-.result-table-dark td {
-    border: 1px solid var(--dark-section);
+.body-dark .result-table td {
+    border: 1px solid var(--dark-color-b);
 }
 
-.result-table-light td {
-    border: 1px solid var(--light-section);
+.body-light .result-table td {
+    border: 1px solid var(--light-color-b);
 }

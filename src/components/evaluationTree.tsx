@@ -54,14 +54,14 @@ const nodePaddingX2: number = 24;
 const nodeHeight = 2 * fontHeight + nodePaddingX2;
 const maxNodeTextLength = 30;
 
-const backgroundColorLight = cssConstants.getPropertyValue('--light-background');
-const backgroundColorDark = cssConstants.getPropertyValue('--dark-background');
+const backgroundColorLight = cssConstants.getPropertyValue('--light-color-a');
+const backgroundColorDark = cssConstants.getPropertyValue('--dark-color-a');
 const textColorLight = cssConstants.getPropertyValue('--text-color-light');
 const textColorDark = cssConstants.getPropertyValue('--text-color-dark');
-const selectedNodeColorLight = cssConstants.getPropertyValue('--light-details');
-const unselectedNodeColorLight = cssConstants.getPropertyValue('--light-section');
-const selectedNodeColorDark = cssConstants.getPropertyValue('--dark-details');
-const unselectedNodeColorDark = cssConstants.getPropertyValue('--dark-section');
+const selectedNodeColorLight = cssConstants.getPropertyValue('--light-color-c');
+const unselectedNodeColorLight = cssConstants.getPropertyValue('--light-color-b');
+const selectedNodeColorDark = cssConstants.getPropertyValue('--dark-color-d');
+const unselectedNodeColorDark = cssConstants.getPropertyValue('--dark-color-c');
 
 interface DisplayTreeNode {
     title: string;

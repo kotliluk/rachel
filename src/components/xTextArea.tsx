@@ -68,6 +68,8 @@ type ExtendedHTMLTextArea = HTMLTextAreaElement & {
      * @param onChange callback to the parent after text change
      */
     insertCurrentSelectedWhisper: (onChange: (text: string, cursorIndex: number) => void) => void,
+    //
+    lastActionWasInsert: boolean,
     // reference to whisper div
     whisperDiv: WhisperDiv,
 
@@ -127,8 +129,8 @@ const fontSize: string = cssConstants.getPropertyValue('--x-textarea-font-size')
 const fontFamily: string = cssConstants.getPropertyValue('--x-textarea-font-family');
 const {fontWidth} = computeFontSizeInPx(fontFamily, fontSize);
 const lineHeight: number = Number(cssConstants.getPropertyValue('--x-textarea-line-height'));
-const numsBackgroundLight: string = cssConstants.getPropertyValue('--light-section');
-const numsBackgroundDark: string = cssConstants.getPropertyValue('--dark-section');
+const numsBackgroundLight: string = cssConstants.getPropertyValue('--light-color-b');
+const numsBackgroundDark: string = cssConstants.getPropertyValue('--dark-color-b');
 const numsColorLight: string = cssConstants.getPropertyValue('--text-color-light');
 const numsColorDark: string = cssConstants.getPropertyValue('--text-color-dark');
 const canvasWidth: number = 24;
@@ -181,7 +183,6 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         const props: Readonly<XTextAreaProps> = this.props;
         // @ts-ignore - gets parent div
         const div: HTMLDivElement = document.getElementById(props.id);
-        div.classList.add(this.props.darkTheme ? "x-textarea-div-dark" : "x-textarea-div-light");
 
         // LAYOUT (table with 1 row and 2 columns)
         const table = document.createElement('table');
@@ -191,7 +192,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         const tr = document.createElement('tr');
         const td1 = document.createElement('td');
         td1.setAttribute('id', props.id + '-td1');
-        td1.classList.add(props.darkTheme ? 'x-textarea-table-td1-dark' : 'x-textarea-table-td1-light');
+        td1.classList.add('x-textarea-table-td1');
         const td2 = document.createElement('td');
         td2.classList.add('x-textarea-table-td2');
         tr.appendChild(td1);
@@ -205,15 +206,13 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         ta.setAttribute('spellcheck', 'false');
         ta.mouseIsDown = false;
         ta.setAttribute('placeholder', this.props.placeholder);
-        ta.classList.add('x-textarea');
-        props.darkTheme ? ta.classList.add('x-textarea-dark', 'cursor-container-dark') :
-                          ta.classList.add('x-textarea-light', 'cursor-container-light');
+        ta.classList.add('x-textarea', 'cursor-container');
         ta.value = props.text;
 
         // TEXTAREA NUMBERS (Canvas)
         const canvas = document.createElement('canvas');
         canvas.width = canvasWidth + 4;    // must not set width & height in css !!!
-        canvas.classList.add(props.darkTheme ? 'canvas-dark' : 'canvas-light');
+        canvas.classList.add('x-textarea-canvas');
         ta.canvasLines = canvas;
         td1.appendChild(canvas);
         td2.appendChild(ta);
@@ -222,7 +221,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         // TEXTAREA WHISPER DIV
         // @ts-ignore - extended later in componentDidMount
         const whisperDiv: WhisperDiv = document.createElement('div');
-        whisperDiv.classList.add('whisper-div', props.darkTheme ? 'whisper-div-dark' : 'whisper-div-light');
+        whisperDiv.classList.add('whisper-div');
         whisperDiv.isShown = false;
         whisperDiv.selectedIndex = -1;
         whisperDiv.changeSelected = function (indexDiff: number) {
@@ -368,8 +367,11 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                 onChange(beforeAdd + currWhisper + afterAdd, newCursorPos);
                 this.setSelectionRange(newCursorPos, newCursorPos);
                 this.hideWhisper();
+                this.lastActionWasInsert = true;
             }
         }
+
+        ta.lastActionWasInsert = false;
 
         // TEXTAREA ERROR RANGE HIGHLIGHTS
         ta.errorDivs = [];
@@ -560,11 +562,16 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
     componentDidUpdate(prevProps: Readonly<XTextAreaProps>) {
         this.textarea.update(this.props.text, this.props.darkTheme);
         if (prevProps.darkTheme !== this.props.darkTheme) {
-            this.updateStyle();
+            this.textarea.paintLineNumbers(this.props.darkTheme);
         }
         // whispers
         if (this.props.whispers !== prevProps.whispers) {
-            this.textarea.createWhisper(this.props.whispers);
+            if (this.textarea.lastActionWasInsert) {
+                this.textarea.lastActionWasInsert = false;
+            }
+            else if (this.textarea.selectionStart === 0 || this.textarea.value[this.textarea.selectionStart - 1] !== '\n') {
+                this.textarea.createWhisper(this.props.whispers);
+            }
         }
         // highlights error
         if (this.props.errors !== undefined) {
@@ -574,29 +581,6 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         else if (this.props.errors !== prevProps.errors) {
             this.textarea.classList.remove('x-textarea-err');
         }
-    }
-
-    /**
-     * Updates style of the XTextArea elements to fit current darkTheme settings.
-     */
-    private updateStyle(): void {
-        // @ts-ignore
-        this.reactDiv.current.classList.toggle('x-textarea-div-dark', this.props.darkTheme);
-        // @ts-ignore
-        this.reactDiv.current.classList.toggle('x-textarea-div-light', !this.props.darkTheme);
-        this.textarea.classList.toggle('x-textarea-dark', this.props.darkTheme);
-        this.textarea.classList.toggle('cursor-container-dark', this.props.darkTheme);
-        this.textarea.classList.toggle('x-textarea-light', !this.props.darkTheme);
-        this.textarea.classList.toggle('cursor-container-light', !this.props.darkTheme);
-        this.textarea.paintLineNumbers(this.props.darkTheme);
-        this.textarea.canvasLines.classList.toggle('canvas-dark', this.props.darkTheme);
-        this.textarea.canvasLines.classList.toggle('canvas-light', !this.props.darkTheme);
-        this.textarea.whisperDiv.classList.toggle('whisper-div-dark', this.props.darkTheme);
-        this.textarea.whisperDiv.classList.toggle('whisper-div-light', !this.props.darkTheme);
-        // @ts-ignore
-        document.getElementById(this.props.id + '-td1').classList.toggle('x-textarea-table-td1-dark', this.props.darkTheme);
-        // @ts-ignore
-        document.getElementById(this.props.id + '-td1').classList.toggle('x-textarea-table-td1-light', !this.props.darkTheme);
     }
 
     /**

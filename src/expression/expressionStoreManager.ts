@@ -46,7 +46,7 @@ export class ExpressionStoreManager {
                         ('\n'.concat(file.text)).split('\n### ').forEach(part => {
                             try {
                                 if (part.trim().length !== 0) {
-                                    expressions.push(this.splitExpressionNameAndText(part.trim()));
+                                    expressions.push(this.splitExpressionNameAndText(part));
                                 }
                             }
                             catch (err) {

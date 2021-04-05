@@ -74,31 +74,31 @@
     border-radius: 4px;
 }
 
-.whisper-div-dark {
+.body-dark .whisper-div {
     border-color: white;
-    background-color: var(--dark-background);
+    background-color: var(--dark-color-a);
 }
 
-.whisper-div-light {
+.body-light .whisper-div {
     border-color: #555;
-    background-color: var(--light-background);
+    background-color: var(--light-color-a);
 }
 
-.whisper-div-dark div {
-    background-color: var(--dark-background);
+.body-dark .whisper-div div {
+    background-color: var(--dark-color-a);
 }
 
-.whisper-div-light div {
-    background-color: var(--light-background);
+.body-light .whisper-div div {
+    background-color: var(--light-color-a);
 }
 
-.whisper-div-dark .selected-whisper {
-    background-color: var(--dark-details) !important; /* more important than dark/light mode background color */
+.body-dark .whisper-div .selected-whisper {
+    background-color: var(--dark-color-d) !important; /* more important than dark/light mode background color */
     color: var(--whisper-dark-text-color);
 }
 
-.whisper-div-light .selected-whisper {
-    background-color: var(--light-details) !important; /* more important than dark/light mode background color */
+.body-light .whisper-div .selected-whisper {
+    background-color: var(--light-color-d) !important; /* more important than dark/light mode background color */
     color: var(--whisper-light-text-color);
 }
 
@@ -106,19 +106,19 @@
     font-weight: 1000;
 }
 
-.whisper-div-dark .whisper-rejected-word {
+.body-dark .whisper-div .whisper-rejected-word {
     color: #888888;
 }
 
-.whisper-div-light .whisper-rejected-word {
+.body-light .whisper-div .whisper-rejected-word {
     color: #666666;
 }
 
-.whisper-div-dark .selected-whisper .whisper-rejected-word {
+.body-dark .whisper-div .selected-whisper .whisper-rejected-word {
     color: var(--whisper-dark-text-color);
 }
 
-.whisper-div-light .selected-whisper .whisper-rejected-word {
+.body-light .whisper-div .selected-whisper .whisper-rejected-word {
     color: var(--whisper-light-text-color);
 }
 
@@ -158,56 +158,57 @@
 
 /* COLORS */
 
-.x-textarea-div-light {
-    border-color: var(--light-section);
-    background-color: var(--light-section);
+.body-light .x-textarea-div {
+    border-color: var(--light-color-b);
+    background-color: var(--light-color-b);
 }
 
-.x-textarea-div-dark {
-    border-color: var(--dark-section);
-    background-color: var(--dark-section);
+.body-dark .x-textarea-div {
+    border-color: var(--dark-color-b);
+    background-color: var(--dark-color-b);
 }
 
-.x-textarea-table-td1-light {
+.x-textarea-table-td1 {
     vertical-align: top;
     width: 1px;
-    background-color: var(--light-section);
 }
 
-.x-textarea-table-td1-dark {
-    vertical-align: top;
-    width: 1px;
-    background-color: var(--dark-section);
+.body-light .x-textarea-table-td1 {
+    background-color: var(--light-color-b);
 }
 
-.x-textarea-light {
-    border: 2px solid var(--light-section);
+.body-dark .x-textarea-table-td1 {
+    background-color: var(--dark-color-b);
+}
+
+.body-light .x-textarea {
+    border: 2px solid var(--light-color-b);
     color: var(--text-color-light);
-    background-color: var(--light-area);
+    background-color: var(--light-color-a);
 }
 
-.x-textarea-dark {
-    border: 2px solid var(--dark-section);
+.body-dark .x-textarea {
+    border: 2px solid var(--dark-color-b);
     color: var(--text-color-dark);
-    background-color: var(--dark-area);
+    background-color: var(--dark-color-a);
 }
 
-.x-textarea-dark::placeholder {
+.body-dark .x-textarea::placeholder {
     color: var(--text-color-dark);
 }
 
-.x-textarea-light:focus {
-    border: 2px solid var(--light-details);
+.body-light .x-textarea:focus {
+    border: 2px solid var(--light-color-d);
 }
 
-.x-textarea-dark:focus {
-    border: 2px solid var(--dark-details);
+.body-dark .x-textarea:focus {
+    border: 2px solid var(--dark-color-d);
 }
 
-.canvas-light {
-    background-color: var(--light-section);
+.body-light .x-textarea-canvas {
+    background-color: var(--light-color-b);
 }
 
-.canvas-dark {
-    background-color: var(--dark-section);
+.body-dark .x-textarea-canvas {
+    background-color: var(--dark-color-b);
 }

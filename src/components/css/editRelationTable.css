@@ -10,7 +10,6 @@
     width: fit-content;
     max-width: 100%;
     box-sizing: border-box;
-    /*resize: vertical;*/
     overflow: auto;
 
     border-radius: 12px;
@@ -19,12 +18,12 @@
     margin-right: 4px;
 }
 
-.edit-table-container-light {
-    border: 6px solid var(--light-section);
+.body-light .edit-table-container {
+    border: 6px solid var(--light-color-b);
 }
 
-.edit-table-container-dark {
-    border: 6px solid var(--dark-section);
+.body-dark .edit-table-container {
+    border: 6px solid var(--dark-color-b);
 }
 
 .edit-table-container .tooltip {
@@ -41,12 +40,6 @@
     table-layout: auto;
 }
 
-.edit-table-light {
-}
-
-.edit-table-dark {
-}
-
 /* ROW NUMBER TD */
 
 .edit-table .row-number-td {
@@ -58,17 +51,17 @@
 }
 
 .edit-table thead .row-number-td {
-    border-color: transparent;
+    border-color: transparent !important;
 }
 
-.edit-table-light tbody .row-number-td {
-    border-color: var(--light-background);
-    background-color: var(--light-section);
+.body-light .edit-table tbody .row-number-td {
+    border-color: var(--light-color-a);
+    background-color: var(--light-color-b);
 }
 
-.edit-table-dark tbody .row-number-td {
-    border-color: var(--dark-background);
-    background-color: var(--dark-section);
+.body-dark .edit-table tbody .row-number-td {
+    border-color: var(--dark-color-a);
+    background-color: var(--dark-color-b);
 }
 
 .row-number-td:hover .delete-row-or-column-button {
@@ -86,8 +79,8 @@
     margin: -2px 0 0 0;
 
     border: none;
-    background-color: transparent;
-    color: var(--dark-details);
+    background-color: transparent !important;
+    color: var(--dark-color-d) !important;
     transform: scale(1.2);
 }
 
@@ -130,20 +123,20 @@
     visibility: visible;
 }
 
-.edit-table-light td {
-    border: 1px solid var(--light-section);
+.body-light .edit-table td {
+    border: 1px solid var(--light-color-b);
 }
 
-.edit-table-dark td {
-    border: 1px solid var(--dark-section);
+.body-dark .edit-table td {
+    border: 1px solid var(--dark-color-b);
 }
 
-.edit-table-light td:focus-within {
-    border: 1px solid var(--light-details);
+.body-light .edit-table td:focus-within {
+    border: 1px solid var(--light-color-d);
 }
 
-.edit-table-dark td:focus-within {
-    border: 1px solid var(--dark-details);
+.body-dark .edit-table td:focus-within {
+    border: 1px solid var(--dark-color-d);
 }
 
 /* TEXT INPUT IN TABLE */
@@ -190,27 +183,27 @@
     visibility: visible;
 }
 
-.edit-table-light th {
-    background-color: var(--light-section);
-    border-color: var(--light-background);
+.body-light .edit-table th {
+    background-color: var(--light-color-b);
+    border-color: var(--light-color-a);
 }
 
-.edit-table-dark th {
-    background-color: var(--dark-section);
-    border-color: var(--dark-background);
+.body-dark .edit-table th {
+    background-color: var(--dark-color-b);
+    border-color: var(--dark-color-a);
 }
 
-.edit-table-light .name-th:focus-within {
+.body-light .edit-table .name-th:focus-within {
     border-width: 1px;
     padding-bottom: 2px;
-    border-color: var(--light-details);
+    border-color: var(--light-color-d);
     border-radius: 8px;
 }
 
-.edit-table-dark .name-th:focus-within {
+.body-dark .edit-table .name-th:focus-within {
     border-width: 1px;
     padding-bottom: 2px;
-    border-color: var(--dark-details);
+    border-color: var(--dark-color-d);
     border-radius: 8px;
 }
 
@@ -238,26 +231,26 @@ td.error-input {
     font-size: inherit;
 }
 
-.edit-table-light select {
+.body-light .edit-table select {
     border-color: transparent;
 }
 
-.edit-table-dark select {
+.body-dark .edit-table select {
     border-color: transparent;
 }
 
-.edit-table-light select:hover {
-    background-color: var(--light-details);
+.body-light .edit-table select:hover {
+    background-color: var(--light-color-d);
 }
 
-.edit-table-dark select:hover {
-    background-color: var(--dark-details);
+.body-dark .edit-table select:hover {
+    background-color: var(--dark-color-d);
 }
 
-.edit-table-light select option {
-    background-color: var(--light-background);
+.body-light .edit-table select option {
+    background-color: var(--light-color-a);
 }
 
-.edit-table-dark select option {
-    background-color: var(--dark-background);
+.body-dark .edit-table select option {
+    background-color: var(--dark-color-a);
 }

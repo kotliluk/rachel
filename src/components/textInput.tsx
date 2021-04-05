@@ -13,9 +13,7 @@ interface TextInputProps {
     forbidden: (text: string) => boolean,
 
     // id of the input
-    id: string,
-    // true if dark theme should be applied
-    darkTheme: boolean
+    id: string
 }
 
 interface TextInputState {
@@ -85,12 +83,11 @@ export class TextInput extends React.Component<TextInputProps, TextInputState> {
                     value={this.state.value}
                     onChange={event => this.handleChange(event.target.value)}
                     onKeyDown={this.handleKeyDown}
-                    className={this.props.darkTheme ? 'text-input-dark' : 'text-input-light'}
+                    className={'text-input'}
                 />
                 <button
                     onClick={this.handleSubmit}
                     disabled={this.state.buttonDisable}
-                    className={this.props.darkTheme ? "button-dark" : "button-light"}
                 >{this.props.buttonText}</button>
             </>
         );

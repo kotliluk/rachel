@@ -285,9 +285,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
     public render() {
         const createExprMenuButtons = () => {
             return this.props.expressions.map((expr, i) => {
-                const className: string = (this.props.darkTheme ?
-                    (this.props.currentExpressionIndex === i ? "button-clicked-dark" : "button-dark") :
-                    (this.props.currentExpressionIndex === i ? "button-clicked-light" : "button-light"));
+                const className: string = (this.props.currentExpressionIndex === i ? "button-clicked" : "");
                 return (<button
                     key={i}
                     onClick={() => this.handleSelectDifferentExpression(i)}
@@ -301,10 +299,10 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                 key={text}
                 text={text}
                 onClick={onClick}
-                className={this.props.darkTheme ? "button-dark" : "button-light"}
+                className={""}
                 style={style}
                 tooltip={tooltip}
-                tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                tooltipClassName={"tooltip"}
             />);
         }
 
@@ -318,9 +316,9 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                     key={prop.key}
                     text={prop.text}
                     onClick={() => this.addSpecialString(prop.char, prop.shift)}
-                    className={this.props.darkTheme ? "button-dark" : "button-light"}
+                    className={""}
                     tooltip={prop.tooltip}
-                    tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                    tooltipClassName={"tooltip"}
                     style={style}
                 />);
             });
@@ -336,10 +334,8 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
 
                 <menu className="page-section-tab-menu">
                     {createExprMenuButtons()}
-                    <button
-                        onClick={this.newExpression}
-                        className={this.props.darkTheme ? "button-dark" : "button-light"}
-                        style={{minWidth: "0", marginLeft: "10px", padding: "2px 5px 1px 6px"}}>
+                    <button onClick={this.newExpression}
+                        style={{minWidth: "0", marginLeft: "10px", padding: "2px 6px 1px 6px"}}>
                         <strong>+</strong>
                     </button>
                 </menu>
@@ -375,7 +371,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                         className={"action-button"}
                         style={{marginRight: "40px"}}
                         tooltip="Evaluates given RA expression"
-                        tooltipClassName={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                        tooltipClassName={"tooltip"}
                     />
                     <TextInput
                         label=""
@@ -384,7 +380,6 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                         onSubmit={this.handleExprNameChange}
                         forbidden={() => false}
                         id="expression-name-input"
-                        darkTheme={this.props.darkTheme}
                     />
                     {createButton("Delete", this.deleteExpression, "Deletes current RA expression")}
                 </menu>

@@ -2,7 +2,23 @@
 
 ## Test info
 
-Děkuji, že mi vaším používáním mé aplikace pomůžete s jejím otestováním.
+Děkuji, že mi pomůžete s testováním mé aplikace. Věřím, že na oplátku bude dobrým nástojem
+pro učení relační algebry a bude tedy přínosná i vám. Do teď aplikace nebyla nijak "masově"
+používána, nicméně věřím, že zásadní chyby v ní již (téměř :smile:) nejsou. Myslím, že v případě
+nalezení chyby nyní není nutné otevírat Issue na GitHubu a stačí o ni informovat na můj mail - 
+kotliluk@fel.cvut.cz - nicméně záleží hlavně, co je vám pohodlnější. Mimo upozornění na zásadní
+chyby budu vděčný i za jakýkoli jiný feedback - co vám přijde nepřehledné, co byste si představovali
+jinak nebo u čeho jste očekávali, že bude fungovat jinak... Jako návrhy pro zpětnou vazbu mě
+napadají například:
+
+- při vložení doporučených slov do textového pole s výrazy za vložené slovo vkládat/nevkládat mezeru?
+- tlačitka spíše s výstižným textovým popisem nebo s piktogramy?
+- nějaké nápady na barevné rozložení (protože s tím bojuji ze všeho nejvíc...)
+
+Dále následuje manuál, přestože se může zdát dlouhý, používání aplikace by mělo být intuitivní.
+Přeji vám příjemné použití Rachel :smile: Lukáš
+
+## About
 
 Rachel is an evaluator and syntax checker for relational algebra (RA). It provides both
 data definition and expression evaluation. It uses simplified RA notation
@@ -104,7 +120,8 @@ The last mentioned section is the upper one.
 We can **Load** or **Save** the whole project using .rachel files. The saved file contains all
 editable relations, all expressions and selected null values support.
 
-We can load prepared sample projects by **Samples** button.
+We can load prepared sample projects by **Samples** button. It can be a great start before
+your own relation and expression definition.
 
 In the **Settings**, we can set:
 
@@ -138,7 +155,7 @@ Rachel uses simplified RA notation (not scientific). It is easier to write and m
 
 Example - projection of columns Name and Address of a relation Human:
 - simplified notation: Human\[Name, Address\]
-- scientific notation: pi<sub>Name, Address</sub>(Human)
+- scientific notation: π<sub>Name, Address</sub>(Human)
 
 ### Null values
 
@@ -208,9 +225,9 @@ it holds "!column == false", "column && boolean == false",
 "column || boolean == boolean". When number, string, or
 null constant is given, an error is triggered.
 
-- negation (! or ~ or U+00AC): !boolean, ...
-- and (&& or & or U+2227): boolean && boolean, ...
-- or (|| or | or U+2228): boolean || boolean, ...
+- negation (! or ~ or ¬): !boolean, ...
+- and (&& or & or ∧): boolean && boolean, ...
+- or (|| or | or ∨): boolean || boolean, ...
 
 ## Implementation details
 
