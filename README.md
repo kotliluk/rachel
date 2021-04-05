@@ -226,4 +226,4 @@ The application uses many great libraries (available on [npm](https://www.npmjs.
 
 ## License
 
-Rachel is licensed under [MIT License](../blob/master/LICENSE)
+Rachel is licensed under [MIT License](./LICENSE)
