@@ -22,7 +22,7 @@ import {
     ValueToken
 } from "./valueTokens"
 import {VETreeNode} from "../vetree/veTreeNode";
-import {getRange, IndexedString, isEmpty, length, nextBorderedPart, nextQuotedString} from "../tools/indexedString";
+import {getRange, IndexedString, isEmpty, length, nextQuotedString} from "../tools/indexedString";
 import ParserIndexed from "../tools/parserIndexed";
 import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {CodeErrorCodes, ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";

@@ -12,15 +12,15 @@ const samples: ProjectSample[] = [
             relations: [
                 {
                     name: "Car",
-                    columnNames: ["Id", "Owner", "Color", "Electric"],
-                    columnTypes: ["number", "number", "string", "boolean"],
+                    columnNames: ["Id", "Owner", "Color", "Electric", "Weight"],
+                    columnTypes: ["number", "number", "string", "boolean", "number"],
                     rows: [
-                        ['1', '1', 'Blue', 'true'],
-                        ['2', '1', 'Green', 'false'],
-                        ['3', '2', 'Blue', 'false'],
-                        ['4', '3', 'Black', 'true']
+                        ['1', '1', 'Blue', 'true', '1000'],
+                        ['2', '1', 'Green', 'false', '1 200'],
+                        ['3', '2', 'Blue', 'false', '850.42'],
+                        ['4', '3', 'Black', 'true', '1 111.111 111']
                     ],
-                    columnCount: 4,
+                    columnCount: 5,
                     rowCount: 4
                 },
                 {

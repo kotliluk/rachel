@@ -35,6 +35,10 @@ interface EditRelationTableState {
     selectedRow: "names" | "types" | number | undefined
 }
 
+// @ts-ignore
+const cssConstants: CSSStyleDeclaration = getComputedStyle(document.querySelector(':root'));
+const cellPaddingSides: number = Number(cssConstants.getPropertyValue('--cell-padding-sides-num'));
+
 /**
  * Table for editing a relation relation. It supports adding new columns and rows and editing all relation (column names,
  * column types and row inputs).
@@ -42,6 +46,10 @@ interface EditRelationTableState {
 export default class EditRelationTable extends React.Component<EditRelationTableProps, EditRelationTableState> {
 
     private readonly containerRef: React.RefObject<HTMLDivElement>;
+    // reference to the head row with columns names
+    private readonly tableHeadRowRef: React.RefObject<HTMLTableRowElement>;
+    // width of cells in head (with deducted padding) to set proper inputs width to not resize the table
+    private columnWidths: number[] = [];
 
     constructor(props: EditRelationTableProps) {
         super(props);
@@ -50,6 +58,33 @@ export default class EditRelationTable extends React.Component<EditRelationTable
             selectedRow: undefined
         }
         this.containerRef = React.createRef<HTMLDivElement>();
+        this.tableHeadRowRef = React.createRef<HTMLTableRowElement>();
+    }
+
+    componentDidMount() {
+        // clicking in the window blurs the selected input (if clicked into a cell, event propagation is stopped to not blur
+        window.addEventListener('click', () => {
+            this.setSelectedInput(undefined, undefined);
+        });
+    }
+
+    componentDidUpdate() {
+        const headRow = this.tableHeadRowRef.current;
+        if (headRow !== null) {
+            // cells without the first (line number) and last (add column button)
+            const cells = [...headRow.cells].slice(1, -1);
+            this.columnWidths = cells.map(cell => cell.clientWidth - 2 * cellPaddingSides);
+        }
+    }
+
+    /**
+     * Changes column width if the resized input element does not fit in it anymore.
+     */
+    private handleInputResize = (inputElement: EventTarget & HTMLInputElement, column: number) => {
+        // handles larger width
+        if (inputElement.scrollWidth > this.columnWidths[column]) {
+            this.columnWidths[column] = inputElement.scrollWidth;
+        }
     }
 
     /**
@@ -137,7 +172,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
      * Catches key inputs with special effects in tht table.
      */
     private handleKeyDown = (event: React.KeyboardEvent): void => {
-        if (event.key === "Enter") {
+        if (event.key === "Enter" || event.key === "Esc" || event.key === "Escape") {
             this.setSelectedInput(undefined, undefined);
         }
         else if (event.key === "Tab" || (event.ctrlKey && event.key === "ArrowRight")) {
@@ -217,15 +252,19 @@ export default class EditRelationTable extends React.Component<EditRelationTable
     /**
      * Creates a text input bind to handling change of given column and row.
      */
-    private createInput(value: string, column: number, row: "names" | "types" | number) {
+    private createInput = (value: string, column: number, row: "names" | "types" | number) => {
         return (
             <input
                 type='text'
                 className={this.props.darkTheme ? 'text-input-dark' : 'text-input-light'}
                 spellCheck={false}
                 value={value}
-                onChange={(e) => this.handleChange(e.target.value, column, row)}
+                onChange={(e) => {
+                    this.handleChange(e.target.value, column, row);
+                    this.handleInputResize(e.target, column);
+                }}
                 autoFocus={true}
+                style={{width: this.columnWidths[column] + "px"}}
             />
         )
     }
@@ -235,10 +274,8 @@ export default class EditRelationTable extends React.Component<EditRelationTable
      */
     private createTooltip(text: string, style?: React.CSSProperties) {
         return (
-            <span
-                className={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
-                style={style}
-            >{text}</span>
+            <span className={"tooltip " + (this.props.darkTheme ? "tooltip-dark" : "tooltip-light")}
+                style={style}>{text}</span>
         )
     }
 
@@ -250,8 +287,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
     }
 
     /**
-     * Creates a first row of the table with column names. If the table is editable and "names" row is selected,
-     * the entry in selected column is changed to text input. Otherwise, plain text is displayed.
+     * Creates content of the first row of the table with column names.
      * If the table is editable, additional blank column is added for "add column" button in next rows.
      */
     private createNamesRow() {
@@ -268,10 +304,12 @@ export default class EditRelationTable extends React.Component<EditRelationTable
                 className += " error-input";
             }
             return (
-                <th
-                    key={columnIndex}
+                <th key={columnIndex}
                     className={className}
-                    onClick={() => this.setSelectedInput(columnIndex, "names")}
+                    onClick={ev => {
+                        this.setSelectedInput(columnIndex, "names");
+                        ev.stopPropagation();
+                    }}
                 >{content}{span}</th>
             )});
         // pushes "add column" button in last column
@@ -285,20 +323,18 @@ export default class EditRelationTable extends React.Component<EditRelationTable
                     style={{width: "100%", height: "100%"}}><strong>+</strong></button>
             </td>);
         return (
-            <tr><td className="row-number-td"/>{rowData}</tr>
+            <><td className="row-number-td"/>{rowData}</>
         );
     }
 
     /**
-     * Creates a first row of the table with column types. If the table is editable,
-     * the entries in the row are select elements. Otherwise, plain texts are displayed.
+     * Creates content of the second row of the table with column types.
      * If the table is editable, "add column" button is added in the last column with row span to the end of the table.
      */
     private createTypesRow() {
         const rowData = this.props.relation.getColumnTypes().map((columnType, columnIndex) => {
             const content = (
-                <select
-                    value={columnType}
+                <select value={columnType}
                     onChange={(e) => this.handleChange(e.target.value, columnIndex, "types")}>
                     <option>number</option>
                     <option>string</option>
@@ -311,13 +347,12 @@ export default class EditRelationTable extends React.Component<EditRelationTable
                 >{content}{this.createDeleteButton(() => this.handleDeleteColumn(columnIndex))}</th>
             )});
         return (
-            <tr><td className="row-number-td"/>{rowData}</tr>
+            <><td className="row-number-td"/>{rowData}</>
         );
     }
 
     /**
-     * Creates a data rows of the table. If the table is editable and any data row is selected,
-     * the entry in selected column is changed to text input. Otherwise, plain text is displayed.
+     * Creates a data rows of the table.
      */
     private createRows() {
         // creates default row if no exists
@@ -345,10 +380,12 @@ export default class EditRelationTable extends React.Component<EditRelationTable
                         className = "error-input";
                     }
                     return (
-                        <td
-                            key={columnIndex}
+                        <td key={columnIndex}
                             className={className}
-                            onClick={() => this.setSelectedInput(columnIndex, rowIndex)}
+                            onClick={ev => {
+                                this.setSelectedInput(columnIndex, rowIndex);
+                                ev.stopPropagation();
+                            }}
                         >{content}{span}</td>
                     )})}
             </tr>
@@ -389,12 +426,10 @@ export default class EditRelationTable extends React.Component<EditRelationTable
                 className={divClassName}
                 ref={this.containerRef}
                 onKeyDown={this.handleKeyDown}>
-                <table
-                    className={tableClassName}
-                    onBlur={() => this.setSelectedInput(undefined, undefined)}>
+                <table className={tableClassName}>
                     <thead>
-                        {this.createNamesRow()}
-                        {this.createTypesRow()}
+                        <tr ref={this.tableHeadRowRef}>{this.createNamesRow()}</tr>
+                        <tr>{this.createTypesRow()}</tr>
                     </thead>
                     <tbody>
                         {this.createRows()}

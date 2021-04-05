@@ -1,3 +1,8 @@
+:root {
+    --cell-padding-sides: 6px;
+    --cell-padding-sides-num: 6;
+}
+
 /* TABLE CONTAINER */
 
 .edit-table-container {
@@ -111,7 +116,7 @@
 .edit-table td {
     position: relative;
     height: 21px;
-    padding: 2px 4px 0 4px;
+    padding: 2px var(--cell-padding-sides) 0 var(--cell-padding-sides);
     white-space: nowrap;
     border-radius: 6px;
 }
@@ -136,22 +141,20 @@
     border: 1px solid var(--dark-details);
 }
 
-/* INPUT IN TABLE */
+/* TEXT INPUT IN TABLE */
 
-.edit-table input {
+.edit-table input[type="text"] {
     margin: 0;
-    padding: 0 0 0 2px;
+    padding: 0;
     font-size: inherit;
     border: none;
-    min-width: 200px;
-    width: 100%;
+    box-sizing: border-box;
 }
 
 /* TH */
 
 .edit-table th {
     position: relative;
-    padding-right: 4px;
     font-weight: bold;
     white-space: nowrap;
 }
@@ -165,18 +168,17 @@
 }
 
 .name-th {
-    border-width: 2px 2px 0 2px;
+    border-width: 1px 1px 0 1px;
     border-style: solid;
     border-radius: 8px 8px 0 0;
-    padding: 2px 4px 4px 6px;
-    box-sizing: border-box;
+    padding: 2px var(--cell-padding-sides) 4px var(--cell-padding-sides);
 }
 
 .type-th {
-    border-width: 0 2px 2px 2px;
+    border-width: 0 1px 1px 1px;
     border-style: solid;
     border-radius: 0 0 8px 8px;
-    padding: 0 4px 2px 2px;
+    padding: 0 var(--cell-padding-sides) 2px var(--cell-padding-sides);
 }
 
 .type-th:hover .delete-row-or-column-button {
@@ -194,14 +196,14 @@
 }
 
 .edit-table-light .name-th:focus-within {
-    border-width: 2px;
+    border-width: 1px;
     padding-bottom: 2px;
     border-color: var(--light-details);
     border-radius: 8px;
 }
 
 .edit-table-dark .name-th:focus-within {
-    border-width: 2px;
+    border-width: 1px;
     padding-bottom: 2px;
     border-color: var(--dark-details);
     border-radius: 8px;
@@ -210,7 +212,7 @@
 /* ERROR INPUT */
 
 .name-th.error-input {
-    border-width: 2px;
+    border-width: 1px;
     padding-bottom: 2px;
     border-color: red !important;
     border-radius: 8px;
