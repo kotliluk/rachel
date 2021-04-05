@@ -1,5 +1,9 @@
 # Rachel
 
+## Test info
+
+Děkuji, že mi vaším používáním mé aplikace pomůžete s jejím otestováním.
+
 Rachel is an evaluator and syntax checker for relational algebra (RA). It provides both
 data definition and expression evaluation. It uses simplified RA notation
 and is implemented for evaluation over small data sets for teaching purposes.
