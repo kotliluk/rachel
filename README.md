@@ -209,3 +209,21 @@ null constant is given, an error is triggered.
 - or (|| or | or U+2228): boolean || boolean, ...
 
 ## Implementation details
+
+Rachel is implemented in [TypeScript](https://www.typescriptlang.org/)
+(a [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) typed superset) using
+[React](https://github.com/facebook/react) framework and
+[create-react-app](https://github.com/facebook/create-react-app) for set up configuration.
+
+The application uses many great libraries (available on [npm](https://www.npmjs.com/)):
+- [JSZIP](https://github.com/Stuk/jszip) - Create, read and edit .zip files with Javascript
+- [visx](https://github.com/airbnb/visx) - Visualization components
+- [export-svg-with-styles](https://www.npmjs.com/package/export-svg-with-styles) - Turn your SVGs to PNGs
+- [FileSaver.js](https://github.com/eligrey/FileSaver.js) - An HTML5 saveAs() FileSaver implementation
+- [Lodash](https://github.com/lodash/lodash) - A modern JavaScript utility library delivering modularity, performance, & extras
+- [Jest](https://github.com/facebook/jest) - Delightful JavaScript Testing
+- [PostMail](https://postmail.invotes.com/) - Send email from JavaScript or static HTML without backend code
+
+## License
+
+Rachel is licensed under [MIT License](../blob/master/LICENSE)
