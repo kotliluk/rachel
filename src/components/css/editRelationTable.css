@@ -1,6 +1,8 @@
 :root {
     --cell-padding-sides: 6px;
     --cell-padding-sides-num: 6;
+    --input-margin-sides: -2px;
+    --input-margin-sides-num: -2;
 }
 
 /* TABLE CONTAINER */
@@ -127,26 +129,44 @@
     border: 1px solid var(--light-color-b);
 }
 
+.body-light .edit-table td:hover {
+    border: 1px solid var(--light-color-d);
+}
+
 .body-dark .edit-table td {
     border: 1px solid var(--dark-color-b);
 }
 
+.body-dark .edit-table td:hover {
+    border: 1px solid var(--dark-color-d);
+}
+
 .body-light .edit-table td:focus-within {
+    background-color: var(--light-color-b);
     border: 1px solid var(--light-color-d);
 }
 
 .body-dark .edit-table td:focus-within {
+    background-color: var(--dark-color-d);
     border: 1px solid var(--dark-color-d);
 }
 
 /* TEXT INPUT IN TABLE */
 
 .edit-table input[type="text"] {
-    margin: 0;
-    padding: 0;
+    margin: 0 var(--input-margin-sides);
+    padding: 0 calc(var(--input-margin-sides) * -1);
     font-size: inherit;
     border: none;
     box-sizing: border-box;
+}
+
+.body-light .edit-table .name-th input {
+    background-color: var(--light-color-b);
+}
+
+.body-dark .edit-table .name-th input {
+    background-color: var(--dark-color-b);
 }
 
 /* TH */
@@ -193,9 +213,24 @@
     border-color: var(--dark-color-a);
 }
 
+.body-light .edit-table .name-th:hover {
+    border-width: 1px;
+    padding-bottom: 2px;
+    border-color: var(--light-color-d);
+    border-radius: 8px;
+}
+
+.body-dark .edit-table .name-th:hover {
+    border-width: 1px;
+    padding-bottom: 2px;
+    border-color: var(--dark-color-d);
+    border-radius: 8px;
+}
+
 .body-light .edit-table .name-th:focus-within {
     border-width: 1px;
     padding-bottom: 2px;
+    background-color: var(--light-color-d);
     border-color: var(--light-color-d);
     border-radius: 8px;
 }
@@ -203,6 +238,7 @@
 .body-dark .edit-table .name-th:focus-within {
     border-width: 1px;
     padding-bottom: 2px;
+    background-color: var(--dark-color-d);
     border-color: var(--dark-color-d);
     border-radius: 8px;
 }

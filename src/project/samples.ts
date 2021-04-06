@@ -15,10 +15,10 @@ const samples: ProjectSample[] = [
                     columnNames: ["Id", "Owner", "Color", "Electric", "Weight"],
                     columnTypes: ["number", "number", "string", "boolean", "number"],
                     rows: [
-                        ['1', '1', 'Blue', 'true', '1000'],
+                        ['1', '1', 'Blue', 'True', '1000'],
                         ['2', '1', 'Green', 'false', '1 200'],
-                        ['3', '2', 'Blue', 'false', '850.42'],
-                        ['4', '3', 'Black', 'true', '1 111.111 111']
+                        ['3', '2', 'Blue', 'F', '850.42'],
+                        ['4', '3', 'Black', 't', '1 111.111 111']
                     ],
                     columnCount: 5,
                     rowCount: 4

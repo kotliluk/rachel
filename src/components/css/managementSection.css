@@ -7,7 +7,7 @@
     width: 100%;
     box-sizing: border-box;
     background-color: var(--light-color-c);
-    border-radius: 20px 20px 0 0;
+    border-radius: 20px;
 }
 
 /* APP NAME */

@@ -159,7 +159,7 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
      */
     private handleCtrlInput = (event: React.KeyboardEvent) => {
         if (event.key === "Enter") {
-            this.props.onLoadRelation(MessageBox.message);
+            this.loadRelation();
         }
     }
 

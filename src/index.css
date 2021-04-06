@@ -133,11 +133,11 @@ menu {
 }
 
 .body-light .page-section {
-  border-top: 2px solid var(--dark-color-c);
+  border-bottom: 2px solid var(--dark-color-c);
 }
 
 .body-dark .page-section {
-  border-top: 2px solid var(--dark-color-c);
+  border-bottom: 2px solid var(--dark-color-c);
 }
 
 /* PAGE SECTION HEADER (with heading and buttons) */

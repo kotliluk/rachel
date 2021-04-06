@@ -35,6 +35,7 @@ interface EditRelationTableState {
 // @ts-ignore
 const cssConstants: CSSStyleDeclaration = getComputedStyle(document.querySelector(':root'));
 const cellPaddingSides: number = Number(cssConstants.getPropertyValue('--cell-padding-sides-num'));
+const inputMarginSides: number = Number(cssConstants.getPropertyValue('--input-margin-sides-num'));
 
 /**
  * Table for editing a relation relation. It supports adding new columns and rows and editing all relation (column names,
@@ -70,7 +71,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
         if (headRow !== null) {
             // cells without the first (line number) and last (add column button)
             const cells = [...headRow.cells].slice(1, -1);
-            this.columnWidths = cells.map(cell => cell.clientWidth - 2 * cellPaddingSides);
+            this.columnWidths = cells.map(cell => cell.clientWidth - 2 * (cellPaddingSides + inputMarginSides));
         }
     }
 
@@ -270,10 +271,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
      * Creates a tooltip with given text.
      */
     private createTooltip(text: string, style?: React.CSSProperties) {
-        return (
-            <span className={"tooltip"}
-                style={style}>{text}</span>
-        )
+        return (<span className={"tooltip"} style={style}>{text}</span>)
     }
 
     /**
