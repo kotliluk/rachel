@@ -7,7 +7,6 @@ const strTwo: string = "The quick brown fox jumps over the lazy dog.";
 const indexedStrTwo: IndexedChar[] = strTwo.split('').map((char, index) => {return {char: char, index: index}});
 
 const strThree: string = "abcde";
-const indexedStrThree: IndexedChar[] = strThree.split('').map((char, index) => {return {char: char, index: index}});
 
 describe("new", () => {
     test("Str with '\n'' and 'řý87\"6§.)'", () => {
@@ -56,20 +55,6 @@ describe("new", () => {
         expect(indexedString.getFirstIndex()).toStrictEqual(NaN);
         expect(indexedString.getLastIndex()).toStrictEqual(NaN);
         expect(indexedString.indexedCharAt(9).getChars()).toStrictEqual([{char: '\n', index: NaN}]);
-    });
-});
-
-describe("getChars", () => {
-    test("is deep copy", () => {
-        // arrange
-        const indexedString = IndexedString.new(strOne);
-        // act
-        const chars1 = indexedString.getChars();
-        chars1[0].index = -5;
-        chars1[1].char = 'X';
-        chars1.pop();
-        // assert (no change expected in original string)
-        expect(indexedString.getChars()).toStrictEqual(indexedStrOne);
     });
 });
 
@@ -388,7 +373,7 @@ describe("join", () => {
         const isC = IndexedString.new(c);
         const isD = IndexedString.new(d);
         // act
-        IndexedString.join([isA, isB, isC, isD], s);
+        IndexedString.join([isA, isB, isC, isD], s, [NaN, NaN, NaN]);
         // assert
         expect(isA.toString()).toStrictEqual(a);
         expect(isB.toString()).toStrictEqual(b);
@@ -408,7 +393,7 @@ describe("join", () => {
         const isS = IndexedString.new(s, NaN);
         const expected = [...isA.getChars(), ...isS.getChars(), ...isB.getChars(), ...isS.getChars(), ...isC.getChars()];
         // act
-        const actual = IndexedString.join([isA, isB, isC], s);
+        const actual = IndexedString.join([isA, isB, isC], s, [NaN, NaN]);
         // assert
         expect(actual.getChars()).toStrictEqual(expected);
     });
@@ -426,24 +411,7 @@ describe("join", () => {
         const isD = IndexedString.new(d);
         const expected: string = [a, b, c, d].join(s);
         // act
-        const actual: IndexedString = IndexedString.join([isA, isB, isC, isD], s);
-        // assert
-        expect(actual.toString()).toStrictEqual(expected);
-    });
-
-    test("join 4 without sep", () => {
-        // arrange
-        const a: string = "abc def";
-        const b: string = "123 456";
-        const c: string = "ěšč řžý";
-        const d: string = ",./ ;'\\";
-        const isA = IndexedString.new(a);
-        const isB = IndexedString.new(b);
-        const isC = IndexedString.new(c);
-        const isD = IndexedString.new(d);
-        const expected: string = [a, b, c, d].join('');
-        // act
-        const actual: IndexedString = IndexedString.join([isA, isB, isC, isD]);
+        const actual: IndexedString = IndexedString.join([isA, isB, isC, isD], s, [NaN, NaN, NaN]);
         // assert
         expect(actual.toString()).toStrictEqual(expected);
     });
@@ -455,7 +423,7 @@ describe("join", () => {
         const isA = IndexedString.new(a);
         const expected: string = [a].join(s);
         // act
-        const actual: IndexedString = IndexedString.join([isA], s);
+        const actual: IndexedString = IndexedString.join([isA], s, []);
         // assert
         expect(actual.toString()).toStrictEqual(expected);
     });
@@ -465,7 +433,7 @@ describe("join", () => {
         const s: string = "\n###\n";
         const expected: string = [].join(s);
         // act
-        const actual: IndexedString = IndexedString.join([], s);
+        const actual: IndexedString = IndexedString.join([], s, []);
         // assert
         expect(actual.toString()).toStrictEqual(expected);
     });

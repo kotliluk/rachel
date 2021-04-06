@@ -39,26 +39,23 @@ export class IndexedString {
     }
 
     /**
-     * Joins given array of IndexedStrings with given separator. When the separator is omitted, empty string "" is used.
-     * All characters of all inserted separators will have NaN indexes.
+     * Joins given array of IndexedStrings with given separator. Inserted separators have indexed given from the
+     * separatorIndexes array. NOTE: separatorIndexes array is expected to have length at least "arr.length - 1".
      *
      * @param arr array to join
      * @param separator separator string
+     * @param separatorIndexes
      */
-    public static join(arr: IndexedString[], separator?: string): IndexedString {
+    public static join(arr: IndexedString[], separator: string, separatorIndexes: number[]): IndexedString {
         if (arr.length === 0) {
             return IndexedString.empty();
         }
         if (arr.length === 1) {
             return arr[0];
         }
-        if (separator === undefined) {
-            separator = '';
-        }
-        const isSep: IndexedString = IndexedString.new(separator, NaN);
         const toConcat: IndexedString[] = Array<IndexedString>(2 * arr.length - 2);
         for (let i = 1; i < arr.length; i++) {
-            toConcat[2 * i - 2] = isSep;
+            toConcat[2 * i - 2] = IndexedString.new(separator, separatorIndexes[i - 1]);
             toConcat[2 * i - 1] = arr[i];
         }
         return arr[0].concat(...toConcat);
@@ -95,12 +92,10 @@ export class IndexedString {
 
     /**
      * Returns IndexedChar array representing the IndexedString.
-     * The array is deep copied.
+     * The array is reference to inner IndexedString structure.
      */
     public getChars(): IndexedChar[] {
-        const ret: IndexedChar[] = Array<IndexedChar>(this.length());
-        this.chars.forEach((char, i) => {ret[i] = {char: char.char, index: char.index}})
-        return ret;
+        return this.chars;
     }
 
     /**
@@ -247,6 +242,31 @@ export class IndexedString {
         return strSplit.map((strSplit, index) => {
             return new IndexedString(strSplit, this.chars.slice(prefixSum[index], prefixSum[index] + strSplit.length));
         });
+    }
+
+    /**
+     * Split a string into substrings using the '\n' separator and return them as an array.
+     * Also, it returns indexes of removed '\n's.
+     */
+    public splitToLines(): {split: IndexedString[], separatorIndexes: number[]} {
+        if (this.isEmpty()) {
+            return {split: [IndexedString.empty()], separatorIndexes: []};
+        }
+        const strSplit: string[] = this.str.split('\n');
+        const strSplitLenMinusOne = strSplit.length - 1;
+        const prefixSum: number[] = Array<number>(strSplit.length);
+        const separatorIndexes: number[] = Array<number>(strSplit.length - 1);
+        prefixSum[0] = 0;
+        for (let i = 0; i < strSplitLenMinusOne; i++) {
+            const ps = prefixSum[i] + strSplit[i].length + 1;
+            separatorIndexes[i] = this.indexAt(ps - 1);
+            prefixSum[i + 1] = ps;
+        }
+
+        const split = strSplit.map((strSplit, index) => {
+            return new IndexedString(strSplit, this.chars.slice(prefixSum[index], prefixSum[index] + strSplit.length));
+        });
+        return {split, separatorIndexes};
     }
 
     /**

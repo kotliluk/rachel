@@ -191,7 +191,8 @@ export default class ParserIndexed {
      * @param str indexed string to be deleted comments in
      */
     public static deleteCommentLines(str: IndexedString) {
-        const toJoin: IndexedString[] = str.split('\n').map(line => {
+        const {split, separatorIndexes} = str.splitToLines();
+        const toJoin = split.map((line, lineNum) => {
             let insideQuotes: boolean = false;
             let backslashes: number = 0;
             for (let i = 0; i < line.length(); ++i) {
@@ -213,6 +214,6 @@ export default class ParserIndexed {
             }
             return line;
         });
-        return IndexedString.join(toJoin, '\n');
+        return IndexedString.join(toJoin, '\n', separatorIndexes);
     }
 }

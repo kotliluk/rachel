@@ -118,7 +118,7 @@ export class ExprParser {
         const {whispers, tokens, errors} = this.fakeParseTokens(indexedExpr, cursorIndex);
         // prevent errors in creation of RPN
         if (tokens.length === 0) {
-            return {whispers: [...this.relations.keys()], errors: errors};
+            return {whispers: whispers, errors: errors};
         }
         // fakes found errors to valid parse
         this.assertValidInfixTokens(tokens, AssertType.NOT_THROW, errors);
@@ -362,25 +362,6 @@ export class ExprParser {
         let tokens: ExprToken[] = [];
         let errors: ErrorWithTextRange[] = [];
 
-        /*// tries to find a cursor in a starting whitespace sequence (because it is trimmed in main while)
-        let i = 0;
-        const len = expr.length()
-        while (i < len && expr.charAt(i).match(/\s/)) {
-            if (expr.indexAt(i) === cursorIndex - 1) {
-                whispers = [...this.relations.keys()];
-            }
-            ++i;
-        }
-        // tries to find a cursor in an ending whitespace sequence (because it is trimmed in main while)
-        i = len - 1;
-        while (i >= 0 && expr.charAt(i).match(/\s/)) {
-            // checking !isNaN index to not whisper after deleted comments
-            if (expr.indexAt(i) === cursorIndex - 1 && !isNaN(expr.indexAt(i))) {
-                whispers = [...this.relations.keys()];
-            }
-            --i;
-        }*/
-
         let rest: IndexedString = expr;
         while (!rest.isEmpty()) {
             // checks whether the cursor was reached
@@ -609,12 +590,16 @@ export class ExprParser {
                 rest = split.second;
                 selectionExpected = true;
             }
-            //
+            // WHITE SPACE
             else if (rest.charAt(0).match(/\s/)) {
-                if (rest.indexAt(0) === cursorIndex - 1) {
-                    whispers = [...this.relations.keys()];
+                let i = 0;
+                while (i < rest.length() && rest.charAt(i).match(/\s/)) {
+                    if (rest.indexAt(i) === cursorIndex - 1) {
+                        whispers = [...this.relations.keys()];
+                    }
+                    ++i;
                 }
-                rest = rest.slice(1);
+                rest = rest.slice(i);
             }
             // UNEXPECTED PART
             else {

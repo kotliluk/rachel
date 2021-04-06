@@ -68,8 +68,8 @@ type ExtendedHTMLTextArea = HTMLTextAreaElement & {
      * @param onChange callback to the parent after text change
      */
     insertCurrentSelectedWhisper: (onChange: (text: string, cursorIndex: number) => void) => void,
-    //
-    lastActionWasInsert: boolean,
+    // true when the whisper should not be shown automatically (e.g., after pressing Enter)
+    notAutoShowWhisper: boolean,
     // reference to whisper div
     whisperDiv: WhisperDiv,
 
@@ -309,6 +309,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                     div.ondblclick = event => {
                         this.focus();
                         this.insertCurrentSelectedWhisper(props.onChange);
+                        this.notAutoShowWhisper = true;
                         event.stopPropagation();
                     };
                     this.whisperDiv.appendChild(div);
@@ -331,7 +332,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                 const cursorDistanceFromTATotalTop: number = (cursorLineAndColumn.line + 1) * lineHeight;
                 const cursorDistanceFromTATotalLeft: number = cursorLineAndColumn.column * fontWidth;
                 const yPos: number = cursorDistanceFromTATotalTop - this.scrollTop;
-                const xPos: number = cursorDistanceFromTATotalLeft - this.scrollLeft;
+                const xPos: number = cursorDistanceFromTATotalLeft - this.scrollLeft + 4;
                 // shows the div at computed position if the cursor is visible
                 if (0 <= yPos && yPos < this.clientHeight && 0 <= xPos && xPos < this.clientWidth) {
                     // if the div is in the upper part of the screen, shows it under the cursor
@@ -367,11 +368,10 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                 onChange(beforeAdd + currWhisper + afterAdd, newCursorPos);
                 this.setSelectionRange(newCursorPos, newCursorPos);
                 this.hideWhisper();
-                this.lastActionWasInsert = true;
             }
         }
 
-        ta.lastActionWasInsert = false;
+        ta.notAutoShowWhisper = false;
 
         // TEXTAREA ERROR RANGE HIGHLIGHTS
         ta.errorDivs = [];
@@ -536,6 +536,14 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                     // keeps default behaviour
                 }
             }
+            if (ev.key === "Enter" || ev.key === "Tab") {
+                // does not show whisper after pressing Enter or Tab
+                ta.notAutoShowWhisper = true;
+            }
+            if (ev.key === "Backspace" && !ta.whisperDiv.isShown) {
+                // does not show whisper after pressing Backspace when it is closed
+                ta.notAutoShowWhisper = true;
+            }
             if (ev.ctrlKey) {
                 if (ev.key === " ") {
                     if (ta.whisperDiv.isShown) {
@@ -566,10 +574,10 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         }
         // whispers
         if (this.props.whispers !== prevProps.whispers) {
-            if (this.textarea.lastActionWasInsert) {
-                this.textarea.lastActionWasInsert = false;
+            if (this.textarea.notAutoShowWhisper) {
+                this.textarea.notAutoShowWhisper = false;
             }
-            else if (this.textarea.selectionStart === 0 || this.textarea.value[this.textarea.selectionStart - 1] !== '\n') {
+            else {
                 this.textarea.createWhisper(this.props.whispers);
             }
         }
