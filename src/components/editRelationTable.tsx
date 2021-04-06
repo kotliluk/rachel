@@ -64,6 +64,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
         window.addEventListener('click', () => {
             this.setSelectedInput(undefined, undefined);
         });
+        this.componentDidUpdate();
     }
 
     componentDidUpdate() {

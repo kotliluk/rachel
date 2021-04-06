@@ -111,7 +111,7 @@
 .edit-table td {
     position: relative;
     height: 21px;
-    padding: 2px var(--cell-padding-sides) 0 var(--cell-padding-sides);
+    padding: 2px var(--cell-padding-sides) 2px var(--cell-padding-sides);
     white-space: nowrap;
     border-radius: 6px;
 }

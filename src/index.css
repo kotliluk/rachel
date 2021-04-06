@@ -341,19 +341,20 @@ button:hover .tooltip {
   width: auto;
   position: absolute;
   z-index: 1;
+  cursor: default;
 
   top: 100%;
   left: 0;
   margin-left: -2px;
   margin-top: 4px;
+  padding: 5px;
+  border: 1px solid #555;
+  border-radius: 6px;
 
   background-color: white;
   color: #555;
   white-space: nowrap;
-  border: 1px solid #555;
-  border-radius: 6px;
   text-align: center;
-  padding: 5px;
 }
 
 /* TEXT INPUT */

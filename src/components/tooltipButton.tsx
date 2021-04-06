@@ -36,6 +36,10 @@ export class TooltipButton extends React.Component<TooltipButtonProps, TooltipBu
                 <span
                     className={this.props.tooltipClassName}
                     style={this.props.tooltipStyle}
+                    onClick={event => {
+                        event.stopPropagation();
+                        event.preventDefault();
+                    }}
                 >{this.props.tooltip}</span>
             </button>
         );

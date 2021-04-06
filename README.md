@@ -3,20 +3,15 @@
 ## Test info
 
 Děkuji, že mi pomůžete s testováním mé aplikace. Věřím, že na oplátku bude dobrým nástojem
-pro učení relační algebry a bude tedy přínosná i vám. Do teď aplikace nebyla nijak "masově"
-používána, nicméně věřím, že zásadní chyby v ní již (téměř :smile:) nejsou. Myslím, že v případě
+pro učení relační algebry a bude tedy přínosná i Vám. Do teď aplikace nebyla nijak "masově"
+používána, nicméně věřím, že zásadní chyby v ní již nejsou. Myslím, že v případě
 nalezení chyby nyní není nutné otevírat Issue na GitHubu a stačí o ni informovat na můj mail - 
-kotliluk@fel.cvut.cz - nicméně záleží hlavně, co je vám pohodlnější. Mimo upozornění na zásadní
-chyby budu vděčný i za jakýkoli jiný feedback - co vám přijde nepřehledné, co byste si představovali
-jinak nebo u čeho jste očekávali, že bude fungovat jinak... Jako návrhy pro zpětnou vazbu mě
-napadají například:
-
-- při vložení doporučených slov do textového pole s výrazy za vložené slovo vkládat/nevkládat mezeru?
-- tlačitka spíše s výstižným textovým popisem nebo s piktogramy?
-- nějaké nápady na barevné rozložení (protože s tím bojuji ze všeho nejvíc...)
+kotliluk@fel.cvut.cz. Mimo upozornění na zásadní
+chyby budu vděčný i za jakýkoli jiný feedback - co Vám přijde nepřehledné, co byste si představovali
+jinak nebo u čeho jste očekávali, že bude fungovat jinak...
 
 Dále následuje manuál, přestože se může zdát dlouhý, používání aplikace by mělo být intuitivní.
-Přeji vám příjemné použití Rachel :smile: Lukáš
+Přeji Vám příjemné používání Rachel :smile: Lukáš
 
 ## About
 
@@ -25,8 +20,8 @@ data definition and expression evaluation. It uses simplified RA notation
 and is implemented for evaluation over small data sets for teaching purposes.
 Rachel has strong, explicit error description which helps better RA understanding.
 
-The application was implemented by Lukáš Kotlík as a bachelor thesis on Faculty of
-Electrical Engineering, Czech Technical University.
+The application was implemented by Lukáš Kotlík as a bachelor thesis on [Faculty of
+Electrical Engineering, Czech Technical University](https://fel.cvut.cz/en/).
 
 ## Usage
 

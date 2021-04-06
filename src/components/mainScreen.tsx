@@ -178,7 +178,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
                 relations: this.state.storedRelations.map(sr => sr.toDataObject()),
                 expressions: this.state.expressions,
                 nullValuesSupport: this.state.nullValuesSupport
-                }, "rachel_project");
+                }, "project");
             console.log("Project saved.");
         }
         catch (err) {
@@ -368,7 +368,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
      */
     private handleExportRelations = (onDone: (msg: string) => void): void => {
         try {
-            RelationStoreManager.save(this.state.storedRelations, "rachel_relations", this.state.csvValueSeparator);
+            RelationStoreManager.save(this.state.storedRelations, "relations", this.state.csvValueSeparator);
             onDone(this.state.storedRelations.length + " relations saved.");
         }
         catch (err) {
@@ -514,7 +514,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
      */
     private handleExportExpressions = (onDone: (msg: string) => void): void => {
         try {
-            ExpressionStoreManager.save(this.state.expressions, 'rachel_expressions');
+            ExpressionStoreManager.save(this.state.expressions, 'expressions');
             onDone("Expressions saved in a textual file.");
         }
         catch (err) {
