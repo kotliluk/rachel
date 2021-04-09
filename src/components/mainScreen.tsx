@@ -158,8 +158,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
      * files.
      */
     private handleBatch = () => {
-        const processor: BatchProcessor = new BatchProcessor();
-        processor.process('rachel-eval-results').then(console.log).catch(console.warn);
+        BatchProcessor.process('rachel-eval-results');
     }
 
     /**

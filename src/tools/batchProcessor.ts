@@ -20,6 +20,7 @@ import {isProjectObject, Project} from "../project/project";
 import {ExprParser} from "../expression/exprParser";
 import {StoredRelation, StoredRelationData} from "../relation/storedRelation";
 import {Expression} from "../expression/expression";
+import {MessageBox} from "../components/messageBox";
 
 /**
  * Class for processing multiple input .txt files with expressions.
@@ -30,55 +31,72 @@ export class BatchProcessor {
      * Opens file dialog and processes files selected by the user. For each .rachel file creates a textual evaluation
      * report. Files are expected to contain valid project data. Returns promise with string message about process.
      */
-    public process(filename: string): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            FileDialog.openFiles(".rachel").then(files => {
-                console.log(files.length + ' files loaded to BatchProcessor');
-                console.time("Batch duration");
-                let reports: {name: string, text: string}[] = [];
-                let processed: number = 0;
-                let skipped: number = 0;
-                files.forEach(file => {
-                    if (file.text === null) {
-                        reports.push({
-                            name: file.name + '-eval-report.txt',
-                            text: "ERROR: Source file cannot be loaded."
-                        });
-                        skipped += 1;
-                        console.warn('Null read from ' + file.name);
-                    }
-                    else if (file.name.match(/\.rachel$/)) {
-                        // @ts-ignore - file.text cannot be null now
-                        reports.push(this.processFile(file));
-                        processed += 1;
-                    }
-                    else {
-                        reports.push({
-                            name: file.name + '-eval-report.txt',
-                            text: "ERROR: Source file is not a .rachel file, but: " + file.name
-                        });
-                        skipped += 1;
-                        console.warn('Unsupported filetype: ' + file.name);
-                    }
-                    console.log("Batch in progress... " + (processed + skipped) + "/" + files.length);
-                });
-                console.timeEnd("Batch duration");
+    public static process(filename: string): void {
+        FileDialog.openFiles(".rachel").then(files => {
+            console.log(files.length + ' files loaded to BatchProcessor');
+            console.time("Batch duration");
+
+            let reports: {name: string, text: string}[] = [];
+            let processed: number = 0;
+            let skipped: number = 0;
+
+            /**
+             * Processes a file on the given index and calls the processing of the next file.
+             * If all files were processed, calls downloadReports().
+             */
+            const processNext = (i: number) => {
+                if (i >= files.length) {
+                    return downloadReports();
+                }
+                const file = files[i];
+                if (file.text === null) {
+                    reports.push({
+                        name: file.name + '-eval-report.txt',
+                        text: "ERROR: Source file cannot be loaded."
+                    });
+                    skipped += 1;
+                    console.warn('Null read from ' + file.name);
+                }
+                else if (file.name.match(/\.rachel$/)) {
+                    // @ts-ignore - file.text cannot be null now
+                    reports.push(BatchProcessor.processFile(file));
+                    processed += 1;
+                }
+                else {
+                    reports.push({
+                        name: file.name + '-eval-report.txt',
+                        text: "ERROR: Source file is not a .rachel file, but: " + file.name
+                    });
+                    skipped += 1;
+                    console.warn('Unsupported filetype: ' + file.name);
+                }
+                MessageBox.message("Batch in progress... " + (processed + skipped) + "/" + files.length);
+                setTimeout(() => processNext(i + 1), 0);
+            }
+
+            /**
+             * Downloads created reports.
+             */
+            const downloadReports = () => {
                 if (reports.length === 0) {
-                    resolve("Batch finished: " + processed + " files processed, " + skipped + " skipped.");
+                    MessageBox.message("Batch finished: " + processed + " files processed, " + skipped + " skipped.");
                 }
                 const zip: JSZip = JSZip();
                 reports.forEach(report => {
                     zip.file(report.name, report.text);
-                });
+                })
                 zip.generateAsync({type: "blob"}).then(content => {
                     saveAs(content, filename + ".zip");
                     console.log("Batch finished: " + processed + " files processed, " + skipped + " skipped.");
-                    resolve("Batch finished: " + processed + " files processed, " + skipped + " skipped.");
+                    MessageBox.message("Batch finished: " + processed + " files processed, " + skipped + " skipped.");
                 }).catch(err => {
-                    reject("Results saving error: " + err.message);
+                    MessageBox.error("Results saving error: " + err.message);
                 });
-            });
-        })
+                console.timeEnd("Batch duration");
+            }
+
+            processNext(0);
+        });
     }
 
     /**
@@ -86,24 +104,24 @@ export class BatchProcessor {
      * expressions in the project and generates textual report: header (see reportHeader()),
      * formatted relations (see formatRelations()) and formatted expressions (see processExpression()).
      */
-    private processFile = (file: {name: string, text: string}): {name: string, text: string} => {
+    private static processFile = (file: {name: string, text: string}): {name: string, text: string} => {
         const project: Project = JSON.parse(file.text);
         const status = isProjectObject(project);
         if (status !== "OK") {
             return {name: file.name.slice(0, -4) + '-eval-report.txt', text: "Invalid JSON file: " + status};
         }
-        const relations: Map<string, Relation> = this.parseRelations(project.relations, project.nullValuesSupport);
+        const relations: Map<string, Relation> = BatchProcessor.parseRelations(project.relations, project.nullValuesSupport);
         const exprParser: ExprParser = new ExprParser(relations, project.nullValuesSupport);
 
         const exprCount: number = project.expressions.length;
-        const reports = project.expressions.map(e => this.processExpression(e, exprParser));
+        const reports = project.expressions.map(e => BatchProcessor.processExpression(e, exprParser));
         const ops: OperationsCount = addOperations(...reports.map(r => r.counts));
         const errors: number = reports.reduce((agg, report) => agg + report.error, 0);
 
         return {
             name: file.name.slice(0, -5) + '-eval-report.txt',
-            text: this.reportHeader(exprCount, errors, ops, project.nullValuesSupport) +
-                  this.formatRelations(project.relations) +
+            text: BatchProcessor.reportHeader(exprCount, errors, ops, project.nullValuesSupport) +
+                  BatchProcessor.formatRelations(project.relations) +
                   reports.map(r => r.text).join('')
         };
     }
@@ -111,7 +129,7 @@ export class BatchProcessor {
     /**
      * Creates full Relation representation for given StoredRelationData array.
      */
-    private parseRelations(storedData: StoredRelationData[], nullValuesSupport: boolean): Map<string, Relation> {
+    private static parseRelations(storedData: StoredRelationData[], nullValuesSupport: boolean): Map<string, Relation> {
         const map: Map<string, Relation> = new Map();
         storedData.forEach(data => {
             try {
@@ -131,7 +149,7 @@ export class BatchProcessor {
      * Processes given expression in context of given parser. Returns formatted expression and its result (or error),
      * count of used RA operations and 0/1 error indicator.
      */
-    private processExpression = (expr: Expression, parser: ExprParser): {text: string, counts: OperationsCount, error: number} => {
+    private static processExpression = (expr: Expression, parser: ExprParser): {text: string, counts: OperationsCount, error: number} => {
         try {
             const evaluationTree = parser.parse(expr.text);
             const counts: OperationsCount = operationsOfTree(evaluationTree);
@@ -160,7 +178,7 @@ export class BatchProcessor {
      * @param operations count of operations
      * @param nullValuesSupport
      */
-    private reportHeader = (expressions: number, errors: number, operations: OperationsCount, nullValuesSupport: boolean): string => {
+    private static reportHeader = (expressions: number, errors: number, operations: OperationsCount, nullValuesSupport: boolean): string => {
         const total: number = totalOperations(operations);
         const binary: number = binaryOperations(operations);
         const unary: number = unaryOperations(operations);
@@ -185,7 +203,7 @@ export class BatchProcessor {
     /**
      * Returns formatted string for given StoredRelationsData array.
      */
-    private formatRelations = (storedData: StoredRelationData[]): string => {
+    private static formatRelations = (storedData: StoredRelationData[]): string => {
         return "### Defined relations ###\n\n" + storedData.map(data => {
             return '# ' + data.name + ' #\n' +
                 data.columnNames.join(', ') + '\n' +
