@@ -9,20 +9,17 @@ import {
     RelationToken,
     UnaryOperatorToken
 } from "./exprTokens";
-import Parser from "../tools/parser";
+import StringUtils from "../utils/stringUtils";
 import CodeError from "../error/codeError";
 import RATreeNode from "../ratree/raTreeNode";
 import RelationNode from "../ratree/relationNode";
 import {
-    containsAny,
-    getRange,
-    IndexedString,
-    isEmpty,
-    nextBorderedPart
-} from "../tools/indexedString";
-import ParserIndexed from "../tools/parserIndexed";
+    IndexedString
+} from "../types/indexedString";
+import IndexedStringUtils from "../utils/indexedStringUtils";
 import ErrorWithTextRange from "../error/errorWithTextRange";
 import RATreeFactory from "../ratree/raTreeFactory";
+import {containsAny, getRange, isEmpty, nextBorderedPart} from "../utils/commonStringUtils";
 
 /**
  * Assertion types for assertValidInfixTokens function.
@@ -34,7 +31,7 @@ enum AssertType {
 }
 
 /**
- * Parser of relational algebra expressions. Provides parsing function parse(String expr) and additional
+ * StringUtils of relational algebra expressions. Provides parsing function parse(String expr) and additional
  * helping functions and predicates. Uses IndexedString to describe error ranges in thrown errors.
  */
 export class ExprParser {
@@ -75,7 +72,7 @@ export class ExprParser {
      * @return tree structure of 'expr'
      */
     public parse(expr: string): RATreeNode {
-        expr = Parser.deleteCommentLines(expr);
+        expr = StringUtils.deleteCommentLines(expr);
         if (expr.trim() === "") {
             throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_parse_emptyStringGiven, undefined);
         }
@@ -93,7 +90,7 @@ export class ExprParser {
      * @return tree structure of 'expr'
      */
     public indexedParse(expr: string): RATreeNode {
-        const indexedExpr = ParserIndexed.deleteCommentLines(IndexedString.new(expr));
+        const indexedExpr = IndexedStringUtils.deleteCommentLines(IndexedString.new(expr));
         if (indexedExpr.trim().isEmpty()) {
             throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_parse_emptyStringGiven, undefined);
         }
@@ -114,7 +111,7 @@ export class ExprParser {
         if (expr.trim() === "") {
             return {whispers: [...this.relations.keys()], errors: []};
         }
-        const indexedExpr = ParserIndexed.deleteCommentLines(IndexedString.new(expr));
+        const indexedExpr = IndexedStringUtils.deleteCommentLines(IndexedString.new(expr));
         const {whispers, tokens, errors} = this.fakeParseTokens(indexedExpr, cursorIndex);
         // prevent errors in creation of RPN
         if (tokens.length === 0) {
@@ -320,15 +317,15 @@ export class ExprParser {
                 rest = split.second;
             }
             // RELATION REFERENCE
-            else if (Parser.isLetter(rest.charAt(0)) || rest.charAt(0) === '_') {
-                const split = (rest instanceof IndexedString) ? ParserIndexed.nextName(rest) : Parser.nextName(rest);
+            else if (StringUtils.isLetter(rest.charAt(0)) || rest.charAt(0) === '_') {
+                const split = (rest instanceof IndexedString) ? IndexedStringUtils.nextName(rest) : StringUtils.nextName(rest);
                 tokens.push(new RelationToken(split.first));
                 rest = split.second;
                 selectionExpected = true;
             }
             // UNEXPECTED PART
             else {
-                const split = (rest instanceof IndexedString) ? ParserIndexed.nextNonWhitespacePart(rest) : Parser.nextNonWhitespacePart(rest);
+                const split = (rest instanceof IndexedString) ? IndexedStringUtils.nextNonWhitespacePart(rest) : StringUtils.nextNonWhitespacePart(rest);
                 throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_parseTokens_unexpectedPart,
                     getRange(split.first), split.first.toString());
             }
@@ -375,7 +372,7 @@ export class ExprParser {
             if (rest.startsWith("(")) {
                 let split: {first: IndexedString, second: IndexedString};
                 try {
-                    split = ParserIndexed.nextBorderedPart(rest, '(', ')');
+                    split = IndexedStringUtils.nextBorderedPart(rest, '(', ')');
                 }
                 // catches error from nextBorderedPart
                 catch (err) {
@@ -432,7 +429,7 @@ export class ExprParser {
                 let split: {first: IndexedString, second: IndexedString};
                 let error: boolean = false;
                 try {
-                    split = ParserIndexed.nextBorderedPart(rest, '[', ']>');
+                    split = IndexedStringUtils.nextBorderedPart(rest, '[', ']>');
                 }
                 // catches error from nextBorderedPart
                 catch (err) {
@@ -548,7 +545,7 @@ export class ExprParser {
             // '<' can be a rename or left theta semi join - this "if" must be after <*
             else if (rest.startsWith('<')) {
                 try {
-                    const split = ParserIndexed.nextBorderedPart(rest, '<', '>]', '-');
+                    const split = IndexedStringUtils.nextBorderedPart(rest, '<', '>]', '-');
                     // checks whether the cursor was reached
                     const operatorEndIndex: number | undefined = split.first.getLastNonNaNIndex();
                     if (operatorEndIndex === cursorIndex - 1) {
@@ -575,8 +572,8 @@ export class ExprParser {
                 }
             }
             // RELATION REFERENCE
-            else if (Parser.isLetter(rest.charAt(0)) || rest.charAt(0) === '_') {
-                const split = ParserIndexed.nextName(rest);
+            else if (StringUtils.isLetter(rest.charAt(0)) || rest.charAt(0) === '_') {
+                const split = IndexedStringUtils.nextName(rest);
 
                 // checks whether the cursor was reached in the relation reference string
                 const relationStartIndex: number | undefined = split.first.getFirstNonNaNIndex();
@@ -603,7 +600,7 @@ export class ExprParser {
             }
             // UNEXPECTED PART
             else {
-                const split = ParserIndexed.nextNonWhitespacePart(rest);
+                const split = IndexedStringUtils.nextNonWhitespacePart(rest);
                 errors.push(ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_parseTokens_unexpectedPart,
                     getRange(split.first), split.first.toString()));
                 // tries to skip first unexpected character

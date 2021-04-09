@@ -1,6 +1,7 @@
 import {BinaryNodeClass} from "../ratree/binaryNode";
-import {getRange, IndexedString} from "../tools/indexedString";
+import {IndexedString} from "../types/indexedString";
 import {UnaryNodeClass} from "../ratree/unaryNode";
+import {getRange} from "../utils/commonStringUtils";
 
 /**
  * Abstract parent class for all RATokens.

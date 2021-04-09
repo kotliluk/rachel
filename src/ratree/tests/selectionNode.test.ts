@@ -2,7 +2,7 @@ import Relation from "../../relation/relation";
 import Row from "../../relation/row";
 import RelationNode from "../relationNode";
 import SelectionNode from "../selectionNode";
-import {IndexedString} from "../../tools/indexedString";
+import {IndexedString} from "../../types/indexedString";
 
 const source: Relation = new Relation("Auto");
 source.addColumn("Id", "number");

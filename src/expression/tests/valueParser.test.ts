@@ -20,7 +20,7 @@ import {LiteralValue} from "../../vetree/literalValue";
 import {LogicalOperator} from "../../vetree/logicalOperator";
 import {ReferenceValue} from "../../vetree/referenceValue";
 import {VETreeNode} from "../../vetree/veTreeNode";
-import {IndexedString} from "../../tools/indexedString";
+import {IndexedString} from "../../types/indexedString";
 
 describe('parseTokens', () => {
     describe('parses valid string correctly', () => {

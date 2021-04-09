@@ -6,7 +6,7 @@ import RASyntaxError from "../error/raSyntaxError";
 import RASemanticError from "../error/raSemanticError";
 import {XTextArea} from "./xTextArea";
 import {ExprParser} from "../expression/exprParser";
-import {getStartOfWordBeforeIndex, sortWhispers} from "../tools/whisper";
+import {getStartOfWordBeforeIndex, sortWhispers} from "../utils/whisperUtils";
 import {Expression} from "../expression/expression";
 import {TextInput} from "./textInput";
 import ErrorWithTextRange from "../error/errorWithTextRange";

@@ -1,6 +1,6 @@
 import React from "react";
-import {CsvValueSeparatorChar} from "../tools/csvSupport";
-import {SupportedLanguage} from "../tools/supportedLanguage";
+import {CsvValueSeparator} from "../types/csvSupport";
+import {SupportedLanguage} from "../types/supportedLanguage";
 import "./css/managementSection.css"
 import {getSamples} from "../project/samples";
 import {Project} from "../project/project";
@@ -18,7 +18,7 @@ interface ManagementSectionProps {
     onLoadSample: (sample: Project) => void,
 
     // current selected value separator in csv files
-    csvValueSeparator: CsvValueSeparatorChar,
+    csvValueSeparator: CsvValueSeparator,
     // current selected language of the application
     language: SupportedLanguage,
     // current selected null values support
@@ -27,7 +27,7 @@ interface ManagementSectionProps {
     darkTheme: boolean,
 
     // handler of change of the current selected value separator in csv files
-    onCsvValueSeparatorChange: (csvValueSeparator: CsvValueSeparatorChar) => void,
+    onCsvValueSeparatorChange: (csvValueSeparator: CsvValueSeparator) => void,
     // handler of change of the current selected language of the application
     onLanguageChange: (language: SupportedLanguage) => void,
     // handler of change of the current selected null values support

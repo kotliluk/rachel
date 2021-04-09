@@ -2,7 +2,7 @@ import Relation from "../../relation/relation";
 import Row from "../../relation/row";
 import RelationNode from "../relationNode";
 import AntijoinNode, {AntijoinType} from "../antijoinNode";
-import {IndexedString} from "../../tools/indexedString";
+import {IndexedString} from "../../types/indexedString";
 import SelectionNode from "../selectionNode";
 
 describe('eval' , () => {

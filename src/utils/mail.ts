@@ -6,19 +6,19 @@ interface SendData {
 
 /**
  * Class for sending emails. Powered by https://postmail.invotes.com/.
- * My TypeScript version of JavaScript Copy & Paste Example from PostMail webpage.
+ * TypeScript version of JavaScript Copy & Paste Example from PostMail webpage.
  */
-export class PostMail {
+export class Mail {
 
     /**
-     * Creates a mailer with given PostMail access token.
+     * Creates a mailer with given Mail access token.
      *
-     * @param accessToken token which specifies PostMail receiver of mails
+     * @param accessToken token which specifies Mail receiver of mails
      */
     constructor(readonly accessToken: string) {}
 
     /**
-     * Sends given subject and body of the email to the PostMail receiver.
+     * Sends given subject and body of the email to the Mail receiver.
      *
      * @param subject subject of the mail
      * @param body body of the mail
@@ -34,11 +34,11 @@ export class PostMail {
         request.onreadystatechange = function() {
             if (request.readyState === 4 && request.status === 200) {
             } else if(request.readyState === 4) {
-                console.log("failed creating XMLHttpRequest in PostMail.send: " + request.response);
+                console.log("failed creating XMLHttpRequest in Mail.send: " + request.response);
             }
         };
 
-        let params = PostMail.toParams(data_js);
+        let params = Mail.toParams(data_js);
         request.open("POST", "https://postmail.invotes.com/send", true);
         request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         request.send(params);

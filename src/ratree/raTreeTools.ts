@@ -1,7 +1,7 @@
 import RATreeNode from "./raTreeNode";
 import UnaryNode from "./unaryNode";
 import BinaryNode from "./binaryNode";
-import {IndexedString} from "../tools/indexedString";
+import {IndexedString} from "../types/indexedString";
 
 /**
  * Finds the root in the given tree with the given index with respect to depth first search. Root has index 0.

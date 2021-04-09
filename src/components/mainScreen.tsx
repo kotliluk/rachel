@@ -5,17 +5,17 @@ import {ExpressionSection} from "./expressionSection";
 import {ResultSection} from "./resultSection";
 import {ExpressionStoreManager} from "../expression/expressionStoreManager";
 import {ManagementSection} from "./managementSection";
-import {CsvValueSeparatorChar} from "../tools/csvSupport";
+import {CsvValueSeparator} from "../types/csvSupport";
 import {ProjectStoreManager} from "../project/projectStoreManager";
-import {SupportedLanguage} from "../tools/supportedLanguage";
-import {LocalStorage} from "../tools/localStorage";
-import {BatchProcessor} from "../tools/batchProcessor";
+import {SupportedLanguage} from "../types/supportedLanguage";
+import {LocalStorage} from "../utils/localStorage";
+import {BatchProcessor} from "../batch/batchProcessor";
 import {Expression} from "../expression/expression";
 import {RelationsSection} from "./relationsSection";
 import {StoredRelation} from "../relation/storedRelation";
 import {SupportedColumnType} from "../relation/columnType";
 import {RelationStoreManager} from "../relation/relationStoreManager";
-import {PostMail} from "../tools/postMail";
+import {Mail} from "../utils/mail";
 import {copyProject, Project} from "../project/project";
 import {getSamples} from "../project/samples";
 
@@ -35,7 +35,7 @@ interface MainScreenState {
     evaluatedExpressionName: string,
 
     nullValuesSupport: boolean,
-    csvValueSeparator: CsvValueSeparatorChar,
+    csvValueSeparator: CsvValueSeparator,
     language: SupportedLanguage,
     darkTheme: boolean
 }
@@ -92,7 +92,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
      * @param err unexpected error
      */
     private reportUnexpectedError = (err: Error): void => {
-        const postMail: PostMail = new PostMail("5uog26ex8q9qu7sqib8ea0qd");
+        const postMail: Mail = new Mail("5uog26ex8q9qu7sqib8ea0qd");
         let body: string = "Unexpected error " + err.name + " in Rachel application." +
             "\n\nMessage:\n" + err.message +
             "\n\nDate:\n" + new Date().toString() +
@@ -208,7 +208,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
      *
      * @param csvValueSeparator new value separator used in generated CSV files
      */
-    private handleCsvValueSeparatorChange = (csvValueSeparator: CsvValueSeparatorChar): void => {
+    private handleCsvValueSeparatorChange = (csvValueSeparator: CsvValueSeparator): void => {
         LocalStorage.setCsvValueSeparator(csvValueSeparator);
         this.setState({csvValueSeparator: csvValueSeparator});
     }

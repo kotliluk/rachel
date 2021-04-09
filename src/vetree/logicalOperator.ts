@@ -2,7 +2,8 @@ import Row from "../relation/row";
 import {VETreeNode} from "./veTreeNode";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
 import {ErrorFactory, SyntaxErrorCodes} from "../error/errorFactory";
-import {getRange, IndexedString} from "../tools/indexedString";
+import {IndexedString} from "../types/indexedString";
+import {getRange} from "../utils/commonStringUtils";
 
 /**
  * Types of LogicalOperator class.

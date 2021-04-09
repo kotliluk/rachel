@@ -1,9 +1,9 @@
 import {isSupportedColumnType, SupportedColumnType} from "./columnType";
-import Parser from "../tools/parser";
-import {RCToStringMap} from "../tools/rcToStringMap";
+import StringUtils from "../utils/stringUtils";
+import {NNToSMap} from "../types/nnToSMap";
 import Relation from "./relation";
 import Row from "./row";
-import {isForbiddenColumnName} from "../tools/keywords";
+import {isForbiddenColumnName} from "../utils/keywords";
 
 /**
  * Plain object representation of the stored relation.
@@ -89,7 +89,7 @@ export class StoredRelation {
     private rows: string[][];
     private columnCount: number;
     private rowCount: number;
-    private readonly errors: RCToStringMap;
+    private readonly errors: NNToSMap;
     private nullValuesSupport: boolean;
     private actual: boolean;
     private revertState: StoredRelationData;
@@ -105,7 +105,7 @@ export class StoredRelation {
         this.rows = rows;
         this.columnCount = columnNames.length;
         this.rowCount = rows.length;
-        this.errors = new RCToStringMap();
+        this.errors = new NNToSMap();
         this.nullValuesSupport = nullValuesSupport;
         this.actual = false;
         this.revertState = this.toDataObject();
@@ -144,7 +144,7 @@ export class StoredRelation {
                 this.errors.set("name", columnIndex, "Column name cannot be a keyword");
                 continue;
             }
-            if (!Parser.isName(columnName)) {
+            if (!StringUtils.isName(columnName)) {
                 this.errors.set("name", columnIndex, "Invalid characters in column name");
                 continue;
             }
@@ -168,7 +168,7 @@ export class StoredRelation {
             }
         }
         else if (this.columnTypes[columnIndex] === "number") {
-            if (!Parser.isNumber(input.replace(/\s/g, ""))) {
+            if (!StringUtils.isNumber(input.replace(/\s/g, ""))) {
                 this.errors.set(rowIndex, columnIndex, "Given string is not a number");
             }
         }
@@ -241,7 +241,7 @@ export class StoredRelation {
     /**
      * Returns map "row/column => error". Numeric row keys are for relation rows, row key "name" is for column name row.
      */
-    public getErrors(): RCToStringMap {
+    public getErrors(): NNToSMap {
         return this.errors;
     }
 

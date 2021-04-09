@@ -10,7 +10,7 @@ import RATreeNode from "../ratree/raTreeNode";
 import UnaryNode from "../ratree/unaryNode";
 import BinaryNode from "../ratree/binaryNode";
 import {getTreeDepth} from "../ratree/raTreeTools";
-import {computeFontSizeInPx} from "../tools/font";
+import {computeFontSizeInPx} from "../utils/fontUtils";
 
 export const evalTreeSVGId: string = "eval-tree-svg";
 

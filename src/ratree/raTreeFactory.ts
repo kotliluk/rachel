@@ -10,8 +10,9 @@ import OuterJoinNode, {OuterJoinType} from "./outerJoinNode";
 import NaturalJoinNode, {NaturalJoinType} from "./naturalJoinNode";
 import SetOperationNode, {SetOperationType} from "./setOperationNode";
 import BinaryNode, {BinaryNodeClass} from "./binaryNode";
-import {getRange, IndexedString} from "../tools/indexedString";
+import {IndexedString} from "../types/indexedString";
 import ThetaJoinNode, {ThetaJoinType} from "./thetaJoinNode";
+import {getRange} from "../utils/commonStringUtils";
 
 /**
  * Factory for creating unary and binary nodes of given class.

@@ -1,5 +1,5 @@
-import ParserIndexed from "../parserIndexed";
-import {IndexedString} from "../indexedString";
+import IndexedStringUtils from "../indexedStringUtils";
+import {IndexedString} from "../../types/indexedString";
 
 describe('isWord', () => {
     test('true for only-letter-strings', () => {
@@ -9,11 +9,11 @@ describe('isWord', () => {
         const w4: string = "čřžšá";
         const w5: string = "ŠČíáopL";
 
-        expect(ParserIndexed.isWord(IndexedString.new(w1))).toBeTruthy();
-        expect(ParserIndexed.isWord(IndexedString.new(w2))).toBeTruthy();
-        expect(ParserIndexed.isWord(IndexedString.new(w3))).toBeTruthy();
-        expect(ParserIndexed.isWord(IndexedString.new(w4))).toBeTruthy();
-        expect(ParserIndexed.isWord(IndexedString.new(w5))).toBeTruthy();
+        expect(IndexedStringUtils.isWord(IndexedString.new(w1))).toBeTruthy();
+        expect(IndexedStringUtils.isWord(IndexedString.new(w2))).toBeTruthy();
+        expect(IndexedStringUtils.isWord(IndexedString.new(w3))).toBeTruthy();
+        expect(IndexedStringUtils.isWord(IndexedString.new(w4))).toBeTruthy();
+        expect(IndexedStringUtils.isWord(IndexedString.new(w5))).toBeTruthy();
     });
 
     test('false for string with a non-letter character', () => {
@@ -23,11 +23,11 @@ describe('isWord', () => {
         const w4: string = "WORD2";
         const w5: string = "woČŘ.";
 
-        expect(ParserIndexed.isWord(IndexedString.new(w1))).toBeFalsy();
-        expect(ParserIndexed.isWord(IndexedString.new(w2))).toBeFalsy();
-        expect(ParserIndexed.isWord(IndexedString.new(w3))).toBeFalsy();
-        expect(ParserIndexed.isWord(IndexedString.new(w4))).toBeFalsy();
-        expect(ParserIndexed.isWord(IndexedString.new(w5))).toBeFalsy();
+        expect(IndexedStringUtils.isWord(IndexedString.new(w1))).toBeFalsy();
+        expect(IndexedStringUtils.isWord(IndexedString.new(w2))).toBeFalsy();
+        expect(IndexedStringUtils.isWord(IndexedString.new(w3))).toBeFalsy();
+        expect(IndexedStringUtils.isWord(IndexedString.new(w4))).toBeFalsy();
+        expect(IndexedStringUtils.isWord(IndexedString.new(w5))).toBeFalsy();
     });
 });
 
@@ -38,10 +38,10 @@ describe('isName', () => {
         const w3: string = "aaaaWord123";
         const w4: string = "ŠČř_123__žšá";
 
-        expect(ParserIndexed.isName(IndexedString.new(w1))).toBeTruthy();
-        expect(ParserIndexed.isName(IndexedString.new(w2))).toBeTruthy();
-        expect(ParserIndexed.isName(IndexedString.new(w3))).toBeTruthy();
-        expect(ParserIndexed.isName(IndexedString.new(w4))).toBeTruthy();
+        expect(IndexedStringUtils.isName(IndexedString.new(w1))).toBeTruthy();
+        expect(IndexedStringUtils.isName(IndexedString.new(w2))).toBeTruthy();
+        expect(IndexedStringUtils.isName(IndexedString.new(w3))).toBeTruthy();
+        expect(IndexedStringUtils.isName(IndexedString.new(w4))).toBeTruthy();
     });
 
     test('false for invalid names', () => {
@@ -50,10 +50,10 @@ describe('isName', () => {
         const w3: string = " aaaaWord";
         const w4: string = "123WORD";
 
-        expect(ParserIndexed.isName(IndexedString.new(w1))).toBeFalsy();
-        expect(ParserIndexed.isName(IndexedString.new(w2))).toBeFalsy();
-        expect(ParserIndexed.isName(IndexedString.new(w3))).toBeFalsy();
-        expect(ParserIndexed.isName(IndexedString.new(w4))).toBeFalsy();
+        expect(IndexedStringUtils.isName(IndexedString.new(w1))).toBeFalsy();
+        expect(IndexedStringUtils.isName(IndexedString.new(w2))).toBeFalsy();
+        expect(IndexedStringUtils.isName(IndexedString.new(w3))).toBeFalsy();
+        expect(IndexedStringUtils.isName(IndexedString.new(w4))).toBeFalsy();
     });
 });
 
@@ -64,10 +64,10 @@ describe('isWhitespacesOnly', () => {
         const w3: string = " \n\t ";
         const w4: string = "";
 
-        expect(ParserIndexed.isWhitespacesOnly(IndexedString.new(w1))).toBeTruthy();
-        expect(ParserIndexed.isWhitespacesOnly(IndexedString.new(w2))).toBeTruthy();
-        expect(ParserIndexed.isWhitespacesOnly(IndexedString.new(w3))).toBeTruthy();
-        expect(ParserIndexed.isWhitespacesOnly(IndexedString.new(w4))).toBeTruthy();
+        expect(IndexedStringUtils.isWhitespacesOnly(IndexedString.new(w1))).toBeTruthy();
+        expect(IndexedStringUtils.isWhitespacesOnly(IndexedString.new(w2))).toBeTruthy();
+        expect(IndexedStringUtils.isWhitespacesOnly(IndexedString.new(w3))).toBeTruthy();
+        expect(IndexedStringUtils.isWhitespacesOnly(IndexedString.new(w4))).toBeTruthy();
     });
 
     test('false for string with a non-whitespace character', () => {
@@ -76,10 +76,10 @@ describe('isWhitespacesOnly', () => {
         const w3: string = "\na\n";
         const w4: string = "\t\t \t.\n";
 
-        expect(ParserIndexed.isWhitespacesOnly(IndexedString.new(w1))).toBeFalsy();
-        expect(ParserIndexed.isWhitespacesOnly(IndexedString.new(w2))).toBeFalsy();
-        expect(ParserIndexed.isWhitespacesOnly(IndexedString.new(w3))).toBeFalsy();
-        expect(ParserIndexed.isWhitespacesOnly(IndexedString.new(w4))).toBeFalsy();
+        expect(IndexedStringUtils.isWhitespacesOnly(IndexedString.new(w1))).toBeFalsy();
+        expect(IndexedStringUtils.isWhitespacesOnly(IndexedString.new(w2))).toBeFalsy();
+        expect(IndexedStringUtils.isWhitespacesOnly(IndexedString.new(w3))).toBeFalsy();
+        expect(IndexedStringUtils.isWhitespacesOnly(IndexedString.new(w4))).toBeFalsy();
     });
 });
 
@@ -90,10 +90,10 @@ describe('isLetter', () => {
         const w3: string = "č";
         const w4: string = "í";
 
-        expect(ParserIndexed.isLetter(IndexedString.new(w1))).toBeTruthy();
-        expect(ParserIndexed.isLetter(IndexedString.new(w2))).toBeTruthy();
-        expect(ParserIndexed.isLetter(IndexedString.new(w3))).toBeTruthy();
-        expect(ParserIndexed.isLetter(IndexedString.new(w4))).toBeTruthy();
+        expect(IndexedStringUtils.isLetter(IndexedString.new(w1))).toBeTruthy();
+        expect(IndexedStringUtils.isLetter(IndexedString.new(w2))).toBeTruthy();
+        expect(IndexedStringUtils.isLetter(IndexedString.new(w3))).toBeTruthy();
+        expect(IndexedStringUtils.isLetter(IndexedString.new(w4))).toBeTruthy();
     });
 
     test('false for non-letters and longer strings', () => {
@@ -101,9 +101,9 @@ describe('isLetter', () => {
         const w2: string = ".";
         const w3: string = "abcd";
 
-        expect(ParserIndexed.isLetter(IndexedString.new(w1))).toBeFalsy();
-        expect(ParserIndexed.isLetter(IndexedString.new(w2))).toBeFalsy();
-        expect(ParserIndexed.isLetter(IndexedString.new(w3))).toBeFalsy();
+        expect(IndexedStringUtils.isLetter(IndexedString.new(w1))).toBeFalsy();
+        expect(IndexedStringUtils.isLetter(IndexedString.new(w2))).toBeFalsy();
+        expect(IndexedStringUtils.isLetter(IndexedString.new(w3))).toBeFalsy();
     });
 });
 
@@ -116,12 +116,12 @@ describe('isNameChar', () => {
         const w5: string = "2";
         const w6: string = "_";
 
-        expect(ParserIndexed.isNameChar(IndexedString.new(w1))).toBeTruthy();
-        expect(ParserIndexed.isNameChar(IndexedString.new(w2))).toBeTruthy();
-        expect(ParserIndexed.isNameChar(IndexedString.new(w3))).toBeTruthy();
-        expect(ParserIndexed.isNameChar(IndexedString.new(w4))).toBeTruthy();
-        expect(ParserIndexed.isNameChar(IndexedString.new(w5))).toBeTruthy();
-        expect(ParserIndexed.isNameChar(IndexedString.new(w6))).toBeTruthy();
+        expect(IndexedStringUtils.isNameChar(IndexedString.new(w1))).toBeTruthy();
+        expect(IndexedStringUtils.isNameChar(IndexedString.new(w2))).toBeTruthy();
+        expect(IndexedStringUtils.isNameChar(IndexedString.new(w3))).toBeTruthy();
+        expect(IndexedStringUtils.isNameChar(IndexedString.new(w4))).toBeTruthy();
+        expect(IndexedStringUtils.isNameChar(IndexedString.new(w5))).toBeTruthy();
+        expect(IndexedStringUtils.isNameChar(IndexedString.new(w6))).toBeTruthy();
     });
 
     test('false for non-letters, non-number and non-underscores and longer strings', () => {
@@ -129,9 +129,9 @@ describe('isNameChar', () => {
         const w2: string = ".";
         const w3: string = "abcd";
 
-        expect(ParserIndexed.isNameChar(IndexedString.new(w1))).toBeFalsy();
-        expect(ParserIndexed.isNameChar(IndexedString.new(w2))).toBeFalsy();
-        expect(ParserIndexed.isNameChar(IndexedString.new(w3))).toBeFalsy();
+        expect(IndexedStringUtils.isNameChar(IndexedString.new(w1))).toBeFalsy();
+        expect(IndexedStringUtils.isNameChar(IndexedString.new(w2))).toBeFalsy();
+        expect(IndexedStringUtils.isNameChar(IndexedString.new(w3))).toBeFalsy();
     });
 });
 
@@ -141,9 +141,9 @@ describe('isDigit', () => {
         const w2: string = "1";
         const w3: string = "5";
 
-        expect(ParserIndexed.isDigit(IndexedString.new(w1))).toBeTruthy();
-        expect(ParserIndexed.isDigit(IndexedString.new(w2))).toBeTruthy();
-        expect(ParserIndexed.isDigit(IndexedString.new(w3))).toBeTruthy();
+        expect(IndexedStringUtils.isDigit(IndexedString.new(w1))).toBeTruthy();
+        expect(IndexedStringUtils.isDigit(IndexedString.new(w2))).toBeTruthy();
+        expect(IndexedStringUtils.isDigit(IndexedString.new(w3))).toBeTruthy();
     });
 
     test('false for non-digit and longer strings', () => {
@@ -152,10 +152,10 @@ describe('isDigit', () => {
         const w3: string = "a";
         const w4: string = "12";
 
-        expect(ParserIndexed.isDigit(IndexedString.new(w1))).toBeFalsy();
-        expect(ParserIndexed.isDigit(IndexedString.new(w2))).toBeFalsy();
-        expect(ParserIndexed.isDigit(IndexedString.new(w3))).toBeFalsy();
-        expect(ParserIndexed.isDigit(IndexedString.new(w4))).toBeFalsy();
+        expect(IndexedStringUtils.isDigit(IndexedString.new(w1))).toBeFalsy();
+        expect(IndexedStringUtils.isDigit(IndexedString.new(w2))).toBeFalsy();
+        expect(IndexedStringUtils.isDigit(IndexedString.new(w3))).toBeFalsy();
+        expect(IndexedStringUtils.isDigit(IndexedString.new(w4))).toBeFalsy();
     });
 });
 
@@ -170,14 +170,14 @@ describe('isNumber', () => {
         const w7: string = "1.1";
         const w8: string = "-453.12489";
 
-        expect(ParserIndexed.isNumber(IndexedString.new(w1))).toBeTruthy();
-        expect(ParserIndexed.isNumber(IndexedString.new(w2))).toBeTruthy();
-        expect(ParserIndexed.isNumber(IndexedString.new(w3))).toBeTruthy();
-        expect(ParserIndexed.isNumber(IndexedString.new(w4))).toBeTruthy();
-        expect(ParserIndexed.isNumber(IndexedString.new(w5))).toBeTruthy();
-        expect(ParserIndexed.isNumber(IndexedString.new(w6))).toBeTruthy();
-        expect(ParserIndexed.isNumber(IndexedString.new(w7))).toBeTruthy();
-        expect(ParserIndexed.isNumber(IndexedString.new(w8))).toBeTruthy();
+        expect(IndexedStringUtils.isNumber(IndexedString.new(w1))).toBeTruthy();
+        expect(IndexedStringUtils.isNumber(IndexedString.new(w2))).toBeTruthy();
+        expect(IndexedStringUtils.isNumber(IndexedString.new(w3))).toBeTruthy();
+        expect(IndexedStringUtils.isNumber(IndexedString.new(w4))).toBeTruthy();
+        expect(IndexedStringUtils.isNumber(IndexedString.new(w5))).toBeTruthy();
+        expect(IndexedStringUtils.isNumber(IndexedString.new(w6))).toBeTruthy();
+        expect(IndexedStringUtils.isNumber(IndexedString.new(w7))).toBeTruthy();
+        expect(IndexedStringUtils.isNumber(IndexedString.new(w8))).toBeTruthy();
     });
 
     test('false for non-numbers', () => {
@@ -187,11 +187,11 @@ describe('isNumber', () => {
         const w4: string = ".12";
         const w5: string = "1.2.";
 
-        expect(ParserIndexed.isNumber(IndexedString.new(w1))).toBeFalsy();
-        expect(ParserIndexed.isNumber(IndexedString.new(w2))).toBeFalsy();
-        expect(ParserIndexed.isNumber(IndexedString.new(w3))).toBeFalsy();
-        expect(ParserIndexed.isNumber(IndexedString.new(w4))).toBeFalsy();
-        expect(ParserIndexed.isNumber(IndexedString.new(w5))).toBeFalsy();
+        expect(IndexedStringUtils.isNumber(IndexedString.new(w1))).toBeFalsy();
+        expect(IndexedStringUtils.isNumber(IndexedString.new(w2))).toBeFalsy();
+        expect(IndexedStringUtils.isNumber(IndexedString.new(w3))).toBeFalsy();
+        expect(IndexedStringUtils.isNumber(IndexedString.new(w4))).toBeFalsy();
+        expect(IndexedStringUtils.isNumber(IndexedString.new(w5))).toBeFalsy();
     });
 });
 
@@ -201,7 +201,7 @@ describe('nextWord', () => {
         const expectedWord: string = "word";
         const expectedRest: string = "";
 
-        const result = ParserIndexed.nextWord(IndexedString.new(input));
+        const result = IndexedStringUtils.nextWord(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedWord);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -211,7 +211,7 @@ describe('nextWord', () => {
         const expectedWord: string = "";
         const expectedRest: string = " word  \n\t";
 
-        const result = ParserIndexed.nextWord(IndexedString.new(input));
+        const result = IndexedStringUtils.nextWord(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedWord);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -221,7 +221,7 @@ describe('nextWord', () => {
         const expectedWord: string = "wor";
         const expectedRest: string = " d";
 
-        const result = ParserIndexed.nextWord(IndexedString.new(input));
+        const result = IndexedStringUtils.nextWord(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedWord);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -231,7 +231,7 @@ describe('nextWord', () => {
         const expectedWord: string = "";
         const expectedRest: string = "< >";
 
-        const result = ParserIndexed.nextWord(IndexedString.new(input));
+        const result = IndexedStringUtils.nextWord(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedWord);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -241,7 +241,7 @@ describe('nextWord', () => {
         const expectedWord: string = "";
         const expectedRest: string = "  \n \t ";
 
-        const result = ParserIndexed.nextWord(IndexedString.new(input));
+        const result = IndexedStringUtils.nextWord(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedWord);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -251,7 +251,7 @@ describe('nextWord', () => {
         const expectedWord: string = "";
         const expectedRest: string = "";
 
-        const result = ParserIndexed.nextWord(IndexedString.new(input));
+        const result = IndexedStringUtils.nextWord(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedWord);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -263,7 +263,7 @@ describe('nextName', () => {
         const expectedWord: string = "word";
         const expectedRest: string = "";
 
-        const result = ParserIndexed.nextName(IndexedString.new(input));
+        const result = IndexedStringUtils.nextName(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedWord);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -273,7 +273,7 @@ describe('nextName', () => {
         const expectedWord: string = "word_123";
         const expectedRest: string = "";
 
-        const result = ParserIndexed.nextName(IndexedString.new(input));
+        const result = IndexedStringUtils.nextName(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedWord);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -283,7 +283,7 @@ describe('nextName', () => {
         const expectedWord: string = "";
         const expectedRest: string = " word  \n\t";
 
-        const result = ParserIndexed.nextName(IndexedString.new(input));
+        const result = IndexedStringUtils.nextName(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedWord);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -293,7 +293,7 @@ describe('nextName', () => {
         const expectedWord: string = "word_123";
         const expectedRest: string = " other_Word";
 
-        const result = ParserIndexed.nextName(IndexedString.new(input));
+        const result = IndexedStringUtils.nextName(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedWord);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -303,7 +303,7 @@ describe('nextName', () => {
         const expectedWord: string = "_123";
         const expectedRest: string = " other_Word";
 
-        const result = ParserIndexed.nextName(IndexedString.new(input));
+        const result = IndexedStringUtils.nextName(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedWord);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -313,7 +313,7 @@ describe('nextName', () => {
         const expectedWord: string = "";
         const expectedRest: string = "123_word other_Word";
 
-        const result = ParserIndexed.nextName(IndexedString.new(input));
+        const result = IndexedStringUtils.nextName(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedWord);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -323,7 +323,7 @@ describe('nextName', () => {
         const expectedWord: string = "wor";
         const expectedRest: string = " d";
 
-        const result = ParserIndexed.nextName(IndexedString.new(input));
+        const result = IndexedStringUtils.nextName(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedWord);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -333,7 +333,7 @@ describe('nextName', () => {
         const expectedWord: string = "";
         const expectedRest: string = "< >";
 
-        const result = ParserIndexed.nextName(IndexedString.new(input));
+        const result = IndexedStringUtils.nextName(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedWord);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -343,7 +343,7 @@ describe('nextName', () => {
         const expectedWord: string = "";
         const expectedRest: string = "  \n \t ";
 
-        const result = ParserIndexed.nextName(IndexedString.new(input));
+        const result = IndexedStringUtils.nextName(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedWord);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -353,7 +353,7 @@ describe('nextName', () => {
         const expectedWord: string = "";
         const expectedRest: string = "";
 
-        const result = ParserIndexed.nextName(IndexedString.new(input));
+        const result = IndexedStringUtils.nextName(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedWord);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -365,7 +365,7 @@ describe('nextNumber', () => {
         const expectedNumber: string = "12";
         const expectedRest: string = "";
 
-        const result = ParserIndexed.nextNumber(IndexedString.new(input));
+        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedNumber);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -375,7 +375,7 @@ describe('nextNumber', () => {
         const expectedNumber: string = "";
         const expectedRest: string = " 12  \n\t";
 
-        const result = ParserIndexed.nextNumber(IndexedString.new(input));
+        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedNumber);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -385,7 +385,7 @@ describe('nextNumber', () => {
         const expectedNumber: string = "12";
         const expectedRest: string = " d";
 
-        const result = ParserIndexed.nextNumber(IndexedString.new(input));
+        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedNumber);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -395,7 +395,7 @@ describe('nextNumber', () => {
         const expectedNumber: string = "";
         const expectedRest: string = ".12 d";
 
-        const result = ParserIndexed.nextNumber(IndexedString.new(input));
+        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedNumber);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -405,7 +405,7 @@ describe('nextNumber', () => {
         const expectedNumber: string = "";
         const expectedRest: string = "< >";
 
-        const result = ParserIndexed.nextNumber(IndexedString.new(input));
+        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedNumber);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -415,7 +415,7 @@ describe('nextNumber', () => {
         const expectedNumber: string = "";
         const expectedRest: string = "  \n \t ";
 
-        const result = ParserIndexed.nextNumber(IndexedString.new(input));
+        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedNumber);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -425,7 +425,7 @@ describe('nextNumber', () => {
         const expectedNumber: string = "12.456";
         const expectedRest: string = "";
 
-        const result = ParserIndexed.nextNumber(IndexedString.new(input));
+        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedNumber);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -435,7 +435,7 @@ describe('nextNumber', () => {
         const expectedNumber: string = "";
         const expectedRest: string = " 12.456  \n\t";
 
-        const result = ParserIndexed.nextNumber(IndexedString.new(input));
+        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedNumber);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -445,7 +445,7 @@ describe('nextNumber', () => {
         const expectedNumber: string = "12.456";
         const expectedRest: string = " d";
 
-        const result = ParserIndexed.nextNumber(IndexedString.new(input));
+        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedNumber);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -455,7 +455,7 @@ describe('nextNumber', () => {
         const expectedNumber: string = "12.456";
         const expectedRest: string = ".5 d";
 
-        const result = ParserIndexed.nextNumber(IndexedString.new(input));
+        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedNumber);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -465,7 +465,7 @@ describe('nextNumber', () => {
         const expectedNumber: string = "";
         const expectedRest: string = "";
 
-        const result = ParserIndexed.nextNumber(IndexedString.new(input));
+        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
         expect(result.first.toString()).toBe(expectedNumber);
         expect(result.second.toString()).toBe(expectedRest);
     });
@@ -478,7 +478,7 @@ describe('nextQuotedString', () => {
             const expectedBordered: string = '"Quoted"';
             const expectedRest: string = "String";
 
-            const result = ParserIndexed.nextQuotedString(input);
+            const result = IndexedStringUtils.nextQuotedString(input);
             expect(result.first.toString()).toBe(expectedBordered);
             expect(result.second.toString()).toBe(expectedRest);
             expect(result.error).toBeUndefined();
@@ -489,7 +489,7 @@ describe('nextQuotedString', () => {
             const expectedBordered: string = '"Quoted with \\" character"';
             const expectedRest: string = "String";
 
-            const result = ParserIndexed.nextQuotedString(input);
+            const result = IndexedStringUtils.nextQuotedString(input);
             expect(result.first.toString()).toBe(expectedBordered);
             expect(result.second.toString()).toBe(expectedRest);
             expect(result.error).toBeUndefined();
@@ -500,7 +500,7 @@ describe('nextQuotedString', () => {
             const expectedBordered: string = '"Quoted with more \\\\ \\" character\\\\"';
             const expectedRest: string = "String";
 
-            const result = ParserIndexed.nextQuotedString(input);
+            const result = IndexedStringUtils.nextQuotedString(input);
             expect(result.first.toString()).toBe(expectedBordered);
             expect(result.second.toString()).toBe(expectedRest);
             expect(result.error).toBeUndefined();
@@ -513,7 +513,7 @@ describe('nextQuotedString', () => {
             const expectedBordered: string = '"Left quoted String';
             const expectedRest: string = "";
 
-            const result = ParserIndexed.nextQuotedString(input);
+            const result = IndexedStringUtils.nextQuotedString(input);
             expect(result.first.toString()).toBe(expectedBordered);
             expect(result.second.toString()).toBe(expectedRest);
             expect(result.error).not.toBeUndefined();
@@ -524,7 +524,7 @@ describe('nextQuotedString', () => {
             const expectedBordered: string = '"End on the next\n';
             const expectedRest: string = 'line"';
 
-            const result = ParserIndexed.nextQuotedString(input);
+            const result = IndexedStringUtils.nextQuotedString(input);
             expect(result.first.toString()).toBe(expectedBordered);
             expect(result.second.toString()).toBe(expectedRest);
             expect(result.error).not.toBeUndefined();
@@ -541,7 +541,7 @@ describe('nextBorderedPart', () => {
             const expectedBordered: string = "()";
             const expectedRest: string = "String";
 
-            const result = ParserIndexed.nextBorderedPart(input, start, end);
+            const result = IndexedStringUtils.nextBorderedPart(input, start, end);
             expect(result.first.toString()).toBe(expectedBordered);
             expect(result.second.toString()).toBe(expectedRest);
             expect(result.second.getLastIndex()).toBe(input.getLastIndex());
@@ -554,7 +554,7 @@ describe('nextBorderedPart', () => {
             const expectedBordered: string = "((()))";
             const expectedRest: string = "String";
 
-            const result = ParserIndexed.nextBorderedPart(input, start, end);
+            const result = IndexedStringUtils.nextBorderedPart(input, start, end);
             expect(result.first.toString()).toBe(expectedBordered);
             expect(result.second.toString()).toBe(expectedRest);
             expect(result.second.getLastIndex()).toBe(input.getLastIndex());
@@ -569,7 +569,7 @@ describe('nextBorderedPart', () => {
             const expectedBordered: string = "[((InnerString))]";
             const expectedRest: string = "String";
 
-            const result = ParserIndexed.nextBorderedPart(input, start, end);
+            const result = IndexedStringUtils.nextBorderedPart(input, start, end);
             expect(result.first.toString()).toBe(expectedBordered);
             expect(result.second.toString()).toBe(expectedRest);
             expect(result.second.getLastIndex()).toBe(input.getLastIndex());
@@ -582,7 +582,7 @@ describe('nextBorderedPart', () => {
             const expectedBordered: string = "[((InnerString))>";
             const expectedRest: string = "String";
 
-            const result = ParserIndexed.nextBorderedPart(input, start, end);
+            const result = IndexedStringUtils.nextBorderedPart(input, start, end);
             expect(result.first.toString()).toBe(expectedBordered);
             expect(result.second.toString()).toBe(expectedRest);
             expect(result.second.getLastIndex()).toBe(input.getLastIndex());
@@ -596,7 +596,7 @@ describe('nextBorderedPart', () => {
             const expectedBordered: string = "< some -> rename >";
             const expectedRest: string = "AndSoOn";
 
-            const result = ParserIndexed.nextBorderedPart(input, start, end, escape);
+            const result = IndexedStringUtils.nextBorderedPart(input, start, end, escape);
             expect(result.first.toString()).toBe(expectedBordered);
             expect(result.second.toString()).toBe(expectedRest);
             expect(result.second.getLastIndex()).toBe(input.getLastIndex());
@@ -609,7 +609,7 @@ describe('nextBorderedPart', () => {
             const start: string = '(';
             const end: string = ')';
 
-            expect(() => ParserIndexed.nextBorderedPart(input, start, end)).toThrow();
+            expect(() => IndexedStringUtils.nextBorderedPart(input, start, end)).toThrow();
         });
 
         test('(String', () => {
@@ -617,7 +617,7 @@ describe('nextBorderedPart', () => {
             const start: string = '(';
             const end: string = ')';
 
-            expect(() => ParserIndexed.nextBorderedPart(input, start, end)).toThrow();
+            expect(() => IndexedStringUtils.nextBorderedPart(input, start, end)).toThrow();
         });
     });
 
@@ -629,7 +629,7 @@ describe('nextBorderedPart', () => {
             const expectedBordered: string = "(\")\")";
             const expectedRest: string = "String";
 
-            const result = ParserIndexed.nextBorderedPart(input, start, end);
+            const result = IndexedStringUtils.nextBorderedPart(input, start, end);
             expect(result.first.toString()).toBe(expectedBordered);
             expect(result.second.toString()).toBe(expectedRest);
         });
@@ -641,7 +641,7 @@ describe('nextBorderedPart', () => {
             const expectedBordered: string = '(some long expression with "inner quoted part with ) and \\", yeah")';
             const expectedRest: string = "String";
 
-            const result = ParserIndexed.nextBorderedPart(input, start, end);
+            const result = IndexedStringUtils.nextBorderedPart(input, start, end);
             expect(result.first.toString()).toBe(expectedBordered);
             expect(result.second.toString()).toBe(expectedRest);
         });
@@ -653,7 +653,7 @@ describe('skipWhitespacesAndChar', () => {
         const str: string = ",";
         const expected: string = "";
 
-        const actual: IndexedString = ParserIndexed.skipWhitespacesAndChar(IndexedString.new(str), ',');
+        const actual: IndexedString = IndexedStringUtils.skipWhitespacesAndChar(IndexedString.new(str), ',');
         expect(actual.toString()).toBe(expected);
     });
 
@@ -661,7 +661,7 @@ describe('skipWhitespacesAndChar', () => {
         const str: string = "abcd";
         const expected: string = "bcd";
 
-        const actual: IndexedString = ParserIndexed.skipWhitespacesAndChar(IndexedString.new(str), 'a');
+        const actual: IndexedString = IndexedStringUtils.skipWhitespacesAndChar(IndexedString.new(str), 'a');
         expect(actual.toString()).toBe(expected);
     });
 
@@ -669,7 +669,7 @@ describe('skipWhitespacesAndChar', () => {
         const str: string = ": \"Value\", Next: 123544, Next: \"asasasd\"";
         const expected: string = "\"Value\", Next: 123544, Next: \"asasasd\"";
 
-        const actual: IndexedString = ParserIndexed.skipWhitespacesAndChar(IndexedString.new(str), ':');
+        const actual: IndexedString = IndexedStringUtils.skipWhitespacesAndChar(IndexedString.new(str), ':');
         expect(actual.toString()).toBe(expected);
     });
 
@@ -677,7 +677,7 @@ describe('skipWhitespacesAndChar', () => {
         const str: string = "  \t  :\t \"Value\", Next: 123544, Next: \"asasasd\"";
         const expected: string = "\"Value\", Next: 123544, Next: \"asasasd\"";
 
-        const actual: IndexedString = ParserIndexed.skipWhitespacesAndChar(IndexedString.new(str), ':');
+        const actual: IndexedString = IndexedStringUtils.skipWhitespacesAndChar(IndexedString.new(str), ':');
         expect(actual.toString()).toBe(expected);
     });
 });
@@ -726,7 +726,7 @@ describe('deleteCommentLines', () => {
             '\t \t\n' +
             '}';
 
-        const actual: IndexedString = ParserIndexed.deleteCommentLines(input);
+        const actual: IndexedString = IndexedStringUtils.deleteCommentLines(input);
         expect(actual.toString()).toStrictEqual(expectedStr);
         expect(actual.getLastIndex()).toStrictEqual(input.getLastIndex());
     });

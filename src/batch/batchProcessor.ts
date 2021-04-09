@@ -1,4 +1,4 @@
-import {FileDialog} from "./fileDialog";
+import {FileDialog} from "../utils/fileDialog";
 import JSZip from "jszip";
 import {saveAs} from "file-saver";
 import Relation from "../relation/relation";
@@ -14,7 +14,7 @@ import DivisionNode from "../ratree/divisionNode";
 import OuterJoinNode from "../ratree/outerJoinNode";
 import NaturalJoinNode, {NaturalJoinType} from "../ratree/naturalJoinNode";
 import SetOperationNode from "../ratree/setOperationNode";
-import {formatDate} from "./date";
+import {formatDate} from "../utils/dateUtils";
 import ThetaJoinNode, {ThetaJoinType} from "../ratree/thetaJoinNode";
 import {isProjectObject, Project} from "../project/project";
 import {ExprParser} from "../expression/exprParser";

@@ -3,11 +3,12 @@ import RATreeNode from "./raTreeNode";
 import Relation from "../relation/relation";
 import {VETreeNode} from "../vetree/veTreeNode";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
-import {getRange, IndexedString} from "../tools/indexedString";
+import {IndexedString} from "../types/indexedString";
 import ValueParser from "../expression/valueParser";
 import {ErrorFactory, SyntaxErrorCodes} from "../error/errorFactory";
 import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {isInRangeAndNotInQuotes} from "./raTreeTools";
+import {getRange} from "../utils/commonStringUtils";
 
 /**
  * Selection node of the relational algebra syntactic tree.

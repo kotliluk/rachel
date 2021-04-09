@@ -1,9 +1,9 @@
 /**
  * Two possible CSV value separators: comma (,) and semicolon (;).
  */
-export type CsvValueSeparatorChar = "," | ";";
+export type CsvValueSeparator = "," | ";";
 
-export function findValueSeparatorChar(str: string): string | undefined {
+export function findValueSeparator(str: string): string | undefined {
     for (let i = 0; i < str.length; ++i) {
         const char: string = str.charAt(i);
         if (char === ",") {

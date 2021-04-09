@@ -2,7 +2,7 @@ import Relation from "../../relation/relation";
 import Row from "../../relation/row";
 import RelationNode from "../relationNode";
 import SetOperationNode, {SetOperationType} from "../setOperationNode";
-import {IndexedString} from "../../tools/indexedString";
+import {IndexedString} from "../../types/indexedString";
 import SelectionNode from "../selectionNode";
 
 describe('eval' , () => {

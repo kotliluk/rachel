@@ -5,8 +5,8 @@ import {SupportedColumnType} from "../relation/columnType";
 import EditRelationTable from "./editRelationTable";
 import {StoredRelation} from "../relation/storedRelation";
 import {TextInput} from "./textInput";
-import {getForbiddenRelationNames} from "../tools/keywords";
-import Parser from "../tools/parser";
+import {getForbiddenRelationNames} from "../utils/keywords";
+import StringUtils from "../utils/stringUtils";
 import {MessageBox} from "./messageBox";
 
 interface RelationsSectionProps {
@@ -204,7 +204,7 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
             if (forbiddenRelationNames.indexOf(text) > -1) {
                 return true;
             }
-            return !Parser.isName(text);
+            return !StringUtils.isName(text);
         }
 
         return (

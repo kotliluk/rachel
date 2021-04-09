@@ -1,7 +1,7 @@
 import RelationNode from "../relationNode";
 import Relation from "../../relation/relation";
 import Row from "../../relation/row";
-import {IndexedString} from "../../tools/indexedString";
+import {IndexedString} from "../../types/indexedString";
 import SelectionNode from "../selectionNode";
 import ThetaJoinNode, {ThetaJoinType} from "../thetaJoinNode";
 

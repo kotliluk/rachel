@@ -1,5 +1,5 @@
 import {isProjectObject, Project} from "./project";
-import {FileDialog} from "../tools/fileDialog";
+import {FileDialog} from "../utils/fileDialog";
 import {saveAs} from "file-saver";
 
 /**

@@ -1,7 +1,7 @@
-import {CsvValueSeparatorChar} from "./csvSupport";
-import {isSupportedLanguage, SupportedLanguage} from "./supportedLanguage";
+import {CsvValueSeparator} from "../types/csvSupport";
+import {isSupportedLanguage, SupportedLanguage} from "../types/supportedLanguage";
 
-const defaultCsvValueSeparator: CsvValueSeparatorChar = ";";
+const defaultCsvValueSeparator: CsvValueSeparator = ";";
 const defaultLanguage: SupportedLanguage = "ENG";
 const defaultDarkMode: string = "false";
 
@@ -15,7 +15,7 @@ export class LocalStorage {
     private static isInit: boolean = false;
     private static storageSupported: boolean = typeof(Storage) !== "undefined";
 
-    private static csvValueSeparator: CsvValueSeparatorChar;
+    private static csvValueSeparator: CsvValueSeparator;
     private static language: SupportedLanguage;
     private static darkTheme: string;
 
@@ -64,14 +64,14 @@ export class LocalStorage {
         LocalStorage.isInit = true;
     }
 
-    public static getCsvValueSeparator(): CsvValueSeparatorChar {
+    public static getCsvValueSeparator(): CsvValueSeparator {
         if (!LocalStorage.isInit) {
             LocalStorage.init();
         }
         return LocalStorage.csvValueSeparator;
     }
 
-    public static setCsvValueSeparator(csvValueSeparator: CsvValueSeparatorChar): void {
+    public static setCsvValueSeparator(csvValueSeparator: CsvValueSeparator): void {
         LocalStorage.csvValueSeparator = csvValueSeparator;
         if (LocalStorage.storageSupported) {
             localStorage.setItem("csvValueSeparator", csvValueSeparator);

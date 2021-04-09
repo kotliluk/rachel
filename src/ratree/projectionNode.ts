@@ -1,13 +1,14 @@
 import UnaryNode from "./unaryNode";
 import RATreeNode from "./raTreeNode";
-import Parser from "../tools/parser";
+import StringUtils from "../utils/stringUtils";
 import Relation from "../relation/relation";
 import Row from "../relation/row";
-import {getRange, IndexedString, isEmpty} from "../tools/indexedString";
+import {IndexedString} from "../types/indexedString";
 import {ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
 import ErrorWithTextRange from "../error/errorWithTextRange";
-import {isForbiddenColumnName} from "../tools/keywords";
-import ParserIndexed from "../tools/parserIndexed";
+import {isForbiddenColumnName} from "../utils/keywords";
+import IndexedStringUtils from "../utils/indexedStringUtils";
+import {getRange, isEmpty} from "../utils/commonStringUtils";
 
 /**
  * Projection node of the relational algebra syntactic tree.
@@ -42,7 +43,7 @@ export default class ProjectionNode extends UnaryNode {
         parts.forEach(part => {
             part = part.trim();
             // @ts-ignore
-            const isName = indexed ? ParserIndexed.isName(part) : Parser.isName(part);
+            const isName = indexed ? IndexedStringUtils.isName(part) : StringUtils.isName(part);
             if (isName && !isForbiddenColumnName(part)) {
                 ret.add(part);
             }

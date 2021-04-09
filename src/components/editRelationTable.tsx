@@ -2,7 +2,7 @@ import React from "react";
 import './css/editRelationTable.css';
 import {StoredRelation} from "../relation/storedRelation";
 import {SupportedColumnType} from "../relation/columnType";
-import {RCToStringMap} from "../tools/rcToStringMap";
+import {NNToSMap} from "../types/nnToSMap";
 
 interface EditRelationTableProps {
     // storing representation of the relation to be edited
@@ -89,7 +89,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
     /**
      * Returns error of the relation to edit.
      */
-    private getErrors = (): RCToStringMap => {
+    private getErrors = (): NNToSMap => {
         return this.props.relation.getErrors();
     }
 

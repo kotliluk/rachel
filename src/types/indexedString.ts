@@ -1,7 +1,3 @@
-import ParserIndexed from "./parserIndexed";
-import Parser from "./parser";
-import RASyntaxError from "../error/raSyntaxError";
-
 /**
  * Immutable string representation with index of each character. Provides some usual string functions.
  */
@@ -393,73 +389,4 @@ export class IndexedString {
 export interface IndexedChar {
     char: string,
     index: number
-}
-
-/**
- * Gets string range: when IndexedString given, returns str.getNonNaNRange(), when string given, returns undefined.
- *
- * @param str string to get the range of
- */
-export function getRange(str: string | IndexedString): {start: number, end: number} | undefined {
-    return (str instanceof IndexedString) ? str.getNonNaNRange() : undefined;
-}
-
-/**
- * Gets strings length.
- *
- * @param str string to get the length of
- */
-export function length(str: string | IndexedString): number {
-    return (str instanceof IndexedString) ? str.length() : str.length;
-}
-
-/**
- * Returns true if the given string is empty.
- *
- * @param str
- */
-export function isEmpty(str: string | IndexedString): boolean {
-    if (str instanceof IndexedString) {
-        return str.isEmpty();
-    }
-    return str === "";
-}
-
-/**
- * Returns next quoted part of the given string. Returned parts are of the same type as the argument.
- * See Parser.nextQuotedString for details.
- */
-export function nextQuotedString(str: string | IndexedString): { first: string, second: string, error: RASyntaxError | undefined } |
-    { first: IndexedString, second: IndexedString, error: RASyntaxError | undefined } {
-    if (str instanceof IndexedString) {
-        return ParserIndexed.nextQuotedString(str);
-    }
-    return Parser.nextQuotedString(str);
-}
-
-/**
- * Returns next bordered part of the given string. Returned parts are of the same type as the argument.
- * See Parser.nextBorderedPart for details.
- */
-export function nextBorderedPart(str: string | IndexedString, start: string, end: string, escape?: string):
-    {first: IndexedString, second: IndexedString} | {first: string, second: string} {
-    if (str instanceof IndexedString) {
-        return ParserIndexed.nextBorderedPart(str, start, end, escape);
-    }
-    return Parser.nextBorderedPart(str, start, end, escape);
-}
-
-/**
- * Returns true if the string str contains any of the characters from string chars. Otherwise, returns false.
- *
- * @param str
- * @param chars
- */
-export function containsAny(str: string | IndexedString, chars: string): boolean {
-    for (let i = 0; i < chars.length; ++i) {
-        if (str.indexOf(chars[i]) > -1) {
-            return true;
-        }
-    }
-    return false;
 }

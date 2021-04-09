@@ -6,10 +6,11 @@ interface KeyValue {
 }
 
 /**
- * Wrapper of JavaScript Map object to provide usage of object (string | IndexedString) as a key.
+ * Wrapper of JavaScript Map object to provide usage of object (string | IndexedString) as a key for (string |
+ * IndexedString) values.
  * Keys "IndexedString: something" and "string: something" are equal for this map.
  */
-export class ISSToISSMap {
+export class SToSMap {
     private map: Map<string, KeyValue> = new Map<string, KeyValue>();
 
     public get(key: string | IndexedString): string | IndexedString | undefined {

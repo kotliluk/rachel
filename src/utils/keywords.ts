@@ -1,4 +1,4 @@
-import {IndexedString} from "./indexedString";
+import {IndexedString} from "../types/indexedString";
 
 /**
  * Lowercase reserved keywords which cannot be used for column names. They are:

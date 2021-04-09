@@ -1,6 +1,6 @@
 import {ComparingOperatorType} from "../vetree/comparingOperator";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
-import {IndexedString} from "../tools/indexedString";
+import {IndexedString} from "../types/indexedString";
 
 /**
  * Precedence value for all token types.

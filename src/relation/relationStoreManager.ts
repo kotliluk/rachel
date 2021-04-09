@@ -1,13 +1,13 @@
-import {FileDialog} from "../tools/fileDialog";
+import {FileDialog} from "../utils/fileDialog";
 import {
-    CsvValueSeparatorChar,
-    findValueSeparatorChar
-} from "../tools/csvSupport";
+    CsvValueSeparator,
+    findValueSeparator
+} from "../types/csvSupport";
 import {StoredRelation} from "./storedRelation";
 import {SupportedColumnType} from "./columnType";
 import {saveAs} from "file-saver";
 import JSZip from "jszip";
-import Parser from "../tools/parser";
+import StringUtils from "../utils/stringUtils";
 
 /**
  * Class for loading and saving relation definitions.
@@ -53,7 +53,7 @@ export class RelationStoreManager {
      * @param filename name of the downloaded file (without .zip/.csv extension)
      * @param valueSeparator the separator of values
      */
-    public static save(relations: StoredRelation[], filename: string, valueSeparator: CsvValueSeparatorChar): void {
+    public static save(relations: StoredRelation[], filename: string, valueSeparator: CsvValueSeparator): void {
         if (relations.length === 0) {
             return;
         }
@@ -99,7 +99,7 @@ export class RelationStoreManager {
         lines[0] = lines[0].replace(/\s/g, '');
         lines[1] = lines[1].replace(/\s/g, '');
 
-        let separator = findValueSeparatorChar(lines[1]);
+        let separator = findValueSeparator(lines[1]);
         // if no separator is found, only one column is expected - sets separator to not defined value to unify the
         // following process
         if (separator === undefined) {
@@ -146,7 +146,7 @@ export class RelationStoreManager {
      * Removes invalid characters for name. If the filtered name is empty, returns string "relation".
      */
     private static createValidName(name: string): string {
-        name = name.split('').filter(char => Parser.isNameChar(char)).join('');
+        name = name.split('').filter(char => StringUtils.isNameChar(char)).join('');
         if (name === "") {
             return "relation";
         }
@@ -186,7 +186,7 @@ export class RelationStoreManager {
     /**
      * Creates a csv representation for the given relation.
      */
-    private static relationToCsv(relation: StoredRelation, valueSeparator: CsvValueSeparatorChar): string {
+    private static relationToCsv(relation: StoredRelation, valueSeparator: CsvValueSeparator): string {
         const names: string = relation.getColumnNames().join(valueSeparator);
         const types: string = relation.getColumnTypes().join(valueSeparator);
         const rows: string[] = relation.getRows().map(row => row.join(valueSeparator));

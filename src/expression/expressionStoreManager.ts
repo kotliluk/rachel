@@ -1,4 +1,4 @@
-import {FileDialog} from "../tools/fileDialog";
+import {FileDialog} from "../utils/fileDialog";
 import {saveAs} from "file-saver";
 import {Expression} from "./expression";
 

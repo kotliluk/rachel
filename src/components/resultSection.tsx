@@ -5,7 +5,7 @@ import Relation from "../relation/relation";
 import {ResultRelationTable} from "./resultRelationTable";
 import {TooltipButton} from "./tooltipButton";
 import RATreeNode from "../ratree/raTreeNode";
-import {CsvValueSeparatorChar} from "../tools/csvSupport";
+import {CsvValueSeparator} from "../types/csvSupport";
 import {evalTreeSVGId, EvaluationTree} from "./evaluationTree";
 import {depthSearch} from "../ratree/raTreeTools";
 import {CodeErrorCodes, ErrorFactory} from "../error/errorFactory";
@@ -26,7 +26,7 @@ interface ResultSectionProps {
     onUnexpectedError: (e: Error) => void,
 
     // current selected value separator in csv files
-    csvValueSeparator: CsvValueSeparatorChar
+    csvValueSeparator: CsvValueSeparator
     // true if dark theme should be applied
     darkTheme: boolean,
 }

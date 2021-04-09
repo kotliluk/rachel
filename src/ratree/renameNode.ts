@@ -1,14 +1,15 @@
 import UnaryNode from "./unaryNode";
 import RATreeNode from "./raTreeNode";
-import Parser from "../tools/parser";
+import StringUtils from "../utils/stringUtils";
 import Relation from "../relation/relation";
 import {SupportedColumnType} from "../relation/columnType";
 import Row from "../relation/row";
-import {getRange, IndexedString, isEmpty} from "../tools/indexedString";
+import {IndexedString} from "../types/indexedString";
 import {ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
-import {isForbiddenColumnName} from "../tools/keywords";
+import {isForbiddenColumnName} from "../utils/keywords";
 import ErrorWithTextRange from "../error/errorWithTextRange";
-import {ISSToISSMap} from "../tools/issToISSMap";
+import {SToSMap} from "../types/sToSMap";
+import {getRange, isEmpty} from "../utils/commonStringUtils";
 
 /**
  * Renaming node of the relational algebra syntactic tree.
@@ -31,7 +32,7 @@ export default class RenameNode extends UnaryNode {
         this.stringRange = getRange(rename);
     }
 
-    private parseChanges(doThrow: boolean, errors: ErrorWithTextRange[] = []): ISSToISSMap {
+    private parseChanges(doThrow: boolean, errors: ErrorWithTextRange[] = []): SToSMap {
         const handleError = (error: SyntaxError) => {
             if (doThrow) {
                 throw error;
@@ -40,7 +41,7 @@ export default class RenameNode extends UnaryNode {
             }
         }
         const parts: (string | IndexedString)[] = this.rename.slice(1, -1).split(",");
-        const ret: ISSToISSMap = new ISSToISSMap();
+        const ret: SToSMap = new SToSMap();
         for (let part of parts) {
             // @ts-ignore
             let words: (string | IndexedString)[] = part.split("->").map(w => w.trim());
@@ -60,7 +61,7 @@ export default class RenameNode extends UnaryNode {
                     getRange(words[0]), words[0].toString()));
                 beforeError = true;
             }
-            if (!afterError && !Parser.isName(words[1].toString())) {
+            if (!afterError && !StringUtils.isName(words[1].toString())) {
                 handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.renameNode_parseChanges_invalidNewName,
                     getRange(words[1]), words[1].toString()));
                 afterError = true;
@@ -95,7 +96,7 @@ export default class RenameNode extends UnaryNode {
         if (this.isEvaluated()) {
             return;
         }
-        const changes: ISSToISSMap = this.parseChanges(true);
+        const changes: SToSMap = this.parseChanges(true);
         const source: Relation = this.subtree.getResult();
         // check whether all columns to rename are in source relation
         changes.forEach((value, key) => {
@@ -163,7 +164,7 @@ export default class RenameNode extends UnaryNode {
         }
         // adds errors from current expression
         const errors = source.errors;
-        const changes: ISSToISSMap = this.parseChanges(false, errors);
+        const changes: SToSMap = this.parseChanges(false, errors);
         // creates relational schema - "(source minus to-rename) union (renamed existing in source)"
         const result: Relation = new Relation(source.result.getName() + "<...>");
         // in first loop adds source columns which are not in changes.keys

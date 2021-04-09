@@ -1,4 +1,4 @@
-import Parser from "../tools/parser";
+import StringUtils from "../utils/stringUtils";
 import {ComparingOperator, ComparingOperatorType} from "../vetree/comparingOperator";
 import {LogicalOperator} from "../vetree/logicalOperator";
 import {LiteralValue} from "../vetree/literalValue";
@@ -22,14 +22,15 @@ import {
     ValueToken
 } from "./valueTokens"
 import {VETreeNode} from "../vetree/veTreeNode";
-import {getRange, IndexedString, isEmpty, length, nextQuotedString} from "../tools/indexedString";
-import ParserIndexed from "../tools/parserIndexed";
+import {IndexedString} from "../types/indexedString";
+import IndexedStringUtils from "../utils/indexedStringUtils";
 import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {CodeErrorCodes, ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
 import RASyntaxError from "../error/raSyntaxError";
+import {getRange, isEmpty, length, nextQuotedString} from "../utils/commonStringUtils";
 
 /**
- * Parser of string infix boolean and algebraic expression to value-evaluating tree.
+ * StringUtils of string infix boolean and algebraic expression to value-evaluating tree.
  */
 export default class ValueParser {
 
@@ -203,8 +204,8 @@ export default class ValueParser {
                 tokens.push(new LiteralToken(str, str.toString(), "string"));
                 rest = split.second;
             }
-            else if (Parser.isDigit(rest.charAt(0))) {
-                let split = (rest instanceof IndexedString) ? ParserIndexed.nextNumber(rest) : Parser.nextNumber(rest);
+            else if (StringUtils.isDigit(rest.charAt(0))) {
+                let split = (rest instanceof IndexedString) ? IndexedStringUtils.nextNumber(rest) : StringUtils.nextNumber(rest);
                 tokens.push(new LiteralToken(split.first, Number(split.first.toString()), "number"));
                 rest = split.second;
             }
@@ -225,14 +226,14 @@ export default class ValueParser {
                 rest = rest.slice(5);
             }
             // COLUMN REFERENCE
-            else if (Parser.isLetter(rest.charAt(0)) || rest.charAt(0) === '_') {
-                let split = (rest instanceof IndexedString) ? ParserIndexed.nextName(rest) : Parser.nextName(rest);
+            else if (StringUtils.isLetter(rest.charAt(0)) || rest.charAt(0) === '_') {
+                let split = (rest instanceof IndexedString) ? IndexedStringUtils.nextName(rest) : StringUtils.nextName(rest);
                 tokens.push(new ReferenceToken(split.first));
                 rest = split.second;
             }
             // UNEXPECTED PART
             else {
-                const split = (rest instanceof IndexedString) ? ParserIndexed.nextNonWhitespacePart(rest) : Parser.nextNonWhitespacePart(rest);
+                const split = (rest instanceof IndexedString) ? IndexedStringUtils.nextNonWhitespacePart(rest) : StringUtils.nextNonWhitespacePart(rest);
                 handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_parseTokens_unexpectedPart,
                     getRange(split.first), split.first.toString()));
                 rest = rest.slice(length(split.first));

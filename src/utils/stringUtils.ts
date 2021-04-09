@@ -2,16 +2,16 @@ import {ErrorFactory, SyntaxErrorCodes} from "../error/errorFactory";
 import RASyntaxError from "../error/raSyntaxError";
 
 /**
- * Parser providing general parsing helper functions.
+ * Class providing general helper functions for strings.
  */
-export default class Parser {
+export default class StringUtils {
 
     /**
      * @param str Checked string
      * @return true if the string contains letters only and has length at least 1
      */
     public static isWord(str: string): boolean {
-        return str.length > 0 && str.split("").every(c => Parser.isLetter(c));
+        return str.length > 0 && str.split("").every(c => StringUtils.isLetter(c));
     }
 
     /**
@@ -23,10 +23,10 @@ export default class Parser {
         if (str.length === 0) {
             return false;
         }
-        if (!Parser.isLetter(str.charAt(0)) && str.charAt(0) !== '_') {
+        if (!StringUtils.isLetter(str.charAt(0)) && str.charAt(0) !== '_') {
             return false;
         }
-        return str.split("").every(c => Parser.isNameChar(c));
+        return str.split("").every(c => StringUtils.isNameChar(c));
     }
 
     /**
@@ -52,7 +52,7 @@ export default class Parser {
      * @return true if the given string has length one and the character is a letter, a number or an underscore
      */
     public static isNameChar(c: string): boolean {
-        return Parser.isLetter(c) || Parser.isDigit(c) || c === '_';
+        return StringUtils.isLetter(c) || StringUtils.isDigit(c) || c === '_';
     }
 
     /**
@@ -84,7 +84,7 @@ export default class Parser {
         }
         let i: number = 0;
         while (i < str.length) {
-            if (!Parser.isLetter(str.charAt(i))) {
+            if (!StringUtils.isLetter(str.charAt(i))) {
                 return { first: str.substring(0, i), second: str.substring(i)};
             }
             ++i;
@@ -104,13 +104,13 @@ export default class Parser {
         if (str === "") {
             return { first: "", second: "" };
         }
-        if (!Parser.isLetter(str.charAt(0)) && str.charAt(0) !== '_') {
+        if (!StringUtils.isLetter(str.charAt(0)) && str.charAt(0) !== '_') {
             return { first: "", second: str };
         }
         let i: number = 0;
         while (i < str.length) {
             const char: string = str.charAt(i);
-            if (!Parser.isLetter(char) && !Parser.isDigit(char) && char !== '_') {
+            if (!StringUtils.isLetter(char) && !StringUtils.isDigit(char) && char !== '_') {
                 return { first: str.substring(0, i), second: str.substring(i)};
             }
             ++i;
@@ -153,7 +153,7 @@ export default class Parser {
         // string starts with '-' sign
         if (str.charAt(0) === '-') {
             // if there is a digit after '-', shifts the start
-            if (str.length > 1 && Parser.isDigit(str.charAt(1))) {
+            if (str.length > 1 && StringUtils.isDigit(str.charAt(1))) {
                 i = 1;
             }
             // there is no digit
@@ -164,7 +164,7 @@ export default class Parser {
         let digitFound: boolean = false;
         let dotFound: boolean = false;
         while (i < str.length) {
-            if (Parser.isDigit(str.charAt(i))) {
+            if (StringUtils.isDigit(str.charAt(i))) {
                 digitFound = true;
                 ++i;
             }

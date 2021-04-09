@@ -1,19 +1,19 @@
-import {IndexedString} from "./indexedString";
-import Parser from "./parser";
+import {IndexedString} from "../types/indexedString";
+import StringUtils from "./stringUtils";
 import {insertRangeIfUndefined} from "../error/errorWithTextRange";
 import RASyntaxError from "../error/raSyntaxError";
 
 /**
- * IndexedParser providing general parsing helper functions for IndexedString. It wraps Parser methods for IndexedStrings.
+ * Class providing general helper functions for IndexedString.
  */
-export default class ParserIndexed {
+export default class IndexedStringUtils {
 
     /**
      * @param str Checked indexed string
      * @return true if the string contains letters only and has length at least 1
      */
     public static isWord(str: IndexedString): boolean {
-        return Parser.isWord(str.toString());
+        return StringUtils.isWord(str.toString());
     }
 
     /**
@@ -22,7 +22,7 @@ export default class ParserIndexed {
      * a letter or an underscore
      */
     public static isName(str: IndexedString): boolean {
-        return Parser.isName(str.toString());
+        return StringUtils.isName(str.toString());
     }
 
     /**
@@ -30,7 +30,7 @@ export default class ParserIndexed {
      * @return true if the string contains whitespaces only
      */
     public static isWhitespacesOnly(str: IndexedString): boolean {
-        return Parser.isWhitespacesOnly(str.toString());
+        return StringUtils.isWhitespacesOnly(str.toString());
     }
 
     /**
@@ -38,7 +38,7 @@ export default class ParserIndexed {
      * @return true if the given string has length one and the character is a letter
      */
     public static isLetter(c: IndexedString): boolean {
-        return Parser.isLetter(c.toString());
+        return StringUtils.isLetter(c.toString());
     }
 
     /**
@@ -46,7 +46,7 @@ export default class ParserIndexed {
      * @return true if the given string has length one and the character is a letter, a number or an underscore
      */
     public static isNameChar(c: IndexedString): boolean {
-        return Parser.isNameChar(c.toString());
+        return StringUtils.isNameChar(c.toString());
     }
 
     /**
@@ -54,7 +54,7 @@ export default class ParserIndexed {
      * @return true if the given string has length one and the character is a digit
      */
     public static isDigit(c: IndexedString): boolean {
-        return Parser.isDigit(c.toString());
+        return StringUtils.isDigit(c.toString());
     }
 
     /**
@@ -62,7 +62,7 @@ export default class ParserIndexed {
      * @return true if the string represents a decimal number
      */
     public static isNumber(str: IndexedString): boolean {
-        return Parser.isNumber(str.toString());
+        return StringUtils.isNumber(str.toString());
     }
 
     /**
@@ -73,7 +73,7 @@ export default class ParserIndexed {
      * @return split indexed string in a pair { word, rest }
      */
     public static nextWord(str: IndexedString): { first: IndexedString, second: IndexedString } {
-        const strParts: { first: string, second: string } = Parser.nextWord(str.toString());
+        const strParts: { first: string, second: string } = StringUtils.nextWord(str.toString());
         return { first: str.slice(0, strParts.first.length), second: str.slice(strParts.first.length)};
     }
 
@@ -86,7 +86,7 @@ export default class ParserIndexed {
      * @return split indexed string in a pair { name, rest }
      */
     public static nextName(str: IndexedString): { first: IndexedString, second: IndexedString } {
-        const strParts: { first: string, second: string } = Parser.nextName(str.toString());
+        const strParts: { first: string, second: string } = StringUtils.nextName(str.toString());
         return { first: str.slice(0, strParts.first.length), second: str.slice(strParts.first.length)};
     }
 
@@ -98,7 +98,7 @@ export default class ParserIndexed {
      * @return split indexed string in a pair { name, rest }
      */
     public static nextNonWhitespacePart(str: IndexedString): { first: IndexedString, second: IndexedString } {
-        const strParts: { first: string, second: string } = Parser.nextNonWhitespacePart(str.toString());
+        const strParts: { first: string, second: string } = StringUtils.nextNonWhitespacePart(str.toString());
         return { first: str.slice(0, strParts.first.length), second: str.slice(strParts.first.length)};
     }
 
@@ -110,7 +110,7 @@ export default class ParserIndexed {
      * @return split indexed string in a pair (word, rest)
      */
     static nextNumber(str: IndexedString): { first: IndexedString, second: IndexedString } {
-        const strParts: { first: string, second: string } = Parser.nextNumber(str.toString());
+        const strParts: { first: string, second: string } = StringUtils.nextNumber(str.toString());
         return { first: str.slice(0, strParts.first.length), second: str.slice(strParts.first.length)};
     }
 
@@ -125,7 +125,7 @@ export default class ParserIndexed {
      * @return pair of the starting bordered part and the rest
      */
     static nextQuotedString(str: IndexedString): { first: IndexedString, second: IndexedString, error: RASyntaxError | undefined } {
-        const strParts: { first: string, second: string, error: RASyntaxError | undefined } = Parser.nextQuotedString(str.toString());
+        const strParts: { first: string, second: string, error: RASyntaxError | undefined } = StringUtils.nextQuotedString(str.toString());
         const startIndex = str.getFirstNonNaNIndex();
         if (startIndex !== undefined) {
             strParts.error = insertRangeIfUndefined(strParts.error, {start: startIndex, end: startIndex});
@@ -155,7 +155,7 @@ export default class ParserIndexed {
     static nextBorderedPart(str: IndexedString, start: string, end: string, escape: string = '\0'):
         { first: IndexedString, second: IndexedString } {
         try {
-            const strParts: { first: string, second: string } = Parser.nextBorderedPart(str.toString(), start, end, escape);
+            const strParts: { first: string, second: string } = StringUtils.nextBorderedPart(str.toString(), start, end, escape);
             return { first: str.slice(0, strParts.first.length), second: str.slice(strParts.first.length)};
         }
         catch (err) {
@@ -177,7 +177,7 @@ export default class ParserIndexed {
      */
     public static skipWhitespacesAndChar(str: IndexedString, char: string): IndexedString {
         try {
-            const skippedStr: string = Parser.skipWhitespacesAndChar(str.toString(), char);
+            const skippedStr: string = StringUtils.skipWhitespacesAndChar(str.toString(), char);
             return str.slice(str.length() - skippedStr.length);
         }
         catch (err) {
@@ -192,7 +192,7 @@ export default class ParserIndexed {
      */
     public static deleteCommentLines(str: IndexedString) {
         const {split, separatorIndexes} = str.splitToLines();
-        const toJoin = split.map((line, lineNum) => {
+        const toJoin = split.map(line => {
             let insideQuotes: boolean = false;
             let backslashes: number = 0;
             for (let i = 0; i < line.length(); ++i) {

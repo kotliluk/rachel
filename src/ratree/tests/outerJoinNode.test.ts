@@ -3,7 +3,7 @@ import Row from "../../relation/row";
 import RelationNode from "../relationNode";
 import outerJoinNode from "../outerJoinNode";
 import OuterJoinNode, {OuterJoinType} from "../outerJoinNode";
-import {IndexedString} from "../../tools/indexedString";
+import {IndexedString} from "../../types/indexedString";
 import SelectionNode from "../selectionNode";
 
 describe('full outer join', () => {

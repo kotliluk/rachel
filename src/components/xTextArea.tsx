@@ -1,8 +1,8 @@
 import React from "react";
 import './css/xTextArea.css';
-import {mod} from "../tools/math";
-import {computeFontSizeInPx} from "../tools/font";
-import {getStartOfWordBeforeIndex} from "../tools/whisper";
+import {mod} from "../utils/math";
+import {computeFontSizeInPx} from "../utils/fontUtils";
+import {getStartOfWordBeforeIndex} from "../utils/whisperUtils";
 
 interface XTextAreaProps {
     // id of the component
