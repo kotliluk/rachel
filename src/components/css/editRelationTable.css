@@ -121,10 +121,6 @@
     bottom: 105%;
 }
 
-.edit-table td:hover .tooltip {
-    visibility: visible;
-}
-
 .body-light .edit-table td {
     border: 1px solid var(--light-color-b);
 }
@@ -175,14 +171,6 @@
     position: relative;
     font-weight: bold;
     white-space: nowrap;
-}
-
-.edit-table th:hover .tooltip {
-    visibility: visible;
-}
-
-.name-th:hover .tooltip {
-    visibility: visible;
 }
 
 .name-th {

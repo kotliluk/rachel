@@ -244,10 +244,6 @@ button:hover {
   cursor: pointer;
 }
 
-button:hover .tooltip {
-  visibility: visible;
-}
-
 .body-light button:hover {
   background-color: var(--light-color-d);
   border-color: var(--light-color-d);
@@ -355,6 +351,11 @@ button:hover .tooltip {
   color: #555;
   white-space: nowrap;
   text-align: center;
+}
+
+*:hover > .tooltip {
+  visibility: visible;
+  transition: visibility 0s linear 0.3s;
 }
 
 /* TEXT INPUT */
