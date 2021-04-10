@@ -151,7 +151,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
     private evalExpr = (): void => {
         try {
             const exprParser: ExprParser = new ExprParser(this.props.relations, this.props.nullValuesSupport);
-            const tree = exprParser.indexedParse(this.props.expressions[this.props.currentExpressionIndex].text);
+            const tree = exprParser.parse(this.props.expressions[this.props.currentExpressionIndex].text);
             tree.eval();
             this.setState({errors: []});
             this.props.onEval(tree);

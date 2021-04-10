@@ -51,7 +51,7 @@ describe('eval', () => {
     describe('selects rows correctly', () => {
         describe('left', () => {
             test('LAuto< LKola > RKola]RAuto', () => {
-                const str: string = '< LKola > RKola]';
+                const str: IndexedString = IndexedString.new('< LKola > RKola]');
                 const expected: Relation = new Relation("(LAuto<...]RAuto)");
                 expected.addColumn("LId", "number");
                 expected.addColumn("LMajitel", "string");
@@ -78,7 +78,7 @@ describe('eval', () => {
             });
 
             test('LAuto< LKola > RKola && LMajitel == "Pepa Left"]RAuto', () => {
-                const str: string = '< LKola > RKola && LMajitel == "Pepa Left"]';
+                const str: IndexedString = IndexedString.new('< LKola > RKola && LMajitel == "Pepa Left"]');
                 const expected: Relation = new Relation("(LAuto<...]RAuto)");
                 expected.addColumn("LId", "number");
                 expected.addColumn("LMajitel", "string");
@@ -97,7 +97,7 @@ describe('eval', () => {
 
         describe('right', () => {
             test('LAuto[LKola > RKola>RAuto', () => {
-                const str: string = '[LKola > RKola>';
+                const str: IndexedString = IndexedString.new('[LKola > RKola>');
                 const expected: Relation = new Relation("(LAuto[...>RAuto)");
                 expected.addColumn("RId", "number");
                 expected.addColumn("RMajitel", "string");
@@ -124,7 +124,7 @@ describe('eval', () => {
             });
 
             test('LAuto[LKola > RKola && LMajitel == "Pepa Left">RAuto', () => {
-                const str: string = '[LKola > RKola && LMajitel == "Pepa Left">';
+                const str: IndexedString = IndexedString.new('[LKola > RKola && LMajitel == "Pepa Left">');
                 const expected: Relation = new Relation("(LAuto[...>RAuto)");
                 expected.addColumn("RId", "number");
                 expected.addColumn("RMajitel", "string");
@@ -148,7 +148,7 @@ describe('eval', () => {
 
         describe('full', () => {
             test('LAuto[LKola > RKola]RAuto', () => {
-                const str: string = '[LKola > RKola]';
+                const str: IndexedString = IndexedString.new('[LKola > RKola]');
                 const expected: Relation = new Relation("(LAuto[...]RAuto)");
                 expected.addColumn("LId", "number");
                 expected.addColumn("LMajitel", "string");
@@ -187,7 +187,7 @@ describe('eval', () => {
             });
 
             test('LAuto[LKola > RKola && LMajitel == "Pepa Left"]RAuto', () => {
-                const str: string = '[LKola > RKola && LMajitel == "Pepa Left"]';
+                const str: IndexedString = IndexedString.new('[LKola > RKola && LMajitel == "Pepa Left"]');
                 const expected: Relation = new Relation("(LAuto[...]RAuto)");
                 expected.addColumn("LId", "number");
                 expected.addColumn("LMajitel", "string");
@@ -222,7 +222,7 @@ describe('eval', () => {
     describe('throws when absent column', () => {
         describe('left', () => {
             test('LAuto<LeftId == 1]RAuto', () => {
-                const str: string = "<LeftId == 1]";
+                const str: IndexedString = IndexedString.new("<LeftId == 1]");
 
                 const thetaSemijoinNode: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, str, leftSource, rightSource, true);
                 expect(() => thetaSemijoinNode.getResult()).toThrow();
@@ -231,7 +231,7 @@ describe('eval', () => {
 
         describe('right', () => {
             test('LAuto[LeftId == 1>RAuto', () => {
-                const str: string = "[LeftId == 1>";
+                const str: IndexedString = IndexedString.new("[LeftId == 1>");
 
                 const thetaSemijoinNode: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, str, leftSource, rightSource, true);
                 expect(() => thetaSemijoinNode.getResult()).toThrow();
@@ -240,7 +240,7 @@ describe('eval', () => {
 
         describe('full', () => {
             test('LAuto[LeftId == 1]RAuto', () => {
-                const str: string = "[LeftId == 1]";
+                const str: IndexedString = IndexedString.new("[LeftId == 1]");
 
                 const thetaJoinNode: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.full, str, leftSource, rightSource, true);
                 expect(() => thetaJoinNode.getResult()).toThrow();
@@ -251,7 +251,7 @@ describe('eval', () => {
     describe('throws when invalid condition', () => {
         describe('left', () => {
             test('LAuto<LId == 1 +]RAuto', () => {
-                const str: string = "<LId == 1 +]";
+                const str: IndexedString = IndexedString.new("<LId == 1 +]");
 
                 const thetaSemijoinNode: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, str, leftSource, rightSource, true);
                 expect(() => thetaSemijoinNode.getResult()).toThrow();
@@ -260,7 +260,7 @@ describe('eval', () => {
 
         describe('right', () => {
             test('LAuto[LId == 1 +>RAuto', () => {
-                const str: string = "[LId == 1 +>";
+                const str: IndexedString = IndexedString.new("[LId == 1 +>");
 
                 const thetaSemijoinNode: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, str, leftSource, rightSource, true);
                 expect(() => thetaSemijoinNode.getResult()).toThrow();
@@ -269,7 +269,7 @@ describe('eval', () => {
 
         describe('full', () => {
             test('LAuto[Id == 1 +]RAuto', () => {
-                const str: string = "[Id == 1 +]";
+                const str: IndexedString = IndexedString.new("[Id == 1 +]");
 
                 const thetaJoinNode: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.full, str, leftSource, rightSource, true);
                 expect(() => thetaJoinNode.getResult()).toThrow();
@@ -280,7 +280,7 @@ describe('eval', () => {
     describe('throws when result not boolean', () => {
         describe('left', () => {
             test('LAuto<1 + 2]RAuto', () => {
-                const str: string = "<1 + 2]";
+                const str: IndexedString = IndexedString.new("<1 + 2]");
 
                 const thetaSemijoinNode: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, str, leftSource, rightSource, true);
                 expect(() => thetaSemijoinNode.getResult()).toThrow();
@@ -289,7 +289,7 @@ describe('eval', () => {
 
         describe('right', () => {
             test('LAuto[1 + 2>RAuto', () => {
-                const str: string = "[1 + 2>";
+                const str: IndexedString = IndexedString.new("[1 + 2>");
 
                 const thetaSemijoinNode: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, str, leftSource, rightSource, true);
                 expect(() => thetaSemijoinNode.getResult()).toThrow();
@@ -298,7 +298,7 @@ describe('eval', () => {
 
         describe('full', () => {
             test('LAuto[1 + 2]RAuto', () => {
-                const str: string = "[1 + 2]";
+                const str: IndexedString = IndexedString.new("[1 + 2]");
 
                 const thetaJoinNode: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.full, str, leftSource, rightSource, true);
                 expect(() => thetaJoinNode.getResult()).toThrow();

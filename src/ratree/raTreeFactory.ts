@@ -12,7 +12,6 @@ import SetOperationNode, {SetOperationType} from "./setOperationNode";
 import BinaryNode, {BinaryNodeClass} from "./binaryNode";
 import {IndexedString} from "../types/indexedString";
 import ThetaJoinNode, {ThetaJoinType} from "./thetaJoinNode";
-import {getRange} from "../utils/commonStringUtils";
 
 /**
  * Factory for creating unary and binary nodes of given class.
@@ -28,7 +27,7 @@ export default class RATreeFactory {
      * @param expr expression used to specify node's behavior
      */
     public static createUnary(unaryClass: UnaryNodeClass, subtree: RATreeNode,
-                              nullValuesSupport: boolean, expr: string | IndexedString): UnaryNode {
+                              nullValuesSupport: boolean, expr: IndexedString): UnaryNode {
         switch (unaryClass) {
             case "projection":
                 return new ProjectionNode(expr, subtree);
@@ -49,16 +48,16 @@ export default class RATreeFactory {
      * @param expr expression used to specify node's behavior
      */
     public static createBinary(binaryClass: BinaryNodeClass, left: RATreeNode, right: RATreeNode,
-                               nullValuesSupport: boolean, expr: string | IndexedString): BinaryNode {
+                               nullValuesSupport: boolean, expr: IndexedString): BinaryNode {
         switch (binaryClass) {
             case "left antijoin":
                 return new AntijoinNode(AntijoinType.left, left, right);
             case "right antijoin":
                 return new AntijoinNode(AntijoinType.right, left, right);
             case "cartesian product":
-                return new CartesianProductNode(left, right, getRange(expr));
+                return new CartesianProductNode(left, right, expr.getRange());
             case "division":
-                return new DivisionNode(left, right, getRange(expr));
+                return new DivisionNode(left, right, expr.getRange());
             case "natural join":
                 return new NaturalJoinNode(NaturalJoinType.natural, left, right);
             case "left outer join":
@@ -72,11 +71,11 @@ export default class RATreeFactory {
             case "right semijoin":
                 return new NaturalJoinNode(NaturalJoinType.rightSemi, left, right);
             case "union":
-                return new SetOperationNode(SetOperationType.union, left, right, getRange(expr));
+                return new SetOperationNode(SetOperationType.union, left, right, expr.getRange());
             case "intersection":
-                return new SetOperationNode(SetOperationType.intersection, left, right, getRange(expr));
+                return new SetOperationNode(SetOperationType.intersection, left, right, expr.getRange());
             case "difference":
-                return new SetOperationNode(SetOperationType.difference, left, right, getRange(expr));
+                return new SetOperationNode(SetOperationType.difference, left, right, expr.getRange());
             case "theta join":
                 return new ThetaJoinNode(ThetaJoinType.full, expr, left, right, nullValuesSupport);
             case "left theta semijoin":

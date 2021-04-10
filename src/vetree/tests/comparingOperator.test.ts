@@ -2,6 +2,7 @@ import {LiteralValue} from "../literalValue";
 import {ComparingOperator} from "../comparingOperator";
 import Row from "../../relation/row";
 import {ColumnContent, SupportedColumnType} from "../../relation/columnType";
+import {IndexedString} from "../../types/indexedString";
 
 const literalFour: LiteralValue = new LiteralValue(4, "number");
 const literalFive: LiteralValue = new LiteralValue(5, "number");
@@ -19,7 +20,7 @@ describe('eval', () => {
              const right: LiteralValue = literalFive;
              const expected: {value: boolean, type: "boolean"} = {value: false, type: "boolean"};
 
-             const comparingOperator: ComparingOperator = ComparingOperator.equal('==', left, right);
+             const comparingOperator: ComparingOperator = ComparingOperator.equal(IndexedString.new('=='), left, right);
              const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = comparingOperator.eval(fakeRowOne);
              expect(actual).toStrictEqual(expected);
          });
@@ -29,7 +30,7 @@ describe('eval', () => {
              const right: LiteralValue = literalFive;
              const expected: {value: boolean, type: "boolean"} = {value: true, type: "boolean"};
 
-             const comparingOperator: ComparingOperator = ComparingOperator.nonEqual('!=', left, right);
+             const comparingOperator: ComparingOperator = ComparingOperator.nonEqual(IndexedString.new('!='), left, right);
              const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = comparingOperator.eval(fakeRowOne);
              expect(actual).toStrictEqual(expected);
          });
@@ -39,7 +40,7 @@ describe('eval', () => {
              const right: LiteralValue = literalFive;
              const expected: {value: boolean, type: "boolean"} = {value: false, type: "boolean"};
 
-             const comparingOperator: ComparingOperator = ComparingOperator.more('>', left, right);
+             const comparingOperator: ComparingOperator = ComparingOperator.more(IndexedString.new('>'), left, right);
              const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = comparingOperator.eval(fakeRowOne);
              expect(actual).toStrictEqual(expected);
          });
@@ -49,7 +50,7 @@ describe('eval', () => {
              const right: LiteralValue = literalFive;
              const expected: {value: boolean, type: "boolean"} = {value: false, type: "boolean"};
 
-             const comparingOperator: ComparingOperator = ComparingOperator.moreOrEqual('>=', left, right);
+             const comparingOperator: ComparingOperator = ComparingOperator.moreOrEqual(IndexedString.new('>='), left, right);
              const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = comparingOperator.eval(fakeRowOne);
              expect(actual).toStrictEqual(expected);
          });
@@ -59,7 +60,7 @@ describe('eval', () => {
              const right: LiteralValue = literalFive;
              const expected: {value: boolean, type: "boolean"} = {value: true, type: "boolean"};
 
-             const comparingOperator: ComparingOperator = ComparingOperator.less('<', left, right);
+             const comparingOperator: ComparingOperator = ComparingOperator.less(IndexedString.new('<'), left, right);
              const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = comparingOperator.eval(fakeRowOne);
              expect(actual).toStrictEqual(expected);
          });
@@ -69,7 +70,7 @@ describe('eval', () => {
              const right: LiteralValue = literalFive;
              const expected: {value: boolean, type: "boolean"} = {value: true, type: "boolean"};
 
-             const comparingOperator: ComparingOperator = ComparingOperator.lessOrEqual('<=', left, right);
+             const comparingOperator: ComparingOperator = ComparingOperator.lessOrEqual(IndexedString.new('<='), left, right);
              const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = comparingOperator.eval(fakeRowOne);
              expect(actual).toStrictEqual(expected);
          });
@@ -81,7 +82,7 @@ describe('eval', () => {
             const right: LiteralValue = literalBBB;
             const expected: {value: boolean, type: "boolean"} = {value: false, type: "boolean"};
 
-            const comparingOperator: ComparingOperator = ComparingOperator.equal('==', left, right);
+            const comparingOperator: ComparingOperator = ComparingOperator.equal(IndexedString.new('=='), left, right);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = comparingOperator.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -91,7 +92,7 @@ describe('eval', () => {
             const right: LiteralValue = literalBBB;
             const expected: {value: boolean, type: "boolean"} = {value: true, type: "boolean"};
 
-            const comparingOperator: ComparingOperator = ComparingOperator.nonEqual('!=', left, right);
+            const comparingOperator: ComparingOperator = ComparingOperator.nonEqual(IndexedString.new('!='), left, right);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = comparingOperator.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -101,7 +102,7 @@ describe('eval', () => {
             const right: LiteralValue = literalBBB;
             const expected: {value: boolean, type: "boolean"} = {value: false, type: "boolean"};
 
-            const comparingOperator: ComparingOperator = ComparingOperator.more('>', left, right);
+            const comparingOperator: ComparingOperator = ComparingOperator.more(IndexedString.new('>'), left, right);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = comparingOperator.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -111,7 +112,7 @@ describe('eval', () => {
             const right: LiteralValue = literalBBB;
             const expected: {value: boolean, type: "boolean"} = {value: false, type: "boolean"};
 
-            const comparingOperator: ComparingOperator = ComparingOperator.moreOrEqual('>=', left, right);
+            const comparingOperator: ComparingOperator = ComparingOperator.moreOrEqual(IndexedString.new('>='), left, right);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = comparingOperator.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -121,7 +122,7 @@ describe('eval', () => {
             const right: LiteralValue = literalBBB;
             const expected: {value: boolean, type: "boolean"} = {value: true, type: "boolean"};
 
-            const comparingOperator: ComparingOperator = ComparingOperator.less('<', left, right);
+            const comparingOperator: ComparingOperator = ComparingOperator.less(IndexedString.new('<'), left, right);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = comparingOperator.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -131,7 +132,7 @@ describe('eval', () => {
             const right: LiteralValue = literalBBB;
             const expected: {value: boolean, type: "boolean"} = {value: true, type: "boolean"};
 
-            const comparingOperator: ComparingOperator = ComparingOperator.lessOrEqual('<=', left, right);
+            const comparingOperator: ComparingOperator = ComparingOperator.lessOrEqual(IndexedString.new('<='), left, right);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = comparingOperator.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -142,7 +143,7 @@ describe('eval', () => {
             const left: LiteralValue = literalAAA;
             const right: LiteralValue = literalFive;
 
-            const comparingOperator: ComparingOperator = ComparingOperator.equal('==', left, right);
+            const comparingOperator: ComparingOperator = ComparingOperator.equal(IndexedString.new('=='), left, right);
             expect(() => comparingOperator.eval(fakeRowOne)).toThrow();
         });
 
@@ -150,7 +151,7 @@ describe('eval', () => {
             const left: LiteralValue = literalAAA;
             const right: LiteralValue = literalFive;
 
-            const comparingOperator: ComparingOperator = ComparingOperator.equal('==', left, right);
+            const comparingOperator: ComparingOperator = ComparingOperator.equal(IndexedString.new('=='), left, right);
             expect(() => comparingOperator.eval(fakeRowOne)).toThrow();
         });
 
@@ -158,7 +159,7 @@ describe('eval', () => {
             const left: LiteralValue = literalAAA;
             const right: LiteralValue = literalFive;
 
-            const comparingOperator: ComparingOperator = ComparingOperator.equal('==', left, right);
+            const comparingOperator: ComparingOperator = ComparingOperator.equal(IndexedString.new('=='), left, right);
             expect(() => comparingOperator.eval(fakeRowOne)).toThrow();
         });
 
@@ -166,7 +167,7 @@ describe('eval', () => {
             const left: LiteralValue = literalFive;
             const right: LiteralValue = literalBBB;
 
-            const comparingOperator: ComparingOperator = ComparingOperator.equal('==', left, right);
+            const comparingOperator: ComparingOperator = ComparingOperator.equal(IndexedString.new('=='), left, right);
             expect(() => comparingOperator.eval(fakeRowOne)).toThrow();
         });
 
@@ -174,7 +175,7 @@ describe('eval', () => {
             const left: LiteralValue = literalFive;
             const right: LiteralValue = literalBBB;
 
-            const comparingOperator: ComparingOperator = ComparingOperator.equal('==', left, right);
+            const comparingOperator: ComparingOperator = ComparingOperator.equal(IndexedString.new('=='), left, right);
             expect(() => comparingOperator.eval(fakeRowOne)).toThrow();
         });
 
@@ -182,7 +183,7 @@ describe('eval', () => {
             const left: LiteralValue = literalFive;
             const right: LiteralValue = literalBBB;
 
-            const comparingOperator: ComparingOperator = ComparingOperator.equal('==', left, right);
+            const comparingOperator: ComparingOperator = ComparingOperator.equal(IndexedString.new('=='), left, right);
             expect(() => comparingOperator.eval(fakeRowOne)).toThrow();
         });
     });

@@ -3,6 +3,7 @@ import {LogicalOperator} from "../logicalOperator";
 import {ColumnContent, SupportedColumnType} from "../../relation/columnType";
 import {LiteralValue} from "../literalValue";
 import {VETreeNode} from "../veTreeNode";
+import {IndexedString} from "../../types/indexedString";
 
 // uses literals, row just to fill eval parameter
 const fakeRowOne: Row = new Row(new Map<string, SupportedColumnType>());
@@ -14,7 +15,7 @@ describe('eval', () => {
             const right: VETreeNode = new LiteralValue(true, "boolean");
             const expected: {value: boolean, type: "boolean"} = {value: true, type: "boolean"};
 
-            const logicalOperator: LogicalOperator = LogicalOperator.and('&&', left, right);
+            const logicalOperator: LogicalOperator = LogicalOperator.and(IndexedString.new('&&'), left, right);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = logicalOperator.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -24,7 +25,7 @@ describe('eval', () => {
             const right: VETreeNode = new LiteralValue(false, "boolean");
             const expected: {value: boolean, type: "boolean"} = {value: false, type: "boolean"};
 
-            const logicalOperator: LogicalOperator = LogicalOperator.and('&&', left, right);
+            const logicalOperator: LogicalOperator = LogicalOperator.and(IndexedString.new('&&'), left, right);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = logicalOperator.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -34,7 +35,7 @@ describe('eval', () => {
             const right: VETreeNode = new LiteralValue(false, "boolean");
             const expected: {value: boolean, type: "boolean"} = {value: true, type: "boolean"};
 
-            const logicalOperator: LogicalOperator = LogicalOperator.or('||', left, right);
+            const logicalOperator: LogicalOperator = LogicalOperator.or(IndexedString.new('||'), left, right);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = logicalOperator.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -44,7 +45,7 @@ describe('eval', () => {
             const right: VETreeNode = new LiteralValue(false, "boolean");
             const expected: {value: boolean, type: "boolean"} = {value: false, type: "boolean"};
 
-            const logicalOperator: LogicalOperator = LogicalOperator.or('||', left, right);
+            const logicalOperator: LogicalOperator = LogicalOperator.or(IndexedString.new('||'), left, right);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = logicalOperator.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -53,7 +54,7 @@ describe('eval', () => {
             const left: VETreeNode = new LiteralValue(false, "boolean");
             const expected: {value: boolean, type: "boolean"} = {value: true, type: "boolean"};
 
-            const logicalOperator: LogicalOperator = LogicalOperator.not('!', left);
+            const logicalOperator: LogicalOperator = LogicalOperator.not(IndexedString.new('!'), left);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = logicalOperator.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -65,7 +66,7 @@ describe('eval', () => {
             const right: VETreeNode = new LiteralValue(null, "boolean");
             const expected: {value: boolean, type: "boolean"} = {value: false, type: "boolean"};
 
-            const logicalOperator: LogicalOperator = LogicalOperator.and('&&', left, right);
+            const logicalOperator: LogicalOperator = LogicalOperator.and(IndexedString.new('&&'), left, right);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = logicalOperator.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -75,7 +76,7 @@ describe('eval', () => {
             const right: VETreeNode = new LiteralValue(null, "boolean");
             const expected: {value: boolean, type: "boolean"} = {value: true, type: "boolean"};
 
-            const logicalOperator: LogicalOperator = LogicalOperator.or('||', left, right);
+            const logicalOperator: LogicalOperator = LogicalOperator.or(IndexedString.new('||'), left, right);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = logicalOperator.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -84,7 +85,7 @@ describe('eval', () => {
             const left: VETreeNode = new LiteralValue(null, "boolean");
             const expected: {value: boolean, type: "boolean"} = {value: false, type: "boolean"};
 
-            const logicalOperator: LogicalOperator = LogicalOperator.not('!', left);
+            const logicalOperator: LogicalOperator = LogicalOperator.not(IndexedString.new('!'), left);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = logicalOperator.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -95,7 +96,7 @@ describe('eval', () => {
             const left: VETreeNode = new LiteralValue(true, "boolean");
             const right: VETreeNode = new LiteralValue("AAA", "string");
 
-            const logicalOperator: LogicalOperator = LogicalOperator.and('&&', left, right);
+            const logicalOperator: LogicalOperator = LogicalOperator.and(IndexedString.new('&&'), left, right);
             expect(() => logicalOperator.eval(fakeRowOne)).toThrow();
         });
 
@@ -103,14 +104,14 @@ describe('eval', () => {
             const left: VETreeNode = new LiteralValue(true, "boolean");
             const right: VETreeNode = new LiteralValue("AAA", "string");
 
-            const logicalOperator: LogicalOperator = LogicalOperator.or('||', left, right);
+            const logicalOperator: LogicalOperator = LogicalOperator.or(IndexedString.new('||'), left, right);
             expect(() => logicalOperator.eval(fakeRowOne)).toThrow();
         });
 
         test('!"AAA" throws', () => {
             const left: VETreeNode = new LiteralValue("AAA", "string");
 
-            const logicalOperator: LogicalOperator = LogicalOperator.not('!', left);
+            const logicalOperator: LogicalOperator = LogicalOperator.not(IndexedString.new('!'), left);
             expect(() => logicalOperator.eval(fakeRowOne)).toThrow();
         });
     });
@@ -120,7 +121,7 @@ describe('eval', () => {
             const left: VETreeNode = new LiteralValue(true, "boolean");
             const right: VETreeNode = new LiteralValue(1, "number");
 
-            const logicalOperator: LogicalOperator = LogicalOperator.and('&&', left, right);
+            const logicalOperator: LogicalOperator = LogicalOperator.and(IndexedString.new('&&'), left, right);
             expect(() => logicalOperator.eval(fakeRowOne)).toThrow();
         });
 
@@ -128,14 +129,14 @@ describe('eval', () => {
             const left: VETreeNode = new LiteralValue(true, "boolean");
             const right: VETreeNode = new LiteralValue(1, "number");
 
-            const logicalOperator: LogicalOperator = LogicalOperator.or('||', left, right);
+            const logicalOperator: LogicalOperator = LogicalOperator.or(IndexedString.new('||'), left, right);
             expect(() => logicalOperator.eval(fakeRowOne)).toThrow();
         });
 
         test('!1 throws', () => {
             const left: VETreeNode = new LiteralValue(1, "number");
 
-            const logicalOperator: LogicalOperator = LogicalOperator.not('!', left);
+            const logicalOperator: LogicalOperator = LogicalOperator.not(IndexedString.new('!'), left);
             expect(() => logicalOperator.eval(fakeRowOne)).toThrow();
         });
     });
@@ -145,7 +146,7 @@ describe('eval', () => {
             const left: VETreeNode = new LiteralValue(true, "boolean");
             const right: VETreeNode = new LiteralValue(null, "null");
 
-            const logicalOperator: LogicalOperator = LogicalOperator.and('&&', left, right);
+            const logicalOperator: LogicalOperator = LogicalOperator.and(IndexedString.new('&&'), left, right);
             expect(() => logicalOperator.eval(fakeRowOne)).toThrow();
         });
 
@@ -153,14 +154,14 @@ describe('eval', () => {
             const left: VETreeNode = new LiteralValue(true, "boolean");
             const right: VETreeNode = new LiteralValue(null, "null");
 
-            const logicalOperator: LogicalOperator = LogicalOperator.or('||', left, right);
+            const logicalOperator: LogicalOperator = LogicalOperator.or(IndexedString.new('||'), left, right);
             expect(() => logicalOperator.eval(fakeRowOne)).toThrow();
         });
 
         test('!null throws', () => {
             const left: VETreeNode = new LiteralValue(null, "null");
 
-            const logicalOperator: LogicalOperator = LogicalOperator.not('!', left);
+            const logicalOperator: LogicalOperator = LogicalOperator.not(IndexedString.new('!'), left);
             expect(() => logicalOperator.eval(fakeRowOne)).toThrow();
         });
     });

@@ -1,5 +1,5 @@
 /**
- * Immutable string representation with index of each character. Provides some usual string functions.
+ * String representation with index of each character. Provides some usual string functions.
  */
 export class IndexedString {
 
@@ -26,12 +26,11 @@ export class IndexedString {
 
     /**
      * Creates a new IndexedString instance representing the given array of IndexedChars.
-     * The array is deep copied for immutability.
      *
      * @param arr IndexedChar array
      */
     public static newFromArray(arr: IndexedChar[]): IndexedString {
-        return new IndexedString(arr.map(ic => ic.char).join(''), arr.map(ic => {return {char: ic.char, index: ic.index}}));
+        return new IndexedString(arr.map(ic => ic.char).join(''), arr);
     }
 
     /**
@@ -173,19 +172,6 @@ export class IndexedString {
         // @ts-ignore
         const end: number = this.getLastNonNaNIndex();
         return { start: start, end: end };
-    }
-
-    /**
-     * Returns an IndexedString representation of the character at the given index. Throws RangeError if the index is
-     * out of string bounds.
-     *
-     * @param index number
-     */
-    public indexedCharAt(index: number): IndexedString {
-        if (index < 0 || index >= this.length()) {
-            throw new RangeError();
-        }
-        return IndexedString.newFromArray([this.chars[index]]);
     }
 
     /**
@@ -379,6 +365,18 @@ export class IndexedString {
     public getNextIndexOrNaN(): number {
         const lastIndex = this.getLastIndex();
         return lastIndex === undefined ? NaN : lastIndex + 1;
+    }
+
+    /**
+     * Returns true if it contains any of the characters from string chars. Otherwise, returns false.
+     */
+    public containsAny(chars: string): boolean {
+        for (let i = 0; i < chars.length; ++i) {
+            if (this.str.indexOf(chars[i]) > -1) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

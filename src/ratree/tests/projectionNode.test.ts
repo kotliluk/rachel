@@ -23,7 +23,7 @@ const sourceNode: RelationNode = new RelationNode(sourceRelation);
 
 describe('eval' , () => {
     test('projects valid columns correctly: [Kola, Id]', () => {
-        const str: string = "[Kola, Id]";
+        const str: IndexedString = IndexedString.new("[Kola, Id]");
         const expected: Relation = new Relation("Auto[...]");
         expected.addColumn("Id", "number");
         expected.addColumn("Kola", "number")
@@ -38,14 +38,14 @@ describe('eval' , () => {
     });
 
     test('fails when absent column: [Radio]', () => {
-        const str: string = "[Radio]";
+        const str: IndexedString = IndexedString.new("[Radio]");
 
         const node: ProjectionNode = new ProjectionNode(str, sourceNode);
         expect(() => node.getResult()).toThrow();
     });
 
     test('fails when invalid column name: [3three]', () => {
-        const str: string = "[3three]";
+        const str: IndexedString = IndexedString.new("[3three]");
 
         const node: ProjectionNode = new ProjectionNode(str, sourceNode);
         expect(() => node.getResult()).toThrow();

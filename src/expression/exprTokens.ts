@@ -1,20 +1,19 @@
 import {BinaryNodeClass} from "../ratree/binaryNode";
 import {IndexedString} from "../types/indexedString";
 import {UnaryNodeClass} from "../ratree/unaryNode";
-import {getRange} from "../utils/commonStringUtils";
 
 /**
  * Abstract parent class for all RATokens.
  */
 export abstract class ExprToken {
-    protected constructor(public readonly str: string | IndexedString) {
+    protected constructor(public readonly str: IndexedString) {
     }
 
     /**
      * Gets token start and end index in the text (if the token has IndexedString representation) or undefined.
      */
     public getRange(): {start: number, end: number} | undefined {
-        return getRange(this.str);
+        return this.str.getRange();
     }
 }
 
@@ -23,14 +22,14 @@ export abstract class ExprToken {
  */
 export abstract class ParenthesisToken extends ExprToken {}
 
-export class OpeningParentheses extends ParenthesisToken {
-    public constructor(str: string | IndexedString) {
+export class OpeningParenthesis extends ParenthesisToken {
+    public constructor(str: IndexedString) {
         super(str);
     }
 }
 
-export class ClosingParentheses extends ParenthesisToken {
-    public constructor(str: string | IndexedString) {
+export class ClosingParenthesis extends ParenthesisToken {
+    public constructor(str: IndexedString) {
         super(str);
     }
 }
@@ -39,7 +38,7 @@ export class ClosingParentheses extends ParenthesisToken {
  * Relation reference.
  */
 export class RelationToken extends ExprToken {
-    public constructor(name: string | IndexedString) {
+    public constructor(name: IndexedString) {
         super(name);
     }
 }
@@ -49,19 +48,19 @@ export class RelationToken extends ExprToken {
  */
 export class UnaryOperatorToken extends ExprToken {
 
-    public static selection(selection: string | IndexedString) {
+    public static selection(selection: IndexedString) {
         return new UnaryOperatorToken(selection, "selection");
     }
 
-    public static projection(projection: string | IndexedString) {
+    public static projection(projection: IndexedString) {
         return new UnaryOperatorToken(projection, "projection");
     }
 
-    public static rename(rename: string | IndexedString) {
+    public static rename(rename: IndexedString) {
         return new UnaryOperatorToken(rename, "rename");
     }
 
-    private constructor(str: string | IndexedString, public readonly type: UnaryNodeClass) {
+    private constructor(str: IndexedString, public readonly type: UnaryNodeClass) {
         super(str);
     }
 }
@@ -100,71 +99,71 @@ const unionPrecedence: number = precedenceLevelG;
  */
 export class BinaryOperatorToken extends ExprToken {
 
-    static naturalJoin(str: string | IndexedString): BinaryOperatorToken {
+    static naturalJoin(str: IndexedString): BinaryOperatorToken {
         return new BinaryOperatorToken(str, naturalPrecedence, "natural join");
     }
 
-    static cartesianProduct(str: string | IndexedString): BinaryOperatorToken {
+    static cartesianProduct(str: IndexedString): BinaryOperatorToken {
         return new BinaryOperatorToken(str, cartesianPrecedence, "cartesian product");
     }
 
-    static union(str: string | IndexedString): BinaryOperatorToken {
+    static union(str: IndexedString): BinaryOperatorToken {
         return new BinaryOperatorToken(str, unionPrecedence, "union");
     }
 
-    static intersection(str: string | IndexedString): BinaryOperatorToken {
+    static intersection(str: IndexedString): BinaryOperatorToken {
         return new BinaryOperatorToken(str, intersectionPrecedence, "intersection");
     }
 
-    static difference(str: string | IndexedString): BinaryOperatorToken {
+    static difference(str: IndexedString): BinaryOperatorToken {
         return new BinaryOperatorToken(str, differencePrecedence, "difference");
     }
 
-    static leftSemijoin(str: string | IndexedString): BinaryOperatorToken {
+    static leftSemijoin(str: IndexedString): BinaryOperatorToken {
         return new BinaryOperatorToken(str, semiPrecedence, "left semijoin");
     }
 
-    static rightSemijoin(str: string | IndexedString): BinaryOperatorToken {
+    static rightSemijoin(str: IndexedString): BinaryOperatorToken {
         return new BinaryOperatorToken(str, semiPrecedence, "right semijoin");
     }
 
-    static leftAntijoin(str: string | IndexedString): BinaryOperatorToken {
+    static leftAntijoin(str: IndexedString): BinaryOperatorToken {
         return new BinaryOperatorToken(str, antiPrecedence, "left antijoin");
     }
 
-    static rightAntijoin(str: string | IndexedString): BinaryOperatorToken {
+    static rightAntijoin(str: IndexedString): BinaryOperatorToken {
         return new BinaryOperatorToken(str, antiPrecedence, "right antijoin");
     }
 
-    static thetaJoin(str: string | IndexedString): BinaryOperatorToken {
+    static thetaJoin(str: IndexedString): BinaryOperatorToken {
         return new BinaryOperatorToken(str, thetaPrecedence, "theta join");
     }
 
-    static leftThetaSemijoin(str: string | IndexedString): BinaryOperatorToken {
+    static leftThetaSemijoin(str: IndexedString): BinaryOperatorToken {
         return new BinaryOperatorToken(str, thetaSemiPrecedence, "left theta semijoin");
     }
 
-    static rightThetaSemijoin(str: string | IndexedString): BinaryOperatorToken {
+    static rightThetaSemijoin(str: IndexedString): BinaryOperatorToken {
         return new BinaryOperatorToken(str, thetaSemiPrecedence, "right theta semijoin");
     }
 
-    static fullOuterJoin(str: string | IndexedString): BinaryOperatorToken {
+    static fullOuterJoin(str: IndexedString): BinaryOperatorToken {
         return new BinaryOperatorToken(str, outerPrecedence, "full outer join");
     }
 
-    static leftOuterJoin(str: string | IndexedString): BinaryOperatorToken {
+    static leftOuterJoin(str: IndexedString): BinaryOperatorToken {
         return new BinaryOperatorToken(str, outerPrecedence, "left outer join");
     }
 
-    static rightOuterJoin(str: string | IndexedString): BinaryOperatorToken {
+    static rightOuterJoin(str: IndexedString): BinaryOperatorToken {
         return new BinaryOperatorToken(str, outerPrecedence, "right outer join");
     }
 
-    static division(str: string | IndexedString): BinaryOperatorToken {
+    static division(str: IndexedString): BinaryOperatorToken {
         return new BinaryOperatorToken(str, divisionPrecedence, "division");
     }
 
-    private constructor(str: string | IndexedString, public readonly precedence: number, public readonly type: BinaryNodeClass) {
+    private constructor(str: IndexedString, public readonly precedence: number, public readonly type: BinaryNodeClass) {
         super(str);
     }
 }

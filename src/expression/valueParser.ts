@@ -27,7 +27,6 @@ import IndexedStringUtils from "../utils/indexedStringUtils";
 import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {CodeErrorCodes, ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
 import RASyntaxError from "../error/raSyntaxError";
-import {getRange, isEmpty, length, nextQuotedString} from "../utils/commonStringUtils";
 
 /**
  * StringUtils of string infix boolean and algebraic expression to value-evaluating tree.
@@ -44,13 +43,12 @@ export default class ValueParser {
      * - literals: numbers (1, 5.02, etc.), strings ("String", "With inner \" symbol", etc.), nulls (null),
      * booleans (true, false)
      * - column references (ColumnNameAsStringWithoutQuotes, Id, etc.)
-     * If the given string is IndexedString, thrown errors contain error range information.
      *
      * @param str infix boolean and algebraic expression to be parsed
      * @param nullValuesSupport whether null values are supported
      * @return VETreeNode tree (its root)
      */
-    public static parse(str: string | IndexedString, nullValuesSupport: boolean): VETreeNode {
+    public static parse(str: IndexedString, nullValuesSupport: boolean): VETreeNode {
         let tokens: ValueToken[] = ValueParser.parseTokens(str, nullValuesSupport, true);
         this.assertValidInfixTokens(tokens, true);
         tokens = this.simplify(tokens);
@@ -59,7 +57,7 @@ export default class ValueParser {
             return ValueParser.rpnToVETree(rpn);
         }
         catch (err) {
-            throw insertRangeIfUndefined(err, getRange(str));
+            throw insertRangeIfUndefined(err, str.getRange());
         }
     }
 
@@ -77,7 +75,7 @@ export default class ValueParser {
         tokens.forEach(token => {
             if (token instanceof ReferenceToken && columns.indexOf(token.str.toString()) === -1) {
                 errors.push(ErrorFactory.semanticError(SemanticErrorCodes.referenceValue_eval_absentColumn,
-                    getRange(token.str), token.str.toString(), columns.join(', ')));
+                    token.str.getRange(), token.str.toString(), columns.join(', ')));
             }
         })
         this.assertValidInfixTokens(tokens, false, errors);
@@ -95,7 +93,7 @@ export default class ValueParser {
      * @param errors array for storing not thrown errors
      * @return infix array of parsed Tokens
      */
-    public static parseTokens(str: string | IndexedString, nullValuesSupport: boolean, doThrow: boolean,
+    public static parseTokens(str: IndexedString, nullValuesSupport: boolean, doThrow: boolean,
                               errors: ErrorWithTextRange[] = []): ValueToken[] {
         const handleError = (error: RASyntaxError) => {
             if (doThrow) {
@@ -105,12 +103,12 @@ export default class ValueParser {
                 errors.push(error);
             }
         }
-        let rest: string | IndexedString = str.trim();
-        if (isEmpty(rest)) {
+        let rest: IndexedString = str.trim();
+        if (rest.isEmpty()) {
             handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_parseTokens_emptyInput, undefined));
         }
         const tokens: ValueToken[] = [];
-        while (!isEmpty(rest)) {
+        while (!rest.isEmpty()) {
             rest = rest.trim();
             // PARENTHESES
             if (rest.startsWith('(')) {
@@ -195,24 +193,24 @@ export default class ValueParser {
             }
             // LITERALS
             else if (rest.startsWith('"')) {
-                const split = nextQuotedString(rest);
+                const split = IndexedStringUtils.nextQuotedString(rest);
                 if (split.error !== undefined) {
                     handleError(split.error);
                 }
-                const end = length(split.first) > 1 ? -1 : undefined;
+                const end = split.first.length() > 1 ? -1 : undefined;
                 const str = split.first.slice(1, end);
                 tokens.push(new LiteralToken(str, str.toString(), "string"));
                 rest = split.second;
             }
             else if (StringUtils.isDigit(rest.charAt(0))) {
-                let split = (rest instanceof IndexedString) ? IndexedStringUtils.nextNumber(rest) : StringUtils.nextNumber(rest);
+                let split = IndexedStringUtils.nextNumber(rest);
                 tokens.push(new LiteralToken(split.first, Number(split.first.toString()), "number"));
                 rest = split.second;
             }
             else if (rest.startsWith('null')) {
                 if (!nullValuesSupport) {
                     handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_parseTokens_unsupportedNull,
-                        getRange(rest.slice(0, 4))));
+                        rest.slice(0, 4).getRange()));
                 }
                 tokens.push(new LiteralToken(rest.slice(0, 4), null, "null"));
                 rest = rest.slice(4);
@@ -227,16 +225,16 @@ export default class ValueParser {
             }
             // COLUMN REFERENCE
             else if (StringUtils.isLetter(rest.charAt(0)) || rest.charAt(0) === '_') {
-                let split = (rest instanceof IndexedString) ? IndexedStringUtils.nextName(rest) : StringUtils.nextName(rest);
+                let split = IndexedStringUtils.nextName(rest);
                 tokens.push(new ReferenceToken(split.first));
                 rest = split.second;
             }
             // UNEXPECTED PART
             else {
-                const split = (rest instanceof IndexedString) ? IndexedStringUtils.nextNonWhitespacePart(rest) : StringUtils.nextNonWhitespacePart(rest);
+                const split = IndexedStringUtils.nextNonWhitespacePart(rest);
                 handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_parseTokens_unexpectedPart,
-                    getRange(split.first), split.first.toString()));
-                rest = rest.slice(length(split.first));
+                    split.first.getRange(), split.first.toString()));
+                rest = rest.slice(split.first.length());
             }
         }
         return tokens;
@@ -505,7 +503,7 @@ export default class ValueParser {
         if (token instanceof ComparingToken) {
             const right: VETreeNode = ValueParser.rpnToVETreeRecursive(tokens);
             const left: VETreeNode = ValueParser.rpnToVETreeRecursive(tokens);
-            return new ComparingOperator(token.type, token.str.toString(), left, right);
+            return new ComparingOperator(token.type, token.str, left, right);
         }
         if (token instanceof LiteralToken) {
             return new LiteralValue(token.value, token.type);

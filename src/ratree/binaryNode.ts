@@ -38,7 +38,8 @@ export default abstract class BinaryNode extends RATreeNode {
      * - type = left: returns left source schema
      * - type = right: returns right source schema
      */
-    protected fakeEvalBinary(cursorIndex: number, type: "union" | "left" | "right"): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
+    protected fakeEvalBinary(cursorIndex: number, type: "union" | "left" | "right"):
+        {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
         // evaluates the subtrees
         const left: {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} = this.leftSubtree.fakeEval(cursorIndex);
         const right: {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} = this.rightSubtree.fakeEval(cursorIndex);

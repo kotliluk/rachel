@@ -8,14 +8,13 @@ import ValueParser from "../expression/valueParser";
 import {ErrorFactory, SyntaxErrorCodes} from "../error/errorFactory";
 import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {isInRangeAndNotInQuotes} from "./raTreeTools";
-import {getRange} from "../utils/commonStringUtils";
 
 /**
  * Selection node of the relational algebra syntactic tree.
  */
 export default class SelectionNode extends UnaryNode {
 
-    private readonly selection: string | IndexedString;
+    private readonly selection: IndexedString;
     private readonly stringRange: { start: number, end: number } | undefined;
     private readonly nullValuesSupport: boolean;
 
@@ -26,10 +25,10 @@ export default class SelectionNode extends UnaryNode {
      * @param subtree
      * @param nullValuesSupport
      */
-    public constructor(selection: string | IndexedString, subtree: RATreeNode, nullValuesSupport: boolean) {
+    public constructor(selection: IndexedString, subtree: RATreeNode, nullValuesSupport: boolean) {
         super(subtree);
         this.selection = selection;
-        this.stringRange = getRange(selection);
+        this.stringRange = selection.getRange();
         this.nullValuesSupport = nullValuesSupport;
     }
 
@@ -87,7 +86,7 @@ export default class SelectionNode extends UnaryNode {
             errors.push(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_parseTokens_emptyInput, this.stringRange));
         }
         // adds errors from current expression
-        else if (this.selection instanceof IndexedString) {
+        else {
             errors.push(...ValueParser.fakeParse(this.selection.slice(1, -1), this.nullValuesSupport, result.getColumnNames()));
         }
         // result schema is the same as the source

@@ -9,7 +9,6 @@ import ValueParser from "../expression/valueParser";
 import {ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
 import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {isInRangeAndNotInQuotes} from "./raTreeTools";
-import {getRange} from "../utils/commonStringUtils";
 
 /**
  * Types of theta join node.
@@ -26,18 +25,18 @@ export enum ThetaJoinType {
 export default class ThetaJoinNode extends BinaryNode {
 
     private readonly type: ThetaJoinType;
-    private readonly condition: string | IndexedString;
+    private readonly condition: IndexedString;
     private readonly stringRange: { start: number, end: number } | undefined;
     private readonly nullValuesSupport: boolean;
 
     /**
      * Expects the condition string to start with '<' and end with ']' or start with '[' and end with '>'.
      */
-    public constructor(type: ThetaJoinType, condition: string | IndexedString,
+    public constructor(type: ThetaJoinType, condition: IndexedString,
                        leftSubtree: RATreeNode, rightSubtree: RATreeNode, nullValuesSupport: boolean) {
         super(leftSubtree, rightSubtree);
         this.condition = condition;
-        this.stringRange = getRange(condition);
+        this.stringRange = condition.getRange();
         this.nullValuesSupport = nullValuesSupport;
         this.type = type;
     }
@@ -148,7 +147,7 @@ export default class ThetaJoinNode extends BinaryNode {
         if (this.condition.toString().slice(1, -1).trim().length  === 0) {
             errors.push(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_parseTokens_emptyInput, this.stringRange));
         }
-        else if (this.condition instanceof IndexedString) {
+        else {
             errors.push(...ValueParser.fakeParse(this.condition.slice(1, -1), this.nullValuesSupport, sourceColumns));
         }
         return {result, whispers, errors};

@@ -156,7 +156,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
         return (
             <header className="management-section">
                 <h1>RACHEL</h1>
-                {/*createBatchButton()*/}
+                {createBatchButton()}
                 {createLoadProjectButton()}
                 {createSaveProjectButton()}
                 {createSamplesButton()}

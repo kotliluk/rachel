@@ -56,8 +56,8 @@ export function getTreeDepth(root: RATreeNode): number {
  * Returns true, if the given cursor position is in the given range and it is not inside quotes.
  * Note: given range is expected to be computed from given string.
  */
-export function isInRangeAndNotInQuotes(cursor: number, range: { start: number, end: number } | undefined, str: string | IndexedString): boolean {
-    if (range !== undefined && str instanceof IndexedString && range.start < cursor && cursor <= range.end) {
+export function isInRangeAndNotInQuotes(cursor: number, range: { start: number, end: number } | undefined, str: IndexedString): boolean {
+    if (range !== undefined && range.start < cursor && cursor <= range.end) {
         const len = range.end - range.start;
         const s = str.toString();
         const cursorIndexInStr = cursor - range.start;

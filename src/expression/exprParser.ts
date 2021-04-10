@@ -2,9 +2,9 @@ import Relation from "../relation/relation";
 import {CodeErrorCodes, ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
 import {
     BinaryOperatorToken,
-    ClosingParentheses,
+    ClosingParenthesis,
     ExprToken,
-    OpeningParentheses,
+    OpeningParenthesis,
     ParenthesisToken,
     RelationToken,
     UnaryOperatorToken
@@ -19,7 +19,6 @@ import {
 import IndexedStringUtils from "../utils/indexedStringUtils";
 import ErrorWithTextRange from "../error/errorWithTextRange";
 import RATreeFactory from "../ratree/raTreeFactory";
-import {containsAny, getRange, isEmpty, nextBorderedPart} from "../utils/commonStringUtils";
 
 /**
  * Assertion types for assertValidInfixTokens function.
@@ -72,24 +71,6 @@ export class ExprParser {
      * @return tree structure of 'expr'
      */
     public parse(expr: string): RATreeNode {
-        expr = StringUtils.deleteCommentLines(expr);
-        if (expr.trim() === "") {
-            throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_parse_emptyStringGiven, undefined);
-        }
-        const tokens: ExprToken[] = this.parseTokens(expr);
-        this.assertValidInfixTokens(tokens, AssertType.THROW_STRICT);
-        const rpn: ExprToken[] = this.toRPN(tokens);
-        return this.rpnToRATree(rpn, true);
-    }
-
-    /**
-     * Indexed version of ExprParser.parse() function. Uses IndexedString to describe error ranges.
-     * See ExprParser.parse for detailed description.
-     *
-     * @param expr relational algebra expression in expected format
-     * @return tree structure of 'expr'
-     */
-    public indexedParse(expr: string): RATreeNode {
         const indexedExpr = IndexedStringUtils.deleteCommentLines(IndexedString.new(expr));
         if (indexedExpr.trim().isEmpty()) {
             throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_parse_emptyStringGiven, undefined);
@@ -139,33 +120,33 @@ export class ExprParser {
      * @param selectionExpected true if next part "(...)" should be treated as a selection = last part
      * was a relation or an unary operator (default false)
      */
-    public parseTokens(expr: string | IndexedString, selectionExpected: boolean = false): ExprToken[] {
+    public parseTokens(expr: IndexedString, selectionExpected: boolean = false): ExprToken[] {
         let tokens: ExprToken[] = [];
         // alternative solution in case of finding "[...]"
         let alternativeTokens: ExprToken[] = [];
-        let rest: string | IndexedString = expr;
+        let rest: IndexedString = expr;
 
-        while (!isEmpty(rest)) {
+        while (!rest.isEmpty()) {
             rest = rest.trim();
             // '(' can be a selection or a parentheses
             if (rest.startsWith("(")) {
-                const split = nextBorderedPart(rest, '(', ')');
+                const split = IndexedStringUtils.nextBorderedPart(rest, '(', ')');
                 // whole "(...)" part pushed as selection
                 if (selectionExpected) {
                     tokens.push(UnaryOperatorToken.selection(split.first));
                 }
                 // inner of "(...)" part parsed as parentheses structure
                 else {
-                    tokens.push(new OpeningParentheses(split.first.slice(0, 1)));
+                    tokens.push(new OpeningParenthesis(split.first.slice(0, 1)));
                     tokens.push(...this.parseTokens(split.first.slice(1, -1)));
-                    tokens.push(new ClosingParentheses(split.first.slice(-1)));
+                    tokens.push(new ClosingParenthesis(split.first.slice(-1)));
                     selectionExpected = true;
                 }
                 rest = split.second;
             }
             // '[' can be a projection, theta join, or right theta semi join
             else if (rest.startsWith("[")) {
-                const split = nextBorderedPart(rest, '[', ']>');
+                const split = IndexedStringUtils.nextBorderedPart(rest, '[', ']>');
                 // right theta semijoin found
                 if (split.first.endsWith('>')) {
                     tokens.push(BinaryOperatorToken.rightThetaSemijoin(split.first));
@@ -173,7 +154,7 @@ export class ExprParser {
                     rest = split.second;
                 }
                 // the expression cannot end with a theta join (right source expected)
-                else if (isEmpty(split.second)) {
+                else if (split.second.isEmpty()) {
                     tokens.push(UnaryOperatorToken.projection(split.first));
                     break;
                 }
@@ -234,7 +215,7 @@ export class ExprParser {
             else if (rest.startsWith("*F*") || rest.startsWith("*L*") || rest.startsWith("*R*")) {
                 if (!this.nullValuesSupport) {
                     let errorRange: {start: number, end: number} | undefined = undefined;
-                    if (rest instanceof IndexedString && rest.getFirstNonNaNIndex() !== undefined) {
+                    if (rest.getFirstNonNaNIndex() !== undefined) {
                         // @ts-ignore
                         errorRange = {start: rest.getFirstNonNaNIndex(), end: rest.getFirstNonNaNIndex() + 2};
                     }
@@ -305,7 +286,7 @@ export class ExprParser {
             }
             // '<' can be a rename or left theta semi join - this "if" must be after <* and *>
             else if (rest.startsWith('<')) {
-                const split = nextBorderedPart(rest, '<', '>]', '-');
+                const split = IndexedStringUtils.nextBorderedPart(rest, '<', '>]', '-');
                 if (split.first.endsWith('>')) {
                     tokens.push(UnaryOperatorToken.rename(split.first));
                     selectionExpected = true;
@@ -318,16 +299,16 @@ export class ExprParser {
             }
             // RELATION REFERENCE
             else if (StringUtils.isLetter(rest.charAt(0)) || rest.charAt(0) === '_') {
-                const split = (rest instanceof IndexedString) ? IndexedStringUtils.nextName(rest) : StringUtils.nextName(rest);
+                const split = IndexedStringUtils.nextName(rest);
                 tokens.push(new RelationToken(split.first));
                 rest = split.second;
                 selectionExpected = true;
             }
             // UNEXPECTED PART
             else {
-                const split = (rest instanceof IndexedString) ? IndexedStringUtils.nextNonWhitespacePart(rest) : StringUtils.nextNonWhitespacePart(rest);
+                const split = IndexedStringUtils.nextNonWhitespacePart(rest);
                 throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_parseTokens_unexpectedPart,
-                    getRange(split.first), split.first.toString());
+                    split.first.getRange(), split.first.toString());
             }
         }
         // checks whether alternative tokens are valid when used
@@ -395,14 +376,14 @@ export class ExprParser {
                         }
 
                         // it fakes the unclosed expression as nested expression in parentheses
-                        tokens.push(new OpeningParentheses(rest.slice(0, 1)));
+                        tokens.push(new OpeningParenthesis(rest.slice(0, 1)));
                         // parses inner part between parentheses
                         const recursiveReturn = this.fakeParseTokens(rest.slice(1), cursorIndex);
                         errors.push(...recursiveReturn.errors);
                         whispers.push(...recursiveReturn.whispers);
                         tokens.push(...recursiveReturn.tokens);
                         // gives invalid index (NaN for not reporting errors with this imaginary parentheses
-                        tokens.push(new ClosingParentheses(IndexedString.new(')', NaN)));
+                        tokens.push(new ClosingParenthesis(IndexedString.new(')', NaN)));
                     }
                     // breaks the while cycle because rest was parsed recursively
                     break;
@@ -414,12 +395,12 @@ export class ExprParser {
                 }
                 // inner of "(...)" part parsed as parentheses structure
                 else {
-                    tokens.push(new OpeningParentheses(split.first.slice(0, 1)));
+                    tokens.push(new OpeningParenthesis(split.first.slice(0, 1)));
                     const recursiveReturn = this.fakeParseTokens(split.first.slice(1, -1), cursorIndex);
                     errors.push(...recursiveReturn.errors);
                     whispers.push(...recursiveReturn.whispers);
                     tokens.push(...recursiveReturn.tokens);
-                    tokens.push(new ClosingParentheses(split.first.slice(-1)));
+                    tokens.push(new ClosingParenthesis(split.first.slice(-1)));
                     selectionExpected = true;
                 }
                 rest = split.second;
@@ -455,7 +436,7 @@ export class ExprParser {
                     rest = split.second;
                 }
                 // if the next part contains any character from =<>+/*&|~"()! it cannot be a valid Projection
-                else if (containsAny(split.first, '=<>+/*&|~"()!')) {
+                else if (split.first.containsAny('=<>+/*&|~"()!')) {
                     tokens.push(BinaryOperatorToken.thetaJoin(split.first));
                     selectionExpected = false;
                     rest = split.second;
@@ -563,7 +544,7 @@ export class ExprParser {
                     }
                     rest = split.second;
                 }
-                    // catches error from nextBorderedPart
+                // catches error from nextBorderedPart
                 catch (e) {
                     // it fakes the unclosed expression part as a rename operator
                     tokens.push(UnaryOperatorToken.rename(rest.concat(IndexedString.new('>', rest.getNextIndexOrNaN()))));
@@ -602,7 +583,7 @@ export class ExprParser {
             else {
                 const split = IndexedStringUtils.nextNonWhitespacePart(rest);
                 errors.push(ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_parseTokens_unexpectedPart,
-                    getRange(split.first), split.first.toString()));
+                    split.first.getRange(), split.first.toString()));
                 // tries to skip first unexpected character
                 rest = rest.slice(split.first.length());
             }
@@ -637,24 +618,24 @@ export class ExprParser {
             }
             else if (missing === "binary") {
                 errors.push(error);
-                tokens.splice(index, 0, BinaryOperatorToken.naturalJoin("*"));
+                tokens.splice(index, 0, BinaryOperatorToken.naturalJoin(IndexedString.new("*")));
             }
             else {
                 errors.push(error);
-                tokens.splice(index, 0, new RelationToken(""));
+                tokens.splice(index, 0, new RelationToken(IndexedString.new("")));
             }
         }
 
         if (type !== AssertType.THROW_NOT_STRICT) {
             // checks start of an array: it must start with '(' or relation
-            if (tokens[0] instanceof UnaryOperatorToken || tokens[0] instanceof BinaryOperatorToken || tokens[0] instanceof ClosingParentheses) {
+            if (tokens[0] instanceof UnaryOperatorToken || tokens[0] instanceof BinaryOperatorToken || tokens[0] instanceof ClosingParenthesis) {
                 handleError(0, "relation", SyntaxErrorCodes.exprParser_assertValidInfixTokens_invalidStart,
                     tokens[0].getRange(), tokens[0].str.toString());
             }
         }
 
         // checks end of an array: it must end with ')', relation or an unary operator
-        if (tokens[tokens.length - 1] instanceof OpeningParentheses || tokens[tokens.length - 1] instanceof BinaryOperatorToken) {
+        if (tokens[tokens.length - 1] instanceof OpeningParenthesis || tokens[tokens.length - 1] instanceof BinaryOperatorToken) {
             handleError(tokens.length, "relation", SyntaxErrorCodes.exprParser_assertValidInfixTokens_invalidEnd,
                 tokens[tokens.length - 1].getRange(), tokens[tokens.length - 1].str.toString());
         }
@@ -675,7 +656,7 @@ export class ExprParser {
                     handleError(i2, "binary", SyntaxErrorCodes.exprParser_assertValidInfixTokens_relationAfterUnary,
                         token2.getRange(), token2.str.toString(), token1.str.toString());
                 }
-                if (token1 instanceof ClosingParentheses) {
+                if (token1 instanceof ClosingParenthesis) {
                     handleError(i2, "binary", SyntaxErrorCodes.exprParser_assertValidInfixTokens_relationAfterClosing,
                         token2.getRange(), token2.str.toString());
                 }
@@ -686,7 +667,7 @@ export class ExprParser {
                     handleError(i2, "relation", SyntaxErrorCodes.exprParser_assertValidInfixTokens_unaryAfterBinary,
                         token2.getRange(), token2.str.toString(), token1.str.toString());
                 }
-                if (token1 instanceof OpeningParentheses) {
+                if (token1 instanceof OpeningParenthesis) {
                     handleError(i2, "relation", SyntaxErrorCodes.exprParser_assertValidInfixTokens_unaryAfterOpening,
                         token2.getRange(), token2.str.toString());
                 }
@@ -697,13 +678,13 @@ export class ExprParser {
                     handleError(i2, "relation", SyntaxErrorCodes.exprParser_assertValidInfixTokens_binaryAfterBinary,
                         token2.getRange(), token2.str.toString(), token1.str.toString());
                 }
-                if (token1 instanceof OpeningParentheses) {
+                if (token1 instanceof OpeningParenthesis) {
                     handleError(i2, "relation", SyntaxErrorCodes.exprParser_assertValidInfixTokens_binaryAfterOpening,
                         token2.getRange(), token2.str.toString());
                 }
             }
             // valid predecessors: binary operator or '('
-            else if (token2 instanceof OpeningParentheses) {
+            else if (token2 instanceof OpeningParenthesis) {
                 if (token1 instanceof RelationToken) {
                     handleError(i2, "binary", SyntaxErrorCodes.exprParser_assertValidInfixTokens_openingAfterRelation,
                         token2.getRange(), token1.str.toString());
@@ -712,18 +693,18 @@ export class ExprParser {
                     handleError(i2, "binary", SyntaxErrorCodes.exprParser_assertValidInfixTokens_openingAfterUnary,
                         token2.getRange(), token1.str.toString());
                 }
-                if (token1 instanceof ClosingParentheses) {
+                if (token1 instanceof ClosingParenthesis) {
                     handleError(i2, "binary", SyntaxErrorCodes.exprParser_assertValidInfixTokens_openingAfterClosing,
                         token2.getRange());
                 }
             }
             // valid predecessors: relation, unary operator or ')'
-            else if (token2 instanceof ClosingParentheses) {
+            else if (token2 instanceof ClosingParenthesis) {
                 if (token1 instanceof BinaryOperatorToken) {
                     handleError(i2, "relation", SyntaxErrorCodes.exprParser_assertValidInfixTokens_closingAfterBinary,
                         token2.getRange(), token1.str.toString());
                 }
-                if (token1 instanceof OpeningParentheses) {
+                if (token1 instanceof OpeningParenthesis) {
                     handleError(i2, "relation", SyntaxErrorCodes.exprParser_assertValidInfixTokens_closingAfterOpening,
                         token2.getRange());
                 }
@@ -764,16 +745,16 @@ export class ExprParser {
                 }
                 operatorsStack.push(token);
             }
-            else if (token instanceof OpeningParentheses) {
+            else if (token instanceof OpeningParenthesis) {
                 operatorsStack.push(token);
             }
-            else if (token instanceof ClosingParentheses) {
+            else if (token instanceof ClosingParenthesis) {
                 while (true) {
                     if (operatorsStack.length === 0) {
                         throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_assertValidInfixTokens_invalidParentheses,
                             undefined);
                     }
-                    if (operatorsStack[operatorsStack.length - 1] instanceof OpeningParentheses) {
+                    if (operatorsStack[operatorsStack.length - 1] instanceof OpeningParenthesis) {
                         operatorsStack.pop();
                         break;
                     }
@@ -785,7 +766,7 @@ export class ExprParser {
         while (operatorsStack.length > 0) {
             // @ts-ignore (token must be present)
             const curToken: ExprToken = operatorsStack.pop();
-            if (curToken instanceof OpeningParentheses) {
+            if (curToken instanceof OpeningParenthesis) {
                 throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_assertValidInfixTokens_invalidParentheses,
                     undefined);
             }

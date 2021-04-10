@@ -140,8 +140,6 @@ const canvasWidth: number = 24;
  * not by React.
  */
 export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
-    // reference to XTextArea root React div element
-    private reactDiv: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
     // @ts-ignore - always set before usage in componentDidMount
     private textarea: ExtendedHTMLTextArea;
 
@@ -595,13 +593,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
      * Renders only an empty div. Other maintaining is not provided by React.
      */
     public render() {
-        return (
-            <div
-                ref={this.reactDiv}
-                id={this.props.id}
-                className="x-textarea-div"
-            />
-        );
+        return <div id={this.props.id} className="x-textarea-div" />;
     }
 }
 

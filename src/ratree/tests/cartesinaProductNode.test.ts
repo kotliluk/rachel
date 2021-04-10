@@ -60,7 +60,7 @@ describe('eval' , () => {
             e1a.addValue("Bydliste", "Praha, CR");
             expected.addRow(e1a);
 
-            const node: CartesianProductNode = new CartesianProductNode(new RelationNode(left), new RelationNode(right));
+            const node: CartesianProductNode = new CartesianProductNode(new RelationNode(left), new RelationNode(right), undefined);
             const actual = node.getResult();
             expect(expected.equals(actual)).toBeTruthy();
         });
@@ -168,7 +168,7 @@ describe('eval' , () => {
             e1d.addValue("Bydliste", "Velke Mezirici");
             expected.addRow(e1d);
 
-            const node: CartesianProductNode = new CartesianProductNode(new RelationNode(left), new RelationNode(right));
+            const node: CartesianProductNode = new CartesianProductNode(new RelationNode(left), new RelationNode(right), undefined);
             const actual = node.getResult();
             expect(expected.equals(actual)).toBeTruthy();
         });
@@ -204,7 +204,7 @@ describe('eval' , () => {
             r1a.addValue("Bydliste", "Praha, CR");
             right.addRow(r1a);
 
-            const node: CartesianProductNode = new CartesianProductNode(new RelationNode(left), new RelationNode(right));
+            const node: CartesianProductNode = new CartesianProductNode(new RelationNode(left), new RelationNode(right), undefined);
             expect(() => node.getResult()).toThrow();
         });
     });
@@ -285,7 +285,7 @@ describe('fakeEval' , () => {
         expected.addColumn("Jmeno", "string");
         expected.addColumn("Prijmeni", "string");
 
-        const node: CartesianProductNode = new CartesianProductNode(new RelationNode(left), new RelationNode(right));
+        const node: CartesianProductNode = new CartesianProductNode(new RelationNode(left), new RelationNode(right), undefined);
         const actual = node.fakeEval(-5);
         expect(expected.equals(actual.result)).toBeTruthy();
         expect(actual.whispers.length).toBe(0);
@@ -297,7 +297,7 @@ describe('fakeEval' , () => {
             const expected: Set<string> = new Set(["LId", "LMajitel", "LKola"]);
 
             const nodePrev: SelectionNode = new SelectionNode(exprPrev, leftSource, true);
-            const node: CartesianProductNode = new CartesianProductNode(nodePrev, rightSource);
+            const node: CartesianProductNode = new CartesianProductNode(nodePrev, rightSource, undefined);
             const actual = node.fakeEval(15);
             expect(new Set(actual.whispers)).toStrictEqual(expected);
         });
@@ -307,7 +307,7 @@ describe('fakeEval' , () => {
             const expected: Set<string> = new Set(["RId", "RMajitel", "RKola"]);
 
             const nodePrev: SelectionNode = new SelectionNode(exprPrev, rightSource, true);
-            const node: CartesianProductNode = new CartesianProductNode(leftSource, nodePrev);
+            const node: CartesianProductNode = new CartesianProductNode(leftSource, nodePrev, undefined);
             const actual = node.fakeEval(25);
             expect(new Set(actual.whispers)).toStrictEqual(expected);
         });

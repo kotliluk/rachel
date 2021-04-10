@@ -3,6 +3,7 @@ import UnaryNode from "../unaryNode";
 import RATreeNode from "../raTreeNode";
 import {depthSearch, getTreeDepth} from "../raTreeTools";
 import Relation from "../../relation/relation";
+import ErrorWithTextRange from "../../error/errorWithTextRange";
 
 /**
  * Testing binary node class. Used only for searching by index.
@@ -23,8 +24,13 @@ class TestBinary extends BinaryNode {
         return this.name;
     }
 
-    fakeEval(cursorIndex: number): Relation | string[] {
-        return [];
+    fakeEval(cursorIndex: number): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
+        // @ts-ignore
+        return;
+    }
+
+    getOperationSymbol(): string {
+        return "";
     }
 }
 
@@ -47,8 +53,13 @@ class TestUnary extends UnaryNode {
         return this.name;
     }
 
-    fakeEval(cursorIndex: number): Relation | string[] {
-        return [];
+    fakeEval(cursorIndex: number): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
+        // @ts-ignore
+        return;
+    }
+
+    getOperationSymbol(): string {
+        return "";
     }
 }
 
@@ -71,8 +82,13 @@ class TestLeaf extends RATreeNode {
         return this.name;
     }
 
-    fakeEval(cursorIndex: number): Relation | string[] {
-        return [];
+    fakeEval(cursorIndex: number): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
+        // @ts-ignore
+        return;
+    }
+
+    getOperationSymbol(): string {
+        return "";
     }
 }
 

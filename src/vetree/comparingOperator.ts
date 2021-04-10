@@ -3,7 +3,6 @@ import {VETreeNode} from "./veTreeNode";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
 import {ErrorFactory, SyntaxErrorCodes} from "../error/errorFactory";
 import {IndexedString} from "../types/indexedString";
-import {getRange} from "../utils/commonStringUtils";
 
 /**
  * Types of ComparingOperator class.
@@ -30,7 +29,7 @@ export class ComparingOperator extends VETreeNode {
      * @param right right subtree producing a value
      * @return new ComparingOperator instance of equality type
      */
-    public static equal(operator: string | IndexedString, left: VETreeNode, right: VETreeNode): ComparingOperator {
+    public static equal(operator: IndexedString, left: VETreeNode, right: VETreeNode): ComparingOperator {
         return new ComparingOperator(ComparingOperatorType.equal, operator, left, right);
     }
 
@@ -42,7 +41,7 @@ export class ComparingOperator extends VETreeNode {
      * @param right right subtree producing a value
      * @return new ComparingOperator instance of non-equality type
      */
-    public static nonEqual(operator: string | IndexedString, left: VETreeNode, right: VETreeNode): ComparingOperator {
+    public static nonEqual(operator: IndexedString, left: VETreeNode, right: VETreeNode): ComparingOperator {
         return new ComparingOperator(ComparingOperatorType.nonEqual, operator, left, right);
     }
 
@@ -54,7 +53,7 @@ export class ComparingOperator extends VETreeNode {
      * @param right right subtree producing a value
      * @return new ComparingOperator instance of less type
      */
-    public static less(operator: string | IndexedString, left: VETreeNode, right: VETreeNode): ComparingOperator {
+    public static less(operator: IndexedString, left: VETreeNode, right: VETreeNode): ComparingOperator {
         return new ComparingOperator(ComparingOperatorType.less, operator, left, right);
     }
 
@@ -66,7 +65,7 @@ export class ComparingOperator extends VETreeNode {
      * @param right right subtree producing a value
      * @return new ComparingOperator instance of more type
      */
-    public static more(operator: string | IndexedString, left: VETreeNode, right: VETreeNode): ComparingOperator {
+    public static more(operator: IndexedString, left: VETreeNode, right: VETreeNode): ComparingOperator {
         return new ComparingOperator(ComparingOperatorType.more, operator, left, right);
     }
 
@@ -78,7 +77,7 @@ export class ComparingOperator extends VETreeNode {
      * @param right right subtree producing a value
      * @return new ComparingOperator instance of less-or-equal type
      */
-    public static lessOrEqual(operator: string | IndexedString, left: VETreeNode, right: VETreeNode): ComparingOperator {
+    public static lessOrEqual(operator: IndexedString, left: VETreeNode, right: VETreeNode): ComparingOperator {
         return new ComparingOperator(ComparingOperatorType.lessOrEqual, operator, left, right);
     }
 
@@ -90,7 +89,7 @@ export class ComparingOperator extends VETreeNode {
      * @param right right subtree producing a value
      * @return new ComparingOperator instance of more-or-equal type
      */
-    public static moreOrEqual(operator: string | IndexedString, left: VETreeNode, right: VETreeNode): ComparingOperator {
+    public static moreOrEqual(operator: IndexedString, left: VETreeNode, right: VETreeNode): ComparingOperator {
         return new ComparingOperator(ComparingOperatorType.moreOrEqual, operator, left, right);
     }
 
@@ -102,7 +101,7 @@ export class ComparingOperator extends VETreeNode {
      * @param left left subtree producing a value
      * @param right right subtree producing a value
      */
-    public constructor(private readonly type: ComparingOperatorType, private readonly operator: string | IndexedString,
+    public constructor(private readonly type: ComparingOperatorType, private readonly operator: IndexedString,
                        private readonly left: VETreeNode, private readonly right: VETreeNode) {
         super();
     }
@@ -122,7 +121,7 @@ export class ComparingOperator extends VETreeNode {
 
         if (leftResult.type !== "null" && rightResult.type !== "null" && leftResult.type !== rightResult.type) {
             throw ErrorFactory.syntaxError(SyntaxErrorCodes.comparingOperator_eval_differentInputTypes,
-                getRange(this.operator), this.operator.toString(), leftResult.type, rightResult.type);
+                this.operator.getRange(), this.operator.toString(), leftResult.type, rightResult.type);
         }
 
         // if both values are null but both types are not null, returns false
@@ -165,6 +164,6 @@ export class ComparingOperator extends VETreeNode {
     }
 
     public toString(): string {
-        return "(" + this.left.toString() + " " + this.operator + " " + this.right.toString() + ")";
+        return "(" + this.left.toString() + " " + this.operator.toString() + " " + this.right.toString() + ")";
     }
 }

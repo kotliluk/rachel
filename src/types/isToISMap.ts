@@ -1,8 +1,8 @@
 import {IndexedString} from "./indexedString";
 
 interface KeyValue {
-    key: string | IndexedString,
-    value: string | IndexedString
+    key: IndexedString,
+    value: IndexedString
 }
 
 /**
@@ -10,7 +10,7 @@ interface KeyValue {
  * IndexedString) values.
  * Keys "IndexedString: something" and "string: something" are equal for this map.
  */
-export class SToSMap {
+export class ISToISMap {
     private map: Map<string, KeyValue> = new Map<string, KeyValue>();
 
     public get(key: string | IndexedString): string | IndexedString | undefined {
@@ -18,11 +18,11 @@ export class SToSMap {
         return keyValue === undefined ? undefined : keyValue.value;
     }
 
-    public set(key: string | IndexedString, value: string | IndexedString): void {
+    public set(key: IndexedString, value: IndexedString): void {
         this.map.set(key.toString(), {key, value});
     }
 
-    public delete(key: string | IndexedString): boolean {
+    public delete(key: IndexedString): boolean {
         return this.map.delete(key.toString());
     }
 
@@ -38,7 +38,7 @@ export class SToSMap {
         return this.map.size;
     }
 
-    public forEach(f: (value: string | IndexedString, row: string | IndexedString, index?: number) => void): void {
+    public forEach(f: (value: IndexedString, row: IndexedString, index?: number) => void): void {
         [...this.map.values()].forEach((keyValue, index) => f(keyValue.value, keyValue.key, index));
     }
 }

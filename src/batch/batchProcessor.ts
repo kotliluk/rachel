@@ -138,9 +138,7 @@ export class BatchProcessor {
                     map.set(storedRelation.getName(), storedRelation.createRelation());
                 }
             }
-            catch (err) {
-                console.log("Definition of relation " + data.name + " has errors, skipping.");
-            }
+            catch (ignored) { }
         })
         return map;
     }

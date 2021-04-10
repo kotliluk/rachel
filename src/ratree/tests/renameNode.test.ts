@@ -24,7 +24,7 @@ const sourceOne: RelationNode = new RelationNode(sourceRelationOne);
 describe('eval', () => {
     describe('renames valid rename correctly', () => {
         test('< Kola -> PocetKol >', () => {
-            const str: string = "< Kola -> PocetKol >";
+            const str: IndexedString = IndexedString.new("< Kola -> PocetKol >");
             const expected: Relation = new Relation("Auto<...>");
             expected.addColumn("Id", "number");
             expected.addColumn("Majitel", "number");
@@ -47,7 +47,7 @@ describe('eval', () => {
         });
 
         test('< Kola -> PocetKol, Motor -> TypMotoru, Majitel -> MajitelId >', () => {
-            const str: string = "< Kola -> PocetKol, Motor -> TypMotoru, Majitel -> MajitelId >";
+            const str: IndexedString = IndexedString.new("< Kola -> PocetKol, Motor -> TypMotoru, Majitel -> MajitelId >");
             const expected: Relation = new Relation("Auto<...>");
             expected.addColumn("Id", "number");
             expected.addColumn("MajitelId", "number");
@@ -72,7 +72,7 @@ describe('eval', () => {
 
     describe('fails when duplicit name', () => {
         test('< Motor -> Vyrobce > makes duplicit column Vyrobce', () => {
-            const str: string = "< Motor -> Vyrobce >";
+            const str: IndexedString = IndexedString.new("< Motor -> Vyrobce >");
 
             const node: RenameNode = new RenameNode(str, sourceOne);
             expect(() => node.getResult()).toThrow();
@@ -81,7 +81,7 @@ describe('eval', () => {
 
     describe('fails when absent source column', () => {
         test('< Moto -> Vyrobce >, Moto is absent', () => {
-            const str: string = "< Moto -> Vyrobce >";
+            const str: IndexedString = IndexedString.new("< Moto -> Vyrobce >");
 
             const node: RenameNode = new RenameNode(str, sourceOne);
             expect(() => node.getResult()).toThrow();
@@ -90,21 +90,21 @@ describe('eval', () => {
 
     describe('fails when invalid rename string', () => {
         test('< Kola => PocetKol >', () => {
-            const str: string = "< Kola => PocetKol >";
+            const str: IndexedString = IndexedString.new("< Kola => PocetKol >");
 
             const node: RenameNode = new RenameNode(str, sourceOne);
             expect(() => node.getResult()).toThrow();
         });
 
         test('< null -> Vyrobce >, null is a keyword', () => {
-            const str: string = "< null -> Vyrobce >";
+            const str: IndexedString = IndexedString.new("< null -> Vyrobce >");
 
             const node: RenameNode = new RenameNode(str, sourceOne);
             expect(() => node.getResult()).toThrow();
         });
 
         test('< Motor -> false >, false is a keyword', () => {
-            const str: string = "< Motor -> false >";
+            const str: IndexedString = IndexedString.new("< Motor -> false >");
 
             const node: RenameNode = new RenameNode(str, sourceOne);
             expect(() => node.getResult()).toThrow();

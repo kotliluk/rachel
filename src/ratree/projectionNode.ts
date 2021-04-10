@@ -1,6 +1,5 @@
 import UnaryNode from "./unaryNode";
 import RATreeNode from "./raTreeNode";
-import StringUtils from "../utils/stringUtils";
 import Relation from "../relation/relation";
 import Row from "../relation/row";
 import {IndexedString} from "../types/indexedString";
@@ -8,14 +7,13 @@ import {ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/error
 import ErrorWithTextRange from "../error/errorWithTextRange";
 import {isForbiddenColumnName} from "../utils/keywords";
 import IndexedStringUtils from "../utils/indexedStringUtils";
-import {getRange, isEmpty} from "../utils/commonStringUtils";
 
 /**
  * Projection node of the relational algebra syntactic tree.
  */
 export default class ProjectionNode extends UnaryNode {
 
-    private readonly projection: string | IndexedString;
+    private readonly projection: IndexedString;
     private readonly stringRange: { start: number, end: number } | undefined;
 
     /**
@@ -24,32 +22,31 @@ export default class ProjectionNode extends UnaryNode {
      * @param projection
      * @param subtree
      */
-    constructor(projection: string | IndexedString, subtree: RATreeNode) {
+    constructor(projection: IndexedString, subtree: RATreeNode) {
         super(subtree);
         this.projection = projection;
-        this.stringRange = getRange(projection);
+        this.stringRange = projection.getRange();
     }
 
     /**
      * Parses projection string to set of projected columns.
      * If doThrow is true, throws found errors. Otherwise, adds found errors to given errors array.
      */
-    private parseProjection(doThrow: boolean, errors: ErrorWithTextRange[] = []): Set<string | IndexedString> {
-        const ret: Set<string | IndexedString> = new Set<string>();
-        const indexed: boolean = this.projection instanceof IndexedString
+    private parseProjection(doThrow: boolean, errors: ErrorWithTextRange[] = []): Set<IndexedString> {
+        const ret: Set<IndexedString> = new Set<IndexedString>();
         // @ts-ignore
-        let str: string | IndexedString = this.projection.slice(1, -1);
-        let parts: (string | IndexedString)[] = str.split(",");
+        let str: IndexedString = this.projection.slice(1, -1);
+        let parts: IndexedString[] = str.split(",");
         parts.forEach(part => {
             part = part.trim();
             // @ts-ignore
-            const isName = indexed ? IndexedStringUtils.isName(part) : StringUtils.isName(part);
+            const isName = IndexedStringUtils.isName(part);
             if (isName && !isForbiddenColumnName(part)) {
                 ret.add(part);
             }
             else {
-                let range = getRange(part);
-                if (isEmpty(part) && this.stringRange !== undefined) {
+                let range = part.getRange();
+                if (part.isEmpty() && this.stringRange !== undefined) {
                     range = {start: this.stringRange.start, end: this.stringRange.start};
                 }
                 const error = ErrorFactory.syntaxError(SyntaxErrorCodes.projectionNode_parseProjection_invalidProjectedColumnName,
@@ -73,15 +70,16 @@ export default class ProjectionNode extends UnaryNode {
             return;
         }
         const source: Relation = this.subtree.getResult();
-        const projected: string[] = [...this.parseProjection(true)].map(value => value.toString());
+        const projectedIndexed: IndexedString[] = [...this.parseProjection(true)];
         // checks if projected columns really exist in source relation
-        projected.forEach(name => {
+        projectedIndexed.forEach(name => {
             if (!source.hasColumn(name.toString())) {
                 throw ErrorFactory.semanticError(SemanticErrorCodes.projectionNode_eval_absentColumn,
-                    getRange(name), name.toString());
+                    name.getRange(), name.toString());
             }
         });
 
+        const projected: string[] = projectedIndexed.map(p => p.toString());
         const result: Relation = new Relation(source.getName() + "[...]");
         // projection of relational schema
         source.forEachColumn((type, name) => {
@@ -116,11 +114,11 @@ export default class ProjectionNode extends UnaryNode {
         }
         // adds errors from current expression
         const errors = source.errors;
-        const projected: Set<string | IndexedString> = this.parseProjection(false, errors);
+        const projected: Set<IndexedString> = this.parseProjection(false, errors);
         // creates relational schema - "projected columns"
         const result: Relation = new Relation(source.result.name + "[...]");
         // adds only projected, which exist in source
-        const absent: (string | IndexedString)[] = [];
+        const absent: IndexedString[] = [];
         projected.forEach(name => {
             const strName = name.toString();
             if (source.result.hasColumn(strName)) {
@@ -133,7 +131,7 @@ export default class ProjectionNode extends UnaryNode {
         });
         absent.forEach(column => {
             errors.push(ErrorFactory.semanticError(SemanticErrorCodes.projectionNode_eval_absentColumn,
-                getRange(column), column.toString()));
+                column.getRange(), column.toString()));
         });
         return {result, whispers, errors};
     }

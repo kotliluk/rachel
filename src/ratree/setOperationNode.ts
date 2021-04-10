@@ -23,7 +23,7 @@ export default class SetOperationNode extends BinaryNode {
     private readonly type: SetOperationType;
 
     public constructor(operator: SetOperationType, leftSubtree: RATreeNode, rightSubtree: RATreeNode,
-                       private stringRange?: { start: number, end: number }) {
+                       private stringRange: { start: number, end: number } | undefined) {
         super(leftSubtree, rightSubtree);
         this.type = operator;
     }

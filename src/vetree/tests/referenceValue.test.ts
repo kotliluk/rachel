@@ -1,6 +1,7 @@
 import Row from "../../relation/row";
 import {ColumnContent, SupportedColumnType} from "../../relation/columnType";
 import {ReferenceValue} from "../referenceValue";
+import {IndexedString} from "../../types/indexedString";
 
 const numColumns: Map<string, SupportedColumnType> = new Map<string, SupportedColumnType>();
 numColumns.set("One", "number");
@@ -47,7 +48,7 @@ describe('eval', () => {
 
             const wantedColumn: string = "One";
             const expectedValue: {value: ColumnContent, type: SupportedColumnType | "null"} = {value: 1, type: "number"};
-            const reference: ReferenceValue = new ReferenceValue(wantedColumn);
+            const reference: ReferenceValue = new ReferenceValue(IndexedString.new(wantedColumn));
 
             const actualValue: {value: ColumnContent, type: SupportedColumnType | "null"} = reference.eval(sourceOne);
             expect(actualValue).toStrictEqual(expectedValue);
@@ -58,7 +59,7 @@ describe('eval', () => {
 
             const wantedColumn: string = "AAA";
             const expectedValue: {value: ColumnContent, type: SupportedColumnType | "null"} = {value: "aaa", type: "string"};
-            const reference: ReferenceValue = new ReferenceValue(wantedColumn);
+            const reference: ReferenceValue = new ReferenceValue(IndexedString.new(wantedColumn));
 
             const actualValue: {value: ColumnContent, type: SupportedColumnType | "null"} = reference.eval(sourceOne);
             expect(actualValue).toStrictEqual(expectedValue);
@@ -69,7 +70,7 @@ describe('eval', () => {
 
             const wantedColumn: string = "True";
             const expectedValue: {value: ColumnContent, type: SupportedColumnType | "null"} = {value: true, type: "boolean"};
-            const reference: ReferenceValue = new ReferenceValue(wantedColumn);
+            const reference: ReferenceValue = new ReferenceValue(IndexedString.new(wantedColumn));
 
             const actualValue: {value: ColumnContent, type: SupportedColumnType | "null"} = reference.eval(sourceOne);
             expect(actualValue).toStrictEqual(expectedValue);
@@ -80,7 +81,7 @@ describe('eval', () => {
 
             const wantedColumn: string = "One";
             const expectedValue: {value: ColumnContent, type: SupportedColumnType | "null"} = {value: null, type: "number"};
-            const reference: ReferenceValue = new ReferenceValue(wantedColumn);
+            const reference: ReferenceValue = new ReferenceValue(IndexedString.new(wantedColumn));
 
             const actualValue: {value: ColumnContent, type: SupportedColumnType | "null"} = reference.eval(sourceOne);
             expect(actualValue).toStrictEqual(expectedValue);
@@ -92,7 +93,7 @@ describe('eval', () => {
             const sourceOne: Row = numRowWithAllValues;
 
             const wantedColumn: string = "Four";
-            const reference: ReferenceValue = new ReferenceValue(wantedColumn);
+            const reference: ReferenceValue = new ReferenceValue(IndexedString.new(wantedColumn));
             expect(() => reference.eval(sourceOne)).toThrow();
         });
 
@@ -100,7 +101,7 @@ describe('eval', () => {
             const sourceOne: Row = strRowWithAllValues;
 
             const wantedColumn: string = "DDD";
-            const reference: ReferenceValue = new ReferenceValue(wantedColumn);
+            const reference: ReferenceValue = new ReferenceValue(IndexedString.new(wantedColumn));
             expect(() => reference.eval(sourceOne)).toThrow();
         });
 
@@ -108,7 +109,7 @@ describe('eval', () => {
             const sourceOne: Row = boolRowWithAllValues;
 
             const wantedColumn: string = "NotTrueNotFalse";
-            const reference: ReferenceValue = new ReferenceValue(wantedColumn);
+            const reference: ReferenceValue = new ReferenceValue(IndexedString.new(wantedColumn));
             expect(() => reference.eval(sourceOne)).toThrow();
         });
     });

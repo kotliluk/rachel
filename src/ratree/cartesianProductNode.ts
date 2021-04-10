@@ -10,7 +10,7 @@ import ErrorWithTextRange from "../error/errorWithTextRange";
  */
 export default class CartesianProductNode extends BinaryNode {
 
-    public constructor(leftSubtree: RATreeNode, rightSubtree: RATreeNode, private stringRange?: { start: number, end: number }) {
+    public constructor(leftSubtree: RATreeNode, rightSubtree: RATreeNode, private stringRange: { start: number, end: number } | undefined) {
         super(leftSubtree, rightSubtree);
     }
 

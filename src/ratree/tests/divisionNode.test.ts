@@ -44,7 +44,7 @@ describe('eval' , () => {
             e1a.addValue("MajitelId", 1);
             expected.addRow(e1a);
 
-            const node: DivisionNode = new DivisionNode(new RelationNode(left), new RelationNode(right));
+            const node: DivisionNode = new DivisionNode(new RelationNode(left), new RelationNode(right), undefined);
             const actual = node.getResult();
             expect(expected.equals(actual)).toBeTruthy();
         });
@@ -101,7 +101,7 @@ describe('eval' , () => {
             e1a.addValue("Kola", 4);
             expected.addRow(e1a);
 
-            const node: DivisionNode = new DivisionNode(new RelationNode(left), new RelationNode(right));
+            const node: DivisionNode = new DivisionNode(new RelationNode(left), new RelationNode(right), undefined);
             const actual = node.getResult();
             expect(expected.equals(actual)).toBeTruthy();
         });
@@ -136,7 +136,7 @@ describe('eval' , () => {
             const expected: Relation = new Relation("(Auto\u00f7Auto)");
             expected.addColumn("AutoId", "number");
 
-            const node: DivisionNode = new DivisionNode(new RelationNode(left), new RelationNode(right));
+            const node: DivisionNode = new DivisionNode(new RelationNode(left), new RelationNode(right), undefined);
             const actual = node.getResult();
             expect(expected.equals(actual)).toBeTruthy();
         });
@@ -174,7 +174,7 @@ describe('eval' , () => {
             r1a.addValue("Extra", "Extra");
             right.addRow(r1a);
 
-            const node: DivisionNode = new DivisionNode(new RelationNode(left), new RelationNode(right));
+            const node: DivisionNode = new DivisionNode(new RelationNode(left), new RelationNode(right), undefined);
             expect(() => node.getResult()).toThrow();
         });
 
@@ -203,7 +203,7 @@ describe('eval' , () => {
             r1a.addValue("Barva", "Modra");
             right.addRow(r1a);
 
-            const node: DivisionNode = new DivisionNode(new RelationNode(left), new RelationNode(right));
+            const node: DivisionNode = new DivisionNode(new RelationNode(left), new RelationNode(right), undefined);
             expect(() => node.getResult()).toThrow();
         });
     });
@@ -278,7 +278,7 @@ describe('fakeEval' , () => {
             expected.addColumn("AutoId", "number");
             expected.addColumn("MajitelId", "number");
 
-            const node: DivisionNode = new DivisionNode(new RelationNode(left), new RelationNode(right));
+            const node: DivisionNode = new DivisionNode(new RelationNode(left), new RelationNode(right), undefined);
             const actual = node.fakeEval(-5);
             expect(expected.equals(actual.result)).toBeTruthy();
             expect(actual.whispers.length).toBe(0);
@@ -308,7 +308,7 @@ describe('fakeEval' , () => {
 
             const expected: Relation = new Relation("(Auto\u00f7Auto)");
 
-            const node: DivisionNode = new DivisionNode(new RelationNode(left), new RelationNode(right));
+            const node: DivisionNode = new DivisionNode(new RelationNode(left), new RelationNode(right), undefined);
             const actual = node.fakeEval(-5);
             expect(expected.equals(actual.result)).toBeTruthy();
             expect(actual.whispers.length).toBe(0);
@@ -337,7 +337,7 @@ describe('fakeEval' , () => {
             const expected: Relation = new Relation("(Auto\u00f7Auto)");
             expected.addColumn("MajitelId", "number");
 
-            const node: DivisionNode = new DivisionNode(new RelationNode(left), new RelationNode(right));
+            const node: DivisionNode = new DivisionNode(new RelationNode(left), new RelationNode(right), undefined);
             const actual = node.fakeEval(-5);
             expect(expected.equals(actual.result)).toBeTruthy();
             expect(actual.whispers.length).toBe(0);
@@ -351,7 +351,7 @@ describe('fakeEval' , () => {
             const expected: Set<string> = new Set(["LId", "LMajitel", "LKola"]);
 
             const nodePrev: SelectionNode = new SelectionNode(exprPrev, leftSource, true);
-            const node: DivisionNode = new DivisionNode(nodePrev, rightSource);
+            const node: DivisionNode = new DivisionNode(nodePrev, rightSource, undefined);
             const actual = node.fakeEval(15);
             expect(new Set(actual.whispers)).toStrictEqual(expected);
         });
@@ -361,7 +361,7 @@ describe('fakeEval' , () => {
             const expected: Set<string> = new Set(["RId", "RMajitel", "RKola"]);
 
             const nodePrev: SelectionNode = new SelectionNode(exprPrev, rightSource, true);
-            const node: DivisionNode = new DivisionNode(leftSource, nodePrev);
+            const node: DivisionNode = new DivisionNode(leftSource, nodePrev, undefined);
             const actual = node.fakeEval(25);
             expect(new Set(actual.whispers)).toStrictEqual(expected);
         });

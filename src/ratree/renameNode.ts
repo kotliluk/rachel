@@ -8,15 +8,14 @@ import {IndexedString} from "../types/indexedString";
 import {ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
 import {isForbiddenColumnName} from "../utils/keywords";
 import ErrorWithTextRange from "../error/errorWithTextRange";
-import {SToSMap} from "../types/sToSMap";
-import {getRange, isEmpty} from "../utils/commonStringUtils";
+import {ISToISMap} from "../types/isToISMap";
 
 /**
  * Renaming node of the relational algebra syntactic tree.
  */
 export default class RenameNode extends UnaryNode {
 
-    private readonly rename: string | IndexedString;
+    private readonly rename: IndexedString;
     private readonly stringRange: { start: number, end: number } | undefined;
 
     /**
@@ -26,13 +25,13 @@ export default class RenameNode extends UnaryNode {
      * @param rename string describing each renaming
      * @param subtree source subtree for renaming
      */
-    public constructor(rename: string | IndexedString, subtree: RATreeNode) {
+    public constructor(rename: IndexedString, subtree: RATreeNode) {
         super(subtree);
         this.rename = rename;
-        this.stringRange = getRange(rename);
+        this.stringRange = rename.getRange();
     }
 
-    private parseChanges(doThrow: boolean, errors: ErrorWithTextRange[] = []): SToSMap {
+    private parseChanges(doThrow: boolean, errors: ErrorWithTextRange[] = []): ISToISMap {
         const handleError = (error: SyntaxError) => {
             if (doThrow) {
                 throw error;
@@ -40,35 +39,35 @@ export default class RenameNode extends UnaryNode {
                 errors.push(error);
             }
         }
-        const parts: (string | IndexedString)[] = this.rename.slice(1, -1).split(",");
-        const ret: SToSMap = new SToSMap();
+        const parts: IndexedString[] = this.rename.slice(1, -1).split(",");
+        const ret: ISToISMap = new ISToISMap();
         for (let part of parts) {
             // @ts-ignore
-            let words: (string | IndexedString)[] = part.split("->").map(w => w.trim());
+            let words: IndexedString[] = part.split("->").map(w => w.trim());
             let beforeError = false; // true when there was an error in before in "before -> after"
             let afterError = false;  // true when there was an error in after in "before -> after"
             if (words.length !== 2) {
-                let range = getRange(part);
-                if (isEmpty(part) && this.stringRange !== undefined) {
+                let range = part.getRange();
+                if (part.isEmpty() && this.stringRange !== undefined) {
                     range = {start: this.stringRange.start, end: this.stringRange.start};
                 }
                 handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.renameNode_parseChanges_missingArrow, range));
                 beforeError = true;
                 afterError = true;
             }
-            if (!beforeError && ret.has(words[0].toString())) {
+            if (!beforeError && ret.has(words[0])) {
                 handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.renameNode_parseChanges_multipleRenameOfTheColumn,
-                    getRange(words[0]), words[0].toString()));
+                    words[0].getRange(), words[0].toString()));
                 beforeError = true;
             }
             if (!afterError && !StringUtils.isName(words[1].toString())) {
                 handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.renameNode_parseChanges_invalidNewName,
-                    getRange(words[1]), words[1].toString()));
+                    words[1].getRange(), words[1].toString()));
                 afterError = true;
             }
             if (!afterError && isForbiddenColumnName(words[1])) {
                 handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.renameNode_parseChanges_keywordNewName,
-                    getRange(words[1]), words[1].toString()));
+                    words[1].getRange(), words[1].toString()));
                 afterError = true;
             }
             // if no error found, adds original rename pair
@@ -81,7 +80,7 @@ export default class RenameNode extends UnaryNode {
             }
             // if no after error, fakes rename """ -> before", where empty string has undefined range
             else if (!afterError) {
-                ret.set("", words[0]);
+                ret.set(IndexedString.empty(), words[0]);
             }
             // if both errors, adds nothing
         }
@@ -96,13 +95,13 @@ export default class RenameNode extends UnaryNode {
         if (this.isEvaluated()) {
             return;
         }
-        const changes: SToSMap = this.parseChanges(true);
+        const changes: ISToISMap = this.parseChanges(true);
         const source: Relation = this.subtree.getResult();
         // check whether all columns to rename are in source relation
         changes.forEach((value, key) => {
              if (source.getColumnNames().indexOf(key.toString()) === -1) {
                  throw ErrorFactory.semanticError(SemanticErrorCodes.renameNode_eval_absentOriginalColumn,
-                     getRange(key), key.toString());
+                     key.getRange(), key.toString());
              }
         });
         // rename of relational schema
@@ -122,7 +121,7 @@ export default class RenameNode extends UnaryNode {
             // @ts-ignore (changes must contain 'name' key now)
             if (!result.addColumn(changes.get(name).toString(), type)) {
                 throw ErrorFactory.semanticError(SemanticErrorCodes.renameNode_eval_changeToDuplicitName,
-                    getRange(this.rename), changes.get(name) as string);
+                    this.rename.getRange(), changes.get(name) as string);
             }
         });
         // rename of relation rows
@@ -156,7 +155,7 @@ export default class RenameNode extends UnaryNode {
         let whispers = source.whispers;
         if (this.stringRange !== undefined && this.stringRange.start < cursorIndex && cursorIndex <= this.stringRange.end) {
             // if the last special character before cursor is '<' or ',' returns current available columns (subtree schema)
-            const beforeCursor: string | IndexedString = this.rename.slice(0, cursorIndex - this.stringRange.start).trim();
+            const beforeCursor: IndexedString = this.rename.slice(0, cursorIndex - this.stringRange.start).trim();
             const regexMatch = beforeCursor.match(/.*[^\w\s]/);
             if (regexMatch !== null && (regexMatch[0].endsWith('<') || regexMatch[0].endsWith(','))) {
                 whispers = source.result.getColumnNames();
@@ -164,7 +163,7 @@ export default class RenameNode extends UnaryNode {
         }
         // adds errors from current expression
         const errors = source.errors;
-        const changes: SToSMap = this.parseChanges(false, errors);
+        const changes: ISToISMap = this.parseChanges(false, errors);
         // creates relational schema - "(source minus to-rename) union (renamed existing in source)"
         const result: Relation = new Relation(source.result.getName() + "<...>");
         // in first loop adds source columns which are not in changes.keys
@@ -174,12 +173,12 @@ export default class RenameNode extends UnaryNode {
             }
         });
         // in second loop adds changes.values whose changes.keys are in source
-        const absent: (string | IndexedString)[] = [];
-        const duplicit: (string | IndexedString)[] = [];
+        const absent: IndexedString[] = [];
+        const duplicit: IndexedString[] = [];
         changes.forEach((after, before) => {
             const beforeStr = before.toString();
             const afterStr = after.toString();
-            if (!source.result.hasColumn(beforeStr) && before !== "") {
+            if (!source.result.hasColumn(beforeStr) && !before.isEmpty()) {
                 absent.push(before);
             }
             // @ts-ignore source must have beforeStr now
@@ -189,11 +188,11 @@ export default class RenameNode extends UnaryNode {
         });
         absent.forEach(column => {
             errors.push(ErrorFactory.semanticError(SemanticErrorCodes.renameNode_eval_absentOriginalColumn,
-                getRange(column), column.toString()));
+                column.getRange(), column.toString()));
         });
         duplicit.forEach(column => {
             errors.push(ErrorFactory.semanticError(SemanticErrorCodes.renameNode_eval_changeToDuplicitName,
-                getRange(column), column.toString()));
+                column.getRange(), column.toString()));
         });
         return {result, whispers, errors};
     }

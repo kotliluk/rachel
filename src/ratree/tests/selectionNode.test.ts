@@ -27,7 +27,7 @@ source.addRow(s1c);
 describe('eval', () => {
     describe('selects rows correctly', () => {
         test('(Id == 1)', () => {
-            const expr: string = "(Id == 1)";
+            const expr: IndexedString = IndexedString.new("(Id == 1)");
             const expected: Relation = new Relation("Auto(...)");
             expected.addColumn("Id", "number");
             expected.addColumn("Majitel", "string");
@@ -44,7 +44,7 @@ describe('eval', () => {
         });
 
         test('(Id != 1 + 0 && Majitel == "Lukas")', () => {
-            const expr: string = '(Id != 1 && Majitel == "Lukas")';
+            const expr: IndexedString = IndexedString.new('(Id != 1 && Majitel == "Lukas")');
             const expected: Relation = new Relation("Auto(...)");
             expected.addColumn("Id", "number");
             expected.addColumn("Majitel", "string");
@@ -63,7 +63,7 @@ describe('eval', () => {
 
     describe('throws when absent column', () => {
         test('(AutoId == 1)', () => {
-            const expr: string = "(AutoId == 1)";
+            const expr: IndexedString = IndexedString.new("(AutoId == 1)");
 
             const selectionNode: SelectionNode = new SelectionNode(expr, new RelationNode(source), true);
             expect(() => selectionNode.getResult()).toThrow();
@@ -72,7 +72,7 @@ describe('eval', () => {
 
     describe('throws when condition result is not boolean', () => {
         test('(1 + 1)', () => {
-            const expr: string = "(1 + 1)";
+            const expr: IndexedString = IndexedString.new("(1 + 1)");
 
             const selectionNode: SelectionNode = new SelectionNode(expr, new RelationNode(source), true);
             expect(() => selectionNode.getResult()).toThrow();
@@ -81,7 +81,7 @@ describe('eval', () => {
 
     describe('throws when condition whitespaces only', () => {
         test('( )', () => {
-            const expr: string = "( )";
+            const expr: IndexedString = IndexedString.new("( )");
 
             const selectionNode: SelectionNode = new SelectionNode(expr, new RelationNode(source), true);
             expect(() => selectionNode.getResult()).toThrow();
@@ -90,7 +90,7 @@ describe('eval', () => {
 
     describe('throws when invalid condition', () => {
         test('(1 + + 2 < 5)', () => {
-            const expr: string = "(1 + + 2 < 5)";
+            const expr: IndexedString = IndexedString.new("(1 + + 2 < 5)");
 
             const selectionNode: SelectionNode = new SelectionNode(expr, new RelationNode(source), true);
             expect(() => selectionNode.getResult()).toThrow();

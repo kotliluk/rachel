@@ -65,7 +65,7 @@ describe('eval' , () => {
             expectedb.addValue("Barva", "Modra");
             expected.addRow(expectedb);
 
-            const node: SetOperationNode = new SetOperationNode(SetOperationType.union, new RelationNode(left), new RelationNode(right));
+            const node: SetOperationNode = new SetOperationNode(SetOperationType.union, new RelationNode(left), new RelationNode(right), undefined);
             const actual = node.getResult();
             expect(expected.equals(actual)).toBeTruthy();
         });
@@ -136,7 +136,7 @@ describe('eval' , () => {
             expectedb.addValue("Barva", "Modra");
             expected.addRow(expectedb);
 
-            const node: SetOperationNode = new SetOperationNode(SetOperationType.union, new RelationNode(left), new RelationNode(right));
+            const node: SetOperationNode = new SetOperationNode(SetOperationType.union, new RelationNode(left), new RelationNode(right), undefined);
             const actual = node.getResult();
             expect(expected.equals(actual)).toBeTruthy();
         });
@@ -175,7 +175,7 @@ describe('eval' , () => {
             righta.addValue("Barva", "Modra");
             right.addRow(righta);
 
-            const node: SetOperationNode = new SetOperationNode(SetOperationType.union, new RelationNode(left), new RelationNode(right));
+            const node: SetOperationNode = new SetOperationNode(SetOperationType.union, new RelationNode(left), new RelationNode(right), undefined);
             expect(() => node.getResult()).toThrow();
         });
     });
@@ -223,7 +223,7 @@ describe('eval' , () => {
             expected.addColumn("Vyrobce", "string");
             expected.addColumn("Barva", "string");
 
-            const node: SetOperationNode = new SetOperationNode(SetOperationType.intersection, new RelationNode(left), new RelationNode(right));
+            const node: SetOperationNode = new SetOperationNode(SetOperationType.intersection, new RelationNode(left), new RelationNode(right), undefined);
             const actual = node.getResult();
             expect(expected.equals(actual)).toBeTruthy();
         });
@@ -286,7 +286,7 @@ describe('eval' , () => {
             expecteda.addValue("MajitelId", 1);
             expected.addRow(expecteda);
 
-            const node: SetOperationNode = new SetOperationNode(SetOperationType.intersection, new RelationNode(left), new RelationNode(right));
+            const node: SetOperationNode = new SetOperationNode(SetOperationType.intersection, new RelationNode(left), new RelationNode(right), undefined);
             const actual = node.getResult();
             expect(expected.equals(actual)).toBeTruthy();
         });
@@ -325,7 +325,7 @@ describe('eval' , () => {
             righta.addValue("Barva", "Modra");
             right.addRow(righta);
 
-            const node: SetOperationNode = new SetOperationNode(SetOperationType.intersection, new RelationNode(left), new RelationNode(right));
+            const node: SetOperationNode = new SetOperationNode(SetOperationType.intersection, new RelationNode(left), new RelationNode(right), undefined);
             expect(() => node.getResult()).toThrow();
         });
     });
@@ -381,7 +381,7 @@ describe('eval' , () => {
             expecteda.addValue("MajitelId", 1);
             expected.addRow(expecteda);
 
-            const node: SetOperationNode = new SetOperationNode(SetOperationType.difference, new RelationNode(left), new RelationNode(right));
+            const node: SetOperationNode = new SetOperationNode(SetOperationType.difference, new RelationNode(left), new RelationNode(right), undefined);
             const actual = node.getResult();
             expect(expected.equals(actual)).toBeTruthy();
         });
@@ -436,7 +436,7 @@ describe('eval' , () => {
             expected.addColumn("Vyrobce", "string");
             expected.addColumn("Barva", "string");
 
-            const node: SetOperationNode = new SetOperationNode(SetOperationType.difference, new RelationNode(left), new RelationNode(right));
+            const node: SetOperationNode = new SetOperationNode(SetOperationType.difference, new RelationNode(left), new RelationNode(right), undefined);
             const actual = node.getResult();
             expect(expected.equals(actual)).toBeTruthy();
         });
@@ -475,7 +475,7 @@ describe('eval' , () => {
             righta.addValue("Barva", "Modra");
             right.addRow(righta);
 
-            const node: SetOperationNode = new SetOperationNode(SetOperationType.difference, new RelationNode(left), new RelationNode(right));
+            const node: SetOperationNode = new SetOperationNode(SetOperationType.difference, new RelationNode(left), new RelationNode(right), undefined);
             expect(() => node.getResult()).toThrow();
         });
     });
@@ -562,15 +562,15 @@ describe('fakeEval' , () => {
         expectedDifference.addColumn("AutoId", "number");
         expectedDifference.addColumn("MajitelId", "number");
 
-        const nodeUnion: SetOperationNode = new SetOperationNode(SetOperationType.union, new RelationNode(left), new RelationNode(right));
+        const nodeUnion: SetOperationNode = new SetOperationNode(SetOperationType.union, new RelationNode(left), new RelationNode(right), undefined);
         const actualUnion = nodeUnion.fakeEval(-5);
         expect(expectedUnion.equals(actualUnion.result)).toBeTruthy();
 
-        const nodeIntersection: SetOperationNode = new SetOperationNode(SetOperationType.intersection, new RelationNode(left), new RelationNode(right));
+        const nodeIntersection: SetOperationNode = new SetOperationNode(SetOperationType.intersection, new RelationNode(left), new RelationNode(right), undefined);
         const actualIntersection = nodeIntersection.fakeEval(-5);
         expect(expectedIntersection.equals(actualIntersection.result)).toBeTruthy();
 
-        const nodeDifference: SetOperationNode = new SetOperationNode(SetOperationType.difference, new RelationNode(left), new RelationNode(right));
+        const nodeDifference: SetOperationNode = new SetOperationNode(SetOperationType.difference, new RelationNode(left), new RelationNode(right), undefined);
         const actualDifference = nodeDifference.fakeEval(-5);
         expect(expectedDifference.equals(actualDifference.result)).toBeTruthy();
     });
@@ -581,7 +581,7 @@ describe('fakeEval' , () => {
             const expected: Set<string> = new Set(["LId", "LMajitel", "LKola"]);
 
             const nodePrev: SelectionNode = new SelectionNode(exprPrev, leftSource, true);
-            const node: SetOperationNode = new SetOperationNode(SetOperationType.union, nodePrev, rightSource);
+            const node: SetOperationNode = new SetOperationNode(SetOperationType.union, nodePrev, rightSource, undefined);
             const actual = node.fakeEval(15);
             expect(new Set(actual.whispers)).toStrictEqual(expected);
         });
@@ -591,7 +591,7 @@ describe('fakeEval' , () => {
             const expected: Set<string> = new Set(["RId", "RMajitel", "RKola"]);
 
             const nodePrev: SelectionNode = new SelectionNode(exprPrev, rightSource, true);
-            const node: SetOperationNode = new SetOperationNode(SetOperationType.union, leftSource, nodePrev);
+            const node: SetOperationNode = new SetOperationNode(SetOperationType.union, leftSource, nodePrev, undefined);
             const actual = node.fakeEval(25);
             expect(new Set(actual.whispers)).toStrictEqual(expected);
         });

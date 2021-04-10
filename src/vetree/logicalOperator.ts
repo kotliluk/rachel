@@ -3,7 +3,6 @@ import {VETreeNode} from "./veTreeNode";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
 import {ErrorFactory, SyntaxErrorCodes} from "../error/errorFactory";
 import {IndexedString} from "../types/indexedString";
-import {getRange} from "../utils/commonStringUtils";
 
 /**
  * Types of LogicalOperator class.
@@ -26,7 +25,7 @@ export class LogicalOperator extends VETreeNode {
      * @param left Left subtree evaluating to a boolean value
      * @param right Right subtree evaluating to a boolean value
      */
-    public static and(operator: string | IndexedString, left: VETreeNode, right: VETreeNode): LogicalOperator {
+    public static and(operator: IndexedString, left: VETreeNode, right: VETreeNode): LogicalOperator {
         return new LogicalOperator(LogicalOperatorType.and, operator, left, right);
     }
 
@@ -37,7 +36,7 @@ export class LogicalOperator extends VETreeNode {
      * @param left Left subtree evaluating to a boolean value
      * @param right Right subtree evaluating to a boolean value
      */
-    public static or(operator: string | IndexedString, left: VETreeNode, right: VETreeNode): LogicalOperator {
+    public static or(operator: IndexedString, left: VETreeNode, right: VETreeNode): LogicalOperator {
         return new LogicalOperator(LogicalOperatorType.or, operator, left, right);
     }
 
@@ -47,11 +46,11 @@ export class LogicalOperator extends VETreeNode {
      * @param operator String representing a 'not' in input (used to printing)
      * @param subtree Subtree evaluating to a boolean value
      */
-    public static not(operator: string | IndexedString, subtree: VETreeNode): LogicalOperator {
+    public static not(operator: IndexedString, subtree: VETreeNode): LogicalOperator {
         return new LogicalOperator(LogicalOperatorType.not, operator, subtree);
     }
 
-    private constructor(private readonly type: LogicalOperatorType, private readonly operator: string | IndexedString,
+    private constructor(private readonly type: LogicalOperatorType, private readonly operator: IndexedString,
                         private readonly left: VETreeNode, private readonly right?: VETreeNode) {
         super();
     }
@@ -68,7 +67,7 @@ export class LogicalOperator extends VETreeNode {
         const leftResult: { value: ColumnContent, type: SupportedColumnType | "null" } = this.left.eval(source);
         if (leftResult.type !== "boolean") {
             throw ErrorFactory.syntaxError(SyntaxErrorCodes.logicalOperator_eval_leftInputNotBoolean,
-                getRange(this.operator), this.operator.toString(), leftResult.type);
+                this.operator.getRange(), this.operator.toString(), leftResult.type);
         }
 
         if (this.type === LogicalOperatorType.not) {
@@ -82,7 +81,7 @@ export class LogicalOperator extends VETreeNode {
             const rightResult: { value: ColumnContent, type: SupportedColumnType | "null" } = this.right.eval(source);
             if (rightResult.type !== "boolean") {
                 throw ErrorFactory.syntaxError(SyntaxErrorCodes.logicalOperator_eval_rightInputNotBoolean,
-                    getRange(this.operator), this.operator.toString(), rightResult.type);
+                    this.operator.getRange(), this.operator.toString(), rightResult.type);
             }
 
             if (this.type === LogicalOperatorType.and) {
@@ -112,7 +111,7 @@ export class LogicalOperator extends VETreeNode {
 
     public toString(): string {
         if (this.type === LogicalOperatorType.not) {
-            return this.operator + "(" + this.left.toString() + ")";
+            return this.operator.toString() + "(" + this.left.toString() + ")";
         }
         // @ts-ignore (in and, or operations right subtree must exist)
         return "(" + this.left.toString() + " " + this.operator.toString() + " " + this.right.toString() + ")";

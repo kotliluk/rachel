@@ -21,106 +21,150 @@ import {LogicalOperator} from "../../vetree/logicalOperator";
 import {ReferenceValue} from "../../vetree/referenceValue";
 import {VETreeNode} from "../../vetree/veTreeNode";
 import {IndexedString} from "../../types/indexedString";
+import {ColumnContent} from "../../relation/columnType";
+
+/* TESTING TOKENS */
+
+function closingParentheses(str: string) {
+    return new ClosingParentheses(IndexedString.new(str));
+}
+
+function openingParentheses(str: string) {
+    return new OpeningParentheses(IndexedString.new(str));
+}
+
+function comparingToken(type: ComparingOperatorType, str: string) {
+    return new ComparingToken(type, IndexedString.new(str));
+}
+
+function computingDivisionToken(str: string) {
+    return new ComputingDivisionToken(IndexedString.new(str));
+}
+
+function computingMinusToken(str: string) {
+    return new ComputingMinusToken(IndexedString.new(str));
+}
+
+function computingMultiplicationToken(str: string) {
+    return new ComputingMultiplicationToken(IndexedString.new(str));
+}
+
+function computingPlusToken(str: string) {
+    return new ComputingPlusToken(IndexedString.new(str));
+}
+
+function literalToken(str: string, value: ColumnContent, type: "string" | "number" | "boolean" | "null") {
+    return new LiteralToken(IndexedString.new(str), value, type);
+}
+
+function logicalAndToken(str: string) {
+    return new LogicalAndToken(IndexedString.new(str))
+}
+
+function logicalNotToken(str: string) {
+    return new LogicalNotToken(IndexedString.new(str))
+}
+
+function logicalOrToken(str: string) {
+    return new LogicalOrToken(IndexedString.new(str))
+}
+
+function referenceToken(str: string) {
+    return new ReferenceToken(IndexedString.new(str))
+}
+
+/**
+ * Asserts equality of string representations of tokens in given arrays.
+ */
+function assertTokenArray(actual: ValueToken[], expected: ValueToken[]) {
+    expect(actual.length).toBe(expected.length);
+    actual.forEach((a, i) => {
+        expect(a.str.toString()).toStrictEqual(expected[i].str.toString());
+    });
+}
 
 describe('parseTokens', () => {
     describe('parses valid string correctly', () => {
         test('(5 + Column > 10)', () => {
             const str: string = '(5 + Column > 10)';
             const expected: ValueToken[] = [];
-            expected.push(new OpeningParentheses('('));
-            expected.push(new LiteralToken("5", 5, "number"));
-            expected.push(new ComputingPlusToken('+'));
-            expected.push(new ReferenceToken('Column'));
-            expected.push(new ComparingToken(ComparingOperatorType.more, '>'));
-            expected.push(new LiteralToken("10", 10, "number"));
-            expected.push(new ClosingParentheses(')'));
+            expected.push(openingParentheses('('));
+            expected.push(literalToken("5", 5, "number"));
+            expected.push(computingPlusToken('+'));
+            expected.push(referenceToken('Column'));
+            expected.push(comparingToken(ComparingOperatorType.more, '>'));
+            expected.push(literalToken("10", 10, "number"));
+            expected.push(closingParentheses(')'));
 
-            const actual: ValueToken[] = ValueParser.parseTokens(str, true, true);
-            expect(actual).toStrictEqual(expected);
+            const actual: ValueToken[] = ValueParser.parseTokens(IndexedString.new(str), true, true);
+            assertTokenArray(actual, expected);
         });
 
         test("!(Column * 3 <= 4.5 && Name == \"Lukas \\\".55\") || Id != null", () => {
             const str: string = "!(Column * 3 <= 4.5 && Name == \"Lukas \\\".55\") || Id != null";
             const expected: ValueToken[] = [];
-            expected.push(new LogicalNotToken('!'));
-            expected.push(new OpeningParentheses('('));
-            expected.push(new ReferenceToken('Column'));
-            expected.push(new ComputingMultiplicationToken('*'));
-            expected.push(new LiteralToken("3", 3, "number"));
-            expected.push(new ComparingToken(ComparingOperatorType.lessOrEqual, '<='));
-            expected.push(new LiteralToken("4.5", 4.5, "number"));
-            expected.push(new LogicalAndToken('&&'));
-            expected.push(new ReferenceToken('Name'));
-            expected.push(new ComparingToken(ComparingOperatorType.equal, '=='));
-            expected.push(new LiteralToken("Lukas \\\".55", "Lukas \\\".55", "string"));
-            expected.push(new ClosingParentheses(')'));
-            expected.push(new LogicalOrToken('||'));
-            expected.push(new ReferenceToken('Id'));
-            expected.push(new ComparingToken(ComparingOperatorType.nonEqual, '!='));
-            expected.push(new LiteralToken("null", null, "null"));
+            expected.push(logicalNotToken('!'));
+            expected.push(openingParentheses('('));
+            expected.push(referenceToken('Column'));
+            expected.push(computingMultiplicationToken('*'));
+            expected.push(literalToken("3", 3, "number"));
+            expected.push(comparingToken(ComparingOperatorType.lessOrEqual, '<='));
+            expected.push(literalToken("4.5", 4.5, "number"));
+            expected.push(logicalAndToken('&&'));
+            expected.push(referenceToken('Name'));
+            expected.push(comparingToken(ComparingOperatorType.equal, '=='));
+            expected.push(literalToken("Lukas \\\".55", "Lukas \\\".55", "string"));
+            expected.push(closingParentheses(')'));
+            expected.push(logicalOrToken('||'));
+            expected.push(referenceToken('Id'));
+            expected.push(comparingToken(ComparingOperatorType.nonEqual, '!='));
+            expected.push(literalToken("null", null, "null"));
 
-            const actual: ValueToken[] = ValueParser.parseTokens(str, true, true);
-            expect(actual).toStrictEqual(expected);
+            const actual: ValueToken[] = ValueParser.parseTokens(IndexedString.new(str), true, true);
+            assertTokenArray(actual, expected);
         });
 
         test('!false && Column == 5', () => {
             const str: string = '!false && Column == 5';
             const expected: ValueToken[] = [];
-            expected.push(new LogicalNotToken('!'));
-            expected.push(new LiteralToken("false", false, "boolean"));
-            expected.push(new LogicalAndToken('&&'));
-            expected.push(new ReferenceToken('Column'));
-            expected.push(new ComparingToken(ComparingOperatorType.equal, '=='));
-            expected.push(new LiteralToken("5", 5, "number"));
+            expected.push(logicalNotToken('!'));
+            expected.push(literalToken("false", false, "boolean"));
+            expected.push(logicalAndToken('&&'));
+            expected.push(referenceToken('Column'));
+            expected.push(comparingToken(ComparingOperatorType.equal, '=='));
+            expected.push(literalToken("5", 5, "number"));
 
-            const actual: ValueToken[] = ValueParser.parseTokens(str, true, true);
-            expect(actual).toStrictEqual(expected);
+            const actual: ValueToken[] = ValueParser.parseTokens(IndexedString.new(str), true, true);
+            assertTokenArray(actual, expected);
         });
 
         test('(Id = )', () => {
             const str: string = '(Id = )';
             const expected: ValueToken[] = [];
-            expected.push(new OpeningParentheses('('));
-            expected.push(new ReferenceToken('Id'));
-            expected.push(new ComparingToken(ComparingOperatorType.equal, '='));
-            expected.push(new ClosingParentheses(')'));
+            expected.push(openingParentheses('('));
+            expected.push(referenceToken('Id'));
+            expected.push(comparingToken(ComparingOperatorType.equal, '='));
+            expected.push(closingParentheses(')'));
 
-            const actual: ValueToken[] = ValueParser.parseTokens(str, true, true);
-            expect(actual).toStrictEqual(expected);
-        });
-    });
-
-    describe('parses valid indexed string correctly', () => {
-        test('(5 + Column > 10)', () => {
-            const str: string = '(5 + Column > 10)';
-            const expected: ValueToken[] = [];
-            expected.push(new OpeningParentheses(IndexedString.new('(', NaN)));
-            expected.push(new LiteralToken(IndexedString.new("5", NaN), 5, "number"));
-            expected.push(new ComputingPlusToken(IndexedString.new('+', NaN)));
-            expected.push(new ReferenceToken(IndexedString.new('Column', NaN)));
-            expected.push(new ComparingToken(ComparingOperatorType.more, IndexedString.new('>', NaN)));
-            expected.push(new LiteralToken(IndexedString.new("10", NaN), 10, "number"));
-            expected.push(new ClosingParentheses(IndexedString.new(')', NaN)));
-
-            const actual: ValueToken[] = ValueParser.parseTokens(IndexedString.new(str, NaN), true, true);
-            expect(actual).toStrictEqual(expected);
+            const actual: ValueToken[] = ValueParser.parseTokens(IndexedString.new(str), true, true);
+            assertTokenArray(actual, expected);
         });
     });
 
     describe('invalid string throws error', () => {
         test('(Column < 5.5.)', () => {
             const str: string = '(Column < 5.5.)';
-            expect(() => ValueParser.parseTokens(str, true, true)).toThrow();
+            expect(() => ValueParser.parseTokens(IndexedString.new(str), true, true)).toThrow();
         });
 
         test('(Column < 5.5 && ?)', () => {
             const str: string = '(Column < 5.5 && ?)';
-            expect(() => ValueParser.parseTokens(str, true, true)).toThrow();
+            expect(() => ValueParser.parseTokens(IndexedString.new(str), true, true)).toThrow();
         });
 
         test('(Column < 5.5 && A == "string over\nmore lines")', () => {
             const str: string = '(Column < 5.5 && ?)';
-            expect(() => ValueParser.parseTokens(str, true, true)).toThrow();
+            expect(() => ValueParser.parseTokens(IndexedString.new(str), true, true)).toThrow();
         });
     });
 });
@@ -128,68 +172,68 @@ describe('parseTokens', () => {
 describe('simplify', () => {
     test('!!true => true', () => {
         const input: ValueToken[] = [];
-        input.push(new LogicalNotToken('!'));
-        input.push(new LogicalNotToken('!'));
-        input.push(new LiteralToken('true', true, 'boolean'));
+        input.push(logicalNotToken('!'));
+        input.push(logicalNotToken('!'));
+        input.push(literalToken('true', true, 'boolean'));
         const expected: ValueToken[] = [];
-        expected.push(new LiteralToken('true', true, 'boolean'));
+        expected.push(literalToken('true', true, 'boolean'));
 
         const actual: ValueToken[] = ValueParser.simplify(input);
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test('!!!true => !true', () => {
         const input: ValueToken[] = [];
-        input.push(new LogicalNotToken('!'));
-        input.push(new LogicalNotToken('!'));
-        input.push(new LogicalNotToken('!'));
-        input.push(new LiteralToken('true', true, 'boolean'));
+        input.push(logicalNotToken('!'));
+        input.push(logicalNotToken('!'));
+        input.push(logicalNotToken('!'));
+        input.push(literalToken('true', true, 'boolean'));
         const expected: ValueToken[] = [];
-        expected.push(new LogicalNotToken('!'));
-        expected.push(new LiteralToken('true', true, 'boolean'));
+        expected.push(logicalNotToken('!'));
+        expected.push(literalToken('true', true, 'boolean'));
 
         const actual: ValueToken[] = ValueParser.simplify(input);
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test('!!!!true => true', () => {
         const input: ValueToken[] = [];
-        input.push(new LogicalNotToken('!'));
-        input.push(new LogicalNotToken('!'));
-        input.push(new LogicalNotToken('!'));
-        input.push(new LogicalNotToken('!'));
-        input.push(new LiteralToken('true', true, 'boolean'));
+        input.push(logicalNotToken('!'));
+        input.push(logicalNotToken('!'));
+        input.push(logicalNotToken('!'));
+        input.push(logicalNotToken('!'));
+        input.push(literalToken('true', true, 'boolean'));
         const expected: ValueToken[] = [];
-        expected.push(new LiteralToken('true', true, 'boolean'));
+        expected.push(literalToken('true', true, 'boolean'));
 
         const actual: ValueToken[] = ValueParser.simplify(input);
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test('!a && (b || !!c) => !a && (b || c)', () => {
         const input: ValueToken[] = [];
-        input.push(new LogicalNotToken('!'));
-        input.push(new ReferenceToken('a'));
-        input.push(new LogicalAndToken('&&'));
-        input.push(new OpeningParentheses('('));
-        input.push(new ReferenceToken('b'));
-        input.push(new LogicalOrToken('||'));
-        input.push(new LogicalNotToken('!'));
-        input.push(new LogicalNotToken('!'));
-        input.push(new LogicalAndToken('c'));
-        input.push(new ClosingParentheses(')'));
+        input.push(logicalNotToken('!'));
+        input.push(referenceToken('a'));
+        input.push(logicalAndToken('&&'));
+        input.push(openingParentheses('('));
+        input.push(referenceToken('b'));
+        input.push(logicalOrToken('||'));
+        input.push(logicalNotToken('!'));
+        input.push(logicalNotToken('!'));
+        input.push(logicalAndToken('c'));
+        input.push(closingParentheses(')'));
         const expected: ValueToken[] = [];
-        expected.push(new LogicalNotToken('!'));
-        expected.push(new ReferenceToken('a'));
-        expected.push(new LogicalAndToken('&&'));
-        expected.push(new OpeningParentheses('('));
-        expected.push(new ReferenceToken('b'));
-        expected.push(new LogicalOrToken('||'));
-        expected.push(new LogicalAndToken('c'));
-        expected.push(new ClosingParentheses(')'));
+        expected.push(logicalNotToken('!'));
+        expected.push(referenceToken('a'));
+        expected.push(logicalAndToken('&&'));
+        expected.push(openingParentheses('('));
+        expected.push(referenceToken('b'));
+        expected.push(logicalOrToken('||'));
+        expected.push(logicalAndToken('c'));
+        expected.push(closingParentheses(')'));
 
         const actual: ValueToken[] = ValueParser.simplify(input);
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 });
 
@@ -197,148 +241,148 @@ describe('toRPN', () => {
     describe('transforms valid token array correctly', () => {
         test('5 + 4', () => {
             const input: ValueToken[] = [];
-            input.push(new LiteralToken("5", 5, "number"));
-            input.push(new ComputingPlusToken('+'));
-            input.push(new LiteralToken("4", 4, "number"));
+            input.push(literalToken("5", 5, "number"));
+            input.push(computingPlusToken('+'));
+            input.push(literalToken("4", 4, "number"));
             const expected: ValueToken[] = [];
-            expected.push(new LiteralToken("5", 5, "number"));
-            expected.push(new LiteralToken("4", 4, "number"));
-            expected.push(new ComputingPlusToken('+'));
+            expected.push(literalToken("5", 5, "number"));
+            expected.push(literalToken("4", 4, "number"));
+            expected.push(computingPlusToken('+'));
 
             const actual: ValueToken[] = ValueParser.toRPN(input);
-            expect(actual).toStrictEqual(expected);
+            assertTokenArray(actual, expected);
         });
 
         test('5 + 4 * 2', () => {
             const input: ValueToken[] = [];
-            input.push(new LiteralToken("5", 5, "number"));
-            input.push(new ComputingPlusToken('+'));
-            input.push(new LiteralToken("4", 4, "number"));
-            input.push(new ComputingMultiplicationToken('*'));
-            input.push(new LiteralToken("2", 2, "number"));
+            input.push(literalToken("5", 5, "number"));
+            input.push(computingPlusToken('+'));
+            input.push(literalToken("4", 4, "number"));
+            input.push(computingMultiplicationToken('*'));
+            input.push(literalToken("2", 2, "number"));
             const expected: ValueToken[] = [];
-            expected.push(new LiteralToken("5", 5, "number"));
-            expected.push(new LiteralToken("4", 4, "number"));
-            expected.push(new LiteralToken("2", 2, "number"));
-            expected.push(new ComputingMultiplicationToken('*'));
-            expected.push(new ComputingPlusToken('+'));
+            expected.push(literalToken("5", 5, "number"));
+            expected.push(literalToken("4", 4, "number"));
+            expected.push(literalToken("2", 2, "number"));
+            expected.push(computingMultiplicationToken('*'));
+            expected.push(computingPlusToken('+'));
 
             const actual: ValueToken[] = ValueParser.toRPN(input);
-            expect(actual).toStrictEqual(expected);
+            assertTokenArray(actual, expected);
         });
 
         test('(5 + 4) * 2', () => {
             const input: ValueToken[] = [];
-            input.push(new OpeningParentheses('('));
-            input.push(new LiteralToken("5", 5, "number"));
-            input.push(new ComputingPlusToken('+'));
-            input.push(new LiteralToken("4", 4, "number"));
-            input.push(new ClosingParentheses(')'));
-            input.push(new ComputingMultiplicationToken('*'));
-            input.push(new LiteralToken("2", 2, "number"));
+            input.push(openingParentheses('('));
+            input.push(literalToken("5", 5, "number"));
+            input.push(computingPlusToken('+'));
+            input.push(literalToken("4", 4, "number"));
+            input.push(closingParentheses(')'));
+            input.push(computingMultiplicationToken('*'));
+            input.push(literalToken("2", 2, "number"));
             const expected: ValueToken[] = [];
-            expected.push(new LiteralToken("5", 5, "number"));
-            expected.push(new LiteralToken("4", 4, "number"));
-            expected.push(new ComputingPlusToken('+'));
-            expected.push(new LiteralToken("2", 2, "number"));
-            expected.push(new ComputingMultiplicationToken('*'));
+            expected.push(literalToken("5", 5, "number"));
+            expected.push(literalToken("4", 4, "number"));
+            expected.push(computingPlusToken('+'));
+            expected.push(literalToken("2", 2, "number"));
+            expected.push(computingMultiplicationToken('*'));
 
             const actual: ValueToken[] = ValueParser.toRPN(input);
-            expect(actual).toStrictEqual(expected);
+            assertTokenArray(actual, expected);
         });
 
         test('5 + 3 * 6 - ( 5 / 3 ) + 7', () => {
             const input: ValueToken[] = [];
-            input.push(new LiteralToken("5", 5, "number"));
-            input.push(new ComputingPlusToken('+'));
-            input.push(new LiteralToken("3", 3, "number"));
-            input.push(new ComputingMultiplicationToken('*'));
-            input.push(new LiteralToken("6", 6, "number"));
-            input.push(new ComputingMinusToken('-'));
-            input.push(new OpeningParentheses('('));
-            input.push(new LiteralToken("5", 5, "number"));
-            input.push(new ComputingDivisionToken('/'));
-            input.push(new LiteralToken("3", 3, "number"));
-            input.push(new ClosingParentheses(')'));
-            input.push(new ComputingPlusToken('+'));
-            input.push(new LiteralToken("7", 7, "number"));
+            input.push(literalToken("5", 5, "number"));
+            input.push(computingPlusToken('+'));
+            input.push(literalToken("3", 3, "number"));
+            input.push(computingMultiplicationToken('*'));
+            input.push(literalToken("6", 6, "number"));
+            input.push(computingMinusToken('-'));
+            input.push(openingParentheses('('));
+            input.push(literalToken("5", 5, "number"));
+            input.push(computingDivisionToken('/'));
+            input.push(literalToken("3", 3, "number"));
+            input.push(closingParentheses(')'));
+            input.push(computingPlusToken('+'));
+            input.push(literalToken("7", 7, "number"));
             const expected: ValueToken[] = [];
-            expected.push(new LiteralToken("5", 5, "number"));
-            expected.push(new LiteralToken("3", 3, "number"));
-            expected.push(new LiteralToken("6", 6, "number"));
-            expected.push(new ComputingMultiplicationToken('*'));
-            expected.push(new ComputingPlusToken('+'));
-            expected.push(new LiteralToken("5", 5, "number"));
-            expected.push(new LiteralToken("3", 3, "number"));
-            expected.push(new ComputingDivisionToken('/'));
-            expected.push(new ComputingMinusToken('-'));
-            expected.push(new LiteralToken("7", 7, "number"));
-            expected.push(new ComputingPlusToken('+'));
+            expected.push(literalToken("5", 5, "number"));
+            expected.push(literalToken("3", 3, "number"));
+            expected.push(literalToken("6", 6, "number"));
+            expected.push(computingMultiplicationToken('*'));
+            expected.push(computingPlusToken('+'));
+            expected.push(literalToken("5", 5, "number"));
+            expected.push(literalToken("3", 3, "number"));
+            expected.push(computingDivisionToken('/'));
+            expected.push(computingMinusToken('-'));
+            expected.push(literalToken("7", 7, "number"));
+            expected.push(computingPlusToken('+'));
 
             const actual: ValueToken[] = ValueParser.toRPN(input);
-            expect(actual).toStrictEqual(expected);
+            assertTokenArray(actual, expected);
         });
 
         test("!(Column * 3 <= 4.5 && Name == \"Lukas \\\".55\") || Id != null", () => {
             const input: ValueToken[] = [];
-            input.push(new LogicalNotToken('!'));
-            input.push(new OpeningParentheses('('));
-            input.push(new ReferenceToken('Column'));
-            input.push(new ComputingMultiplicationToken('*'));
-            input.push(new LiteralToken("3", 3, "number"));
-            input.push(new ComparingToken(ComparingOperatorType.lessOrEqual, '<='));
-            input.push(new LiteralToken("4.5", 4.5, "number"));
-            input.push(new LogicalAndToken('&&'));
-            input.push(new ReferenceToken('Name'));
-            input.push(new ComparingToken(ComparingOperatorType.equal, '=='));
-            input.push(new LiteralToken("\"Lukas \\\".55\"", "Lukas \\\".55", "string"));
-            input.push(new ClosingParentheses(')'));
-            input.push(new LogicalOrToken('||'));
-            input.push(new ReferenceToken('Id'));
-            input.push(new ComparingToken(ComparingOperatorType.nonEqual, '!='));
-            input.push(new LiteralToken("null", null, "null"));
+            input.push(logicalNotToken('!'));
+            input.push(openingParentheses('('));
+            input.push(referenceToken('Column'));
+            input.push(computingMultiplicationToken('*'));
+            input.push(literalToken("3", 3, "number"));
+            input.push(comparingToken(ComparingOperatorType.lessOrEqual, '<='));
+            input.push(literalToken("4.5", 4.5, "number"));
+            input.push(logicalAndToken('&&'));
+            input.push(referenceToken('Name'));
+            input.push(comparingToken(ComparingOperatorType.equal, '=='));
+            input.push(literalToken("\"Lukas \\\".55\"", "Lukas \\\".55", "string"));
+            input.push(closingParentheses(')'));
+            input.push(logicalOrToken('||'));
+            input.push(referenceToken('Id'));
+            input.push(comparingToken(ComparingOperatorType.nonEqual, '!='));
+            input.push(literalToken("null", null, "null"));
             const expected: ValueToken[] = [];
-            expected.push(new ReferenceToken('Column'));
-            expected.push(new LiteralToken("3", 3, "number"));
-            expected.push(new ComputingMultiplicationToken('*'));
-            expected.push(new LiteralToken("4.5", 4.5, "number"));
-            expected.push(new ComparingToken(ComparingOperatorType.lessOrEqual, '<='));
-            expected.push(new ReferenceToken('Name'));
-            expected.push(new LiteralToken("\"Lukas \\\".55\"", "Lukas \\\".55", "string"));
-            expected.push(new ComparingToken(ComparingOperatorType.equal, '=='));
-            expected.push(new LogicalAndToken('&&'));
-            expected.push(new LogicalNotToken('!'));
-            expected.push(new ReferenceToken('Id'));
-            expected.push(new LiteralToken("null", null, "null"));
-            expected.push(new ComparingToken(ComparingOperatorType.nonEqual, '!='));
-            expected.push(new LogicalOrToken('||'));
+            expected.push(referenceToken('Column'));
+            expected.push(literalToken("3", 3, "number"));
+            expected.push(computingMultiplicationToken('*'));
+            expected.push(literalToken("4.5", 4.5, "number"));
+            expected.push(comparingToken(ComparingOperatorType.lessOrEqual, '<='));
+            expected.push(referenceToken('Name'));
+            expected.push(literalToken("\"Lukas \\\".55\"", "Lukas \\\".55", "string"));
+            expected.push(comparingToken(ComparingOperatorType.equal, '=='));
+            expected.push(logicalAndToken('&&'));
+            expected.push(logicalNotToken('!'));
+            expected.push(referenceToken('Id'));
+            expected.push(literalToken("null", null, "null"));
+            expected.push(comparingToken(ComparingOperatorType.nonEqual, '!='));
+            expected.push(logicalOrToken('||'));
 
             const actual: ValueToken[] = ValueParser.toRPN(input);
-            expect(actual).toStrictEqual(expected);
+            assertTokenArray(actual, expected);
         });
     });
 
     describe('invalid array throws error', () => {
         test('5 + 4) * 2', () => {
             const input: ValueToken[] = [];
-            input.push(new LiteralToken("5", 5, "number"));
-            input.push(new ComputingPlusToken('+'));
-            input.push(new LiteralToken("4", 4, "number"));
-            input.push(new ClosingParentheses(')'));
-            input.push(new ComputingMultiplicationToken('*'));
-            input.push(new LiteralToken("2", 2, "number"));
+            input.push(literalToken("5", 5, "number"));
+            input.push(computingPlusToken('+'));
+            input.push(literalToken("4", 4, "number"));
+            input.push(closingParentheses(')'));
+            input.push(computingMultiplicationToken('*'));
+            input.push(literalToken("2", 2, "number"));
 
             expect(() => ValueParser.toRPN(input)).toThrow();
         });
 
         test('(5 + 4 * 2', () => {
             const input: ValueToken[] = [];
-            input.push(new OpeningParentheses('('));
-            input.push(new LiteralToken("5", 5, "number"));
-            input.push(new ComputingPlusToken('+'));
-            input.push(new LiteralToken("4", 4, "number"));
-            input.push(new ComputingMultiplicationToken('*'));
-            input.push(new LiteralToken("2", 2, "number"));
+            input.push(openingParentheses('('));
+            input.push(literalToken("5", 5, "number"));
+            input.push(computingPlusToken('+'));
+            input.push(literalToken("4", 4, "number"));
+            input.push(computingMultiplicationToken('*'));
+            input.push(literalToken("2", 2, "number"));
 
             expect(() => ValueParser.toRPN(input)).toThrow();
         });
@@ -349,9 +393,9 @@ describe('rpnToVETree', () => {
     describe('transforms valid rpn array correctly', () => {
         test('5 4 + (infix: 5 + 4)', () => {
             const input: ValueToken[] = [];
-            input.push(new LiteralToken("5", 5, "number"));
-            input.push(new LiteralToken("4", 4, "number"));
-            input.push(new ComputingPlusToken('+'));
+            input.push(literalToken("5", 5, "number"));
+            input.push(literalToken("4", 4, "number"));
+            input.push(computingPlusToken('+'));
             const expected: VETreeNode = ComputingOperator.add(
                 new LiteralValue(5, "number"),
                 new LiteralValue(4, "number"),
@@ -359,22 +403,22 @@ describe('rpnToVETree', () => {
             );
 
             const actual: VETreeNode = ValueParser.rpnToVETree(input);
-            expect(actual).toStrictEqual(expected);
+            expect(actual.toString()).toStrictEqual(expected.toString());
         });
 
         test('5 3 6 * + 5 3 / - 7 + (infix: 5 + 3 * 6 - ( 5 / 3 ) + 7)', () => {
             const input: ValueToken[] = [];
-            input.push(new LiteralToken("5", 5, "number"));
-            input.push(new LiteralToken("3", 3, "number"));
-            input.push(new LiteralToken("6", 6, "number"));
-            input.push(new ComputingMultiplicationToken('*'));
-            input.push(new ComputingPlusToken('+'));
-            input.push(new LiteralToken("5", 5, "number"));
-            input.push(new LiteralToken("3", 3, "number"));
-            input.push(new ComputingDivisionToken('/'));
-            input.push(new ComputingMinusToken('-'));
-            input.push(new LiteralToken("7", 7, "number"));
-            input.push(new ComputingPlusToken('+'));
+            input.push(literalToken("5", 5, "number"));
+            input.push(literalToken("3", 3, "number"));
+            input.push(literalToken("6", 6, "number"));
+            input.push(computingMultiplicationToken('*'));
+            input.push(computingPlusToken('+'));
+            input.push(literalToken("5", 5, "number"));
+            input.push(literalToken("3", 3, "number"));
+            input.push(computingDivisionToken('/'));
+            input.push(computingMinusToken('-'));
+            input.push(literalToken("7", 7, "number"));
+            input.push(computingPlusToken('+'));
             const expected: VETreeNode = ComputingOperator.add(
                 ComputingOperator.deduct(
                     ComputingOperator.add(
@@ -398,25 +442,25 @@ describe('rpnToVETree', () => {
             );
 
             const actual: VETreeNode = ValueParser.rpnToVETree(input);
-            expect(actual).toStrictEqual(expected);
+            expect(actual.toString()).toStrictEqual(expected.toString());
         });
 
         test("!(Column * 3 <= 4.5 && Name == \"Lukas \\\".55\") || Id != null", () => {
             const input: ValueToken[] = [];
-            input.push(new ReferenceToken('Column'));
-            input.push(new LiteralToken("3", 3, "number"));
-            input.push(new ComputingMultiplicationToken('*'));
-            input.push(new LiteralToken("4.5", 4.5, "number"));
-            input.push(new ComparingToken(ComparingOperatorType.lessOrEqual, '<='));
-            input.push(new ReferenceToken('Name'));
-            input.push(new LiteralToken("\"Lukas \\\".55\"", "Lukas \\\".55", "string"));
-            input.push(new ComparingToken(ComparingOperatorType.equal, '=='));
-            input.push(new LogicalAndToken('&&'));
-            input.push(new LogicalNotToken('!'));
-            input.push(new ReferenceToken('Id'));
-            input.push(new LiteralToken("null", null, "null"));
-            input.push(new ComparingToken(ComparingOperatorType.nonEqual, '!='));
-            input.push(new LogicalOrToken('||'));
+            input.push(referenceToken('Column'));
+            input.push(literalToken("3", 3, "number"));
+            input.push(computingMultiplicationToken('*'));
+            input.push(literalToken("4.5", 4.5, "number"));
+            input.push(comparingToken(ComparingOperatorType.lessOrEqual, '<='));
+            input.push(referenceToken('Name'));
+            input.push(literalToken("\"Lukas \\\".55\"", "Lukas \\\".55", "string"));
+            input.push(comparingToken(ComparingOperatorType.equal, '=='));
+            input.push(logicalAndToken('&&'));
+            input.push(logicalNotToken('!'));
+            input.push(referenceToken('Id'));
+            input.push(literalToken("null", null, "null"));
+            input.push(comparingToken(ComparingOperatorType.nonEqual, '!='));
+            input.push(logicalOrToken('||'));
             const expected: VETreeNode = LogicalOperator.or('||',
                 LogicalOperator.not('!',
                     LogicalOperator.and('&&',
@@ -441,19 +485,19 @@ describe('rpnToVETree', () => {
             );
 
             const actual: VETreeNode = ValueParser.rpnToVETree(input);
-            expect(actual).toStrictEqual(expected);
+            expect(actual.toString()).toStrictEqual(expected.toString());
         });
 
         test("!(Column * 3 <= 4.5) && true", () => {
             const input: ValueToken[] = [];
-            input.push(new ReferenceToken('Column'));
-            input.push(new LiteralToken("3", 3, "number"));
-            input.push(new ComputingMultiplicationToken('*'));
-            input.push(new LiteralToken("4.5", 4.5, "number"));
-            input.push(new ComparingToken(ComparingOperatorType.lessOrEqual, '<='));
-            input.push(new LogicalNotToken('!'));
-            input.push(new LiteralToken("true", true, "boolean"));
-            input.push(new LogicalAndToken('&&'));
+            input.push(referenceToken('Column'));
+            input.push(literalToken("3", 3, "number"));
+            input.push(computingMultiplicationToken('*'));
+            input.push(literalToken("4.5", 4.5, "number"));
+            input.push(comparingToken(ComparingOperatorType.lessOrEqual, '<='));
+            input.push(logicalNotToken('!'));
+            input.push(literalToken("true", true, "boolean"));
+            input.push(logicalAndToken('&&'));
             const expected: VETreeNode = LogicalOperator.and('&&',
                 LogicalOperator.not('!',
                     new ComparingOperator(ComparingOperatorType.lessOrEqual, '<=',
@@ -469,27 +513,27 @@ describe('rpnToVETree', () => {
             );
 
             const actual: VETreeNode = ValueParser.rpnToVETree(input);
-            expect(actual).toStrictEqual(expected);
+            expect(actual.toString()).toStrictEqual(expected.toString());
         });
     });
 
     describe('invalid rpn array throws error', () => {
         test('2 < 4 + (infix: (< 2) + 4)', () => {
             const input: ValueToken[] = [];
-            input.push(new LiteralToken("2", 2, "number"));
-            input.push(new ComparingToken(ComparingOperatorType.less, '<'));
-            input.push(new LiteralToken("4", 4, "number"));
-            input.push(new ComputingPlusToken('+'));
+            input.push(literalToken("2", 2, "number"));
+            input.push(comparingToken(ComparingOperatorType.less, '<'));
+            input.push(literalToken("4", 4, "number"));
+            input.push(computingPlusToken('+'));
 
             expect(() => ValueParser.rpnToVETree(input)).toThrow();
         });
 
         test('Column(Column = 1) (infix: Column Column 1 =)', () => {
             const input: ValueToken[] = [];
-            input.push(new ReferenceToken("Column"));
-            input.push(new ReferenceToken("Column"));
-            input.push(new LiteralToken("1", 1, "number"));
-            input.push(new ComparingToken(ComparingOperatorType.equal, '='));
+            input.push(referenceToken("Column"));
+            input.push(referenceToken("Column"));
+            input.push(literalToken("1", 1, "number"));
+            input.push(comparingToken(ComparingOperatorType.equal, '='));
 
             expect(() => ValueParser.rpnToVETree(input)).toThrow();
         });

@@ -1,8 +1,8 @@
 import Relation from "../../relation/relation";
 import {
-    BinaryOperatorToken, ClosingParentheses, OpeningParentheses,
+    BinaryOperatorToken, ClosingParenthesis,
     ExprToken,
-    RelationToken, UnaryOperatorToken
+    RelationToken, UnaryOperatorToken, OpeningParenthesis
 } from "../exprTokens";
 import {ExprParser} from "../exprParser";
 import RATreeNode from "../../ratree/raTreeNode";
@@ -14,11 +14,116 @@ import NaturalJoinNode, {NaturalJoinType} from "../../ratree/naturalJoinNode";
 import AntijoinNode, {AntijoinType} from "../../ratree/antijoinNode";
 import DivisionNode from "../../ratree/divisionNode";
 import OuterJoinNode, {OuterJoinType} from "../../ratree/outerJoinNode";
+import {IndexedString} from "../../types/indexedString";
 
 enum AssertType {
     NOT_THROW,
     THROW_STRICT,
     THROW_NOT_STRICT
+}
+
+/* TESTING BINARY */
+
+function relationToken(str: string) {
+    return new RelationToken(IndexedString.new(str));
+}
+
+function naturalJoin(str: string) {
+    return BinaryOperatorToken.naturalJoin(IndexedString.new(str));
+}
+
+function leftSemijoin(str: string) {
+    return BinaryOperatorToken.leftSemijoin(IndexedString.new(str));
+}
+
+function rightSemijoin(str: string) {
+    return BinaryOperatorToken.rightSemijoin(IndexedString.new(str));
+}
+
+function leftAntijoin(str: string) {
+    return BinaryOperatorToken.leftAntijoin(IndexedString.new(str));
+}
+
+function rightAntijoin(str: string) {
+    return BinaryOperatorToken.rightAntijoin(IndexedString.new(str));
+}
+
+function fullOuterJoin(str: string) {
+    return BinaryOperatorToken.fullOuterJoin(IndexedString.new(str));
+}
+
+function leftOuterJoin(str: string) {
+    return BinaryOperatorToken.leftOuterJoin(IndexedString.new(str));
+}
+
+function rightOuterJoin(str: string) {
+    return BinaryOperatorToken.rightOuterJoin(IndexedString.new(str));
+}
+
+function thetaJoin(str: string) {
+    return BinaryOperatorToken.thetaJoin(IndexedString.new(str));
+}
+
+function leftThetaSemijoin(str: string) {
+    return BinaryOperatorToken.leftThetaSemijoin(IndexedString.new(str));
+}
+
+function rightThetaSemijoin(str: string) {
+    return BinaryOperatorToken.rightThetaSemijoin(IndexedString.new(str));
+}
+
+function cartesianProduct(str: string) {
+    return BinaryOperatorToken.cartesianProduct(IndexedString.new(str));
+}
+
+function division(str: string) {
+    return BinaryOperatorToken.division(IndexedString.new(str));
+}
+
+function difference(str: string) {
+    return BinaryOperatorToken.difference(IndexedString.new(str));
+}
+
+function union(str: string) {
+    return BinaryOperatorToken.union(IndexedString.new(str));
+}
+
+function intersection(str: string) {
+    return BinaryOperatorToken.union(IndexedString.new(str));
+}
+
+/* TESTING UNARY */
+
+function selection(str: string) {
+    return UnaryOperatorToken.selection(IndexedString.new(str));
+}
+
+function projection(str: string) {
+    return UnaryOperatorToken.projection(IndexedString.new(str));
+}
+
+function rename(str: string) {
+    return UnaryOperatorToken.rename(IndexedString.new(str));
+}
+
+/* TESTING PARENTHESES */
+
+function openingParenthesis(str: string) {
+    return new OpeningParenthesis(IndexedString.new(str));
+}
+
+function closingParenthesis(str: string) {
+    return new ClosingParenthesis(IndexedString.new(str));
+}
+
+/**
+ * Asserts equality of string representations of tokens in given arrays.
+ */
+function assertTokenArray(actual: ExprToken[], expected: ExprToken[]) {
+    expect(actual.length).toBe(expected.length);
+    actual.forEach((a, i) => {
+        expect(a.str.toString()).toStrictEqual(expected[i].str.toString());
+    });
 }
 
 const relations: Map<string, Relation> = new Map<string, Relation>();
@@ -42,129 +147,129 @@ describe("parseTokens", () => {
     test("Auto", () => {
         // arrange
         const str: string = "Auto";
-        const expected: ExprToken[] = [new RelationToken("Auto")];
+        const expected: ExprToken[] = [relationToken("Auto")];
         // act
-        const actual: ExprToken[] = exprParser.parseTokens(str);
+        const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
         // assert
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test("Auto * Majitel", () => {
         // arrange
         const str: string = "Auto * Majitel";
         const expected: ExprToken[] = [
-            new RelationToken("Auto"),
-            BinaryOperatorToken.naturalJoin('*'),
-            new RelationToken("Majitel")
+            relationToken("Auto"),
+            naturalJoin('*'),
+            relationToken("Majitel")
         ];
         // act
-        const actual: ExprToken[] = exprParser.parseTokens(str);
+        const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
         // assert
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test("Auto(Id = 1)", () => {
         // arrange
         const str: string = "Auto(Id = 1)";
         const expected: ExprToken[] = [
-            new RelationToken("Auto"),
-            UnaryOperatorToken.selection("(Id = 1)")
+            relationToken("Auto"),
+            selection("(Id = 1)")
         ];
         // act
-        const actual: ExprToken[] = exprParser.parseTokens(str);
+        const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
         // assert
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test("Auto(Id = 1)<Id -> AutoId>", () => {
         // arrange
         const str: string = "Auto(Id = 1)<Id -> AutoId>";
         const expected: ExprToken[] = [
-            new RelationToken("Auto"),
-            UnaryOperatorToken.selection("(Id = 1)"),
-            UnaryOperatorToken.rename("<Id -> AutoId>")
+            relationToken("Auto"),
+            selection("(Id = 1)"),
+            rename("<Id -> AutoId>")
         ];
         // act
-        const actual: ExprToken[] = exprParser.parseTokens(str);
+        const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
         // assert
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test("Auto *F* (Auto \u2a2f Majitel)", () => {
         // arrange
         const str: string = "Auto *F* (Auto \u2a2f Majitel)";
         const expected: ExprToken[] = [
-            new RelationToken("Auto"),
-            BinaryOperatorToken.fullOuterJoin('*F*'),
-            new OpeningParentheses('('),
-            new RelationToken("Auto"),
-            BinaryOperatorToken.cartesianProduct('\u2a2f'),
-            new RelationToken("Majitel"),
-            new ClosingParentheses(')')
+            relationToken("Auto"),
+            fullOuterJoin('*F*'),
+            openingParenthesis('('),
+            relationToken("Auto"),
+            cartesianProduct('\u2a2f'),
+            relationToken("Majitel"),
+            closingParenthesis(')')
         ];
         // act
-        const actual: ExprToken[] = exprParser.parseTokens(str);
+        const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
         // assert
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test('(Auto \u00f7 Majitel)(Jmeno = "Honza")', () => {
         // arrange
         const str: string = '(Auto \u00f7 Majitel)(Jmeno = "Honza")';
         const expected: ExprToken[] = [
-            new OpeningParentheses('('),
-            new RelationToken("Auto"),
-            BinaryOperatorToken.division('\u00f7'),
-            new RelationToken("Majitel"),
-            new ClosingParentheses(')'),
-            UnaryOperatorToken.selection("(Jmeno = \"Honza\")")
+            openingParenthesis('('),
+            relationToken("Auto"),
+            division('\u00f7'),
+            relationToken("Majitel"),
+            closingParenthesis(')'),
+            selection("(Jmeno = \"Honza\")")
         ];
         // act
-        const actual: ExprToken[] = exprParser.parseTokens(str);
+        const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
         // assert
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test('A<]A[>A*F*A*L*A*R*A<*A*>A*A\u2a2fA\u222aA\u2229A\\A\u22b2A\u22b3A\u00f7A', () => {
         // arrange
         const str: string = 'A<]A[>A*F*A*L*A*R*A<*A*>A*A\u2a2fA\u222aA\u2229A\\A\u22b2A\u22b3A\u00f7A';
         const expected: ExprToken[] = [
-            new RelationToken("A"),
-            BinaryOperatorToken.leftThetaSemijoin('<]'),
-            new RelationToken("A"),
-            BinaryOperatorToken.rightThetaSemijoin('[>'),
-            new RelationToken("A"),
-            BinaryOperatorToken.fullOuterJoin('*F*'),
-            new RelationToken("A"),
-            BinaryOperatorToken.leftOuterJoin('*L*'),
-            new RelationToken("A"),
-            BinaryOperatorToken.rightOuterJoin('*R*'),
-            new RelationToken("A"),
-            BinaryOperatorToken.leftSemijoin('<*'),
-            new RelationToken("A"),
-            BinaryOperatorToken.rightSemijoin('*>'),
-            new RelationToken("A"),
-            BinaryOperatorToken.naturalJoin('*'),
-            new RelationToken("A"),
-            BinaryOperatorToken.cartesianProduct('\u2a2f'),
-            new RelationToken("A"),
-            BinaryOperatorToken.union('\u222a'),
-            new RelationToken("A"),
-            BinaryOperatorToken.intersection('\u2229'),
-            new RelationToken("A"),
-            BinaryOperatorToken.difference('\\'),
-            new RelationToken("A"),
-            BinaryOperatorToken.rightAntijoin('\u22b2'),
-            new RelationToken("A"),
-            BinaryOperatorToken.leftAntijoin('\u22b3'),
-            new RelationToken("A"),
-            BinaryOperatorToken.division('\u00f7'),
-            new RelationToken("A")
+            relationToken("A"),
+            leftThetaSemijoin('<]'),
+            relationToken("A"),
+            rightThetaSemijoin('[>'),
+            relationToken("A"),
+            fullOuterJoin('*F*'),
+            relationToken("A"),
+            leftOuterJoin('*L*'),
+            relationToken("A"),
+            rightOuterJoin('*R*'),
+            relationToken("A"),
+            leftSemijoin('<*'),
+            relationToken("A"),
+            rightSemijoin('*>'),
+            relationToken("A"),
+            naturalJoin('*'),
+            relationToken("A"),
+            cartesianProduct('\u2a2f'),
+            relationToken("A"),
+            union('\u222a'),
+            relationToken("A"),
+            intersection('\u2229'),
+            relationToken("A"),
+            difference('\\'),
+            relationToken("A"),
+            rightAntijoin('\u22b2'),
+            relationToken("A"),
+            leftAntijoin('\u22b3'),
+            relationToken("A"),
+            division('\u00f7'),
+            relationToken("A")
         ];
         // act
-        const actual: ExprToken[] = exprParser.parseTokens(str);
+        const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
         // assert
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     describe("distinguishes projection and theta join", () => {
@@ -172,65 +277,65 @@ describe("parseTokens", () => {
             // arrange
             const str: string = 'Auto[Id]';
             const expected: ExprToken[] = [
-                new RelationToken("Auto"),
-                UnaryOperatorToken.projection("[Id]")
+                relationToken("Auto"),
+                projection("[Id]")
             ];
             // act
-            const actual: ExprToken[] = exprParser.parseTokens(str);
+            const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
             // assert
-            expect(actual).toStrictEqual(expected);
+            assertTokenArray(actual, expected);
         });
 
         test("Auto[Id]Majitel", () => {
             // arrange
             const str: string = 'Auto[Id]Majitel';
             const expected: ExprToken[] = [
-                new RelationToken("Auto"),
-                BinaryOperatorToken.thetaJoin("[Id]"),
-                new RelationToken("Majitel")
+                relationToken("Auto"),
+                thetaJoin("[Id]"),
+                relationToken("Majitel")
             ];
             // act
-            const actual: ExprToken[] = exprParser.parseTokens(str);
+            const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
             // assert
-            expect(actual).toStrictEqual(expected);
+            assertTokenArray(actual, expected);
         });
 
         test("Auto[Id][Id]Majitel[Id][Id]", () => {
             // arrange
             const str: string = 'Auto[Id][Id]Majitel[Id][Id]';
             const expected: ExprToken[] = [
-                new RelationToken("Auto"),
-                UnaryOperatorToken.projection("[Id]"),
-                BinaryOperatorToken.thetaJoin("[Id]"),
-                new RelationToken("Majitel"),
-                UnaryOperatorToken.projection("[Id]"),
-                UnaryOperatorToken.projection("[Id]")
+                relationToken("Auto"),
+                projection("[Id]"),
+                thetaJoin("[Id]"),
+                relationToken("Majitel"),
+                projection("[Id]"),
+                projection("[Id]")
             ];
             // act
-            const actual: ExprToken[] = exprParser.parseTokens(str);
+            const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
             // assert
-            expect(actual).toStrictEqual(expected);
+            assertTokenArray(actual, expected);
         });
 
         test("(Auto[Id]Auto)[Id][Id]Majitel[Id][Id]", () => {
             // arrange
             const str: string = '(Auto[Id]Auto)[Id][Id]Majitel[Id][Id]';
             const expected: ExprToken[] = [
-                new OpeningParentheses('('),
-                new RelationToken("Auto"),
-                BinaryOperatorToken.thetaJoin("[Id]"),
-                new RelationToken("Auto"),
-                new ClosingParentheses(')'),
-                UnaryOperatorToken.projection("[Id]"),
-                BinaryOperatorToken.thetaJoin("[Id]"),
-                new RelationToken("Majitel"),
-                UnaryOperatorToken.projection("[Id]"),
-                UnaryOperatorToken.projection("[Id]")
+                openingParenthesis('('),
+                relationToken("Auto"),
+                thetaJoin("[Id]"),
+                relationToken("Auto"),
+                closingParenthesis(')'),
+                projection("[Id]"),
+                thetaJoin("[Id]"),
+                relationToken("Majitel"),
+                projection("[Id]"),
+                projection("[Id]")
             ];
             // act
-            const actual: ExprToken[] = exprParser.parseTokens(str);
+            const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
             // assert
-            expect(actual).toStrictEqual(expected);
+            assertTokenArray(actual, expected);
         });
     });
 
@@ -239,51 +344,51 @@ describe("parseTokens", () => {
             // arrange
             const str: string = 'Auto[Id, Majitel](Id = 1)';
             const expected: ExprToken[] = [
-                new RelationToken("Auto"),
-                UnaryOperatorToken.projection("[Id, Majitel]"),
-                UnaryOperatorToken.selection("(Id = 1)")
+                relationToken("Auto"),
+                projection("[Id, Majitel]"),
+                selection("(Id = 1)")
             ];
             // act
-            const actual: ExprToken[] = exprParser.parseTokens(str);
+            const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
             // assert
-            expect(actual).toStrictEqual(expected);
+            assertTokenArray(actual, expected);
         });
 
         test("Auto[Id, Majitel][theta join](Auto [theta join] Majitel(selection))", () => {
             // arrange
             const str: string = 'Auto[Id, Majitel][theta join](Auto [theta join] Majitel(selection))';
             const expected: ExprToken[] = [
-                new RelationToken("Auto"),
-                UnaryOperatorToken.projection("[Id, Majitel]"),
-                BinaryOperatorToken.thetaJoin("[theta join]"),
-                new OpeningParentheses('('),
-                new RelationToken("Auto"),
-                BinaryOperatorToken.thetaJoin("[theta join]"),
-                new RelationToken("Majitel"),
-                UnaryOperatorToken.selection("(selection)"),
-                new ClosingParentheses(')')
+                relationToken("Auto"),
+                projection("[Id, Majitel]"),
+                thetaJoin("[theta join]"),
+                openingParenthesis('('),
+                relationToken("Auto"),
+                thetaJoin("[theta join]"),
+                relationToken("Majitel"),
+                selection("(selection)"),
+                closingParenthesis(')')
             ];
             // act
-            const actual: ExprToken[] = exprParser.parseTokens(str);
+            const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
             // assert
-            expect(actual).toStrictEqual(expected);
+            assertTokenArray(actual, expected);
         });
 
         test("((Auto))(selection)", () => {
             // arrange
             const str: string = '((Auto))(selection)';
             const expected: ExprToken[] = [
-                new OpeningParentheses('('),
-                new OpeningParentheses('('),
-                new RelationToken("Auto"),
-                new ClosingParentheses(')'),
-                new ClosingParentheses(')'),
-                UnaryOperatorToken.selection("(selection)")
+                openingParenthesis('('),
+                openingParenthesis('('),
+                relationToken("Auto"),
+                closingParenthesis(')'),
+                closingParenthesis(')'),
+                selection("(selection)")
             ];
             // act
-            const actual: ExprToken[] = exprParser.parseTokens(str);
+            const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
             // assert
-            expect(actual).toStrictEqual(expected);
+            assertTokenArray(actual, expected);
         });
     });
 
@@ -292,21 +397,21 @@ describe("parseTokens", () => {
             // arrange
             const str: string = "Auto + Auto";
             // act and assert
-            expect(() => exprParser.parseTokens(str));
+            expect(() => exprParser.parseTokens(IndexedString.new(str)));
         });
 
         test("(Auto", () => {
             // arrange
             const str: string = "Auto + Auto";
             // act and assert
-            expect(() => exprParser.parseTokens(str));
+            expect(() => exprParser.parseTokens(IndexedString.new(str)));
         });
 
         test("((Auto)))", () => {
             // arrange
             const str: string = "Auto + Auto";
             // act and assert
-            expect(() => exprParser.parseTokens(str));
+            expect(() => exprParser.parseTokens(IndexedString.new(str)));
         });
     });
 });
@@ -316,7 +421,7 @@ describe("assertValidInfixTokens", () => {
         test(")", () => {
             // arrange
             const input: ExprToken[] = [
-                new ClosingParentheses(')')
+                closingParenthesis(')')
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
@@ -326,9 +431,9 @@ describe("assertValidInfixTokens", () => {
         test(")*Auto", () => {
             // arrange
             const input: ExprToken[] = [
-                new ClosingParentheses(')'),
-                BinaryOperatorToken.naturalJoin("*"),
-                new RelationToken("Auto")
+                closingParenthesis(')'),
+                naturalJoin("*"),
+                relationToken("Auto")
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
@@ -338,7 +443,7 @@ describe("assertValidInfixTokens", () => {
         test("(Id = 1)", () => {
             // arrange
             const input: ExprToken[] = [
-                UnaryOperatorToken.selection("(Id = 1)")
+                selection("(Id = 1)")
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
@@ -348,9 +453,9 @@ describe("assertValidInfixTokens", () => {
         test("(Id = 1)*Auto", () => {
             // arrange
             const input: ExprToken[] = [
-                UnaryOperatorToken.selection("(Id = 1)"),
-                BinaryOperatorToken.naturalJoin("*"),
-                new RelationToken("Auto")
+                selection("(Id = 1)"),
+                naturalJoin("*"),
+                relationToken("Auto")
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
@@ -362,8 +467,8 @@ describe("assertValidInfixTokens", () => {
         test("Auto[projection]", () => {
             // arrange
             const input: ExprToken[] = [
-                new RelationToken("Auto"),
-                UnaryOperatorToken.projection("[projection]")
+                relationToken("Auto"),
+                projection("[projection]")
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
@@ -373,9 +478,9 @@ describe("assertValidInfixTokens", () => {
         test("(Auto)", () => {
             // arrange
             const input: ExprToken[] = [
-                new OpeningParentheses('('),
-                new RelationToken("Auto"),
-                new ClosingParentheses(')')
+                openingParenthesis('('),
+                relationToken("Auto"),
+                closingParenthesis(')')
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
@@ -385,9 +490,9 @@ describe("assertValidInfixTokens", () => {
         test("Auto*Auto", () => {
             // arrange
             const input: ExprToken[] = [
-                new RelationToken("Auto"),
-                BinaryOperatorToken.naturalJoin('*'),
-                new RelationToken("Auto")
+                relationToken("Auto"),
+                naturalJoin('*'),
+                relationToken("Auto")
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
@@ -397,13 +502,13 @@ describe("assertValidInfixTokens", () => {
         test("(Auto)*(Auto)", () => {
             // arrange
             const input: ExprToken[] = [
-                new OpeningParentheses('('),
-                new RelationToken("Auto"),
-                new ClosingParentheses(')'),
-                BinaryOperatorToken.naturalJoin('*'),
-                new OpeningParentheses('('),
-                new RelationToken("Auto"),
-                new ClosingParentheses(')')
+                openingParenthesis('('),
+                relationToken("Auto"),
+                closingParenthesis(')'),
+                naturalJoin('*'),
+                openingParenthesis('('),
+                relationToken("Auto"),
+                closingParenthesis(')')
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
@@ -413,9 +518,9 @@ describe("assertValidInfixTokens", () => {
         test("Auto(selection)[projection]", () => {
             // arrange
             const input: ExprToken[] = [
-                new RelationToken("Auto"),
-                UnaryOperatorToken.projection("(selection)"),
-                UnaryOperatorToken.projection("[projection]")
+                relationToken("Auto"),
+                projection("(selection)"),
+                projection("[projection]")
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
@@ -425,12 +530,12 @@ describe("assertValidInfixTokens", () => {
         test("(Auto*Auto)[projection]", () => {
             // arrange
             const input: ExprToken[] = [
-                new OpeningParentheses('('),
-                new RelationToken("Auto"),
-                BinaryOperatorToken.naturalJoin('*'),
-                new RelationToken("Auto"),
-                new ClosingParentheses(')'),
-                UnaryOperatorToken.projection("[projection]")
+                openingParenthesis('('),
+                relationToken("Auto"),
+                naturalJoin('*'),
+                relationToken("Auto"),
+                closingParenthesis(')'),
+                projection("[projection]")
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
@@ -440,10 +545,10 @@ describe("assertValidInfixTokens", () => {
         test("(Auto[projection])", () => {
             // arrange
             const input: ExprToken[] = [
-                new OpeningParentheses('('),
-                new RelationToken("Auto"),
-                UnaryOperatorToken.projection("[projection]"),
-                new ClosingParentheses(')'),
+                openingParenthesis('('),
+                relationToken("Auto"),
+                projection("[projection]"),
+                closingParenthesis(')'),
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
@@ -455,8 +560,8 @@ describe("assertValidInfixTokens", () => {
         test("Auto Auto", () => {
             // arrange
             const input: ExprToken[] = [
-                new RelationToken("Auto"),
-                new RelationToken("Auto")
+                relationToken("Auto"),
+                relationToken("Auto")
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
@@ -466,10 +571,10 @@ describe("assertValidInfixTokens", () => {
         test("(Auto) Auto", () => {
             // arrange
             const input: ExprToken[] = [
-                new OpeningParentheses('('),
-                new RelationToken("Auto"),
-                new ClosingParentheses(')'),
-                new RelationToken("Auto")
+                openingParenthesis('('),
+                relationToken("Auto"),
+                closingParenthesis(')'),
+                relationToken("Auto")
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
@@ -479,9 +584,9 @@ describe("assertValidInfixTokens", () => {
         test("Auto(selection)Auto", () => {
             // arrange
             const input: ExprToken[] = [
-                new RelationToken("Auto"),
-                UnaryOperatorToken.selection("(selection)"),
-                new RelationToken("Auto")
+                relationToken("Auto"),
+                selection("(selection)"),
+                relationToken("Auto")
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
@@ -491,10 +596,10 @@ describe("assertValidInfixTokens", () => {
         test("Auto (Auto)", () => {
             // arrange
             const input: ExprToken[] = [
-                new RelationToken("Auto"),
-                new OpeningParentheses('('),
-                new RelationToken("Auto"),
-                new ClosingParentheses(')')
+                relationToken("Auto"),
+                openingParenthesis('('),
+                relationToken("Auto"),
+                closingParenthesis(')')
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
@@ -504,12 +609,12 @@ describe("assertValidInfixTokens", () => {
         test("(Auto) (Auto)", () => {
             // arrange
             const input: ExprToken[] = [
-                new OpeningParentheses('('),
-                new RelationToken("Auto"),
-                new ClosingParentheses(')'),
-                new OpeningParentheses('('),
-                new RelationToken("Auto"),
-                new ClosingParentheses(')')
+                openingParenthesis('('),
+                relationToken("Auto"),
+                closingParenthesis(')'),
+                openingParenthesis('('),
+                relationToken("Auto"),
+                closingParenthesis(')')
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
@@ -519,11 +624,11 @@ describe("assertValidInfixTokens", () => {
         test("Auto(selection)(Auto)", () => {
             // arrange
             const input: ExprToken[] = [
-                new RelationToken("Auto"),
-                UnaryOperatorToken.selection("(selection)"),
-                new OpeningParentheses('('),
-                new RelationToken("Auto"),
-                new ClosingParentheses(')')
+                relationToken("Auto"),
+                selection("(selection)"),
+                openingParenthesis('('),
+                relationToken("Auto"),
+                closingParenthesis(')')
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
@@ -533,9 +638,9 @@ describe("assertValidInfixTokens", () => {
         test("Auto*)", () => {
             // arrange
             const input: ExprToken[] = [
-                new RelationToken("Auto"),
-                BinaryOperatorToken.naturalJoin('*'),
-                new ClosingParentheses(')')
+                relationToken("Auto"),
+                naturalJoin('*'),
+                closingParenthesis(')')
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
@@ -545,9 +650,9 @@ describe("assertValidInfixTokens", () => {
         test("Auto*)", () => {
             // arrange
             const input: ExprToken[] = [
-                new RelationToken("Auto"),
-                BinaryOperatorToken.naturalJoin('*'),
-                new ClosingParentheses(')')
+                relationToken("Auto"),
+                naturalJoin('*'),
+                closingParenthesis(')')
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
@@ -557,9 +662,9 @@ describe("assertValidInfixTokens", () => {
         test("(*Auto", () => {
             // arrange
             const input: ExprToken[] = [
-                new OpeningParentheses('('),
-                BinaryOperatorToken.naturalJoin('*'),
-                new RelationToken("Auto")
+                openingParenthesis('('),
+                naturalJoin('*'),
+                relationToken("Auto")
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
@@ -569,10 +674,10 @@ describe("assertValidInfixTokens", () => {
         test("Auto**Auto", () => {
             // arrange
             const input: ExprToken[] = [
-                new RelationToken("Auto"),
-                BinaryOperatorToken.naturalJoin('*'),
-                BinaryOperatorToken.naturalJoin('*'),
-                new RelationToken("Auto")
+                relationToken("Auto"),
+                naturalJoin('*'),
+                naturalJoin('*'),
+                relationToken("Auto")
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
@@ -582,9 +687,9 @@ describe("assertValidInfixTokens", () => {
         test("([projection])", () => {
             // arrange
             const input: ExprToken[] = [
-                new OpeningParentheses('('),
-                UnaryOperatorToken.projection("[projection]"),
-                new ClosingParentheses(')')
+                openingParenthesis('('),
+                projection("[projection]"),
+                closingParenthesis(')')
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
@@ -594,9 +699,9 @@ describe("assertValidInfixTokens", () => {
         test("Auto*[projection]", () => {
             // arrange
             const input: ExprToken[] = [
-                new RelationToken("Auto"),
-                BinaryOperatorToken.naturalJoin('*'),
-                UnaryOperatorToken.projection("[projection]")
+                relationToken("Auto"),
+                naturalJoin('*'),
+                projection("[projection]")
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
@@ -608,9 +713,9 @@ describe("assertValidInfixTokens", () => {
         test("Auto*(", () => {
             // arrange
             const input: ExprToken[] = [
-                new RelationToken("Auto"),
-                BinaryOperatorToken.naturalJoin('*'),
-                new OpeningParentheses('(')
+                relationToken("Auto"),
+                naturalJoin('*'),
+                openingParenthesis('(')
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
@@ -620,8 +725,8 @@ describe("assertValidInfixTokens", () => {
         test("Auto*", () => {
             // arrange
             const input: ExprToken[] = [
-                new RelationToken("Auto"),
-                BinaryOperatorToken.naturalJoin('*')
+                relationToken("Auto"),
+                naturalJoin('*')
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
@@ -631,10 +736,10 @@ describe("assertValidInfixTokens", () => {
         test("(())", () => {
             // arrange
             const input: ExprToken[] = [
-                new OpeningParentheses('('),
-                new OpeningParentheses('('),
-                new ClosingParentheses(')'),
-                new ClosingParentheses(')')
+                openingParenthesis('('),
+                openingParenthesis('('),
+                closingParenthesis(')'),
+                closingParenthesis(')')
             ];
             // assert
             expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
@@ -647,111 +752,111 @@ describe("fakeValidInfixTokensForWhisper", () => {
     test("*", () => {
         // arrange
         const input: ExprToken[] = [
-            BinaryOperatorToken.naturalJoin("*")
+            naturalJoin("*")
         ];
         const expected: ExprToken[] = [
-            new RelationToken(""),
-            BinaryOperatorToken.naturalJoin("*"),
-            new RelationToken("")
+            relationToken(""),
+            naturalJoin("*"),
+            relationToken("")
         ];
         // act - input is changed inside the function
         exprParser.assertValidInfixTokens(input, AssertType.NOT_THROW, []);
         // assert
-        expect(input).toStrictEqual(expected);
+        assertTokenArray(input, expected);
     });
 
     test("**", () => {
         // arrange
         const input: ExprToken[] = [
-            BinaryOperatorToken.naturalJoin("*"),
-            BinaryOperatorToken.naturalJoin("*")
+            naturalJoin("*"),
+            naturalJoin("*")
         ];
         const expected: ExprToken[] = [
-            new RelationToken(""),
-            BinaryOperatorToken.naturalJoin("*"),
-            new RelationToken(""),
-            BinaryOperatorToken.naturalJoin("*"),
-            new RelationToken("")
+            relationToken(""),
+            naturalJoin("*"),
+            relationToken(""),
+            naturalJoin("*"),
+            relationToken("")
         ];
         // act - input is changed inside the function
         exprParser.assertValidInfixTokens(input, AssertType.NOT_THROW, []);
         // assert
-        expect(input).toStrictEqual(expected);
+        assertTokenArray(input, expected);
     });
 
     test("Car Car", () => {
         // arrange
         const input: ExprToken[] = [
-            new RelationToken("Car"),
-            new RelationToken("Car")
+            relationToken("Car"),
+            relationToken("Car")
         ];
         const expected: ExprToken[] = [
-            new RelationToken("Car"),
-            BinaryOperatorToken.naturalJoin("*"),
-            new RelationToken("Car")
+            relationToken("Car"),
+            naturalJoin("*"),
+            relationToken("Car")
         ];
         // act - input is changed inside the function
         exprParser.assertValidInfixTokens(input, AssertType.NOT_THROW, []);
         // assert
-        expect(input).toStrictEqual(expected);
+        assertTokenArray(input, expected);
     });
 
     test("<> Car", () => {
         // arrange
         const input: ExprToken[] = [
-            UnaryOperatorToken.rename("<>"),
-            new RelationToken("Car")
+            rename("<>"),
+            relationToken("Car")
         ];
         const expected: ExprToken[] = [
-            new RelationToken(""),
-            UnaryOperatorToken.rename("<>"),
-            BinaryOperatorToken.naturalJoin("*"),
-            new RelationToken("Car")
+            relationToken(""),
+            rename("<>"),
+            naturalJoin("*"),
+            relationToken("Car")
         ];
         // act - input is changed inside the function
         exprParser.assertValidInfixTokens(input, AssertType.NOT_THROW, []);
         // assert
-        expect(input).toStrictEqual(expected);
+        assertTokenArray(input, expected);
     });
 
     test("()", () => {
         // arrange
         const input: ExprToken[] = [
-            new OpeningParentheses("("),
-            new ClosingParentheses(")")
+            openingParenthesis("("),
+            closingParenthesis(")")
         ];
         const expected: ExprToken[] = [
-            new OpeningParentheses("("),
-            new RelationToken(""),
-            new ClosingParentheses(")")
+            openingParenthesis("("),
+            relationToken(""),
+            closingParenthesis(")")
         ];
         // act - input is changed inside the function
         exprParser.assertValidInfixTokens(input, AssertType.NOT_THROW, []);
         // assert
-        expect(input).toStrictEqual(expected);
+        assertTokenArray(input, expected);
     });
 
     test("()()", () => {
         // arrange
         const input: ExprToken[] = [
-            new OpeningParentheses("("),
-            new ClosingParentheses(")"),
-            new OpeningParentheses("("),
-            new ClosingParentheses(")")
+            openingParenthesis("("),
+            closingParenthesis(")"),
+            openingParenthesis("("),
+            closingParenthesis(")")
         ];
         const expected: ExprToken[] = [
-            new OpeningParentheses("("),
-            new RelationToken(""),
-            new ClosingParentheses(")"),
-            BinaryOperatorToken.naturalJoin("*"),
-            new OpeningParentheses("("),
-            new RelationToken(""),
-            new ClosingParentheses(")")
+            openingParenthesis("("),
+            relationToken(""),
+            closingParenthesis(")"),
+            naturalJoin("*"),
+            openingParenthesis("("),
+            relationToken(""),
+            closingParenthesis(")")
         ];
         // act - input is changed inside the function
         exprParser.assertValidInfixTokens(input, AssertType.NOT_THROW, []);
         // assert
-        expect(input).toStrictEqual(expected);
+        assertTokenArray(input, expected);
     });
 });
 
@@ -759,181 +864,181 @@ describe("toRPN", () => {
     test("Auto", () => {
         // arrange
         const input: ExprToken[] = [
-            new RelationToken("Auto")
+            relationToken("Auto")
         ];
         const expected: ExprToken[] = [
-            new RelationToken("Auto")
+            relationToken("Auto")
         ];
         // act
         const actual: ExprToken[] = exprParser.toRPN(input);
         // assert
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test("Auto(selection)", () => {
         // arrange
         const input: ExprToken[] = [
-            new RelationToken("Auto"),
-            UnaryOperatorToken.selection("(selection)")
+            relationToken("Auto"),
+            selection("(selection)")
         ];
         const expected: ExprToken[] = [
-            new RelationToken("Auto"),
-            UnaryOperatorToken.selection("(selection)")
+            relationToken("Auto"),
+            selection("(selection)")
         ];
         // act
         const actual: ExprToken[] = exprParser.toRPN(input);
         // assert
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test("Auto(selection)[projection]", () => {
         // arrange
         const input: ExprToken[] = [
-            new RelationToken("Auto"),
-            UnaryOperatorToken.selection("(selection)"),
-            UnaryOperatorToken.projection("[projection]")
+            relationToken("Auto"),
+            selection("(selection)"),
+            projection("[projection]")
         ];
         const expected: ExprToken[] = [
-            new RelationToken("Auto"),
-            UnaryOperatorToken.selection("(selection)"),
-            UnaryOperatorToken.projection("[projection]")
+            relationToken("Auto"),
+            selection("(selection)"),
+            projection("[projection]")
         ];
         // act
         const actual: ExprToken[] = exprParser.toRPN(input);
         // assert
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test("Auto*Majitel", () => {
         // arrange
         const input: ExprToken[] = [
-            new RelationToken("Auto"),
-            BinaryOperatorToken.naturalJoin('*'),
-            new RelationToken("Majitel")
+            relationToken("Auto"),
+            naturalJoin('*'),
+            relationToken("Majitel")
         ];
         const expected: ExprToken[] = [
-            new RelationToken("Auto"),
-            new RelationToken("Majitel"),
-            BinaryOperatorToken.naturalJoin('*')
+            relationToken("Auto"),
+            relationToken("Majitel"),
+            naturalJoin('*')
         ];
         // act
         const actual: ExprToken[] = exprParser.toRPN(input);
         // assert
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test("Auto*Majitel*Majitel", () => {
         // arrange
         const input: ExprToken[] = [
-            new RelationToken("Auto"),
-            BinaryOperatorToken.naturalJoin('*'),
-            new RelationToken("Majitel"),
-            BinaryOperatorToken.naturalJoin('*'),
-            new RelationToken("Majitel")
+            relationToken("Auto"),
+            naturalJoin('*'),
+            relationToken("Majitel"),
+            naturalJoin('*'),
+            relationToken("Majitel")
         ];
         const expected: ExprToken[] = [
-            new RelationToken("Auto"),
-            new RelationToken("Majitel"),
-            BinaryOperatorToken.naturalJoin('*'),
-            new RelationToken("Majitel"),
-            BinaryOperatorToken.naturalJoin('*')
+            relationToken("Auto"),
+            relationToken("Majitel"),
+            naturalJoin('*'),
+            relationToken("Majitel"),
+            naturalJoin('*')
         ];
         // act
         const actual: ExprToken[] = exprParser.toRPN(input);
         // assert
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test("Auto\\Majitel*Majitel", () => {
         // arrange
         const input: ExprToken[] = [
-            new RelationToken("Auto"),
-            BinaryOperatorToken.difference('\\'),
-            new RelationToken("Majitel"),
-            BinaryOperatorToken.naturalJoin('*'),
-            new RelationToken("Majitel")
+            relationToken("Auto"),
+            difference('\\'),
+            relationToken("Majitel"),
+            naturalJoin('*'),
+            relationToken("Majitel")
         ];
         const expected: ExprToken[] = [
-            new RelationToken("Auto"),
-            new RelationToken("Majitel"),
-            new RelationToken("Majitel"),
-            BinaryOperatorToken.naturalJoin('*'),
-            BinaryOperatorToken.difference('\\')
+            relationToken("Auto"),
+            relationToken("Majitel"),
+            relationToken("Majitel"),
+            naturalJoin('*'),
+            difference('\\')
         ];
         // act
         const actual: ExprToken[] = exprParser.toRPN(input);
         // assert
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test("Auto\\(Majitel*Majitel)", () => {
         // arrange
         const input: ExprToken[] = [
-            new RelationToken("Auto"),
-            BinaryOperatorToken.difference('\\'),
-            new OpeningParentheses('('),
-            new RelationToken("Majitel"),
-            BinaryOperatorToken.naturalJoin('*'),
-            new RelationToken("Majitel"),
-            new ClosingParentheses(')')
+            relationToken("Auto"),
+            difference('\\'),
+            openingParenthesis('('),
+            relationToken("Majitel"),
+            naturalJoin('*'),
+            relationToken("Majitel"),
+            closingParenthesis(')')
         ];
         const expected: ExprToken[] = [
-            new RelationToken("Auto"),
-            new RelationToken("Majitel"),
-            new RelationToken("Majitel"),
-            BinaryOperatorToken.naturalJoin('*'),
-            BinaryOperatorToken.difference('\\')
+            relationToken("Auto"),
+            relationToken("Majitel"),
+            relationToken("Majitel"),
+            naturalJoin('*'),
+            difference('\\')
         ];
         // act
         const actual: ExprToken[] = exprParser.toRPN(input);
         // assert
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test("(Auto\\Majitel)*Majitel", () => {
         // arrange
         const input: ExprToken[] = [
-            new OpeningParentheses('('),
-            new RelationToken("Auto"),
-            BinaryOperatorToken.difference('\\'),
-            new RelationToken("Majitel"),
-            new ClosingParentheses(')'),
-            BinaryOperatorToken.naturalJoin('*'),
-            new RelationToken("Majitel")
+            openingParenthesis('('),
+            relationToken("Auto"),
+            difference('\\'),
+            relationToken("Majitel"),
+            closingParenthesis(')'),
+            naturalJoin('*'),
+            relationToken("Majitel")
         ];
         const expected: ExprToken[] = [
-            new RelationToken("Auto"),
-            new RelationToken("Majitel"),
-            BinaryOperatorToken.difference('\\'),
-            new RelationToken("Majitel"),
-            BinaryOperatorToken.naturalJoin('*')
+            relationToken("Auto"),
+            relationToken("Majitel"),
+            difference('\\'),
+            relationToken("Majitel"),
+            naturalJoin('*')
         ];
         // act
         const actual: ExprToken[] = exprParser.toRPN(input);
         // assert
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 
     test("A*B\\C", () => {
         // arrange
         const input: ExprToken[] = [
-            new RelationToken("A"),
-            BinaryOperatorToken.naturalJoin('*'),
-            new RelationToken("B"),
-            BinaryOperatorToken.difference('\\'),
-            new RelationToken("C")
+            relationToken("A"),
+            naturalJoin('*'),
+            relationToken("B"),
+            difference('\\'),
+            relationToken("C")
         ];
         const expected: ExprToken[] = [
-            new RelationToken("A"),
-            new RelationToken("B"),
-            BinaryOperatorToken.naturalJoin('*'),
-            new RelationToken("C"),
-            BinaryOperatorToken.difference('\\')
+            relationToken("A"),
+            relationToken("B"),
+            naturalJoin('*'),
+            relationToken("C"),
+            difference('\\')
         ];
         // act
         const actual: ExprToken[] = exprParser.toRPN(input);
         // assert
-        expect(actual).toStrictEqual(expected);
+        assertTokenArray(actual, expected);
     });
 });
 
@@ -941,7 +1046,7 @@ describe("rpnToRATree", () => {
     test("Auto", () => {
         // arrange
         const input: ExprToken[] = [
-            new RelationToken("Auto")
+            relationToken("Auto")
         ];
         const expected: RATreeNode = new RelationNode(auto);
         // act
@@ -953,9 +1058,9 @@ describe("rpnToRATree", () => {
     test("Auto*Majitel", () => {
         // arrange
         const input: ExprToken[] = [
-            new RelationToken("Auto"),
-            new RelationToken("Majitel"),
-            BinaryOperatorToken.naturalJoin('*')
+            relationToken("Auto"),
+            relationToken("Majitel"),
+            naturalJoin('*')
         ];
         const expected: RATreeNode = new NaturalJoinNode(NaturalJoinType.natural,
             new RelationNode(auto),
@@ -970,11 +1075,11 @@ describe("rpnToRATree", () => {
     test("(Auto*Majitel)*Auto", () => {
         // arrange
         const input: ExprToken[] = [
-            new RelationToken("Auto"),
-            new RelationToken("Majitel"),
-            BinaryOperatorToken.naturalJoin('*'),
-            new RelationToken("Auto"),
-            BinaryOperatorToken.naturalJoin('*')
+            relationToken("Auto"),
+            relationToken("Majitel"),
+            naturalJoin('*'),
+            relationToken("Auto"),
+            naturalJoin('*')
         ];
         const expected: RATreeNode = new NaturalJoinNode(NaturalJoinType.natural,
             new NaturalJoinNode(NaturalJoinType.natural,
@@ -992,12 +1097,12 @@ describe("rpnToRATree", () => {
     test("Auto(Id = 1)[Id]", () => {
         // arrange
         const input: ExprToken[] = [
-            new RelationToken("Auto"),
-            UnaryOperatorToken.selection("(Id = 1)"),
-            UnaryOperatorToken.projection("[Id]")
+            relationToken("Auto"),
+            selection("(Id = 1)"),
+            projection("[Id]")
         ];
-        const expected: RATreeNode = new ProjectionNode("[Id]",
-            new SelectionNode("(Id = 1)",
+        const expected: RATreeNode = new ProjectionNode(IndexedString.new("[Id]"),
+            new SelectionNode(IndexedString.new("(Id = 1)"),
                 new RelationNode(auto), true));
         // act
         const actual: RATreeNode = exprParser.rpnToRATree(input, true);
@@ -1008,20 +1113,20 @@ describe("rpnToRATree", () => {
     test("Auto(Id = 1)[Id]*Majitel(Id = 1)[Id]", () => {
         // arrange
         const input: ExprToken[] = [
-            new RelationToken("Auto"),
-            UnaryOperatorToken.selection("(Id = 1)"),
-            UnaryOperatorToken.projection("[Id]"),
-            new RelationToken("Majitel"),
-            UnaryOperatorToken.selection("(Id = 1)"),
-            UnaryOperatorToken.projection("[Id]"),
-            BinaryOperatorToken.naturalJoin('*')
+            relationToken("Auto"),
+            selection("(Id = 1)"),
+            projection("[Id]"),
+            relationToken("Majitel"),
+            selection("(Id = 1)"),
+            projection("[Id]"),
+            naturalJoin('*')
         ];
         const expected: RATreeNode = new NaturalJoinNode(NaturalJoinType.natural,
-            new ProjectionNode("[Id]",
-                new SelectionNode("(Id = 1)",
+            new ProjectionNode(IndexedString.new("[Id]"),
+                new SelectionNode(IndexedString.new("(Id = 1)"),
                     new RelationNode(auto), true)),
-            new ProjectionNode("[Id]",
-                new SelectionNode("(Id = 1)",
+            new ProjectionNode(IndexedString.new("[Id]"),
+                new SelectionNode(IndexedString.new("(Id = 1)"),
                     new RelationNode(majitel), true))
         )
         // act
@@ -1037,43 +1142,35 @@ describe('parse and indexedParse', () => {
             const input: string = "Auto";
             const expected: RATreeNode = new RelationNode(auto);
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
 
         test('Auto\t[Kola]', () => {
             const input: string = "Auto\t[Kola]";
-            const expected: RATreeNode = new ProjectionNode("[Kola]",
+            const expected: RATreeNode = new ProjectionNode(IndexedString.new("[Kola]"),
                 new RelationNode(auto));
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
 
         test('Auto< Kola -> PocetKol >', () => {
             const input: string = "Auto< Kola -> PocetKol >";
-            const expected: RATreeNode = new RenameNode("< Kola -> PocetKol >",
+            const expected: RATreeNode = new RenameNode(IndexedString.new("< Kola -> PocetKol >"),
                 new RelationNode(auto));
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
 
         test('Auto[Kola\t\n]< Kola -> PocetKol >', () => {
             const input: string = "Auto[Kola\t\n]< Kola -> PocetKol >";
-            const expected: RATreeNode = new RenameNode("< Kola -> PocetKol >",
-                new ProjectionNode("[Kola\t\n]",
+            const expected: RATreeNode = new RenameNode(IndexedString.new("< Kola -> PocetKol >"),
+                new ProjectionNode(IndexedString.new("[Kola\t\n]"),
                     new RelationNode(auto)));
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
 
@@ -1083,23 +1180,19 @@ describe('parse and indexedParse', () => {
                 new RelationNode(auto),
                 new RelationNode(majitel));
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
 
         test('Auto[Kola]*Majitel< Id -> MajitelId >', () => {
             const input: string = "Auto[Kola]*Majitel< Id -> MajitelId >";
             const expected: RATreeNode = new NaturalJoinNode(NaturalJoinType.natural,
-                new ProjectionNode("[Kola]",
+                new ProjectionNode(IndexedString.new("[Kola]"),
                     new RelationNode(auto)),
-                new RenameNode("< Id -> MajitelId >",
+                new RenameNode(IndexedString.new("< Id -> MajitelId >"),
                     new RelationNode(majitel)));
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
 
@@ -1109,9 +1202,7 @@ describe('parse and indexedParse', () => {
                 new RelationNode(auto),
                 new RelationNode(majitel));
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
 
@@ -1121,9 +1212,7 @@ describe('parse and indexedParse', () => {
                 new RelationNode(auto),
                 new RelationNode(majitel));
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
 
@@ -1133,9 +1222,7 @@ describe('parse and indexedParse', () => {
                 new RelationNode(auto),
                 new RelationNode(majitel));
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
 
@@ -1145,9 +1232,7 @@ describe('parse and indexedParse', () => {
                 new RelationNode(auto),
                 new RelationNode(majitel));
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
 
@@ -1155,11 +1240,9 @@ describe('parse and indexedParse', () => {
             const input: string = "Auto \u00f7 Majitel";
             const expected: RATreeNode = new DivisionNode(
                 new RelationNode(auto),
-                new RelationNode(majitel));
+                new RelationNode(majitel), undefined);
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
 
@@ -1169,9 +1252,7 @@ describe('parse and indexedParse', () => {
                 new RelationNode(auto),
                 new RelationNode(majitel));
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
 
@@ -1181,9 +1262,7 @@ describe('parse and indexedParse', () => {
                 new RelationNode(auto),
                 new RelationNode(majitel));
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
 
@@ -1193,9 +1272,7 @@ describe('parse and indexedParse', () => {
                 new RelationNode(auto),
                 new RelationNode(majitel));
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
 
@@ -1204,26 +1281,22 @@ describe('parse and indexedParse', () => {
             const expected: RATreeNode = new NaturalJoinNode(NaturalJoinType.natural,
                 new NaturalJoinNode(NaturalJoinType.natural,
                     new RelationNode(auto),
-                    new RenameNode("< Id->Majitel >",
+                    new RenameNode(IndexedString.new("< Id->Majitel >"),
                         new RelationNode(majitel))),
-                new SelectionNode('(Name == "Skoda \\"dobra :)\\"")',
+                new SelectionNode(IndexedString.new('(Name == "Skoda \\"dobra :)\\"")'),
                     new RelationNode(auto), true));
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
 
         test('Auto(Id == 1)', () => {
             const input: string = 'Auto(Id == 1)';
             const expected: RATreeNode =
-                new SelectionNode('(Id == 1)',
+                new SelectionNode(IndexedString.new('(Id == 1)'),
                     new RelationNode(auto), true);
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
 
@@ -1236,9 +1309,7 @@ describe('parse and indexedParse', () => {
                         new RelationNode(auto),
                         new RelationNode(auto)));
 
-            const actual: RATreeNode = exprParser.parse(input);
-            const actualIndexed: RATreeNode = exprParser.indexedParse(input);
-            expect(actual).toStrictEqual(expected);
+            const actualIndexed: RATreeNode = exprParser.parse(input);
             expect(actualIndexed.printInLine()).toStrictEqual(expected.printInLine());
         });
     });

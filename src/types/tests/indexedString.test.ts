@@ -18,7 +18,6 @@ describe("new", () => {
         expect(indexedString.getChars()).toStrictEqual(indexedStrOne);
         expect(indexedString.getFirstIndex()).toStrictEqual(0);
         expect(indexedString.getLastIndex()).toStrictEqual(strOne.length - 1);
-        expect(indexedString.indexedCharAt(9).getChars()).toStrictEqual([{char: '\n', index: 9}]);
     });
 
     test("Empty string", () => {
@@ -30,7 +29,6 @@ describe("new", () => {
         expect(indexedString.getChars()).toStrictEqual([]);
         expect(indexedString.getFirstIndex()).toBeUndefined();
         expect(indexedString.getLastIndex()).toBeUndefined();
-        expect(() => indexedString.indexedCharAt(0)).toThrow();
     });
 
     test("number startIndex given", () => {
@@ -42,7 +40,6 @@ describe("new", () => {
         expect(indexedString.getChars()).toStrictEqual(indexedStrOne.map(ic => {return {char: ic.char, index: ic.index + 5}}));
         expect(indexedString.getFirstIndex()).toStrictEqual(5);
         expect(indexedString.getLastIndex()).toStrictEqual(strOne.length - 1 + 5);
-        expect(indexedString.indexedCharAt(9).getChars()).toStrictEqual([{char: '\n', index: 9 + 5}]);
     });
 
     test("NaN startIndex given", () => {
@@ -54,7 +51,6 @@ describe("new", () => {
         expect(indexedString.getChars()).toStrictEqual(indexedStrOne.map(ic => {return {char: ic.char, index: NaN}}));
         expect(indexedString.getFirstIndex()).toStrictEqual(NaN);
         expect(indexedString.getLastIndex()).toStrictEqual(NaN);
-        expect(indexedString.indexedCharAt(9).getChars()).toStrictEqual([{char: '\n', index: NaN}]);
     });
 });
 

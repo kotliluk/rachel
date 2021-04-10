@@ -3,7 +3,6 @@ import {VETreeNode} from "./veTreeNode";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
 import {ErrorFactory, SemanticErrorCodes} from "../error/errorFactory";
 import {IndexedString} from "../types/indexedString";
-import {getRange} from "../utils/commonStringUtils";
 
 /**
  * Class storing reference to a column.
@@ -15,7 +14,7 @@ export class ReferenceValue extends VETreeNode {
      *
      * @param columnName name of the column whose value is returned by eval(...) function
      */
-    public constructor(private readonly columnName: string | IndexedString) {
+    public constructor(private readonly columnName: IndexedString) {
         super();
     }
 
@@ -30,7 +29,7 @@ export class ReferenceValue extends VETreeNode {
         const type: SupportedColumnType | undefined = source.getType(this.columnName.toString());
         if (value === undefined || type === undefined) {
             throw ErrorFactory.semanticError(SemanticErrorCodes.referenceValue_eval_absentColumn,
-                getRange(this.columnName), this.columnName.toString(), [...source.getColumnNames()].join(', '));
+                this.columnName.getRange(), this.columnName.toString(), [...source.getColumnNames()].join(', '));
         }
         return { value: value, type: type };
     }

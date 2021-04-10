@@ -21,7 +21,7 @@ describe('eval', () => {
             const right: LiteralValue = literalFive;
             const expected: {value: number, type: "number"} = {value: 9, type: "number"};
 
-            const computingOperation: ComputingOperator = ComputingOperator.add(left, right);
+            const computingOperation: ComputingOperator = ComputingOperator.add(left, right, undefined);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = computingOperation.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -31,7 +31,7 @@ describe('eval', () => {
             const right: LiteralValue = literalFive;
             const expected: {value: number, type: "number"} = {value: 20, type: "number"};
 
-            const computingOperation: ComputingOperator = ComputingOperator.multiply(left, right);
+            const computingOperation: ComputingOperator = ComputingOperator.multiply(left, right, undefined);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = computingOperation.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -43,7 +43,7 @@ describe('eval', () => {
             const right: LiteralValue = literalFive;
             const expected: {value: null, type: "number"} = {value: null, type: "number"};
 
-            const computingOperation: ComputingOperator = ComputingOperator.add(left, right);
+            const computingOperation: ComputingOperator = ComputingOperator.add(left, right, undefined);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = computingOperation.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -53,7 +53,7 @@ describe('eval', () => {
             const right: LiteralValue = literalNullAsNumber;
             const expected: {value: null, type: "number"} = {value: null, type: "number"};
 
-            const computingOperation: ComputingOperator = ComputingOperator.multiply(left, right);
+            const computingOperation: ComputingOperator = ComputingOperator.multiply(left, right, undefined);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = computingOperation.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -63,7 +63,7 @@ describe('eval', () => {
             const right: LiteralValue = literalNullAsNumber;
             const expected: {value: null, type: "number"} = {value: null, type: "number"};
 
-            const computingOperation: ComputingOperator = ComputingOperator.divide(left, right);
+            const computingOperation: ComputingOperator = ComputingOperator.divide(left, right, undefined);
             const actual: {value: ColumnContent, type: SupportedColumnType | "null"} = computingOperation.eval(fakeRowOne);
             expect(actual).toStrictEqual(expected);
         });
@@ -74,7 +74,7 @@ describe('eval', () => {
             const left: LiteralValue = literalAAA;
             const right: LiteralValue = literalFive;
 
-            const computingOperation: ComputingOperator = ComputingOperator.add(left, right);
+            const computingOperation: ComputingOperator = ComputingOperator.add(left, right, undefined);
             expect(() => computingOperation.eval(fakeRowOne)).toThrow();
         });
 
@@ -82,7 +82,7 @@ describe('eval', () => {
             const left: LiteralValue = literalFour;
             const right: LiteralValue = literalAAA;
 
-            const computingOperation: ComputingOperator = ComputingOperator.multiply(left, right);
+            const computingOperation: ComputingOperator = ComputingOperator.multiply(left, right, undefined);
             expect(() => computingOperation.eval(fakeRowOne)).toThrow();
         });
 
@@ -90,7 +90,7 @@ describe('eval', () => {
             const left: LiteralValue = literalAAA;
             const right: LiteralValue = literalBBB;
 
-            const computingOperation: ComputingOperator = ComputingOperator.add(left, right);
+            const computingOperation: ComputingOperator = ComputingOperator.add(left, right, undefined);
             expect(() => computingOperation.eval(fakeRowOne)).toThrow();
         });
     });
@@ -100,7 +100,7 @@ describe('eval', () => {
             const left: LiteralValue = literalNull;
             const right: LiteralValue = literalFive;
 
-            const computingOperation: ComputingOperator = ComputingOperator.add(left, right);
+            const computingOperation: ComputingOperator = ComputingOperator.add(left, right, undefined);
             expect(() => computingOperation.eval(fakeRowOne)).toThrow();
         });
     });
@@ -110,7 +110,7 @@ describe('eval', () => {
             const left: LiteralValue = literalTrue;
             const right: LiteralValue = literalFive;
 
-            const computingOperation: ComputingOperator = ComputingOperator.add(left, right);
+            const computingOperation: ComputingOperator = ComputingOperator.add(left, right, undefined);
             expect(() => computingOperation.eval(fakeRowOne)).toThrow();
         });
     });
