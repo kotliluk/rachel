@@ -111,7 +111,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
     // timestamp of last display of whispers and errors
     private lastWhisperAndErrorsUpdate: number = 0;
     // update rate of whispers and errors (in ms)
-    private readonly whispersAndErrorsUpdateRate: number = 200;
+    private readonly whispersAndErrorsUpdateRate: number = 400;
 
     constructor(props: ExpressionSectionProps) {
         super(props);

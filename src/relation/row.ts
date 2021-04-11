@@ -129,10 +129,7 @@ export default class Row {
             if (value === undefined || type === undefined) {
                 throw ErrorFactory.codeError(CodeErrorCodes.row_getOrderedValues_absentColumn, column, [...this.types.values()].join(', '));
             }
-            if (value === null) {
-                ret.push("");
-            }
-            else if (type === "string") {
+            if (type === "string") {
                 const str = String(value).replace(/\\"/g, '"').replace(/\\\\/g, '\\');
                 ret.push(str);
             }

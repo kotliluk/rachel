@@ -159,7 +159,7 @@ export class StoredRelation {
         this.errors.delete(rowIndex, columnIndex);
         const input: string = this.rows[rowIndex][columnIndex].trim();
         // empty input = null
-        if (input === "") {
+        if (input === "" || input === "null") {
             if (this.nullValuesSupport) {
                 this.errors.delete(rowIndex, columnIndex);
             }
