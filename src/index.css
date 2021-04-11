@@ -54,49 +54,49 @@ body {
 
 /* SCROLLBAR */
 
-.body-light .cursor-container::-webkit-scrollbar, .body-light::-webkit-scrollbar {
+.body-light .scrollbar-container::-webkit-scrollbar, .body-light::-webkit-scrollbar {
   background-color: var(--light-color-a);
 }
 
-.body-dark .cursor-container::-webkit-scrollbar, .body-dark::-webkit-scrollbar {
+.body-dark .scrollbar-container::-webkit-scrollbar, .body-dark::-webkit-scrollbar {
   background-color: var(--dark-color-a);
 }
 
-.body-light .cursor-container::-webkit-scrollbar-track, .body-light::-webkit-scrollbar-track {
+.body-light .scrollbar-container::-webkit-scrollbar-track, .body-light::-webkit-scrollbar-track {
   background-color: var(--light-color-a);
 }
 
-.body-dark .cursor-container::-webkit-scrollbar-track, .body-dark::-webkit-scrollbar-track {
+.body-dark .scrollbar-container::-webkit-scrollbar-track, .body-dark::-webkit-scrollbar-track {
   background-color: var(--dark-color-a);
 }
 
-.body-light .cursor-container::-webkit-scrollbar-thumb, .body-light::-webkit-scrollbar-thumb {
+.body-light .scrollbar-container::-webkit-scrollbar-thumb, .body-light::-webkit-scrollbar-thumb {
   background-color: var(--light-color-b);
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 2px var(--light-color-a);
 }
 
-.body-dark .cursor-container::-webkit-scrollbar-thumb, .body-dark::-webkit-scrollbar-thumb {
+.body-dark .scrollbar-container::-webkit-scrollbar-thumb, .body-dark::-webkit-scrollbar-thumb {
   background-color: var(--dark-color-b);
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 2px var(--dark-color-a);
 }
 
-.body-light .cursor-container::-webkit-scrollbar-thumb:hover, .body-light::-webkit-scrollbar-thumb:hover {
+.body-light .scrollbar-container::-webkit-scrollbar-thumb:hover, .body-light::-webkit-scrollbar-thumb:hover {
   background-color: var(--light-color-d);
   border-radius: 10px;
 }
 
-.body-dark .cursor-container::-webkit-scrollbar-thumb:hover, .body-dark::-webkit-scrollbar-thumb:hover {
+.body-dark .scrollbar-container::-webkit-scrollbar-thumb:hover, .body-dark::-webkit-scrollbar-thumb:hover {
   background-color: var(--dark-color-d);
   border-radius: 10px;
 }
 
-.body-light .cursor-container::-webkit-scrollbar-corner, .body-light::-webkit-scrollbar-corner {
+.body-light .scrollbar-container::-webkit-scrollbar-corner, .body-light::-webkit-scrollbar-corner {
   background-color: var(--light-color-b);
 }
 
-.body-dark .cursor-container::-webkit-scrollbar-corner, .body-dark::-webkit-scrollbar-corner {
+.body-dark .scrollbar-container::-webkit-scrollbar-corner, .body-dark::-webkit-scrollbar-corner {
   background-color: var(--dark-color-b);
 }
 

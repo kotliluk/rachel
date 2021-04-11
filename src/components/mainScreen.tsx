@@ -149,7 +149,20 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
         });
     }
 
-    // TODO - extract hledani volneho jmena
+    /**
+     * Adds number after the given name if it already exists in stored relation.
+     */
+    private ensureUniqueRelationName = (name: string): string => {
+        if (this.state.storedRelations.map(sr => sr.getName()).indexOf(name) > -1) {
+            for (let i = 2; true; ++i) {
+                if (this.state.storedRelations.map(sr => sr.getName()).indexOf(name + i) === -1) {
+                    name += i;
+                    break;
+                }
+            }
+        }
+        return name;
+    }
 
     /****************************************** MANAGEMENT SECTION HANDLERS ******************************************/
 
@@ -306,15 +319,8 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
     private handleCreateNewRelation = (): void => {
         // inserts a new empty relation in the array
         const newIndex: number = this.state.selectedRelation + 1;
-        let name: string = "NewRelation";
-        for (let i = 1; true; ++i) {
-            if (this.state.storedRelations.map(sr => sr.getName()).indexOf(name + i) === -1) {
-                name += i;
-                break;
-            }
-        }
-        this.state.storedRelations.splice(newIndex, 0,
-            StoredRelation.new(name, this.state.nullValuesSupport));
+        let name: string = this.ensureUniqueRelationName("NewRelation");
+        this.state.storedRelations.splice(newIndex, 0, StoredRelation.new(name, this.state.nullValuesSupport));
         this.setState({selectedRelation: newIndex});
     }
 
@@ -385,16 +391,8 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
             const countBefore: number = this.state.storedRelations.length;
             // loads relations to application
             info.relations.forEach(relation => {
-                let name = relation.getName();
-                // renames existing names
-                if (this.state.storedRelations.map(sr => sr.getName()).indexOf(name) > -1) {
-                    for (let i = 2; true; ++i) {
-                        if (this.state.storedRelations.map(sr => sr.getName()).indexOf(name + i) === -1) {
-                            relation.setName(name + i);
-                            break;
-                        }
-                    }
-                }
+                const name = this.ensureUniqueRelationName(relation.getName());
+                relation.setName(name);
                 this.state.storedRelations.push(relation);
             });
             if (info.relations.length > 0) {
@@ -543,17 +541,8 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
      * @return message and its color (red for errors, black for information)
      */
     private addResultRelation = (relation: Relation): void => {
-        let name = "Evaluated";
+        const name = this.ensureUniqueRelationName("Evaluated");
         const storedRelation = StoredRelation.fromRelation(name, relation, this.state.nullValuesSupport);
-        // renames existing names
-        if (this.state.storedRelations.map(sr => sr.getName()).indexOf(name) > -1) {
-            for (let i = 2; true; ++i) {
-                if (this.state.storedRelations.map(sr => sr.getName()).indexOf(name + i) === -1) {
-                    storedRelation.setName(name + i);
-                    break;
-                }
-            }
-        }
         this.state.storedRelations.push(storedRelation);
         this.setState({selectedRelation: this.state.storedRelations.length - 1});
     }

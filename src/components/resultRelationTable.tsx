@@ -167,7 +167,7 @@ export class ResultRelationTable extends React.Component<RelationTableProps, Rel
         const rows = this.createRows(columns);
 
         return (
-            <div className="result-table-container">
+            <div className="result-table-container scrollbar-container">
                 <table className="result-table">
                     <thead>
                     {headerRow}

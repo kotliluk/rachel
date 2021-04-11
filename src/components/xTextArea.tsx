@@ -204,7 +204,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         ta.setAttribute('spellcheck', 'false');
         ta.mouseIsDown = false;
         ta.setAttribute('placeholder', this.props.placeholder);
-        ta.classList.add('x-textarea', 'cursor-container');
+        ta.classList.add('x-textarea', 'scrollbar-container');
         ta.value = props.text;
 
         // TEXTAREA NUMBERS (Canvas)

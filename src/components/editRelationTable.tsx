@@ -401,7 +401,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
     }
 
     public render() {
-        let divClassName: string = "edit-table-container cursor-container";
+        let divClassName: string = "edit-table-container scrollbar-container";
         let tableClassName: string = "edit-table";
 
         return (
