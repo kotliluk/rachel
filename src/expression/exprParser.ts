@@ -124,10 +124,9 @@ export class ExprParser {
         let tokens: ExprToken[] = [];
         // alternative solution in case of finding "[...]"
         let alternativeTokens: ExprToken[] = [];
-        let rest: IndexedString = expr;
+        let rest: IndexedString = expr.trim();
 
         while (!rest.isEmpty()) {
-            rest = rest.trim();
             // '(' can be a selection or a parentheses
             if (rest.startsWith("(")) {
                 const split = IndexedStringUtils.nextBorderedPart(rest, '(', ')');
@@ -310,6 +309,7 @@ export class ExprParser {
                 throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_parseTokens_unexpectedPart,
                     split.first.getRange(), split.first.toString());
             }
+            rest = rest.trim();
         }
         // checks whether alternative tokens are valid when used
         if (alternativeTokens.length > 0) {
