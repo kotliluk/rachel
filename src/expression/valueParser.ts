@@ -109,7 +109,6 @@ export default class ValueParser {
         }
         const tokens: ValueToken[] = [];
         while (!rest.isEmpty()) {
-            rest = rest.trim();
             // PARENTHESES
             if (rest.startsWith('(')) {
                 tokens.push(new OpeningParentheses(rest.slice(0, 1)));
@@ -236,6 +235,7 @@ export default class ValueParser {
                     split.first.getRange(), split.first.toString()));
                 rest = rest.slice(split.first.length());
             }
+            rest = rest.trim();
         }
         return tokens;
     }
