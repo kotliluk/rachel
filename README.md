@@ -238,7 +238,7 @@ The application uses many great libraries (available on [npm](https://www.npmjs.
 - [FileSaver.js](https://github.com/eligrey/FileSaver.js) - An HTML5 saveAs() FileSaver implementation
 - [Lodash](https://github.com/lodash/lodash) - A modern JavaScript utility library delivering modularity, performance, & extras
 - [Jest](https://github.com/facebook/jest) - Delightful JavaScript Testing
-- [Mail](https://postmail.invotes.com/) - Send email from JavaScript or static HTML without backend code
+- [PostMail](https://postmail.invotes.com/) - Send email from JavaScript or static HTML without backend code
 
 ## License
 

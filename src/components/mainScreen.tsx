@@ -105,12 +105,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
 
             "\n\nStored relations: ----------------------------" +
             "\nSelected relation (1-index): " + (this.state.selectedRelation + 1) + "\n\n" +
-            this.state.storedRelations.map(relation => {
-                return relation.getName() + "\n" +
-                    relation.getColumnNames().join(", ") + "\n" +
-                    relation.getColumnTypes().join(", ") + "\n" +
-                    relation.getRows().map(row => row.join(", ")).join("\n");
-            }).join("\n\n") +
+            this.state.storedRelations.map(rel => StoredRelation.format(rel)).join("\n\n") +
 
             "\n\nExpressions: ----------------------------" +
             "\nSelected expression (1-index): " + (this.state.selectedExpression + 1) + "\n\n" +

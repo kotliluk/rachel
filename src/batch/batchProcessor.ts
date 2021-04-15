@@ -119,9 +119,10 @@ export class BatchProcessor {
         const errors: number = reports.reduce((agg, report) => agg + report.error, 0);
 
         return {
-            name: file.name.slice(0, -5) + '-eval-report.txt',
+            name: file.name.slice(0, -7) + '-eval-report.txt',
             text: BatchProcessor.reportHeader(exprCount, errors, ops, project.nullValuesSupport) +
                   BatchProcessor.formatRelations(project.relations) +
+                  sectionLine + "\n\nQUERIES (" + exprCount + ")\n\n" +
                   reports.map(r => r.text).join('')
         };
     }
@@ -153,14 +154,14 @@ export class BatchProcessor {
             const counts: OperationsCount = operationsOfTree(evaluationTree);
             const relation: Relation = evaluationTree.getResult();
             return {
-                text: '### ' + expr.name + ' ###\n\n' + expr.text + '\n\n# Result #\n\n' + relation.contentString() + '\n\n',
+                text: contentLine + '\n' + expr.name + '\n\n' + expr.text + '\n\n' + relation.contentString() + '\n\n\n',
                 counts: counts,
                 error: 0
             };
         }
         catch (err) {
             return {
-                text: '### ' + expr.name + ' ###\n\n' + expr.text + '\n\n# Error #\n\n' + err.message + '\n\n',
+                text: contentLine + '\n' + expr.name + '\n\n' + expr.text + '\n\nERROR: ' + err.message + '\n\n\n',
                 counts: zeroOperations(),
                 error: 1
             };
@@ -180,21 +181,21 @@ export class BatchProcessor {
         const total: number = totalOperations(operations);
         const binary: number = binaryOperations(operations);
         const unary: number = unaryOperations(operations);
-        return 'Rachel project report from ' + formatDate(new Date()) + '\n\n' +
+        return sectionLine + '\n\nRachel project report from ' + formatDate(new Date()) + '\n\n' + sectionLine + '\n\n' +
             'Expressions: ' + expressions + '    Errors: ' + errors + '\n\n' +
             'Used operations (' + total + ' in total: ' + binary + ' binary, ' + unary + ' unary):\n' +
-            '    Antijoin: ' + operations.antijoin + '\n' +
-            '    Cartesian product: ' + operations.cartesian + '\n' +
-            '    Division: ' + operations.division + '\n' +
-            '    Natural join: ' + operations.natural + '\n' +
-            '    Outer Join: ' + operations.outerJoin + '\n' +
-            '    Projection: ' + operations.projection + '\n' +
-            '    Rename: ' + operations.rename + '\n' +
             '    Selection: ' + operations.selection + '\n' +
+            '    Projection: ' + operations.projection + '\n' +
+            '    Rename: ' + operations.rename + '\n\n' +
+            '    Set Operations: ' + operations.setOperation + '\n\n' +
+            '    Natural join: ' + operations.natural + '\n' +
+            '    Cartesian product: ' + operations.cartesian + '\n' +
             '    Semijoin: ' + operations.semijoin + '\n' +
-            '    Set Operations: ' + operations.setOperation + '\n' +
+            '    Antijoin: ' + operations.antijoin + '\n' +
             '    Theta Join: ' + operations.thetaJoin + '\n' +
             '    Theta Semijoin: ' + operations.thetaSemijoin + '\n\n' +
+            '    Outer Join: ' + operations.outerJoin + '\n\n' +
+            '    Division: ' + operations.division + '\n\n' +
             (nullValuesSupport ? 'Null values ALLOWED.\n\n' : 'Null values FORBIDDEN.\n\n');
     }
 
@@ -202,14 +203,16 @@ export class BatchProcessor {
      * Returns formatted string for given StoredRelationsData array.
      */
     private static formatRelations = (storedData: StoredRelationData[]): string => {
-        return "### Defined relations ###\n\n" + storedData.map(data => {
-            return '# ' + data.name + ' #\n' +
-                data.columnNames.join(', ') + '\n' +
-                data.columnTypes.join(', ') + '\n' +
-                data.rows.map(row => row.join(', ')).join('\n') + '\n\n';
+        const inlines = storedData.map(data => {
+            return data.name + "(" + data.columnNames.join(", ") + ")\n"
         }).join('');
+        return sectionLine + "\n\nTABLES (" + storedData.length + ")\n\n" + inlines + "\n" +
+            storedData.map(data => contentLine + "\n" + data.name + '\n\n' + StoredRelation.format(data)).join('');
     }
 }
+
+const sectionLine: string = "################################################################################";
+const contentLine: string = "--------------------------------------------------------------------------------";
 
 /**
  * Counts of all supported relational algebra operations.

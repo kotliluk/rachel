@@ -83,10 +83,36 @@ export class StoredRelation {
         return new StoredRelation(name, columnNames, columnTypes, rows, nullValuesSupport);
     }
 
+    /**
+     * Returns formatted string representation of StoredRelation or StoredRelationData.
+     */
+    static format(rel: StoredRelation | StoredRelationData): string {
+        // finds longest inputs in each column
+        const longest = rel.columnNames.map(n => n.length);
+        rel.columnTypes.forEach((t, i) => {
+            if (longest[i] < t.length) {
+                longest[i] = t.length;
+            }
+        });
+        rel.rows.forEach(r => {
+            r.forEach((d, i) => {
+                if (longest[i] < d.length) {
+                    longest[i] = d.length;
+                }
+            });
+        });
+        // function for end-padding strings with spaces
+        const pad = (ss: string[]) => ss.map((s, i) => s.padEnd(longest[i], " ")).join(' | ');
+        return pad(rel.columnNames) + '\n' +
+            pad(rel.columnTypes) + '\n' +
+            longest.map(n => "-".repeat(n)).join("-+-") + '\n' +
+            rel.rows.map(r => pad(r)).join('\n') + '\n\n';
+    }
+
     private name: string;
-    private columnNames: string[];
-    private columnTypes: SupportedColumnType[];
-    private rows: string[][];
+    columnNames: string[];
+    columnTypes: SupportedColumnType[];
+    rows: string[][];
     private columnCount: number;
     private rowCount: number;
     private readonly errors: NNToSMap;
