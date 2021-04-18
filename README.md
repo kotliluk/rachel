@@ -1,18 +1,5 @@
 # Rachel
 
-## Test info
-
-Děkuji, že mi pomůžete s testováním mé aplikace. Věřím, že na oplátku bude dobrým nástojem
-pro učení relační algebry a bude tedy přínosná i Vám. Do teď aplikace nebyla nijak "masově"
-používána, nicméně věřím, že zásadní chyby v ní již nejsou. Myslím, že v případě
-nalezení chyby nyní není nutné otevírat Issue na GitHubu a stačí o ni informovat na můj mail - 
-kotliluk@fel.cvut.cz. Mimo upozornění na zásadní
-chyby budu vděčný i za jakýkoli jiný feedback - co Vám přijde nepřehledné, co byste si představovali
-jinak nebo u čeho jste očekávali, že bude fungovat jinak...
-
-Dále následuje manuál, přestože se může zdát dlouhý, používání aplikace by mělo být intuitivní.
-Přeji Vám příjemné používání Rachel :smile: Lukáš
-
 ## About
 
 Rachel is an evaluator and syntax checker for relational algebra (RA). It provides both
@@ -46,7 +33,7 @@ the last loaded (valid) state is still available for the expressions.
 There are 4 buttons in the header menu, which affect all relations:
 - The **Load all** button loads all valid relations into the application memory.
 If any loaded relation with the same name exists, it is overwritten. Invalid relations are skipped.
-- The **Delete loaded** button deletes all loaded relations (editable relations are not changed).
+- The **Remove loaded** button removes all loaded relations (editable relations are not changed).
 - The **Import** button enables us to import new editable relations from CSV files.
 - The **Export** button saves all editable relations in CSV files. The saved relations can be
 in invalid state.
@@ -223,6 +210,11 @@ null constant is given, an error is triggered.
 - negation (! or ~ or ¬): !boolean, ...
 - and (&& or & or ∧): boolean && boolean, ...
 - or (|| or | or ∨): boolean || boolean, ...
+
+## Language contribution
+
+If you want to extend Rachel by a new language, feel free to define it by the steps
+described in the /src/language/language.ts file.
 
 ## Implementation details
 

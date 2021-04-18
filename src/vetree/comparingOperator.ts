@@ -1,8 +1,9 @@
 import Row from "../relation/row";
 import {VETreeNode} from "./veTreeNode";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
-import {ErrorFactory, SyntaxErrorCodes} from "../error/errorFactory";
+import {ErrorFactory} from "../error/errorFactory";
 import {IndexedString} from "../types/indexedString";
+import {language} from "../language/language";
 
 /**
  * Types of ComparingOperator class.
@@ -120,7 +121,7 @@ export class ComparingOperator extends VETreeNode {
         const rightResult: { value: ColumnContent, type: SupportedColumnType | "null" } = this.right.eval(source);
 
         if (leftResult.type !== "null" && rightResult.type !== "null" && leftResult.type !== rightResult.type) {
-            throw ErrorFactory.syntaxError(SyntaxErrorCodes.comparingOperator_eval_differentInputTypes,
+            throw ErrorFactory.syntaxError(language().syntaxErrors.comparingOperator_differentInputTypes,
                 this.operator.getRange(), this.operator.toString(), leftResult.type, rightResult.type);
         }
 

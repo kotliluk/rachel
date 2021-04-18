@@ -6,8 +6,9 @@ export interface ProjectSample {
 }
 
 const samples: ProjectSample[] = [
+    // english sample
     {
-        name: "Cars and Owners",
+        name: "Cars and Owners (EN)",
         project: {
             relations: [
                 {
@@ -105,6 +106,112 @@ const samples: ProjectSample[] = [
                         ")[Id, Name]\n" +
                         "\n" +
                         "// For more detailed manual click 'About' button in the page header\n" +
+                        ""
+                }
+            ],
+            nullValuesSupport: true
+        }
+    },
+    // czech sample
+    {
+        name: "Auta a Majitelé (CS)",
+        project: {
+            relations: [
+                {
+                    name: "Auto",
+                    columnNames: ["Id", "Majitel", "Barva", "Elektro", "Váha"],
+                    columnTypes: ["number", "number", "string", "boolean", "number"],
+                    rows: [
+                        ['1', '1', 'Modrá', 'True', '1000'],
+                        ['2', '1', 'Zelená', 'false', '1 200'],
+                        ['3', '2', 'Modrá', 'F', '850.42'],
+                        ['4', '3', 'Černá', 't', '1 111.111 111']
+                    ],
+                    columnCount: 5,
+                    rowCount: 4
+                },
+                {
+                    name: "Majitel",
+                    columnNames: ["Id", "Jméno"],
+                    columnTypes: ["number", "string"],
+                    rows: [
+                        ['1', 'Pepa Mrázek'],
+                        ['2', 'Adam "Závodník /\\" Horváth'],
+                        ['3', 'Michael Dvořák'],
+                        ['Před nahráním', 'oprav chyby'],
+                        ['Nebo odstraň', 'chybné řádky']
+                    ],
+                    columnCount: 2,
+                    rowCount: 3
+                }
+            ],
+            expressions: [
+                {
+                    name: "Pouze relace",
+                    text:
+                        "// Můžeš používat komentáře po '//'\n" +
+                        "// Před použitím relací ve výrazech je musíš nahrát\n" +
+                        "\n" +
+                        "Auto\n" +
+                        "\n" +
+                        "// Po vyhodnocení uvidíš evaluační strom\n" +
+                        "// a výslednou relaci dole na stránce\n" +
+                        ""
+                },
+                {
+                    name: "Unární operátor",
+                    text:
+                        "// Unární operátory se píší za vstupní relaci\n" +
+                        "// Pokud je tato relace stále nedefinovaná, zkontroluj její definici\n" +
+                        "// Tento dotaz vrátí všechny majitele s id = 1\n" +
+                        "\n" +
+                        "Majitel(Id = 1)\n" +
+                        ""
+                },
+                {
+                    name: "Binární operátor",
+                    text:
+                        "// Binární operátory se píší mezi vstupní relace\n" +
+                        "// Tento výraz vrátí přirozené spojení aut a majitelů\n" +
+                        "\n" +
+                        "Auto*Majitel\n" +
+                        ""
+                },
+                {
+                    name: "Escapes",
+                    text:
+                        "// Textové řetězce ve výrazech musí být mezi uvozovkami\n" +
+                        "// Pro použití uvozovek v řetězci před ně musíš napsat zpětné lomítko '\\\"'\n" +
+                        "// Pro použití zpětného lomítka před něj musíš napsat druhé '\\\\'\n" +
+                        "\n" +
+                        'Majitel(Jméno == "Adam \\"Závodník /\\\\\\" Horváth")\n' +
+                        '\n' +
+                        '// Toto by nefungovalo: Majitel(Jméno == "Adam "Závodník /\\" Horváth")\n' +
+                        ""
+                },
+                {
+                    name: "Příklad",
+                    text:
+                        "// Chyby jsou zvýrazněni červeným podtržením - přejeď na ně myší pro detaily\n" +
+                        "// Při psaní ti Rachel nabízí dostupné relace nebo sloupce\n" +
+                        "// (pokud jsou relace nahrané v aplikace)\n" +
+                        "// Zkus napsat dotaz pro: id všech aut a jména jejich majitelů\n" +
+                        "\n" +
+                        "TODO...\n" +
+                        ""
+                },
+                {
+                    name: "Výsledek příkladu",
+                    text:
+                        "// Jedno možné řešení je toto...\n" +
+                        "\n" +
+                        "(\n" +
+                        "  Auto\n" +
+                        "  *\n" +
+                        "  Majitel< Id -> Majitel >\n" +
+                        ")[Id, Jméno]\n" +
+                        "\n" +
+                        "// Pro více informací navštiv manuál přes odkaz 'O aplikaci' v horním menu\n" +
                         ""
                 }
             ],

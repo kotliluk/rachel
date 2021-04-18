@@ -2,8 +2,9 @@ import BinaryNode from "./binaryNode";
 import RATreeNode from "./raTreeNode";
 import Relation from "../relation/relation";
 import Row from "../relation/row";
-import {ErrorFactory, SemanticErrorCodes} from "../error/errorFactory";
+import {ErrorFactory} from "../error/errorFactory";
 import ErrorWithTextRange from "../error/errorWithTextRange";
+import {language} from "../language/language";
 
 /**
  * Cartesian product node of the relational algebra syntactic tree.
@@ -28,7 +29,7 @@ export default class CartesianProductNode extends BinaryNode {
         leftSource.forEachColumn((type, name) => result.addColumn(name, type));
         rightSource.forEachColumn((type, name) => {
             if (!result.addColumn(name, type)) {
-                throw ErrorFactory.semanticError(SemanticErrorCodes.binaryNode_eval_commonColumnsInSources,
+                throw ErrorFactory.semanticError(language().semanticErrors.binaryNode_commonColumns,
                     this.stringRange, "cartesian product", name);
             }
         });
@@ -66,7 +67,7 @@ export default class CartesianProductNode extends BinaryNode {
             }
         });
         if (commonColumns.length > 0) {
-            left.errors.push(ErrorFactory.semanticError(SemanticErrorCodes.binaryNode_eval_commonColumnsInSources,
+            left.errors.push(ErrorFactory.semanticError(language().semanticErrors.binaryNode_commonColumns,
                 this.stringRange, "cartesian product", commonColumns.join('", "')));
         }
         return {result, whispers: left.whispers.length !== 0 ? left.whispers : right.whispers, errors: left.errors};
@@ -77,7 +78,7 @@ export default class CartesianProductNode extends BinaryNode {
     }
 
     public getOperationName(): string {
-        return "Cartesian product";
+        return language().operations.cartesianProduct;
     }
 
     public getOperationSymbol(): string {

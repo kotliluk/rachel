@@ -1,5 +1,6 @@
-import {ErrorFactory, SyntaxErrorCodes} from "../error/errorFactory";
+import {ErrorFactory} from "../error/errorFactory";
 import RASyntaxError from "../error/raSyntaxError";
+import {language} from "../language/language";
 
 /**
  * Class providing general helper functions for strings.
@@ -214,7 +215,7 @@ export default class StringUtils {
                 return {
                     first: str.slice(0, i),
                     second: str.slice(i),
-                    error: ErrorFactory.syntaxError(SyntaxErrorCodes.parser_nextBorderedPart_missingClosingChar,
+                    error: ErrorFactory.syntaxError(language().syntaxErrors.stringUtils_missingClosingChar,
                         undefined, '"', '"')
                 };
             }
@@ -229,7 +230,7 @@ export default class StringUtils {
         return {
             first: str,
             second: "",
-            error: ErrorFactory.syntaxError(SyntaxErrorCodes.parser_nextBorderedPart_missingClosingChar,
+            error: ErrorFactory.syntaxError(language().syntaxErrors.stringUtils_missingClosingChar,
                 undefined, '"', '"')
         };
     }
@@ -294,8 +295,8 @@ export default class StringUtils {
                 return { first: str.slice(0, i), second: str.slice(i) };
             }
         }
-        throw ErrorFactory.syntaxError(SyntaxErrorCodes.parser_nextBorderedPart_missingClosingChar, undefined,
-            end.split('').join("' or '"), start);
+        throw ErrorFactory.syntaxError(language().syntaxErrors.stringUtils_missingClosingChar, undefined,
+            end.split('').join("' / '"), start);
     }
 
     /**
@@ -322,7 +323,7 @@ export default class StringUtils {
             }
         }
         if (!charFound) {
-            throw ErrorFactory.syntaxError(SyntaxErrorCodes.parser_skipWhitespacesAndChar_charNotFound, undefined, char);
+            throw ErrorFactory.syntaxError(language().syntaxErrors.stringUtils_charNotFound, undefined, char);
         }
         return str.substring(i);
     }

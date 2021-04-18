@@ -3,6 +3,7 @@ import RATreeNode from "./raTreeNode";
 import Relation from "../relation/relation";
 import Row from "../relation/row";
 import ErrorWithTextRange from "../error/errorWithTextRange";
+import {language} from "../language/language";
 
 /**
  * Types of antijoin node.
@@ -78,7 +79,8 @@ export default class AntijoinNode extends BinaryNode {
     }
 
     public getOperationName(): string {
-        return this.type === AntijoinType.left ? "Left antijoin" : "Right antijoin";
+        const lang = language().operations;
+        return this.type === AntijoinType.left ? lang.leftAntijoin : lang.rightAntijoin;
     }
 
     public getOperationSymbol(): string {

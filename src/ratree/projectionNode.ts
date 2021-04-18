@@ -3,10 +3,9 @@ import RATreeNode from "./raTreeNode";
 import Relation from "../relation/relation";
 import Row from "../relation/row";
 import {IndexedString} from "../types/indexedString";
-import {ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
+import {ErrorFactory} from "../error/errorFactory";
 import ErrorWithTextRange from "../error/errorWithTextRange";
-import {isForbiddenColumnName} from "../utils/keywords";
-import IndexedStringUtils from "../utils/indexedStringUtils";
+import {language} from "../language/language";
 
 /**
  * Projection node of the relational algebra syntactic tree.
@@ -32,33 +31,12 @@ export default class ProjectionNode extends UnaryNode {
      * Parses projection string to set of projected columns.
      * If doThrow is true, throws found errors. Otherwise, adds found errors to given errors array.
      */
-    private parseProjection(doThrow: boolean, errors: ErrorWithTextRange[] = []): Set<IndexedString> {
+    private parseProjection(): Set<IndexedString> {
         const ret: Set<IndexedString> = new Set<IndexedString>();
         // @ts-ignore
         let str: IndexedString = this.projection.slice(1, -1);
         let parts: IndexedString[] = str.split(",");
-        parts.forEach(part => {
-            part = part.trim();
-            // @ts-ignore
-            const isName = IndexedStringUtils.isName(part);
-            if (isName && !isForbiddenColumnName(part)) {
-                ret.add(part);
-            }
-            else {
-                let range = part.getRange();
-                if (part.isEmpty() && this.stringRange !== undefined) {
-                    range = {start: this.stringRange.start, end: this.stringRange.start};
-                }
-                const error = ErrorFactory.syntaxError(SyntaxErrorCodes.projectionNode_parseProjection_invalidProjectedColumnName,
-                    range, part.toString());
-                if (doThrow) {
-                    throw error;
-                }
-                else {
-                    errors.push(error);
-                }
-            }
-        });
+        parts.forEach(part => ret.add(part.trim()));
         return ret;
     }
 
@@ -70,11 +48,11 @@ export default class ProjectionNode extends UnaryNode {
             return;
         }
         const source: Relation = this.subtree.getResult();
-        const projectedIndexed: IndexedString[] = [...this.parseProjection(true)];
+        const projectedIndexed: IndexedString[] = [...this.parseProjection()];
         // checks if projected columns really exist in source relation
         projectedIndexed.forEach(name => {
             if (!source.hasColumn(name.toString())) {
-                throw ErrorFactory.semanticError(SemanticErrorCodes.projectionNode_eval_absentColumn,
+                throw ErrorFactory.semanticError(language().semanticErrors.projectionNode_absentColumn,
                     name.getRange(), name.toString());
             }
         });
@@ -114,7 +92,7 @@ export default class ProjectionNode extends UnaryNode {
         }
         // adds errors from current expression
         const errors = source.errors;
-        const projected: Set<IndexedString> = this.parseProjection(false, errors);
+        const projected: Set<IndexedString> = this.parseProjection();
         // creates relational schema - "projected columns"
         const result: Relation = new Relation(source.result.name + "[...]");
         // adds only projected, which exist in source
@@ -130,18 +108,18 @@ export default class ProjectionNode extends UnaryNode {
             }
         });
         absent.forEach(column => {
-            errors.push(ErrorFactory.semanticError(SemanticErrorCodes.projectionNode_eval_absentColumn,
+            errors.push(ErrorFactory.semanticError(language().semanticErrors.projectionNode_absentColumn,
                 column.getRange(), column.toString()));
         });
         return {result, whispers, errors};
     }
 
-    printInLine(): string {
+    public printInLine(): string {
         return this.subtree.printInLine() + this.getOperationSymbol();
     }
 
     public getOperationName(): string {
-        return "Projection";
+        return language().operations.projection;
     }
 
     public getOperationSymbol(): string {

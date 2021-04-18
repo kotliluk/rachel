@@ -3,8 +3,9 @@ import RATreeNode from "./raTreeNode";
 import Relation from "../relation/relation";
 import Row from "../relation/row";
 import { isEqual } from "lodash";
-import {ErrorFactory, SemanticErrorCodes} from "../error/errorFactory";
+import {ErrorFactory} from "../error/errorFactory";
 import ErrorWithTextRange from "../error/errorWithTextRange";
+import {language} from "../language/language";
 
 /**
  * Types of set operation node.
@@ -28,18 +29,6 @@ export default class SetOperationNode extends BinaryNode {
         this.type = operator;
     }
 
-    private getTypeStr(): string {
-        if (this.type === SetOperationType.union) {
-            return "Union";
-        }
-        else if (this.type === SetOperationType.intersection) {
-            return "Intersection";
-        }
-        else {
-            return "Difference";
-        }
-    }
-
     /**
      * Expectations on source schemas: equality
      */
@@ -51,8 +40,8 @@ export default class SetOperationNode extends BinaryNode {
         const rightSource: Relation = this.rightSubtree.getResult();
 
         if (!isEqual(leftSource.getColumns(), rightSource.getColumns())) {
-            let typeStr: string = this.getTypeStr().toLowerCase();
-            throw ErrorFactory.semanticError(SemanticErrorCodes.setOperationNode_eval_notEqualColumnsInSources,
+            let typeStr: string = this.getOperationName().toLowerCase();
+            throw ErrorFactory.semanticError(language().semanticErrors.setOperationNode_notEqualColumns,
                 this.stringRange, leftSource.getSchemaString(), rightSource.getSchemaString(), typeStr);
         }
         // copy of relational schema
@@ -95,8 +84,8 @@ export default class SetOperationNode extends BinaryNode {
         const errors = left.errors;
         errors.push(...right.errors);
         if (!isEqual(left.result.getColumns(), right.result.getColumns()) && left.result.getName() !== "" && right.result.getName() !== "") {
-            let typeStr: string = this.getTypeStr().toLowerCase();
-            errors.push(ErrorFactory.semanticError(SemanticErrorCodes.setOperationNode_eval_notEqualColumnsInSources,
+            let typeStr: string = this.getOperationName().toLowerCase();
+            errors.push(ErrorFactory.semanticError(language().semanticErrors.setOperationNode_notEqualColumns,
                 this.stringRange, left.result.getSchemaString(), right.result.getSchemaString(), typeStr));
         }
         return {result, whispers: left.whispers.length !== 0 ? left.whispers : right.whispers, errors};
@@ -107,7 +96,16 @@ export default class SetOperationNode extends BinaryNode {
     }
 
     public getOperationName(): string {
-        return this.getTypeStr();
+        const lang = language().operations;
+        if (this.type === SetOperationType.union) {
+            return lang.union;
+        }
+        else if (this.type === SetOperationType.intersection) {
+            return lang.intersection;
+        }
+        else {
+            return lang.difference;
+        }
     }
 
     public getOperationSymbol(): string {

@@ -1,5 +1,5 @@
 import Relation from "../relation/relation";
-import {CodeErrorCodes, ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
+import {ErrorFactory} from "../error/errorFactory";
 import {
     BinaryOperatorToken,
     ClosingParenthesis,
@@ -19,6 +19,7 @@ import {
 import IndexedStringUtils from "../utils/indexedStringUtils";
 import ErrorWithTextRange from "../error/errorWithTextRange";
 import RATreeFactory from "../ratree/raTreeFactory";
+import {language} from "../language/language";
 
 /**
  * Assertion types for assertValidInfixTokens function.
@@ -73,7 +74,7 @@ export class ExprParser {
     public parse(expr: string): RATreeNode {
         const indexedExpr = IndexedStringUtils.deleteCommentLines(IndexedString.new(expr));
         if (indexedExpr.trim().isEmpty()) {
-            throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_parse_emptyStringGiven, undefined);
+            throw ErrorFactory.syntaxError(language().syntaxErrors.exprParser_emptyStringGiven, undefined);
         }
         const tokens: ExprToken[] = this.parseTokens(indexedExpr);
         this.assertValidInfixTokens(tokens, AssertType.THROW_STRICT);
@@ -194,7 +195,7 @@ export class ExprParser {
                             throw error;
                         }
                         // when errors were different, joins them
-                        throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_parseTokens_bothBranchesError,
+                        throw ErrorFactory.syntaxError(language().syntaxErrors.exprParser_bothBranchesError,
                             undefined, split.first.toString(), error.message, errorAlternative.message);
                     }
                     // does not use alternative tokens after error
@@ -218,7 +219,7 @@ export class ExprParser {
                         // @ts-ignore
                         errorRange = {start: rest.getFirstNonNaNIndex(), end: rest.getFirstNonNaNIndex() + 2};
                     }
-                    throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_parseTokens_outerJoinWhenNullNotSupported,
+                    throw ErrorFactory.syntaxError(language().syntaxErrors.exprParser_outerJoinWhenNullNotSupported,
                         errorRange, "*F*");
                 }
                 if (rest.startsWith("*F")) {
@@ -306,7 +307,7 @@ export class ExprParser {
             // UNEXPECTED PART
             else {
                 const split = IndexedStringUtils.nextNonWhitespacePart(rest);
-                throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_parseTokens_unexpectedPart,
+                throw ErrorFactory.syntaxError(language().syntaxErrors.exprParser_unexpectedPart,
                     split.first.getRange(), split.first.toString());
             }
             rest = rest.trim();
@@ -348,7 +349,6 @@ export class ExprParser {
                 whispers = [...this.relations.keys()];
             }
 
-            //rest = rest.trim();
             // '(' can be a selection or a parentheses
             if (rest.startsWith("(")) {
                 let split: {first: IndexedString, second: IndexedString};
@@ -582,7 +582,7 @@ export class ExprParser {
             // UNEXPECTED PART
             else {
                 const split = IndexedStringUtils.nextNonWhitespacePart(rest);
-                errors.push(ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_parseTokens_unexpectedPart,
+                errors.push(ErrorFactory.syntaxError(language().syntaxErrors.exprParser_unexpectedPart,
                     split.first.getRange(), split.first.toString()));
                 // tries to skip first unexpected character
                 rest = rest.slice(split.first.length());
@@ -611,8 +611,8 @@ export class ExprParser {
          * missing is "binary", otherwise, it is a relation with empty name.
          */
         const handleError = (index: number, missing: "binary" | "relation",
-                             code: SyntaxErrorCodes, range: {start: number, end: number} | undefined, ...params: string[]) => {
-            const error = ErrorFactory.syntaxError(code, range, ...params);
+                             msg: string[], range: {start: number, end: number} | undefined, ...params: string[]) => {
+            const error = ErrorFactory.syntaxError(msg, range, ...params);
             if (type !== AssertType.NOT_THROW) {
                 throw error;
             }
@@ -629,14 +629,14 @@ export class ExprParser {
         if (type !== AssertType.THROW_NOT_STRICT) {
             // checks start of an array: it must start with '(' or relation
             if (tokens[0] instanceof UnaryOperatorToken || tokens[0] instanceof BinaryOperatorToken || tokens[0] instanceof ClosingParenthesis) {
-                handleError(0, "relation", SyntaxErrorCodes.exprParser_assertValidInfixTokens_invalidStart,
+                handleError(0, "relation", language().syntaxErrors.exprParser_invalidStart,
                     tokens[0].getRange(), tokens[0].str.toString());
             }
         }
 
         // checks end of an array: it must end with ')', relation or an unary operator
         if (tokens[tokens.length - 1] instanceof OpeningParenthesis || tokens[tokens.length - 1] instanceof BinaryOperatorToken) {
-            handleError(tokens.length, "relation", SyntaxErrorCodes.exprParser_assertValidInfixTokens_invalidEnd,
+            handleError(tokens.length, "relation", language().syntaxErrors.exprParser_invalidEnd,
                 tokens[tokens.length - 1].getRange(), tokens[tokens.length - 1].str.toString());
         }
 
@@ -649,68 +649,68 @@ export class ExprParser {
             // valid predecessors: binary operator or '('
             if (token2 instanceof RelationToken) {
                 if (token1 instanceof RelationToken) {
-                    handleError(i2, "binary", SyntaxErrorCodes.exprParser_assertValidInfixTokens_relationAfterRelation,
+                    handleError(i2, "binary", language().syntaxErrors.exprParser_relationAfterRelation,
                         token2.getRange(), token2.str.toString(), token1.str.toString());
                 }
                 if (token1 instanceof UnaryOperatorToken) {
-                    handleError(i2, "binary", SyntaxErrorCodes.exprParser_assertValidInfixTokens_relationAfterUnary,
+                    handleError(i2, "binary", language().syntaxErrors.exprParser_relationAfterUnary,
                         token2.getRange(), token2.str.toString(), token1.str.toString());
                 }
                 if (token1 instanceof ClosingParenthesis) {
-                    handleError(i2, "binary", SyntaxErrorCodes.exprParser_assertValidInfixTokens_relationAfterClosing,
+                    handleError(i2, "binary", language().syntaxErrors.exprParser_relationAfterClosing,
                         token2.getRange(), token2.str.toString());
                 }
             }
             // valid predecessors: relation, unary operator or ')'
             else if (token2 instanceof UnaryOperatorToken) {
                 if (token1 instanceof BinaryOperatorToken) {
-                    handleError(i2, "relation", SyntaxErrorCodes.exprParser_assertValidInfixTokens_unaryAfterBinary,
+                    handleError(i2, "relation", language().syntaxErrors.exprParser_unaryAfterBinary,
                         token2.getRange(), token2.str.toString(), token1.str.toString());
                 }
                 if (token1 instanceof OpeningParenthesis) {
-                    handleError(i2, "relation", SyntaxErrorCodes.exprParser_assertValidInfixTokens_unaryAfterOpening,
+                    handleError(i2, "relation", language().syntaxErrors.exprParser_unaryAfterOpening,
                         token2.getRange(), token2.str.toString());
                 }
             }
             // valid predecessors: relation, unary operator or ')'
             else if (token2 instanceof BinaryOperatorToken) {
                 if (token1 instanceof BinaryOperatorToken) {
-                    handleError(i2, "relation", SyntaxErrorCodes.exprParser_assertValidInfixTokens_binaryAfterBinary,
+                    handleError(i2, "relation", language().syntaxErrors.exprParser_binaryAfterBinary,
                         token2.getRange(), token2.str.toString(), token1.str.toString());
                 }
                 if (token1 instanceof OpeningParenthesis) {
-                    handleError(i2, "relation", SyntaxErrorCodes.exprParser_assertValidInfixTokens_binaryAfterOpening,
+                    handleError(i2, "relation", language().syntaxErrors.exprParser_binaryAfterOpening,
                         token2.getRange(), token2.str.toString());
                 }
             }
             // valid predecessors: binary operator or '('
             else if (token2 instanceof OpeningParenthesis) {
                 if (token1 instanceof RelationToken) {
-                    handleError(i2, "binary", SyntaxErrorCodes.exprParser_assertValidInfixTokens_openingAfterRelation,
+                    handleError(i2, "binary", language().syntaxErrors.exprParser_openingAfterRelation,
                         token2.getRange(), token1.str.toString());
                 }
                 if (token1 instanceof UnaryOperatorToken) {
-                    handleError(i2, "binary", SyntaxErrorCodes.exprParser_assertValidInfixTokens_openingAfterUnary,
+                    handleError(i2, "binary", language().syntaxErrors.exprParser_openingAfterUnary,
                         token2.getRange(), token1.str.toString());
                 }
                 if (token1 instanceof ClosingParenthesis) {
-                    handleError(i2, "binary", SyntaxErrorCodes.exprParser_assertValidInfixTokens_openingAfterClosing,
+                    handleError(i2, "binary", language().syntaxErrors.exprParser_openingAfterClosing,
                         token2.getRange());
                 }
             }
             // valid predecessors: relation, unary operator or ')'
             else if (token2 instanceof ClosingParenthesis) {
                 if (token1 instanceof BinaryOperatorToken) {
-                    handleError(i2, "relation", SyntaxErrorCodes.exprParser_assertValidInfixTokens_closingAfterBinary,
+                    handleError(i2, "relation", language().syntaxErrors.exprParser_closingAfterBinary,
                         token2.getRange(), token1.str.toString());
                 }
                 if (token1 instanceof OpeningParenthesis) {
-                    handleError(i2, "relation", SyntaxErrorCodes.exprParser_assertValidInfixTokens_closingAfterOpening,
+                    handleError(i2, "relation", language().syntaxErrors.exprParser_closingAfterOpening,
                         token2.getRange());
                 }
             }
             else {
-                throw ErrorFactory.codeError(CodeErrorCodes.exprParser_isValidSequence_unexpectedToken, JSON.stringify(token2));
+                throw ErrorFactory.codeError(language().codeErrors.exprParser_unexpectedToken, JSON.stringify(token2));
             }
             ++i2;
         }
@@ -751,7 +751,7 @@ export class ExprParser {
             else if (token instanceof ClosingParenthesis) {
                 while (true) {
                     if (operatorsStack.length === 0) {
-                        throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_assertValidInfixTokens_invalidParentheses,
+                        throw ErrorFactory.syntaxError(language().syntaxErrors.exprParser_invalidParentheses,
                             undefined);
                     }
                     if (operatorsStack[operatorsStack.length - 1] instanceof OpeningParenthesis) {
@@ -767,7 +767,7 @@ export class ExprParser {
             // @ts-ignore (token must be present)
             const curToken: ExprToken = operatorsStack.pop();
             if (curToken instanceof OpeningParenthesis) {
-                throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_assertValidInfixTokens_invalidParentheses,
+                throw ErrorFactory.syntaxError(language().syntaxErrors.exprParser_invalidParentheses,
                     undefined);
             }
             else {
@@ -796,7 +796,7 @@ export class ExprParser {
         // not all tokens were used
         if (tokens.length > 0) {
             if (doThrow) {
-                throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_rpnToVETree_invalidExpression, undefined);
+                throw ErrorFactory.syntaxError(language().syntaxErrors.exprParser_invalidExpression, undefined);
             }
             else {
                 return new RelationNode(new Relation(""));
@@ -807,7 +807,7 @@ export class ExprParser {
 
     public rpnToRATreeRecursive(tokens: ExprToken[], doThrow: boolean, errors: ErrorWithTextRange[]): RATreeNode {
         if (tokens.length === 0) {
-            throw ErrorFactory.syntaxError(SyntaxErrorCodes.exprParser_rpnToVETree_invalidExpression, undefined);
+            throw ErrorFactory.syntaxError(language().syntaxErrors.exprParser_invalidExpression, undefined);
         }
         // @ts-ignore (there must be a token)
         const token: ExprToken = tokens.pop();
@@ -816,7 +816,7 @@ export class ExprParser {
             const relation: Relation | undefined = this.relations.get(token.str.toString());
             // when the relation does not exist, throws or fakes it with an empty relation
             if (relation === undefined) {
-                const error = ErrorFactory.semanticError(SemanticErrorCodes.exprParser_parse_relationNotDefined,
+                const error = ErrorFactory.semanticError(language().semanticErrors.exprParser_relationNotDefined,
                     token.getRange(), token.str.toString());
                 if (doThrow) {
                     throw error;
@@ -840,6 +840,6 @@ export class ExprParser {
             return RATreeFactory.createBinary(token.type, left, right, this.nullValuesSupport, token.str);
         }
         // should never happen
-        throw ErrorFactory.codeError(CodeErrorCodes.exprParser_rpnToVETreeRecursive_unexpectedToken, JSON.stringify(token));
+        throw ErrorFactory.codeError(language().codeErrors.exprParser_unexpectedToken, JSON.stringify(token));
     }
 }

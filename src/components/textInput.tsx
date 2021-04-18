@@ -1,8 +1,6 @@
 import React from "react";
 
 interface TextInputProps {
-    // label before the input
-    label: string,
     // initial value for the input
     value: string,
     // text on the submit button
@@ -22,7 +20,7 @@ interface TextInputState {
 }
 
 /**
- * Basic text input with submit button. The input cannot be submit if the current value is forbidden.
+ * Basic text input with submit button (without label). The input cannot be submit if the current value is forbidden.
  * All inserted tabulators are replaced by 4 spaces.
  */
 export class TextInput extends React.Component<TextInputProps, TextInputState> {
@@ -73,7 +71,6 @@ export class TextInput extends React.Component<TextInputProps, TextInputState> {
     public render() {
         return (
             <>
-                <label htmlFor={this.props.id}>{this.props.label}</label>
                 <input
                     ref={this.inputRef}
                     type='text'

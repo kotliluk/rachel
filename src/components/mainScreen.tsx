@@ -7,7 +7,7 @@ import {ExpressionStoreManager} from "../expression/expressionStoreManager";
 import {ManagementSection} from "./managementSection";
 import {CsvValueSeparator} from "../types/csvSupport";
 import {ProjectStoreManager} from "../project/projectStoreManager";
-import {SupportedLanguage} from "../types/supportedLanguage";
+import {language, LanguageDef, SupportedLanguage} from "../language/language";
 import {LocalStorage} from "../utils/localStorage";
 import {BatchProcessor} from "../batch/batchProcessor";
 import {Expression} from "../expression/expression";
@@ -36,7 +36,7 @@ interface MainScreenState {
 
     nullValuesSupport: boolean,
     csvValueSeparator: CsvValueSeparator,
-    language: SupportedLanguage,
+    language: LanguageDef,
     darkTheme: boolean
 }
 
@@ -80,7 +80,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
 
             nullValuesSupport: true,
             csvValueSeparator: LocalStorage.getCsvValueSeparator(),
-            language: LocalStorage.getLanguage(),
+            language: language(),
             darkTheme: LocalStorage.getDarkMode()
         }
         this.expressionSectionRef = React.createRef();
@@ -224,11 +224,13 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
     /**
      * Changes the language of the application.
      *
-     * @param language new language of the application
+     * @param lang new language of the application
      */
-    private handleLanguageChange = (language: SupportedLanguage): void => {
-        LocalStorage.setLanguage(language);
-        this.setState({language: language});
+    private handleLanguageChange = (lang: SupportedLanguage): void => {
+        LocalStorage.setLanguage(lang);
+        // updates language of errors in stored relations
+        this.state.storedRelations.forEach(r => r.recomputeErrors());
+        this.setState({language: language()});
     }
 
     /**
@@ -354,9 +356,11 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
      * Deletes all relations loaded in the application.
      */
     private handleDeleteLoadedRelations = (onDone: (msg: string) => void): void => {
+        const lang = this.state.language.userMessages;
+        const previous = this.state.loadedRelations.size;
         this.state.loadedRelations.clear();
         this.state.storedRelations.forEach(sr => sr.setActual(false));
-        onDone("All loaded relations deleted.");
+        onDone(previous + lang.deleteLoadedRelations);
         // forces update
         this.setState({}, this.updateExpressionsErrors);
     }
@@ -367,12 +371,13 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
      * @param onDone
      */
     private handleExportRelations = (onDone: (msg: string) => void): void => {
+        const lang = this.state.language.userMessages;
         try {
             RelationStoreManager.save(this.state.storedRelations, "relations", this.state.csvValueSeparator);
-            onDone(this.state.storedRelations.length + " relations saved.");
+            onDone(this.state.storedRelations.length + lang.relationsExportOK);
         }
         catch (err) {
-            onDone("Saving error: " + err);
+            onDone(lang.relationsExportErr + err);
         }
     }
 
@@ -382,6 +387,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
      * @param onDone
      */
     private handleImportRelations = (onDone: (msg: string) => void): void => {
+        const lang = this.state.language.userMessages;
         RelationStoreManager.load(this.state.nullValuesSupport).then(info => {
             const countBefore: number = this.state.storedRelations.length;
             // loads relations to application
@@ -394,24 +400,24 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
                 // shows first loaded relation
                 this.setState({selectedRelation: countBefore});
             }
-            onDone(info.relations.length + " relations loaded, " + info.skipped + " files skipped.")
+            onDone(info.relations.length + lang.relationsImport[0] + info.skipped + lang.relationsImport[1])
         });
     }
 
     private handleLoadRelation = (onDone: (msg: string) => void): void => {
+        const lang = this.state.language.userMessages;
         const currRelation: StoredRelation = this.state.storedRelations[this.state.selectedRelation];
         currRelation.setActual(true);
         this.state.loadedRelations.set(currRelation.getName(), currRelation.createRelation());
-        const msgPart2: string = this.state.loadedRelations.size === 0 ?
-            "No relations loaded in the application at the moment." :
-            "All current loaded relations (" + this.state.loadedRelations.size + "): " +
-            [...this.state.loadedRelations.keys()].join(', ') + ".";
-        onDone("Relation loaded to application.\n" + msgPart2);
+        const msgPart2: string = this.state.loadedRelations.size === 0 ? lang.loadedRelationsTotalNo :
+            this.state.loadedRelations.size + lang.loadedRelationsTotalSome + [...this.state.loadedRelations.keys()].join(', ') + ".";
+        onDone(lang.loadRelationNew + "\n" + msgPart2);
         // forces update
         this.setState({}, this.updateExpressionsErrors);
     }
 
     private handleLoadAllRelations = (onDone: (msg: string) => void): void => {
+        const lang = this.state.language.userMessages;
         let loaded: number = 0;
         let skipped: number = 0;
         this.state.storedRelations.forEach(sr => {
@@ -424,11 +430,9 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
                 ++skipped;
             }
         });
-        const msgPart2: string = this.state.loadedRelations.size === 0 ?
-            "No relations loaded in the application at the moment." :
-            "All current loaded relations (" + this.state.loadedRelations.size + "): " +
-            [...this.state.loadedRelations.keys()].join(', ') + ".";
-        onDone(loaded + " relations loaded to application, " + skipped + " skipped for errors.\n" + msgPart2);
+        const msgPart2: string = this.state.loadedRelations.size === 0 ? lang.loadedRelationsTotalNo :
+            this.state.loadedRelations.size + lang.loadedRelationsTotalSome + [...this.state.loadedRelations.keys()].join(', ') + ".";
+        onDone(loaded + lang.loadAllRelationsNew[0] + skipped + lang.loadAllRelationsNew[1] + "\n" + msgPart2);
         // forces update
         this.setState({}, this.updateExpressionsErrors);
     }
@@ -505,12 +509,13 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
      * @param onDone
      */
     private handleExportExpressions = (onDone: (msg: string) => void): void => {
+        const lang = this.state.language.userMessages;
         try {
             ExpressionStoreManager.save(this.state.expressions, 'expressions');
-            onDone("Expressions saved in a textual file.");
+            onDone(lang.expressionsExportOK);
         }
         catch (err) {
-            onDone("Expressions saving failed: " + err.message);
+            onDone(lang.expressionsExportErr + err.message);
         }
     }
 
@@ -520,11 +525,12 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
      * @param onDone
      */
     private handleImportExpressions = (onDone: (msg: string) => void): void => {
+        const lang = this.state.language.userMessages;
         ExpressionStoreManager.load().then(info => {
             this.state.expressions.push(...info.expressions);
             this.setState({});
-            onDone(info.expressions.length + " expressions loaded from " + info.loadedFiles + " files (" +
-                + info.skippedExpressions + " expressions skipped, " + info.skippedFiles + " files skipped).");
+            onDone(info.expressions.length + lang.expressionsImport[0] + info.loadedFiles + lang.expressionsImport[1] +
+                + info.skippedExpressions + lang.expressionsImport[2] + info.skippedFiles + lang.expressionsImport[3]);
         });
     }
 
@@ -557,6 +563,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
 
                     csvValueSeparator={this.state.csvValueSeparator}
                     darkTheme={this.state.darkTheme}
+                    language={this.state.language}
                 />
             );
         }
@@ -607,6 +614,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
                     onImportRelations={this.handleImportRelations}
 
                     nullValuesSupport={this.state.nullValuesSupport}
+                    language={this.state.language}
                 />
 
                 <ExpressionSection
@@ -628,6 +636,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
                     onUnexpectedError={this.reportUnexpectedError}
                     nullValuesSupport={this.state.nullValuesSupport}
                     darkTheme={this.state.darkTheme}
+                    language={this.state.language}
                 />
 
                 {resultSection}

@@ -5,9 +5,10 @@ import {SupportedColumnType} from "../relation/columnType";
 import EditRelationTable from "./editRelationTable";
 import {StoredRelation} from "../relation/storedRelation";
 import {TextInput} from "./textInput";
-import {getForbiddenRelationNames} from "../utils/keywords";
+import {isForbiddenRelationName} from "../utils/keywords";
 import StringUtils from "../utils/stringUtils";
 import {MessageBox} from "./messageBox";
+import {LanguageDef} from "../language/language";
 
 interface RelationsSectionProps {
     // all stored relations
@@ -56,7 +57,9 @@ interface RelationsSectionProps {
     onImportRelations: (onDone: (msg: string) => void) => void,
 
     // whether to support null values
-    nullValuesSupport: boolean
+    nullValuesSupport: boolean,
+    // current application language
+    language: LanguageDef
 }
 
 interface RelationsSectionState {
@@ -183,6 +186,8 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
     }
 
     public render() {
+        const lang = this.props.language.relationSection;
+
         const createButton = (text: string, onClick: () => void, tooltip: string, style?: React.CSSProperties) => {
             return (<TooltipButton
                 key={text}
@@ -199,22 +204,21 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
         const forbiddenRelationNames: string[] = this.props.storedRelations
             .filter((sr, i) => i !== this.props.storedRelationIndex)
             .map(sr => sr.getName());
-        forbiddenRelationNames.push(...getForbiddenRelationNames());
         const forbiddenNamesFunction = (text: string): boolean => {
             if (forbiddenRelationNames.indexOf(text) > -1) {
                 return true;
             }
-            return !StringUtils.isName(text);
+            return !StringUtils.isName(text) || isForbiddenRelationName(text);
         }
 
         return (
             <section className="page-section">
                 <header>
-                    <h2>Relations</h2>
-                    {createButton("Load all", this.loadAllRelations, "Loads all valid relations into the application")}
-                    {createButton("Delete loaded", this.deleteAllLoadedRelations, "Deletes relations loaded in the application")}
-                    {createButton("Import", this.importRelations, "Adds new relations from files")}
-                    {createButton("Export", this.exportRelations, "Saves stored relations to files")}
+                    <h2>{lang.relationSectionHeader}</h2>
+                    {createButton(lang.loadAllButton, this.loadAllRelations, lang.loadAllButtonTooltip)}
+                    {createButton(lang.removeLoadedButton, this.deleteAllLoadedRelations, lang.removeLoadedButtonTooltip)}
+                    {createButton(lang.importButton, this.importRelations, lang.importButtonTooltip)}
+                    {createButton(lang.exportButton, this.exportRelations, lang.exportButtonTooltip)}
                 </header>
 
                 <menu className="page-section-tab-menu">
@@ -241,25 +245,23 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
 
                 <menu className="page-section-management-menu">
                     <TooltipButton
-                        key="Load"
-                        text="Load"
+                        text={lang.loadButton}
                         onClick={this.loadRelation}
                         className={"action-button"}
                         style={{marginRight: "40px"}}
-                        tooltip="Loads the relation into the application"
+                        tooltip={lang.loadButtonTooltip}
                         tooltipClassName={"tooltip"}
                     />
                     <TextInput
-                        label=""
                         value={this.getCurRel().getName()}
-                        buttonText="Rename"
+                        buttonText={lang.renameButton}
                         onSubmit={this.handleRelationNameChange}
                         forbidden={forbiddenNamesFunction}
                         id="relation-name-input"
                     />
-                    {createButton("Delete", this.deleteRelation,"Deletes the relation")}
-                    {this.getCurRel().canRevert() && createButton("Revert", this.revertRelation,
-                        "Reverts to last loaded state (" + this.getCurRel().getRevertName() + ")")}
+                    {createButton(lang.deleteButton, this.deleteRelation, lang.deleteButtonTooltip)}
+                    {createButton(lang.revertButton, this.revertRelation,
+                        lang.revertButtonTooltip + " (" + this.getCurRel().getRevertName() + ")")}
                 </menu>
             </section>
         );

@@ -3,8 +3,9 @@ import RATreeNode from "./raTreeNode";
 import Relation from "../relation/relation";
 import Row from "../relation/row";
 import {SupportedColumnType} from "../relation/columnType";
-import {ErrorFactory, SemanticErrorCodes} from "../error/errorFactory";
+import {ErrorFactory} from "../error/errorFactory";
 import ErrorWithTextRange from "../error/errorWithTextRange";
+import {language} from "../language/language";
 
 /**
  * Division node of the relational algebra syntactic tree.
@@ -28,7 +29,7 @@ export default class DivisionNode extends BinaryNode {
         const rightColumns: Map<string, SupportedColumnType> = rightSource.getColumns();
 
         if (![...rightColumns].every(value => leftColumns.has(value[0]) && leftColumns.get(value[0]) === value[1])) {
-            throw ErrorFactory.semanticError(SemanticErrorCodes.divisionNode_eval_rightColumnsNotSubsetOfLeft,
+            throw ErrorFactory.semanticError(language().semanticErrors.divisionNode_rightColumnsNotSubset,
                 this.stringRange, rightSource.getSchemaString(), leftSource.getSchemaString());
         }
 
@@ -41,7 +42,7 @@ export default class DivisionNode extends BinaryNode {
         });
 
         if (resultColumns.size === 0) {
-            throw ErrorFactory.semanticError(SemanticErrorCodes.divisionNode_eval_rightColumnsNotProperSubsetOfLeft,
+            throw ErrorFactory.semanticError(language().semanticErrors.divisionNode_rightColumnsNotProperSubset,
                 this.stringRange, rightSource.getNamesSchemaString(), leftSource.getNamesSchemaString());
         }
 
@@ -91,11 +92,11 @@ export default class DivisionNode extends BinaryNode {
         errors.push(...right.errors);
         if (![...rightColumns].every(value => leftColumns.has(value[0]) && leftColumns.get(value[0]) === value[1])
             && left.result.getName() !== "") {
-            errors.push(ErrorFactory.semanticError(SemanticErrorCodes.divisionNode_eval_rightColumnsNotSubsetOfLeft,
+            errors.push(ErrorFactory.semanticError(language().semanticErrors.divisionNode_rightColumnsNotSubset,
                 this.stringRange, right.result.getSchemaString(), left.result.getSchemaString()));
         }
         else if (resultColumns.size === 0 && left.result.getName() !== "") {
-            errors.push(ErrorFactory.semanticError(SemanticErrorCodes.divisionNode_eval_rightColumnsNotProperSubsetOfLeft,
+            errors.push(ErrorFactory.semanticError(language().semanticErrors.divisionNode_rightColumnsNotProperSubset,
                 this.stringRange, right.result.getNamesSchemaString(), left.result.getNamesSchemaString()));
         }
         return {result, whispers: left.whispers.length !== 0 ? left.whispers : right.whispers, errors};
@@ -106,7 +107,7 @@ export default class DivisionNode extends BinaryNode {
     }
 
     public getOperationName(): string {
-        return "Division";
+        return language().operations.division;
     }
 
     public getOperationSymbol(): string {

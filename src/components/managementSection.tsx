@@ -1,6 +1,6 @@
 import React from "react";
 import {CsvValueSeparator} from "../types/csvSupport";
-import {SupportedLanguage} from "../types/supportedLanguage";
+import {allSupportedLanguages, LanguageDef, SupportedLanguage} from "../language/language";
 import "./css/managementSection.css"
 import {getSamples} from "../project/samples";
 import {Project} from "../project/project";
@@ -20,7 +20,7 @@ interface ManagementSectionProps {
     // current selected value separator in csv files
     csvValueSeparator: CsvValueSeparator,
     // current selected language of the application
-    language: SupportedLanguage,
+    language: LanguageDef,
     // current selected null values support
     nullValuesSupport: boolean,
     // true if dark theme should be applied
@@ -53,20 +53,22 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
     }
 
     render() {
+        const lang = this.props.language.managementSection;
+
         const createBatchButton = () => {
-            return (<button onClick={this.props.onBatch}>Batch</button>);
+            return (<button onClick={this.props.onBatch}>{lang.batchButton}</button>);
         }
         const createLoadProjectButton = () => {
-            return (<button onClick={this.props.onLoadProject} >Load</button>);
+            return (<button onClick={this.props.onLoadProject} >{lang.loadButton}</button>);
         }
         const createSaveProjectButton = () => {
-            return (<button onClick={this.props.onSaveProject} >Save</button>);
+            return (<button onClick={this.props.onSaveProject} >{lang.saveButton}</button>);
         }
         const createSettingsButton = () => {
             const settingsMenu = (
                 <ul className="list-menu">
                     <li>
-                        <span>Null values:</span>
+                        <span>{lang.settingsNullValues}:</span>
                         <input
                             type="radio"
                             name="null_values_support"
@@ -74,7 +76,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                             id="null_values_support_allowed"
                             checked={this.props.nullValuesSupport}
                             onChange={() => this.props.onNullValuesSupportChange(true)} />
-                        <label htmlFor="null_values_support_allowed">allowed</label>
+                        <label htmlFor="null_values_support_allowed">{lang.settingsNullValuesAllowed}</label>
                         <input
                             type="radio"
                             name="null_values_support"
@@ -82,10 +84,10 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                             id="null_values_support_forbid"
                             checked={!this.props.nullValuesSupport}
                             onChange={() => this.props.onNullValuesSupportChange(false)} />
-                        <label htmlFor="null_values_support_forbid">forbidden</label>
+                        <label htmlFor="null_values_support_forbid">{lang.settingsNullValuesForbidden}</label>
                     </li>
                     <li>
-                        <span>CSV separator:</span>
+                        <span>{lang.settingsCSVSeparator}:</span>
                         <input
                             type="radio"
                             name="value_separator"
@@ -93,7 +95,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                             id="value_separator_semi"
                             checked={this.props.csvValueSeparator === ";"}
                             onChange={() => this.props.onCsvValueSeparatorChange(";")}/>
-                        <label htmlFor="value_separator_semi">semicolon</label>
+                        <label htmlFor="value_separator_semi">{lang.settingsCSVSeparatorSemicolon}</label>
                         <input
                             type="radio"
                             name="value_separator"
@@ -101,10 +103,10 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                             id="value_separator_comma"
                             checked={this.props.csvValueSeparator === ","}
                             onChange={() => this.props.onCsvValueSeparatorChange(",")}/>
-                        <label htmlFor="value_separator_comma">comma</label>
+                        <label htmlFor="value_separator_comma">{lang.settingsCSVSeparatorComma}</label>
                     </li>
                     <li>
-                        <span>Theme:</span>
+                        <span>{lang.settingsTheme}:</span>
                         <input
                             type="radio"
                             name="dark_mode"
@@ -112,7 +114,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                             id="dark_mode_on"
                             checked={!this.props.darkTheme}
                             onChange={() => this.props.onDarkModeChange(false)} />
-                        <label htmlFor="dark_mode_on">light</label>
+                        <label htmlFor="dark_mode_on">{lang.settingsThemeLight}</label>
                         <input
                             type="radio"
                             name="dark_mode"
@@ -120,28 +122,41 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                             id="dark_mode_off"
                             checked={this.props.darkTheme}
                             onChange={() => this.props.onDarkModeChange(true)} />
-                        <label htmlFor="dark_mode_off">dark</label>
+                        <label htmlFor="dark_mode_off">{lang.settingsThemeDark}</label>
+                    </li>
+                    <li>
+                        <span>{lang.settingsLanguage}:</span>
+                        {allSupportedLanguages.map(lang => {
+                            return (<>
+                                <input
+                                    type="radio"
+                                    name="language"
+                                    value={lang}
+                                    id={"language_" + lang}
+                                    checked={this.props.language.abbr === lang}
+                                    onChange={() => this.props.onLanguageChange(lang)} />
+                                <label htmlFor={"language_" + lang}>{lang}</label>
+                            </>)
+                        })}
                     </li>
                 </ul>
             );
-            return (<div className={"button-like"}>Settings{settingsMenu}</div>);
+            return (<div className={"button-like"}>{lang.settingsButton}{settingsMenu}</div>);
         }
         const createSamplesButton = () => {
-            const settingsMenu = (
+            const samplesMenu = (
             <ul className="list-menu">
-                {"Prepared sample projects"}
+                {lang.samplesMenuTitle}
                 {getSamples().map((sample, i) => {
                     return (
                         <li key={i}>
-                            {"- "}
-                            <button onClick={() => this.props.onLoadSample(sample.project)}
-                            >{sample.name}</button>
+                            <button onClick={() => this.props.onLoadSample(sample.project)}>{sample.name}</button>
                         </li>
                     );
                 })}
             </ul>
             );
-            return (<div className={"button-like"} >Samples{settingsMenu}</div>);
+            return (<div className={"button-like"} >{lang.samplesButton}{samplesMenu}</div>);
         }
         const createAboutButton = () => {
             return (
@@ -149,7 +164,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                     target="_blank"
                     rel="noreferrer"
                     className={"button-like"}
-                >About</a>
+                >{lang.aboutButton}</a>
             );
         }
 

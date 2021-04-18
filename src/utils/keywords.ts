@@ -10,7 +10,7 @@ const forbiddenColumnNames: string[] = ["null", "true", "false", ""];
 
 /**
  * Reserved keywords which cannot be used for relation names. They are:
- * - First characters of outer joins: F, L, R, f, l, r
+ * - First characters of outer joins: F, L, R
  * - Empty string: ""
  */
 const forbiddenRelationNames: string[] = ["F", "L", "R", ""];

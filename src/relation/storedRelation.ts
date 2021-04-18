@@ -4,6 +4,7 @@ import {NNToSMap} from "../types/nnToSMap";
 import Relation from "./relation";
 import Row from "./row";
 import {isForbiddenColumnName} from "../utils/keywords";
+import {language} from "../language/language";
 
 /**
  * Plain object representation of the stored relation.
@@ -141,7 +142,7 @@ export class StoredRelation {
     /**
      * Checks all possible errors in the relation.
      */
-    private recomputeErrors(): void {
+    public recomputeErrors(): void {
         this.errors.clear();
         this.checkColumnNames();
         for (let c = 0; c < this.columnCount; ++c) {
@@ -153,25 +154,26 @@ export class StoredRelation {
      * Checks whether the column name on given index is valid and not duplicit and updates error map.
      */
     private checkColumnNames(): void {
+        const lang = language().relationErrors;
         for (let columnIndex = 0; columnIndex < this.columnCount; ++columnIndex) {
             const columnName: string = this.columnNames[columnIndex].trim();
             if (columnName === "") {
-                this.errors.set("name", columnIndex, "Column name cannot be empty");
+                this.errors.set("name", columnIndex, lang.emptyColumn);
                 continue;
             }
             const nameCount: number = this.columnNames.reduce((agg, name) => {
                 return (name === columnName) ? (agg + 1) : agg;
             }, 0);
             if (nameCount > 1) {
-                this.errors.set("name", columnIndex, "Duplicit column name");
+                this.errors.set("name", columnIndex, lang.duplicitColumn);
                 continue;
             }
             if (isForbiddenColumnName(columnName)) {
-                this.errors.set("name", columnIndex, "Column name cannot be a keyword");
+                this.errors.set("name", columnIndex, lang.keywordColumn);
                 continue;
             }
             if (!StringUtils.isName(columnName)) {
-                this.errors.set("name", columnIndex, "Invalid characters in column name");
+                this.errors.set("name", columnIndex, lang.invalidColumn);
                 continue;
             }
             this.errors.delete("name", columnIndex);
@@ -182,26 +184,24 @@ export class StoredRelation {
      * Checks whether the row input on given index is valid and updates error map.
      */
     private checkRowInput(columnIndex: number, rowIndex: number): void {
+        const lang = language().relationErrors;
         this.errors.delete(rowIndex, columnIndex);
         const input: string = this.rows[rowIndex][columnIndex].trim();
         // empty input = null
         if (input === "" || input === "null") {
-            if (this.nullValuesSupport) {
-                this.errors.delete(rowIndex, columnIndex);
-            }
-            else {
-                this.errors.set(rowIndex, columnIndex, "Null values are not supported");
+            if (!this.nullValuesSupport) {
+                this.errors.set(rowIndex, columnIndex, lang.unsupportedNull);
             }
         }
         else if (this.columnTypes[columnIndex] === "number") {
             if (!StringUtils.isNumber(input.replace(/\s/g, ""))) {
-                this.errors.set(rowIndex, columnIndex, "Given string is not a number");
+                this.errors.set(rowIndex, columnIndex, lang.invalidNumber);
             }
         }
         else if (this.columnTypes[columnIndex] === "boolean") {
             const lower = input.toLowerCase();
             if (lower !== "true" && lower !== "t" && lower !== "false" && lower !== "f") {
-                this.errors.set(rowIndex, columnIndex, "Given string is not a boolean");
+                this.errors.set(rowIndex, columnIndex, lang.invalidBoolean);
             }
         }
         /* STRING COLUMNS CANNOT BE INVALID */
@@ -448,13 +448,6 @@ export class StoredRelation {
         if (actual) {
             this.revertState = this.toDataObject();
         }
-    }
-
-    /**
-     * Returns true if the relation has saved previous state.
-     */
-    public canRevert(): boolean {
-        return this.revertState !== undefined;
     }
 
     /**

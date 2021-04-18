@@ -3,6 +3,7 @@ import RATreeNode from "./raTreeNode";
 import Relation from "../relation/relation";
 import Row from "../relation/row";
 import ErrorWithTextRange from "../error/errorWithTextRange";
+import {language} from "../language/language";
 
 /**
  * Types of natural join node.
@@ -83,14 +84,15 @@ export default class NaturalJoinNode extends BinaryNode {
     }
 
     public getOperationName(): string {
+        const lang = language().operations;
         if (this.type === NaturalJoinType.leftSemi) {
-            return "Left semijoin";
+            return lang.leftSemiJoin;
         }
         else if (this.type === NaturalJoinType.rightSemi) {
-            return "Right semijoin";
+            return lang.rightSemiJoin;
         }
         else {
-            return "Natural join";
+            return lang.naturalJoin;
         }
     }
 

@@ -6,9 +6,10 @@ import {ColumnContent, SupportedColumnType} from "../relation/columnType";
 import {VETreeNode} from "../vetree/veTreeNode";
 import {IndexedString} from "../types/indexedString";
 import ValueParser from "../expression/valueParser";
-import {ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
+import {ErrorFactory} from "../error/errorFactory";
 import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {isInRangeAndNotInQuotes} from "./raTreeTools";
+import {language} from "../language/language";
 
 /**
  * Types of theta join node.
@@ -63,7 +64,7 @@ export default class ThetaJoinNode extends BinaryNode {
 
         leftSource.getColumnNames().forEach(leftColumn => {
             if (rightSource.hasColumn(leftColumn)) {
-                throw ErrorFactory.semanticError(SemanticErrorCodes.binaryNode_eval_commonColumnsInSources, this.stringRange,
+                throw ErrorFactory.semanticError(language().semanticErrors.binaryNode_commonColumns, this.stringRange,
                     this.getOperationName().toLowerCase(), leftColumn);
             }
         });
@@ -87,7 +88,7 @@ export default class ThetaJoinNode extends BinaryNode {
                 // checks whether the combined row from both relations' columns satisfies the condition
                 let booleanResult: { value: ColumnContent, type: SupportedColumnType | "null" } = boolExpr.eval(testRow);
                 if (booleanResult.type !== "boolean") {
-                    throw ErrorFactory.syntaxError(SyntaxErrorCodes.thetaSemiJoinNode_eval_resultNotBoolean,
+                    throw ErrorFactory.syntaxError(language().syntaxErrors.thetaJoinNode_resultNotBoolean,
                         this.stringRange, this.condition.replace(/\s+/g, " "), booleanResult.type);
                 }
                 if (booleanResult.value) {
@@ -139,13 +140,13 @@ export default class ThetaJoinNode extends BinaryNode {
             }
         });
         if (commonColumns.length > 0 && this.stringRange !== undefined) {
-            errors.push(ErrorFactory.semanticError(SemanticErrorCodes.binaryNode_eval_commonColumnsInSources,
+            errors.push(ErrorFactory.semanticError(language().semanticErrors.binaryNode_commonColumns,
                 {start: this.stringRange.start, end: this.stringRange.start},   // highlight only opening bracket
                 this.getOperationName().toLowerCase(), commonColumns.join('", "')));
         }
         // checks empty condition input
         if (this.condition.toString().slice(1, -1).trim().length  === 0) {
-            errors.push(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_parseTokens_emptyInput, this.stringRange));
+            errors.push(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_emptyInput, this.stringRange));
         }
         else {
             errors.push(...ValueParser.fakeParse(this.condition.slice(1, -1), this.nullValuesSupport, sourceColumns));
@@ -158,14 +159,15 @@ export default class ThetaJoinNode extends BinaryNode {
     }
 
     public getOperationName(): string {
+        const lang = language().operations;
         if (this.type === ThetaJoinType.left) {
-            return "Left theta semijoin";
+            return lang.leftThetaSemiJoin;
         }
         else if (this.type === ThetaJoinType.right) {
-            return "Right theta semijoin";
+            return lang.rightThetaSemiJoin;
         }
         else {
-            return "Theta join";
+            return lang.thetaJoin;
         }
     }
 

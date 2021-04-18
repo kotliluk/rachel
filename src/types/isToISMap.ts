@@ -6,14 +6,12 @@ interface KeyValue {
 }
 
 /**
- * Wrapper of JavaScript Map object to provide usage of object (string | IndexedString) as a key for (string |
- * IndexedString) values.
- * Keys "IndexedString: something" and "string: something" are equal for this map.
+ * Wrapper of JavaScript Map object to provide usage of object IndexedString as a key for IndexedString values.
  */
 export class ISToISMap {
     private map: Map<string, KeyValue> = new Map<string, KeyValue>();
 
-    public get(key: string | IndexedString): string | IndexedString | undefined {
+    public get(key: string | IndexedString): IndexedString | undefined {
         const keyValue = this.map.get(key.toString());
         return keyValue === undefined ? undefined : keyValue.value;
     }

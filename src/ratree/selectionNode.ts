@@ -5,9 +5,10 @@ import {VETreeNode} from "../vetree/veTreeNode";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
 import {IndexedString} from "../types/indexedString";
 import ValueParser from "../expression/valueParser";
-import {ErrorFactory, SyntaxErrorCodes} from "../error/errorFactory";
+import {ErrorFactory} from "../error/errorFactory";
 import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {isInRangeAndNotInQuotes} from "./raTreeTools";
+import {language} from "../language/language";
 
 /**
  * Selection node of the relational algebra syntactic tree.
@@ -55,7 +56,7 @@ export default class SelectionNode extends UnaryNode {
         source.getRows().forEach(row => {
             let bool: { value: ColumnContent, type: SupportedColumnType | "null" } = boolExpr.eval(row);
             if (bool.type !== "boolean") {
-                throw ErrorFactory.syntaxError(SyntaxErrorCodes.selectionNode_eval_resultNotBoolean,
+                throw ErrorFactory.syntaxError(language().syntaxErrors.selectionNode_resultNotBoolean,
                     this.stringRange, this.selection.replace(/\s+/g, " "), bool.type);
             }
             if (bool.value) {
@@ -83,7 +84,7 @@ export default class SelectionNode extends UnaryNode {
         }
         // checks empty selection input
         if (this.selection.toString().slice(1, -1).trim().length  === 0) {
-            errors.push(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_parseTokens_emptyInput, this.stringRange));
+            errors.push(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_emptyInput, this.stringRange));
         }
         // adds errors from current expression
         else {
@@ -98,7 +99,7 @@ export default class SelectionNode extends UnaryNode {
     }
 
     public getOperationName(): string {
-        return "Selection";
+        return language().operations.selection;
     }
 
     public getOperationSymbol(): string {

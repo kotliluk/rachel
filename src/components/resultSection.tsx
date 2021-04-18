@@ -8,10 +8,11 @@ import RATreeNode from "../ratree/raTreeNode";
 import {CsvValueSeparator} from "../types/csvSupport";
 import {evalTreeSVGId, EvaluationTree} from "./evaluationTree";
 import {depthSearch} from "../ratree/raTreeTools";
-import {CodeErrorCodes, ErrorFactory} from "../error/errorFactory";
+import {ErrorFactory} from "../error/errorFactory";
 import {RelationStoreManager} from "../relation/relationStoreManager";
 import {StoredRelation} from "../relation/storedRelation";
 import "./css/resultSection.css"
+import {language, LanguageDef} from "../language/language";
 
 interface ResultSectionProps {
     // the root of the current evaluation tree to display
@@ -29,6 +30,8 @@ interface ResultSectionProps {
     csvValueSeparator: CsvValueSeparator
     // true if dark theme should be applied
     darkTheme: boolean,
+    // current application language
+    language: LanguageDef
 }
 
 interface ResultSectionState {
@@ -66,7 +69,7 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
         if (currentNode === null) {
             currentNode = depthSearch(this.props.evaluationTreeRoot, 0);
             if (currentNode === null) {
-                this.props.onUnexpectedError(ErrorFactory.codeError(CodeErrorCodes.resultSection_getCurrentRelation_nodeIndexNotFound));
+                this.props.onUnexpectedError(ErrorFactory.codeError(language().codeErrors.resultSection_nodeIndexNotFound));
                 return null;
             }
         }
@@ -75,7 +78,7 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
         }
         catch (err) {
             // errors should be handled in expression section
-            this.props.onUnexpectedError(ErrorFactory.codeError(CodeErrorCodes.resultSection_getCurrentRelation_evalError, err.message));
+            this.props.onUnexpectedError(ErrorFactory.codeError(language().codeErrors.resultSection_evalError, err.message));
             return null;
         }
     }
@@ -106,7 +109,7 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
      */
     private exportRelation = (): void => {
         if (this.getCurrentRelation() === null) {
-            this.props.onUnexpectedError(ErrorFactory.codeError(CodeErrorCodes.resultSection_saveResultRelation_nullRelationToSave));
+            this.props.onUnexpectedError(ErrorFactory.codeError(language().codeErrors.resultSection_nullRelationToSave));
             return;
         }
         try {
@@ -124,7 +127,9 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
      */
     private addRelation = (): void => {
         if (this.getCurrentRelation() === null) {
-            this.props.onUnexpectedError(ErrorFactory.codeError(CodeErrorCodes.resultSection_handleAddRelation_nullRelationToAdd));
+            this.props.onUnexpectedError(
+                ErrorFactory.codeError(language().codeErrors.resultSection_nullRelationToAdd)
+            );
             return;
         }
         // @ts-ignore
@@ -132,11 +137,14 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
     }
 
     render() {
+        const relation = this.getCurrentRelation();
         // does not show null result
-        if (this.getCurrentRelation() === null) {
+        if (relation === null) {
             return null;
         }
-        const relationType: string = this.state.selectedIndex === 0 ? "Result" : "Intermediate"
+        const lang = this.props.language.resultSection;
+
+        const relationType: string = this.state.selectedIndex === 0 ? lang.resultRelationTitle : lang.intermediateRelationTitle;
         const selectedNode: RATreeNode | null = depthSearch(this.props.evaluationTreeRoot, this.state.selectedIndex);
         const tableTitle: string | null = selectedNode === null ? null : selectedNode.printInLine();
 
@@ -145,18 +153,18 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
                 ref={this.sectionRef}
                 className="page-section result-section">
                 <header>
-                    <h2>Result</h2>
+                    <h2>{lang.resultSectionHeader}</h2>
                     <TooltipButton
-                        text="Export"
+                        text={lang.exportEvalTreeButton}
                         onClick={this.exportEvalTreeAsPng}
                         className={""}
-                        tooltip={"Saves the evaluation tree as png"}
+                        tooltip={lang.exportEvalTreeButtonTooltip}
                         tooltipClassName={"tooltip"}
                     />
                 </header>
 
                 <p className="upper-p">
-                    <strong>{'Evaluation tree of ' + this.props.evaluationTreeRoot.printInLine() + ':'}</strong>
+                    <strong>{lang.evalTreeTitle + ' ' + this.props.evaluationTreeRoot.printInLine() + ':'}</strong>
                 </p>
 
                 <EvaluationTree
@@ -166,28 +174,26 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
                     darkTheme={this.props.darkTheme}
                 />
 
-                <p className="lower-p"><strong>{relationType} relation {tableTitle}:</strong></p>
+                <p className="lower-p"><strong>{relationType} {tableTitle}:</strong></p>
 
                 <menu className="page-section-tab-menu">
                     <TooltipButton
-                        text="Add"
+                        text={lang.addButton}
                         onClick={this.addRelation}
                         className={""}
-                        tooltip={"Adds given relation to stored ones"}
+                        tooltip={lang.addButtonTooltip}
                         tooltipClassName={"tooltip"}
                     />
                     <TooltipButton
-                        text="Export"
+                        text={lang.exportRelationButton}
                         onClick={this.exportRelation}
                         className={""}
-                        tooltip={"Saves given relation to a file"}
+                        tooltip={lang.exportRelationButtonTooltip}
                         tooltipClassName={"tooltip"}
                     />
                 </menu>
 
-                <ResultRelationTable
-                    relation={this.getCurrentRelation() as Relation}
-                />
+                <ResultRelationTable relation={relation} />
             </section>
         );
     }

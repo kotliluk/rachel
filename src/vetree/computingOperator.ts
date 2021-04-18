@@ -1,7 +1,8 @@
 import Row from "../relation/row";
 import {VETreeNode} from "./veTreeNode";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
-import {ErrorFactory, SyntaxErrorCodes} from "../error/errorFactory";
+import {ErrorFactory} from "../error/errorFactory";
+import {language} from "../language/language";
 
 /**
  * Types of ComputingOperator class.
@@ -80,7 +81,7 @@ export class ComputingOperator extends VETreeNode {
         const rightResult: { value: ColumnContent, type: SupportedColumnType | "null" } = this.right.eval(source);
 
         if (leftResult.type !== "number" || rightResult.type !== "number") {
-            throw ErrorFactory.syntaxError(SyntaxErrorCodes.computingOperator_eval_inputTypesNotNumbers, this.range,
+            throw ErrorFactory.syntaxError(language().syntaxErrors.computingOperator_inputTypesNotNumbers, this.range,
                 this.type, leftResult.type, rightResult.type);
         }
 

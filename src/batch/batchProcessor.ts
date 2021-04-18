@@ -78,9 +78,6 @@ export class BatchProcessor {
              * Downloads created reports.
              */
             const downloadReports = () => {
-                if (reports.length === 0) {
-                    MessageBox.message("Batch finished: " + processed + " files processed, " + skipped + " skipped.");
-                }
                 const zip: JSZip = JSZip();
                 reports.forEach(report => {
                     zip.file(report.name, report.text);
@@ -90,7 +87,7 @@ export class BatchProcessor {
                     console.log("Batch finished: " + processed + " files processed, " + skipped + " skipped.");
                     MessageBox.message("Batch finished: " + processed + " files processed, " + skipped + " skipped.");
                 }).catch(err => {
-                    MessageBox.error("Results saving error: " + err.message);
+                    MessageBox.error("Batch results saving error: " + err.message);
                 });
                 console.timeEnd("Batch duration");
             }

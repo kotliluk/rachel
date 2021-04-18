@@ -1,8 +1,9 @@
 import Row from "../relation/row";
 import {VETreeNode} from "./veTreeNode";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
-import {ErrorFactory, SyntaxErrorCodes} from "../error/errorFactory";
+import {ErrorFactory} from "../error/errorFactory";
 import {IndexedString} from "../types/indexedString";
+import {language} from "../language/language";
 
 /**
  * Types of LogicalOperator class.
@@ -66,7 +67,7 @@ export class LogicalOperator extends VETreeNode {
 
         const leftResult: { value: ColumnContent, type: SupportedColumnType | "null" } = this.left.eval(source);
         if (leftResult.type !== "boolean") {
-            throw ErrorFactory.syntaxError(SyntaxErrorCodes.logicalOperator_eval_leftInputNotBoolean,
+            throw ErrorFactory.syntaxError(language().syntaxErrors.logicalOperator_leftInputNotBoolean,
                 this.operator.getRange(), this.operator.toString(), leftResult.type);
         }
 
@@ -80,7 +81,7 @@ export class LogicalOperator extends VETreeNode {
             // @ts-ignore (in and/or operations right subtree must exist)
             const rightResult: { value: ColumnContent, type: SupportedColumnType | "null" } = this.right.eval(source);
             if (rightResult.type !== "boolean") {
-                throw ErrorFactory.syntaxError(SyntaxErrorCodes.logicalOperator_eval_rightInputNotBoolean,
+                throw ErrorFactory.syntaxError(language().syntaxErrors.logicalOperator_rightInputNotBoolean,
                     this.operator.getRange(), this.operator.toString(), rightResult.type);
             }
 

@@ -1,6 +1,7 @@
 import {ColumnContent, SupportedColumnType} from "./columnType";
 import {isEqual} from "lodash";
-import {CodeErrorCodes, ErrorFactory} from "../error/errorFactory";
+import {ErrorFactory} from "../error/errorFactory";
+import {language} from "../language/language";
 
 /**
  * Row stores a set of columns' values in a relation.
@@ -127,7 +128,7 @@ export default class Row {
             const type = this.types.get(column);
             // should be handled before call
             if (value === undefined || type === undefined) {
-                throw ErrorFactory.codeError(CodeErrorCodes.row_getOrderedValues_absentColumn, column, [...this.types.values()].join(', '));
+                throw ErrorFactory.codeError(language().codeErrors.row_absentColumn, column, [...this.types.values()].join(', '));
             }
             if (type === "string") {
                 const str = String(value).replace(/\\"/g, '"').replace(/\\\\/g, '\\');

@@ -5,10 +5,11 @@ import Relation from "../relation/relation";
 import {SupportedColumnType} from "../relation/columnType";
 import Row from "../relation/row";
 import {IndexedString} from "../types/indexedString";
-import {ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
+import {ErrorFactory} from "../error/errorFactory";
 import {isForbiddenColumnName} from "../utils/keywords";
 import ErrorWithTextRange from "../error/errorWithTextRange";
 import {ISToISMap} from "../types/isToISMap";
+import {language} from "../language/language";
 
 /**
  * Renaming node of the relational algebra syntactic tree.
@@ -51,22 +52,22 @@ export default class RenameNode extends UnaryNode {
                 if (part.isEmpty() && this.stringRange !== undefined) {
                     range = {start: this.stringRange.start, end: this.stringRange.start};
                 }
-                handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.renameNode_parseChanges_missingArrow, range));
+                handleError(ErrorFactory.syntaxError(language().syntaxErrors.renameNode_missingArrow, range));
                 beforeError = true;
                 afterError = true;
             }
             if (!beforeError && ret.has(words[0])) {
-                handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.renameNode_parseChanges_multipleRenameOfTheColumn,
+                handleError(ErrorFactory.syntaxError(language().syntaxErrors.renameNode_multipleRenameOfTheColumn,
                     words[0].getRange(), words[0].toString()));
                 beforeError = true;
             }
             if (!afterError && !StringUtils.isName(words[1].toString())) {
-                handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.renameNode_parseChanges_invalidNewName,
+                handleError(ErrorFactory.syntaxError(language().syntaxErrors.renameNode_invalidNewName,
                     words[1].getRange(), words[1].toString()));
                 afterError = true;
             }
             if (!afterError && isForbiddenColumnName(words[1])) {
-                handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.renameNode_parseChanges_keywordNewName,
+                handleError(ErrorFactory.syntaxError(language().syntaxErrors.renameNode_keywordNewName,
                     words[1].getRange(), words[1].toString()));
                 afterError = true;
             }
@@ -100,7 +101,7 @@ export default class RenameNode extends UnaryNode {
         // check whether all columns to rename are in source relation
         changes.forEach((value, key) => {
              if (source.getColumnNames().indexOf(key.toString()) === -1) {
-                 throw ErrorFactory.semanticError(SemanticErrorCodes.renameNode_eval_absentOriginalColumn,
+                 throw ErrorFactory.semanticError(language().semanticErrors.renameNode_absentOriginalColumn,
                      key.getRange(), key.toString());
              }
         });
@@ -120,8 +121,9 @@ export default class RenameNode extends UnaryNode {
         toChange.forEach((type, name) => {
             // @ts-ignore (changes must contain 'name' key now)
             if (!result.addColumn(changes.get(name).toString(), type)) {
-                throw ErrorFactory.semanticError(SemanticErrorCodes.renameNode_eval_changeToDuplicitName,
-                    this.rename.getRange(), changes.get(name) as string);
+                const newName = changes.get(name);
+                throw ErrorFactory.semanticError(language().semanticErrors.renameNode_changeToDuplicit,
+                    this.rename.getRange(), newName ? newName.toString() : "");
             }
         });
         // rename of relation rows
@@ -187,11 +189,11 @@ export default class RenameNode extends UnaryNode {
             }
         });
         absent.forEach(column => {
-            errors.push(ErrorFactory.semanticError(SemanticErrorCodes.renameNode_eval_absentOriginalColumn,
+            errors.push(ErrorFactory.semanticError(language().semanticErrors.renameNode_absentOriginalColumn,
                 column.getRange(), column.toString()));
         });
         duplicit.forEach(column => {
-            errors.push(ErrorFactory.semanticError(SemanticErrorCodes.renameNode_eval_changeToDuplicitName,
+            errors.push(ErrorFactory.semanticError(language().semanticErrors.renameNode_changeToDuplicit,
                 column.getRange(), column.toString()));
         });
         return {result, whispers, errors};
@@ -202,7 +204,7 @@ export default class RenameNode extends UnaryNode {
     }
 
     public getOperationName(): string {
-        return "Rename";
+        return language().operations.rename;
     }
 
     public getOperationSymbol(): string {

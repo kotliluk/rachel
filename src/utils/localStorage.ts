@@ -1,8 +1,8 @@
 import {CsvValueSeparator} from "../types/csvSupport";
-import {isSupportedLanguage, SupportedLanguage} from "../types/supportedLanguage";
+import {isSupportedLanguage, SupportedLanguage} from "../language/language";
 
 const defaultCsvValueSeparator: CsvValueSeparator = ";";
-const defaultLanguage: SupportedLanguage = "ENG";
+const defaultLanguage: SupportedLanguage = "EN";
 const defaultDarkMode: string = "false";
 
 /**

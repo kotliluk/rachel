@@ -25,8 +25,9 @@ import {VETreeNode} from "../vetree/veTreeNode";
 import {IndexedString} from "../types/indexedString";
 import IndexedStringUtils from "../utils/indexedStringUtils";
 import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
-import {CodeErrorCodes, ErrorFactory, SemanticErrorCodes, SyntaxErrorCodes} from "../error/errorFactory";
+import {ErrorFactory} from "../error/errorFactory";
 import RASyntaxError from "../error/raSyntaxError";
+import {language} from "../language/language";
 
 /**
  * StringUtils of string infix boolean and algebraic expression to value-evaluating tree.
@@ -74,7 +75,7 @@ export default class ValueParser {
         let tokens: ValueToken[] = ValueParser.parseTokens(str, nullValuesSupport, false, errors);
         tokens.forEach(token => {
             if (token instanceof ReferenceToken && columns.indexOf(token.str.toString()) === -1) {
-                errors.push(ErrorFactory.semanticError(SemanticErrorCodes.referenceValue_eval_absentColumn,
+                errors.push(ErrorFactory.semanticError(language().semanticErrors.referenceValue_absentColumn,
                     token.str.getRange(), token.str.toString(), columns.join(', ')));
             }
         })
@@ -105,7 +106,7 @@ export default class ValueParser {
         }
         let rest: IndexedString = str.trim();
         if (rest.isEmpty()) {
-            handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_parseTokens_emptyInput, undefined));
+            handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_emptyInput, undefined));
         }
         const tokens: ValueToken[] = [];
         while (!rest.isEmpty()) {
@@ -208,7 +209,7 @@ export default class ValueParser {
             }
             else if (rest.startsWith('null')) {
                 if (!nullValuesSupport) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_parseTokens_unsupportedNull,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_unsupportedNull,
                         rest.slice(0, 4).getRange()));
                 }
                 tokens.push(new LiteralToken(rest.slice(0, 4), null, "null"));
@@ -231,7 +232,7 @@ export default class ValueParser {
             // UNEXPECTED PART
             else {
                 const split = IndexedStringUtils.nextNonWhitespacePart(rest);
-                handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_parseTokens_unexpectedPart,
+                handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_unexpectedPart,
                     split.first.getRange(), split.first.toString()));
                 rest = rest.slice(split.first.length());
             }
@@ -262,13 +263,13 @@ export default class ValueParser {
         // checks start of an array: it must start with '(', literal, reference or '!'
         // it cannot start with binary operator or ')'
         if ((tokens[0] instanceof ClosingParentheses) || ((tokens[0] instanceof OperatorToken) && !(tokens[0] instanceof LogicalNotToken))) {
-            handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_invalidStart,
+            handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_invalidStart,
                 tokens[0].getRange(), tokens[0].str.toString()));
         }
         // checks end of an array: it must end with ')', literal or reference
         // it cannot end with operator or '('
         if ((tokens[tokens.length - 1] instanceof OpeningParentheses) || (tokens[tokens.length - 1] instanceof OperatorToken)) {
-            handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_invalidEnd,
+            handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_invalidEnd,
                 tokens[tokens.length - 1].getRange(), tokens[tokens.length - 1].str.toString()));
         }
         // checks adjacent pairs of tokens
@@ -282,15 +283,15 @@ export default class ValueParser {
             // invalid predecessors: literal, reference or ')'
             if (token2 instanceof LiteralToken) {
                 if (token1 instanceof LiteralToken) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_literalAfterLiteral,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_literalAfterLiteral,
                         token2.getRange(), token2.str.toString(), token1.str.toString()));
                 }
                 if (token1 instanceof ReferenceToken) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_literalAfterReference,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_literalAfterReference,
                         token2.getRange(), token2.str.toString(), token1.str.toString()));
                 }
                 if (token1 instanceof ClosingParentheses) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_literalAfterClosing,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_literalAfterClosing,
                         token2.getRange(), token2.str.toString()));
                 }
             }
@@ -298,15 +299,15 @@ export default class ValueParser {
             // invalid predecessors: literal, reference or ')'
             else if (token2 instanceof ReferenceToken) {
                 if (token1 instanceof LiteralToken) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_referenceAfterLiteral,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_referenceAfterLiteral,
                         token2.getRange(), token2.str.toString(), token1.str.toString()));
                 }
                 if (token1 instanceof ReferenceToken) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_referenceAfterReference,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_referenceAfterReference,
                         token2.getRange(), token2.str.toString(), token1.str.toString()));
                 }
                 if (token1 instanceof ClosingParentheses) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_referenceAfterClosing,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_referenceAfterClosing,
                         token2.getRange(), token2.str.toString()));
                 }
             }
@@ -314,15 +315,15 @@ export default class ValueParser {
             // invalid predecessors: literal, reference or ')'
             else if (token2 instanceof LogicalNotToken) {
                 if (token1 instanceof LiteralToken) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_notAfterLiteral,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_notAfterLiteral,
                         token2.getRange(), token2.str.toString(), token1.str.toString()));
                 }
                 if (token1 instanceof ReferenceToken) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_notAfterReference,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_notAfterReference,
                         token2.getRange(), token2.str.toString(), token1.str.toString()));
                 }
                 if (token1 instanceof ClosingParentheses) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_notAfterClosing,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_notAfterClosing,
                         token2.getRange(), token2.str.toString()));
                 }
             }
@@ -330,11 +331,11 @@ export default class ValueParser {
             // invalid predecessors: operator or '('
             else if (token2 instanceof OperatorToken /* only binary (without LogicalNotToken) */ ) {
                 if (token1 instanceof OperatorToken) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_binaryAfterOperator,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_binaryAfterOperator,
                         token2.getRange(), token2.str.toString(), token1.str.toString()));
                 }
                 if (token1 instanceof OpeningParentheses) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_binaryAfterOpening,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_binaryAfterOpening,
                         token2.getRange(), token2.str.toString()));
                 }
             }
@@ -342,15 +343,15 @@ export default class ValueParser {
             // invalid predecessors: literal, reference or ')'
             else if (token2 instanceof OpeningParentheses) {
                 if (token1 instanceof LiteralToken) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_openingAfterLiteral,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_openingAfterLiteral,
                         token2.getRange(), token1.str.toString()));
                 }
                 if (token1 instanceof ReferenceToken) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_openingAfterReference,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_openingAfterReference,
                         token2.getRange(), token1.str.toString()));
                 }
                 if (token1 instanceof ClosingParentheses) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_openingAfterClosing,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_openingAfterClosing,
                         token2.getRange()));
                 }
             }
@@ -358,11 +359,11 @@ export default class ValueParser {
             // invalid predecessors: operator, '(' or ')'
             else if (token2 instanceof ClosingParentheses) {
                 if (token1 instanceof OperatorToken) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_closingAfterOperator,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_closingAfterOperator,
                         token2.getRange(), token1.str.toString()));
                 }
                 if (token1 instanceof OpeningParentheses) {
-                    handleError(ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_closingAfterOpening,
+                    handleError(ErrorFactory.syntaxError(language().syntaxErrors.valueParser_closingAfterOpening,
                         token2.getRange()));
                 }
             }
@@ -432,7 +433,7 @@ export default class ValueParser {
             else if (token instanceof ClosingParentheses) {
                 while (true) {
                     if (operatorsStack.length === 0) {
-                        throw ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_toRPN_missingOpeningParenthesis,
+                        throw ErrorFactory.syntaxError(language().syntaxErrors.valueParser_missingOpeningParenthesis,
                             undefined);
                     }
                     if (operatorsStack[operatorsStack.length - 1] instanceof OpeningParentheses) {
@@ -448,7 +449,7 @@ export default class ValueParser {
             // @ts-ignore (token must be present)
             const curToken: ValueToken = operatorsStack.pop();
             if (curToken instanceof OpeningParentheses) {
-                throw ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_toRPN_missingClosingParenthesis,
+                throw ErrorFactory.syntaxError(language().syntaxErrors.valueParser_missingClosingParenthesis,
                     undefined);
             }
             else {
@@ -469,7 +470,7 @@ export default class ValueParser {
         const ret: VETreeNode = this.rpnToVETreeRecursive(tokens);
         // not all tokens were used
         if (tokens.length > 0) {
-            throw ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_invalidExpression, undefined);
+            throw ErrorFactory.syntaxError(language().syntaxErrors.valueParser_invalidExpression, undefined);
         }
         return ret;
     }
@@ -482,7 +483,7 @@ export default class ValueParser {
      */
     public static rpnToVETreeRecursive(tokens: ValueToken[]): VETreeNode {
         if (tokens.length === 0) {
-            throw ErrorFactory.syntaxError(SyntaxErrorCodes.valueParser_rpnToVETree_invalidExpression, undefined);
+            throw ErrorFactory.syntaxError(language().syntaxErrors.valueParser_invalidExpression, undefined);
         }
         // @ts-ignore (there must be a token)
         const token: ValueToken = tokens.pop();
@@ -532,6 +533,6 @@ export default class ValueParser {
             return ComputingOperator.divide(left, right, token.getRange());
         }
         // should never happen
-        throw ErrorFactory.codeError(CodeErrorCodes.valueParser_rpnToVETreeRecursive_unexpectedToken, JSON.stringify(token));
+        throw ErrorFactory.codeError(language().codeErrors.valueParser_unexpectedToken, JSON.stringify(token));
     }
 }

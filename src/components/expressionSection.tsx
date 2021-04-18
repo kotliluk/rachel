@@ -12,6 +12,7 @@ import {TextInput} from "./textInput";
 import ErrorWithTextRange from "../error/errorWithTextRange";
 import RATreeNode from "../ratree/raTreeNode";
 import {MessageBox} from "./messageBox";
+import {LanguageDef} from "../language/language";
 
 interface ExpressionSectionProps {
     // available expressions
@@ -43,7 +44,9 @@ interface ExpressionSectionProps {
     // whether to support null values
     nullValuesSupport: boolean,
     // true if dark theme should be applied
-    darkTheme: boolean
+    darkTheme: boolean,
+    // current application language
+    language: LanguageDef
 }
 
 interface ExpressionSectionState {
@@ -53,56 +56,10 @@ interface ExpressionSectionState {
     cursorIndex: number
 }
 
-interface OpButtonProps {
-    // key for React DOM
-    key: string,
-    // characters to be added on click
-    char: string,
-    // text to display on the button
-    text: string,
-    // tooltip ti show on mouse move
-    tooltip: string,
-    // shift to left of the cursor after adding the characters
-    shift: number
-}
-
 /**
  * Section to edit, manage, and eval relational algebra expressions.
  */
 export class ExpressionSection extends React.Component<ExpressionSectionProps, ExpressionSectionState> {
-
-    private readonly unaryButtons: Array<OpButtonProps> = [
-        {key: 'unary_a', char: '()',        text: '()', tooltip: 'Selection',   shift: 1},
-        {key: 'unary_b', char: '[]',        text: '[]', tooltip: 'Projection',  shift: 1},
-        {key: 'unary_c', char: '< -> >',    text: '<>', tooltip: 'Rename',      shift: 5}
-    ];
-    private readonly setOperatorsButtons: Array<OpButtonProps> = [
-        {key: 'set_a', char: '\u222a',  text: '\u222a', tooltip: 'Union',         shift: 0},
-        {key: 'set_b', char: '\u2229',  text: '\u2229', tooltip: 'Intersection',  shift: 0},
-        {key: 'set_c', char: '\\',      text: '\\',     tooltip: 'Difference',    shift: 0},
-    ];
-    private readonly innerJoinsButtons: Array<OpButtonProps> = [
-        {key: 'inner_a', char: '*',       text: '*',      tooltip: 'Natural join',            shift: 0},
-        {key: 'inner_b', char: '\u2a2f',  text: '\u2a2f', tooltip: 'Cartesian product',       shift: 0},
-        {key: 'inner_c', char: '<*',      text: '<*',     tooltip: 'Left semijoin',           shift: 0},
-        {key: 'inner_d', char: '*>',      text: '*>',     tooltip: 'Right semijoin',          shift: 0},
-        {key: 'inner_e', char: '\u22b3',  text: '\u22b3', tooltip: 'Left antijoin',           shift: 0},
-        {key: 'inner_f', char: '\u22b2',  text: '\u22b2', tooltip: 'Right antijoin',          shift: 0},
-        {key: 'inner_g', char: '[]',      text: '[]',     tooltip: 'Theta join',              shift: 1},
-        {key: 'inner_h', char: '<]',      text: '<]',     tooltip: 'Left theta semijoin',     shift: 1},
-        {key: 'inner_i', char: '[>',      text: '[>',     tooltip: 'Right theta semijoin',    shift: 1},
-    ];
-    private readonly outerJoinsButtons: Array<OpButtonProps> = [
-        {key: 'outer_a', char: '*F*', text: '*F*', tooltip: 'Full outer join',  shift: 0},
-        {key: 'outer_b', char: '*L*', text: '*L*', tooltip: 'Left outer join',  shift: 0},
-        {key: 'outer_c', char: '*R*', text: '*R*', tooltip: 'Right outer join', shift: 0}
-    ];
-    private readonly divisionButton: Array<OpButtonProps> = [
-        {key: 'division', char: '\u00f7',  text: '\u00f7', tooltip: 'Division', shift: 0}
-    ];
-    private readonly specialButtons: Array<OpButtonProps> = [
-        {key: 'special_a', char: '//',  text: '//', tooltip: 'Comment', shift: 0}
-    ];
 
     // reference to child textarea element
     private readonly textAreaRef: React.RefObject<XTextArea>;
@@ -183,11 +140,11 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
         this.props.onDeleteExpression(this.updateErrors);
     }
 
-    private saveExpressions = (): void => {
+    private exportExpressions = (): void => {
         this.props.onExportExpressions(MessageBox.message);
     }
 
-    private loadExpressions = (): void => {
+    private importExpressions = (): void => {
         this.setState({errors: []});
         this.props.onImportExpressions((msg) => {
             MessageBox.message(msg);
@@ -283,6 +240,9 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
     }
 
     public render() {
+        const lang = this.props.language.expressionSection;
+        const ops = this.props.language.operations;
+
         const createExprMenuButtons = () => {
             return this.props.expressions.map((expr, i) => {
                 const className: string = (this.props.currentExpressionIndex === i ? "button-clicked" : "");
@@ -306,30 +266,25 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
             />);
         }
 
-        /**
-         * Creates buttons for inserting given operators and adds margin after them.
-         */
-        const createOpButtons = (buttonProps: Array<OpButtonProps>) => {
-            return buttonProps.map((prop, i) => {
-                const style = i === buttonProps.length - 1 ? {marginRight: "10px"} : undefined;
-                return (<TooltipButton
-                    key={prop.key}
-                    text={prop.text}
-                    onClick={() => this.addSpecialString(prop.char, prop.shift)}
-                    className={""}
-                    tooltip={prop.tooltip}
-                    tooltipClassName={"tooltip"}
-                    style={style}
-                />);
-            });
+        const createOpButton = (key: string, char: string, text: string, tooltip: string, shift: number, style: React.CSSProperties = {}) => {
+            return (<TooltipButton
+                key={key}
+                text={text}
+                onClick={() => this.addSpecialString(char, shift)}
+                className={""}
+                tooltip={tooltip}
+                tooltipClassName={"tooltip"}
+                style={style}
+            />);
         }
+        const buttonGroupMargin = {marginRight: "10px"};
 
         return (
             <section className="page-section">
                 <header>
-                    <h2>Expressions</h2>
-                    {createButton("Import", this.loadExpressions, "Loads expressions from a file")}
-                    {createButton("Export", this.saveExpressions, "Saves expressions to a file")}
+                    <h2>{lang.expressionSectionHeader}</h2>
+                    {createButton(lang.importButton, this.importExpressions, lang.importButtonTooltip)}
+                    {createButton(lang.exportButton, this.exportExpressions, lang.exportButtonTooltip)}
                 </header>
 
                 <menu className="page-section-tab-menu">
@@ -344,7 +299,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                     ref={this.textAreaRef}
                     id="expression-section-textarea"
                     text={this.getCurExpr().text}
-                    placeholder="Write RA expression here..."
+                    placeholder={lang.expressionTextareaPlaceholder}
                     errors={this.state.errors}
                     whispers={this.state.whispers}
 
@@ -355,33 +310,50 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                 />
 
                 <menu className="expressions-operators-menu">
-                    {createOpButtons(this.unaryButtons)}
-                    {createOpButtons(this.setOperatorsButtons)}
-                    {createOpButtons(this.innerJoinsButtons)}
-                    {this.props.nullValuesSupport ? createOpButtons(this.outerJoinsButtons) : null}
-                    {createOpButtons(this.divisionButton)}
-                    {createOpButtons(this.specialButtons)}
+                    {createOpButton("unary_a", "()", "()", ops.selection, 1)}
+                    {createOpButton("unary_b", "[]", "[]", ops.projection, 1)}
+                    {createOpButton("unary_c", "< -> >", "<>", ops.rename, 5, buttonGroupMargin)}
+
+                    {createOpButton("set_a", "\u222a", "\u222a", ops.union, 0)}
+                    {createOpButton("set_b", "\u2229", "\u2229", ops.intersection, 0)}
+                    {createOpButton("set_c", "\\", "\\", ops.difference, 0, buttonGroupMargin)}
+
+                    {createOpButton("inner_a", "*", "*", ops.naturalJoin, 0)}
+                    {createOpButton("inner_b", "\u2a2f", "\u2a2f", ops.cartesianProduct, 0)}
+                    {createOpButton("inner_c", "<*", "<*", ops.leftSemiJoin, 0)}
+                    {createOpButton("inner_d", "*>", "*>", ops.rightSemiJoin, 0)}
+                    {createOpButton("inner_e", "\u22b3", "\u22b3", ops.leftAntijoin, 0)}
+                    {createOpButton("inner_f", "\u22b2", "\u22b2", ops.rightAntijoin, 0)}
+                    {createOpButton("inner_g", "[]", "[]", ops.thetaJoin, 1)}
+                    {createOpButton("inner_h", "<]", "<]", ops.leftThetaSemiJoin, 1)}
+                    {createOpButton("inner_i", "[>", "[>", ops.rightThetaSemiJoin, 1, buttonGroupMargin)}
+
+                    {this.props.nullValuesSupport && createOpButton("outer_a", "*F*", "*F*", ops.fullOuterJoin, 0)}
+                    {this.props.nullValuesSupport && createOpButton("outer_b", "*L*", "*L*", ops.leftOuterJoin, 0)}
+                    {this.props.nullValuesSupport && createOpButton("outer_c", "*R*", "*R*", ops.rightOuterJoin, 0, buttonGroupMargin)}
+
+                    {createOpButton("division", "\u00f7", "\u00f7", ops.division, 0, buttonGroupMargin)}
+
+                    {createOpButton("comment", "//", "//", lang.comment, 0)}
                 </menu>
 
                 <menu className="page-section-management-menu">
                     <TooltipButton
-                        key="Evaluate"
-                        text="Evaluate"
+                        text={lang.evaluateButton}
                         onClick={this.evalExpr}
                         className={"action-button"}
                         style={{marginRight: "40px"}}
-                        tooltip="Evaluates given RA expression"
+                        tooltip={lang.evaluateButtonTooltip}
                         tooltipClassName={"tooltip"}
                     />
                     <TextInput
-                        label=""
                         value={this.getCurExpr().name}
-                        buttonText="Rename"
+                        buttonText={lang.renameButton}
                         onSubmit={this.handleExprNameChange}
                         forbidden={() => false}
                         id="expression-name-input"
                     />
-                    {createButton("Delete", this.deleteExpression, "Deletes current RA expression")}
+                    {createButton(lang.deleteButton, this.deleteExpression, lang.deleteButtonTooltip)}
                 </menu>
             </section>
         );

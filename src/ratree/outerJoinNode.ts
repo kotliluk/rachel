@@ -3,6 +3,7 @@ import RATreeNode from "./raTreeNode";
 import Relation from "../relation/relation";
 import Row from "../relation/row";
 import ErrorWithTextRange from "../error/errorWithTextRange";
+import {language} from "../language/language";
 
 /**
  * Types of outer join node.
@@ -99,17 +100,16 @@ export default class OuterJoinNode extends BinaryNode {
     }
 
     public getOperationName(): string {
-        let typeStr: string;
+        const lang = language().operations;
         if (this.type === OuterJoinType.left) {
-            typeStr = "Left";
+            return lang.leftOuterJoin;
         }
         else if (this.type === OuterJoinType.right) {
-            typeStr = "Right";
+            return lang.rightOuterJoin;
         }
         else {
-            typeStr = "Full";
+            return lang.fullOuterJoin;
         }
-        return typeStr + " outer join";
     }
 
     public getOperationSymbol(): string {
