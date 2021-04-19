@@ -111,6 +111,7 @@ In the **Settings**, we can set:
 null values in relations and expressions
 - CSV separator - semicolon/comma - used value separator in downloaded CSV files
 - Theme - light/dark - theme of the application
+- Language - language of the application
 
 The **About** button navigates to the application GitHub.
 

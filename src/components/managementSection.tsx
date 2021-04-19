@@ -127,7 +127,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                     <li>
                         <span>{lang.settingsLanguage}:</span>
                         {allSupportedLanguages.map(lang => {
-                            return (<>
+                            return (<div key={lang}>
                                 <input
                                     type="radio"
                                     name="language"
@@ -136,7 +136,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                                     checked={this.props.language.abbr === lang}
                                     onChange={() => this.props.onLanguageChange(lang)} />
                                 <label htmlFor={"language_" + lang}>{lang}</label>
-                            </>)
+                            </div>)
                         })}
                     </li>
                 </ul>

@@ -364,10 +364,7 @@ export class ExprParser {
 
                     if (selectionExpected) {
                         // it fakes the unclosed expression part as a selection operator
-                        // pushes space with valid index and parentheses with NaN index for expected behavior (error
-                        // indexing) in fakeEval in selection/theta join nodes and fakeEval in ValueParser
-                        tokens.push(UnaryOperatorToken.selection(rest.concat(IndexedString.newFromArray([
-                            {char: ' ', index: rest.getNextIndexOrNaN()}, {char: ')', index: NaN}]))));
+                        tokens.push(UnaryOperatorToken.selection(rest.concat(IndexedString.new(')', rest.getNextIndexOrNaN()))));
                     }
                     else {
                         // checks whether the cursor was reached after the opening parentheses
