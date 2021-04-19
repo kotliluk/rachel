@@ -50,7 +50,7 @@ interface RelationsSectionProps {
     // handler of loading all valid relations into the application
     onLoadAllRelations: (onDone: (msg: string) => void) => void,
     // handler of deleting the loaded relations
-    onDeleteLoadedRelations: (onDone: (msg: string) => void) => void,
+    onRemoveLoadedRelations: (onDone: (msg: string) => void) => void,
     // handler of saving the stored relations into the files
     onExportRelations: (onDone: (msg: string) => void) => void,
     // handler of loading new relations from files
@@ -144,17 +144,17 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
     }
 
     /**
-     * Passes the import create new stored relation to the parent.
+     * Passes the create new stored relation call to the parent.
      */
     private newRelation = () => {
         this.props.onNewRelation();
     }
 
     /**
-     * Passes the delete all loaded relations call to the parent.
+     * Passes the remove loaded relations call to the parent.
      */
-    private deleteAllLoadedRelations = () => {
-        this.props.onDeleteLoadedRelations(MessageBox.message);
+    private removeLoadedRelations = () => {
+        this.props.onRemoveLoadedRelations(MessageBox.message);
     }
 
     /**
@@ -193,10 +193,8 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                 key={text}
                 text={text}
                 onClick={onClick}
-                className={""}
                 style={style}
                 tooltip={tooltip}
-                tooltipClassName={"tooltip"}
             />);
         }
 
@@ -216,7 +214,7 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                 <header>
                     <h2>{lang.relationSectionHeader}</h2>
                     {createButton(lang.loadAllButton, this.loadAllRelations, lang.loadAllButtonTooltip)}
-                    {createButton(lang.removeLoadedButton, this.deleteAllLoadedRelations, lang.removeLoadedButtonTooltip)}
+                    {createButton(lang.removeLoadedButton, this.removeLoadedRelations, lang.removeLoadedButtonTooltip)}
                     {createButton(lang.importButton, this.importRelations, lang.importButtonTooltip)}
                     {createButton(lang.exportButton, this.exportRelations, lang.exportButtonTooltip)}
                 </header>
@@ -250,7 +248,6 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                         className={"action-button"}
                         style={{marginRight: "40px"}}
                         tooltip={lang.loadButtonTooltip}
-                        tooltipClassName={"tooltip"}
                     />
                     <TextInput
                         value={this.getCurRel().getName()}

@@ -353,9 +353,9 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
     }
 
     /**
-     * Deletes all relations loaded in the application.
+     * Removes all relations loaded in the application.
      */
-    private handleDeleteLoadedRelations = (onDone: (msg: string) => void): void => {
+    private handleRemoveLoadedRelations = (onDone: (msg: string) => void): void => {
         const lang = this.state.language.userMessages;
         const previous = this.state.loadedRelations.size;
         this.state.loadedRelations.clear();
@@ -609,7 +609,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
                     onRevertRelation={this.handleRevertRelation}
 
                     onLoadAllRelations={this.handleLoadAllRelations}
-                    onDeleteLoadedRelations={this.handleDeleteLoadedRelations}
+                    onRemoveLoadedRelations={this.handleRemoveLoadedRelations}
                     onExportRelations={this.handleExportRelations}
                     onImportRelations={this.handleImportRelations}
 

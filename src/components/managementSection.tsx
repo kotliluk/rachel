@@ -127,7 +127,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                     <li>
                         <span>{lang.settingsLanguage}:</span>
                         {allSupportedLanguages.map(lang => {
-                            return (<div key={lang}>
+                            return (<div key={lang} style={{display: "inline"}}>
                                 <input
                                     type="radio"
                                     name="language"

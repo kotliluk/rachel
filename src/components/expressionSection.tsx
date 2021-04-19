@@ -259,10 +259,8 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                 key={text}
                 text={text}
                 onClick={onClick}
-                className={""}
                 style={style}
                 tooltip={tooltip}
-                tooltipClassName={"tooltip"}
             />);
         }
 
@@ -271,9 +269,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                 key={key}
                 text={text}
                 onClick={() => this.addSpecialString(char, shift)}
-                className={""}
                 tooltip={tooltip}
-                tooltipClassName={"tooltip"}
                 style={style}
             />);
         }
@@ -344,7 +340,6 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                         className={"action-button"}
                         style={{marginRight: "40px"}}
                         tooltip={lang.evaluateButtonTooltip}
-                        tooltipClassName={"tooltip"}
                     />
                     <TextInput
                         value={this.getCurExpr().name}

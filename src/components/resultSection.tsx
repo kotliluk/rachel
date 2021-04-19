@@ -157,9 +157,7 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
                     <TooltipButton
                         text={lang.exportEvalTreeButton}
                         onClick={this.exportEvalTreeAsPng}
-                        className={""}
                         tooltip={lang.exportEvalTreeButtonTooltip}
-                        tooltipClassName={"tooltip"}
                     />
                 </header>
 
@@ -180,16 +178,12 @@ export class ResultSection extends React.Component<ResultSectionProps, ResultSec
                     <TooltipButton
                         text={lang.addButton}
                         onClick={this.addRelation}
-                        className={""}
                         tooltip={lang.addButtonTooltip}
-                        tooltipClassName={"tooltip"}
                     />
                     <TooltipButton
                         text={lang.exportRelationButton}
                         onClick={this.exportRelation}
-                        className={""}
                         tooltip={lang.exportRelationButtonTooltip}
-                        tooltipClassName={"tooltip"}
                     />
                 </menu>
 

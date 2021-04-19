@@ -6,14 +6,14 @@ interface TooltipButtonProps {
     // handler of the button click
     onClick: () => void,
     // css class of the button
-    className: string,
+    className?: string,
     // inline styling for button
     style?: React.CSSProperties,
 
     // text of the tooltip
     tooltip: string,
-    // css class of the tooltip
-    tooltipClassName: string,
+    // css class of the tooltip (it always has default .tooltip class)
+    tooltipClassName?: string,
     // inline styling for tooltip
     tooltipStyle?: React.CSSProperties,
 }
@@ -34,7 +34,7 @@ export class TooltipButton extends React.Component<TooltipButtonProps, TooltipBu
                 style={this.props.style}
                 >{this.props.text}
                 <span
-                    className={this.props.tooltipClassName}
+                    className={"tooltip " + (this.props.tooltipClassName !== undefined ? this.props.tooltipClassName : "")}
                     style={this.props.tooltipStyle}
                     onClick={event => {
                         event.stopPropagation();
