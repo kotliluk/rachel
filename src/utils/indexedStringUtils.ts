@@ -170,49 +170,68 @@ export default class IndexedStringUtils {
     }
 
     /**
-     * Skips all characters until the first found newline '\n' and returns the rest of the string.
-     * NOTE: First two characters of the string are expected to be '//'.
-     *
-     * @param str string to be skipped in
+     * Deletes all line and block comments from the given IndexedString.
+     * If there is unclosed block comment, return the error as well.
+     * Line comment "//comment\n" will be changed to "\n" - new line is kept.
+     * Block comment "/*comment* /" will be changed to " " - it is replaced by a space to ensure splitting of the content around.
      */
-    public static skipLineComment(str: IndexedString): IndexedString {
-        let i = 2;
-        while (i < str.length()) {
-            // ends when finds newline
-            const stop = str.charAt(i) === '\n';
-            ++i;
-            if (stop) {
-                break;
-            }
-        }
-        return str.slice(i);
-    }
+    public static deleteAllComments(str: IndexedString): {str: IndexedString, err: RASyntaxError | undefined} {
+        const chars = str.copy().getChars();
+        // to ignore special characters
+        let inQuotes: boolean = false;
+        let inLineComment: boolean = false;
+        let blockCommentStart: number = -1;
+        let backslashes: number = 0;
 
-    /**
-     * Skips all characters until the first found '* /' and returns the rest of the string. When the ending characters
-     * are not found, throws error.
-     * NOTE: First two characters of the string are expected to be '/*'.
-     *
-     * @param str string to be skipped in
-     */
-    public static skipBlockComment(str: IndexedString): IndexedString {
-        let i = 2;
-        let stop = false;
-        while (i < str.length()) {
-            // ends when finds newline
-            stop = i >= 3 && str.charAt(i) === '/' && str.charAt(i - 1) === '*';
-            ++i;
-            if (stop) {
-                break;
+        for (let i = 0; i < chars.length; ++i) {
+            const curChar = chars[i].char;
+            // found quote if even number of backslashes before
+            if (curChar === '"' && (backslashes % 2) === 0 && !inLineComment && blockCommentStart === -1) {
+                inQuotes = !inQuotes;
+            }
+            // found start of a line comment if it is not in a comment already
+            else if (curChar === '/' && i + 1 < chars.length && chars[i + 1].char === '/' && !inQuotes && !inLineComment && blockCommentStart === -1) {
+                inLineComment = true;
+                chars[i].char = '\0';
+                ++i;    // skips '/'
+            }
+            // newlines ends the line comment
+            else if (curChar === '\n') {
+                inLineComment = false;
+            }
+            // found start of a block comment if it is not in a comment already
+            else if (curChar === '/' && i + 1 < chars.length && chars[i + 1].char === '*' && !inQuotes && !inLineComment && blockCommentStart === -1) {
+                blockCommentStart = i;
+                chars[i].char = '\0';
+                ++i;    // skips '*'
+                chars[i].char = ' ';
+            }
+            // found end of a block comment
+            else if (curChar === '*' && i + 1 < chars.length && chars[i + 1].char === '/' && blockCommentStart !== -1) {
+                blockCommentStart = -1;
+                chars[i].char = '\0';
+                ++i;    // replaces '/' with space to force splitting of string in the comment place
+                chars[i].char = ' ';
+            }
+            // updates backslash count
+            if (curChar === '\\') {
+                ++backslashes;
+            }
+            else {
+                backslashes = 0;
+            }
+            if (inLineComment || blockCommentStart !== -1) {
+                chars[i].char = '\0';
             }
         }
-        // throws error when the comment is not closed
-        if (!stop) {
-            const startIndex = str.getFirstNonNaNIndex();
-            const range = startIndex === undefined ? undefined : {start: startIndex, end: startIndex + 1};
-            throw ErrorFactory.syntaxError(language().syntaxErrors.stringUtils_missingClosingChar, range, '*/', '/*');
+        let err = undefined;
+        if (blockCommentStart !== -1) {
+            const errStart = chars[blockCommentStart].index;
+            err = ErrorFactory.syntaxError(language().syntaxErrors.stringUtils_missingClosingChar,
+              {start: errStart, end: errStart + 1}, '*/', '/*');
         }
-        return str.slice(i);
+        // creates a new string from non-null characters
+        return {str: IndexedString.newFromArray(chars.filter(c => c.char !== '\0')), err: err};
     }
 
     /**

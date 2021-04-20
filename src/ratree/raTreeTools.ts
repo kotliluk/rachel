@@ -53,7 +53,8 @@ export function getTreeDepth(root: RATreeNode): number {
 }
 
 /**
- * Returns true, if the given cursor position is in the given range and it is not inside quotes.
+ * Returns true, if the given cursor position is in the given range, it is not inside quotes, and the character at the
+ * cursor position is present (i.e., was not removed as comment).
  * Note: given range is expected to be computed from given string.
  */
 export function isInRangeAndNotInQuotes(cursor: number, range: { start: number, end: number } | undefined, str: IndexedString): boolean {
@@ -76,11 +77,11 @@ export function isInRangeAndNotInQuotes(cursor: number, range: { start: number, 
                 backslashes = 0;
             }
             if (i === cursorIndexInStr - 1) {
-                // when the cursor was reached, returns true, when it is not in quotes
-                return !insideQuotes;
+                // when the cursor was reached, returns true, if it is not in quotes and the position is present (was not removed as comment)
+                return !insideQuotes && str.getChars().some(c => c.index === cursor - 1);
             }
         }
-        console.warn("isInRangeAndNotInQuotes outside range")
+        console.warn("isInRangeAndNotInQuotes outside range");
     }
     return false;
 }

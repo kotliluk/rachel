@@ -682,44 +682,20 @@ describe('skipWhitespacesAndChar', () => {
     });
 });
 
-describe("skipLineComment", () => {
-    test("Comment only", () => {
-        const str: string = "//comment";
-        const expected: string = "";
+test("deleteAllComments", () => {
+    const str: string =
+      '(abc //line comment\n' +
+      'abc "ignored line comment // in string"\n' +
+      'abc /* block comment */ abc\n' + // there will be a space instead of /* ... */
+      'abc " ignore /* block comment */ in string"\n' +
+      ')';
+    const expected: string =
+      '(abc \n' +
+      'abc "ignored line comment // in string"\n' +
+      'abc   abc\n' +
+      'abc " ignore /* block comment */ in string"\n' +
+      ')';
 
-        const actual: IndexedString = IndexedStringUtils.skipLineComment(IndexedString.new(str));
-        expect(actual.toString()).toBe(expected);
-    });
-
-    test("Comment with rest", () => {
-        const str: string = "//comment\nSome rest after comment...";
-        const expected: string = "Some rest after comment...";
-
-        const actual: IndexedString = IndexedStringUtils.skipLineComment(IndexedString.new(str));
-        expect(actual.toString()).toBe(expected);
-    });
-});
-
-describe("skipBlockComment", () => {
-    test("Comment only", () => {
-        const str: string = "/* block comment with \n newlines ,;[;// etc. */";
-        const expected: string = "";
-
-        const actual: IndexedString = IndexedStringUtils.skipBlockComment(IndexedString.new(str));
-        expect(actual.toString()).toBe(expected);
-    });
-
-    test("Comment with rest", () => {
-        const str: string = "/* block comment\n blah blah */Some rest after comment...";
-        const expected: string = "Some rest after comment...";
-
-        const actual: IndexedString = IndexedStringUtils.skipBlockComment(IndexedString.new(str));
-        expect(actual.toString()).toBe(expected);
-    });
-
-    test("Unclosed comment", () => {
-        const str: string = "/* unclosed block comment with \n newlines ,;[;// etc.";
-
-        expect(() => IndexedStringUtils.skipBlockComment(IndexedString.new(str))).toThrow();
-    });
+    const actual = IndexedStringUtils.deleteAllComments(IndexedString.new(str)).str;
+    expect(actual.toString()).toBe(expected);
 });

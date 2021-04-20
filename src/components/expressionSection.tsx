@@ -330,8 +330,8 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
 
                     {createOpButton("division", "\u00f7", "\u00f7", ops.division, 0, buttonGroupMargin)}
 
-                    {createOpButton("comment", "//", "//", lang.lineComment, 0)}
-                    {createOpButton("comment", "/**/", "/*", lang.blockComment, 2)}
+                    {createOpButton("line_comment", "//", "//", lang.lineComment, 0)}
+                    {createOpButton("block_comment", "/**/", "/*", lang.blockComment, 2)}
                 </menu>
 
                 <menu className="page-section-management-menu">

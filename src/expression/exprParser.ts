@@ -72,8 +72,11 @@ export class ExprParser {
      * @return tree structure of 'expr'
      */
     public parse(expr: string): RATreeNode {
-        const indexedExpr = IndexedString.new(expr);
-        const tokens: ExprToken[] = this.parseTokens(indexedExpr);
+        const {str, err} = IndexedStringUtils.deleteAllComments(IndexedString.new(expr));
+        if (err !== undefined) {
+            throw err;
+        }
+        const tokens: ExprToken[] = this.parseTokens(str);
         if (tokens.length === 0) {
             throw ErrorFactory.syntaxError(language().syntaxErrors.exprParser_emptyStringGiven, undefined);
         }
@@ -93,8 +96,11 @@ export class ExprParser {
         if (expr.trim() === "") {
             return {whispers: [...this.relations.keys()], errors: []};
         }
-        const indexedExpr = IndexedString.new(expr);
-        const {whispers, tokens, errors} = this.fakeParseTokens(indexedExpr, cursorIndex);
+        const {str, err} = IndexedStringUtils.deleteAllComments(IndexedString.new(expr));
+        const {whispers, tokens, errors} = this.fakeParseTokens(str, cursorIndex);
+        if (err !== undefined) {
+            errors.push(err);
+        }
         // prevent errors in creation of RPN
         if (tokens.length === 0) {
             return {whispers: whispers, errors: errors};
@@ -303,14 +309,6 @@ export class ExprParser {
                 tokens.push(new RelationToken(split.first));
                 rest = split.second;
                 selectionExpected = true;
-            }
-            // LINE COMMENT
-            else if (rest.startsWith("//")) {
-                rest = IndexedStringUtils.skipLineComment(rest);
-            }
-            // BLOCK COMMENT
-            else if (rest.startsWith("/*")) {
-                rest = IndexedStringUtils.skipBlockComment(rest);
             }
             // UNEXPECTED PART
             else {
@@ -572,21 +570,6 @@ export class ExprParser {
                 tokens.push(new RelationToken(split.first));
                 rest = split.second;
                 selectionExpected = true;
-            }
-            // COMMENT
-            else if (rest.startsWith("//")) {
-                rest = IndexedStringUtils.skipLineComment(rest);
-            }
-            // BLOCK COMMENT
-            else if (rest.startsWith("/*")) {
-                try {
-                    rest = IndexedStringUtils.skipBlockComment(rest);
-                }
-                catch (err) {
-                    errors.push(err);
-                    // breaks as the rest of the string is treated as comment
-                    break;
-                }
             }
             // WHITE SPACE
             else if (rest.charAt(0).match(/\s/)) {

@@ -253,7 +253,7 @@ export default class StringUtils {
     static nextBorderedPart(str: string, start: string, end: string, escape: string = '\0'): { first: string, second: string } {
         let depth: number = 1;
         let i: number = 1;
-        // to ignore special characters in quoted part
+        // to ignore special characters
         let inQuotes: boolean = false;
         // nested bordering is supported if there is only one ending character
         const nesting: boolean = end.length === 1;
@@ -271,7 +271,7 @@ export default class StringUtils {
             else if (curChar === start && (escapeCount % 2) === 0 && nesting && !inQuotes) {
                 ++depth;
             }
-            // found quote - changes ignoring of special chars
+            // found quote if even number of backslashes before
             else if (curChar === '"' && (backslashes % 2) === 0) {
                 inQuotes = !inQuotes;
             }
@@ -289,7 +289,7 @@ export default class StringUtils {
             else {
                 backslashes = 0;
             }
-            // increases index for using "i" in slicing
+            // increases index for before slicing
             ++i;
             if (depth === 0) {
                 return { first: str.slice(0, i), second: str.slice(i) };

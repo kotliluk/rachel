@@ -9,9 +9,6 @@ export class IndexedString {
      * Indexes of the characters are (0 + startIndex, ..., str.length - 1 + startIndex).
      * NOTE: Each character has its own index. That means '\r\n' line separator has two indexes. For expected behavior, use
      * '\n' separator instead.
-     *
-     * @param str string
-     * @param startIndex
      */
     public static new(str: string, startIndex: number = 0): IndexedString {
         return new IndexedString(str, str.split('').map((char, index) => {return {char: char, index: index + startIndex}}));
@@ -26,34 +23,9 @@ export class IndexedString {
 
     /**
      * Creates a new IndexedString instance representing the given array of IndexedChars.
-     *
-     * @param arr IndexedChar array
      */
     public static newFromArray(arr: IndexedChar[]): IndexedString {
         return new IndexedString(arr.map(ic => ic.char).join(''), arr);
-    }
-
-    /**
-     * Joins given array of IndexedStrings with given separator. Inserted separators have indexed given from the
-     * separatorIndexes array. NOTE: separatorIndexes array is expected to have length at least "arr.length - 1".
-     *
-     * @param arr array to join
-     * @param separator separator string
-     * @param separatorIndexes
-     */
-    public static join(arr: IndexedString[], separator: string, separatorIndexes: number[]): IndexedString {
-        if (arr.length === 0) {
-            return IndexedString.empty();
-        }
-        if (arr.length === 1) {
-            return arr[0];
-        }
-        const toConcat: IndexedString[] = Array<IndexedString>(2 * arr.length - 2);
-        for (let i = 1; i < arr.length; i++) {
-            toConcat[2 * i - 2] = IndexedString.new(separator, separatorIndexes[i - 1]);
-            toConcat[2 * i - 1] = arr[i];
-        }
-        return arr[0].concat(...toConcat);
     }
 
     /**
