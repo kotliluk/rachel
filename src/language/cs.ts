@@ -208,7 +208,8 @@ export const CS: LanguageDef = {
 
         expressionTextareaPlaceholder: "Zde napište svůj relační výraz...",
 
-        comment: "Komentář"
+        lineComment: "Řádkový komentář",
+        blockComment: "Blokový komentář"
     },
 
     resultSection: {

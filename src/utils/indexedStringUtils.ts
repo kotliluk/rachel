@@ -2,6 +2,8 @@ import {IndexedString} from "../types/indexedString";
 import StringUtils from "./stringUtils";
 import {insertRangeIfUndefined} from "../error/errorWithTextRange";
 import RASyntaxError from "../error/raSyntaxError";
+import {ErrorFactory} from "../error/errorFactory";
+import {language} from "../language/language";
 
 /**
  * Class providing general helper functions for IndexedString.
@@ -168,6 +170,52 @@ export default class IndexedStringUtils {
     }
 
     /**
+     * Skips all characters until the first found newline '\n' and returns the rest of the string.
+     * NOTE: First two characters of the string are expected to be '//'.
+     *
+     * @param str string to be skipped in
+     */
+    public static skipLineComment(str: IndexedString): IndexedString {
+        let i = 2;
+        while (i < str.length()) {
+            // ends when finds newline
+            const stop = str.charAt(i) === '\n';
+            ++i;
+            if (stop) {
+                break;
+            }
+        }
+        return str.slice(i);
+    }
+
+    /**
+     * Skips all characters until the first found '* /' and returns the rest of the string. When the ending characters
+     * are not found, throws error.
+     * NOTE: First two characters of the string are expected to be '/*'.
+     *
+     * @param str string to be skipped in
+     */
+    public static skipBlockComment(str: IndexedString): IndexedString {
+        let i = 2;
+        let stop = false;
+        while (i < str.length()) {
+            // ends when finds newline
+            stop = i >= 3 && str.charAt(i) === '/' && str.charAt(i - 1) === '*';
+            ++i;
+            if (stop) {
+                break;
+            }
+        }
+        // throws error when the comment is not closed
+        if (!stop) {
+            const startIndex = str.getFirstNonNaNIndex();
+            const range = startIndex === undefined ? undefined : {start: startIndex, end: startIndex + 1};
+            throw ErrorFactory.syntaxError(language().syntaxErrors.stringUtils_missingClosingChar, range, '*/', '/*');
+        }
+        return str.slice(i);
+    }
+
+    /**
      * Skips all whitespaces and exactly one given character and returns rest of the string.
      * If the string does not match this pattern, throws error.
      *
@@ -183,37 +231,5 @@ export default class IndexedStringUtils {
         catch (err) {
             throw insertRangeIfUndefined(err, str.getNonNaNRange());
         }
-    }
-
-    /**
-     * Deletes all lines, where two first non-whitespace characters are '//'.
-     *
-     * @param str indexed string to be deleted comments in
-     */
-    public static deleteCommentLines(str: IndexedString) {
-        const {split, separatorIndexes} = str.splitToLines();
-        const toJoin = split.map(line => {
-            let insideQuotes: boolean = false;
-            let backslashes: number = 0;
-            for (let i = 0; i < line.length(); ++i) {
-                const curChar = line.charAt(i);
-                // quotes found
-                if (curChar === '"' && (backslashes % 2) === 0) {
-                    insideQuotes = !insideQuotes;
-                }
-                if (insideQuotes && curChar === '\\') {
-                    ++backslashes;
-                }
-                else {
-                    backslashes = 0;
-                }
-                // double-backslash found outside quotes
-                if (!insideQuotes && curChar === '/' && i > 0 && line.charAt(i - 1) === '/') {
-                    return line.slice(0, i - 1);
-                }
-            }
-            return line;
-        });
-        return IndexedString.join(toJoin, '\n', separatorIndexes);
     }
 }

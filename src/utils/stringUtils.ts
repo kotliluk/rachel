@@ -327,34 +327,4 @@ export default class StringUtils {
         }
         return str.substring(i);
     }
-
-    /**
-     * Deletes all line contents after '//'.
-     *
-     * @param str string to be deleted comments in
-     */
-    public static deleteCommentLines(str: string) {
-        return str.split('\n').map(line => {
-            let insideQuotes: boolean = false;
-            let backslashes: number = 0;
-            for (let i = 0; i < line.length; ++i) {
-                const curChar = line.charAt(i);
-                // quotes found
-                if (curChar === '"' && (backslashes % 2) === 0) {
-                    insideQuotes = !insideQuotes;
-                }
-                if (insideQuotes && curChar === '\\') {
-                    ++backslashes;
-                }
-                else {
-                    backslashes = 0;
-                }
-                // double-backslash found outside quotes
-                if (!insideQuotes && curChar === '/' && i > 0 && line.charAt(i - 1) === '/') {
-                    return line.slice(0, i - 1);
-                }
-            }
-            return line;
-        }).join('\n');
-    }
 }

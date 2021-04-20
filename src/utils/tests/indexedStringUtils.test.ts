@@ -682,52 +682,44 @@ describe('skipWhitespacesAndChar', () => {
     });
 });
 
-describe('deleteCommentLines', () => {
-    test('', () => {
-        const inputStr: string = '//comment before relation\n' +
-            '\n' +
-            'Auto = {\n' +
-            '    //comment 1 in a relation\n' +
-            'Id: number, Barva: string   // comment after line\n' +
-            '\n' +
-            '//comment 2 in a relation\n' +
-            '         1,     "Cervena"\n' +
-            '      null,          null\n' +
-            '          ,   ",{}\\"..."\n' +
-            '}\n' +
-            '\n' +
-            '     //   comment between relations\n' +
-            '\n' +
-            'Majitel = {//comment with .[/",// stuf\n' +
-            'Id: number, Jmeno: string\n' +
-            '\n' +
-            '         1,        "Lukas"\n' +
-            '\t \t// comment 3 in a relation\n' +
-            '}';
-        const input: IndexedString = IndexedString.new(inputStr);
-        const expectedStr: string = '\n' +
-            '\n' +
-            'Auto = {\n' +
-            '    \n' +
-            'Id: number, Barva: string   \n' +
-            '\n' +
-            '\n' +
-            '         1,     "Cervena"\n' +
-            '      null,          null\n' +
-            '          ,   ",{}\\"..."\n' +
-            '}\n' +
-            '\n' +
-            '     \n' +
-            '\n' +
-            'Majitel = {\n' +
-            'Id: number, Jmeno: string\n' +
-            '\n' +
-            '         1,        "Lukas"\n' +
-            '\t \t\n' +
-            '}';
+describe("skipLineComment", () => {
+    test("Comment only", () => {
+        const str: string = "//comment";
+        const expected: string = "";
 
-        const actual: IndexedString = IndexedStringUtils.deleteCommentLines(input);
-        expect(actual.toString()).toStrictEqual(expectedStr);
-        expect(actual.getLastIndex()).toStrictEqual(input.getLastIndex());
+        const actual: IndexedString = IndexedStringUtils.skipLineComment(IndexedString.new(str));
+        expect(actual.toString()).toBe(expected);
+    });
+
+    test("Comment with rest", () => {
+        const str: string = "//comment\nSome rest after comment...";
+        const expected: string = "Some rest after comment...";
+
+        const actual: IndexedString = IndexedStringUtils.skipLineComment(IndexedString.new(str));
+        expect(actual.toString()).toBe(expected);
+    });
+});
+
+describe("skipBlockComment", () => {
+    test("Comment only", () => {
+        const str: string = "/* block comment with \n newlines ,;[;// etc. */";
+        const expected: string = "";
+
+        const actual: IndexedString = IndexedStringUtils.skipBlockComment(IndexedString.new(str));
+        expect(actual.toString()).toBe(expected);
+    });
+
+    test("Comment with rest", () => {
+        const str: string = "/* block comment\n blah blah */Some rest after comment...";
+        const expected: string = "Some rest after comment...";
+
+        const actual: IndexedString = IndexedStringUtils.skipBlockComment(IndexedString.new(str));
+        expect(actual.toString()).toBe(expected);
+    });
+
+    test("Unclosed comment", () => {
+        const str: string = "/* unclosed block comment with \n newlines ,;[;// etc.";
+
+        expect(() => IndexedStringUtils.skipBlockComment(IndexedString.new(str))).toThrow();
     });
 });

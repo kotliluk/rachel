@@ -27,7 +27,7 @@ import {SyntaxErrorMessages} from "../error/raSyntaxError";
 export const allSupportedLanguages = (<L extends string>(arr: L[]) => arr)(["EN", "CS"]);
 
 /**
- * Textual description of supported value separators.
+ * Abbreviation of supported languages in the application.
  */
 export type SupportedLanguage = (typeof allSupportedLanguages)[number];
 
@@ -180,7 +180,8 @@ export interface LanguageDef {
 
         expressionTextareaPlaceholder: string,
 
-        comment: string,
+        lineComment: string,
+        blockComment: string
     }
     /**
      * Description of elements in result section.

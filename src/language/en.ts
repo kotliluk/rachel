@@ -236,7 +236,8 @@ export const EN: LanguageDef = {
 
         expressionTextareaPlaceholder: "Write RA expression here...",
 
-        comment: "Comment"
+        lineComment: "Line comment",
+        blockComment: "Block comment"
     },
 
     resultSection: {
