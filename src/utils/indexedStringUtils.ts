@@ -128,14 +128,10 @@ export default class IndexedStringUtils {
      */
     static nextQuotedString(str: IndexedString): { first: IndexedString, second: IndexedString, error: RASyntaxError | undefined } {
         const strParts: { first: string, second: string, error: RASyntaxError | undefined } = StringUtils.nextQuotedString(str.toString());
-        const startIndex = str.getFirstNonNaNIndex();
-        if (startIndex !== undefined) {
-            strParts.error = insertRangeIfUndefined(strParts.error, {start: startIndex, end: startIndex});
-        }
         return {
             first: str.slice(0, strParts.first.length),
             second: str.slice(strParts.first.length),
-            error: strParts.error
+            error: insertRangeIfUndefined(strParts.error, {start: str.getFirstIndex(), end: str.getFirstIndex()})
         };
     }
 
@@ -161,11 +157,7 @@ export default class IndexedStringUtils {
             return { first: str.slice(0, strParts.first.length), second: str.slice(strParts.first.length)};
         }
         catch (err) {
-            const startIndex = str.getFirstNonNaNIndex();
-            if (startIndex !== undefined) {
-                throw insertRangeIfUndefined(err, {start: startIndex, end: startIndex});
-            }
-            throw err;
+            throw insertRangeIfUndefined(err, {start: str.getFirstIndex(), end: str.getFirstIndex()});
         }
     }
 
@@ -173,7 +165,7 @@ export default class IndexedStringUtils {
      * Deletes all line and block comments from the given IndexedString.
      * If there is unclosed block comment, return the error as well.
      * Line comment "//comment\n" will be changed to "\n" - new line is kept.
-     * Block comment "/*comment* /" will be changed to " " - it is replaced by a space to ensure splitting of the content around.
+     * Block comment "/\*comment* /" will be changed to " " - it is replaced by a space to ensure splitting of the content around.
      */
     public static deleteAllComments(str: IndexedString): {str: IndexedString, err: RASyntaxError | undefined} {
         const chars = str.copy().getChars();
@@ -248,7 +240,7 @@ export default class IndexedStringUtils {
             return str.slice(str.length() - skippedStr.length);
         }
         catch (err) {
-            throw insertRangeIfUndefined(err, str.getNonNaNRange());
+            throw insertRangeIfUndefined(err, str.getRange());
         }
     }
 }

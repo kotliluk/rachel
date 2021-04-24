@@ -9,6 +9,7 @@ import {ErrorFactory} from "../error/errorFactory";
 import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {isInRangeAndNotInQuotes} from "./raTreeTools";
 import {language} from "../language/language";
+import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Selection node of the relational algebra syntactic tree.
@@ -16,7 +17,7 @@ import {language} from "../language/language";
 export default class SelectionNode extends UnaryNode {
 
     private readonly selection: IndexedString;
-    private readonly stringRange: { start: number, end: number } | undefined;
+    private readonly stringRange: StartEndPair | undefined;
     private readonly nullValuesSupport: boolean;
 
     /**

@@ -492,7 +492,6 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                     // finds highlight start and end lines and columns
                     const start = getPositionLineAndColumn(ta.value, parentheses.start);
                     const end = getPositionLineAndColumn(ta.value, parentheses.end);
-                    console.log(start, end);
                     const div1 = createParenthesesDiv(start.line, start.column, ta);
                     const div2 = createParenthesesDiv(end.line, end.column, ta);
                     // @ts-ignore
@@ -650,7 +649,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                 this.props.onCtrlInput(ev);
             }
             if (ev.key === "ArrowLeft" || ev.key === "ArrowRight" || ev.key === "ArrowUp" || ev.key === "ArrowDown" ||
-                ev.key === "Home" || ev.key === "End") {
+                ev.key === "Home" || ev.key === "End" || ev.key === "PageUp" || ev.key === "PageDown") {
                 setTimeout(ta.updateParentheses, 0);
             }
         }

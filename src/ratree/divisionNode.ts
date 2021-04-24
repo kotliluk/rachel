@@ -5,13 +5,14 @@ import Row from "../relation/row";
 import {SupportedColumnType} from "../relation/columnType";
 import {ErrorFactory} from "../error/errorFactory";
 import {language} from "../language/language";
+import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Division node of the relational algebra syntactic tree.
  */
 export default class DivisionNode extends BinaryNode {
 
-    public constructor(leftSubtree: RATreeNode, rightSubtree: RATreeNode, private stringRange: { start: number, end: number } | undefined) {
+    public constructor(leftSubtree: RATreeNode, rightSubtree: RATreeNode, private stringRange: StartEndPair | undefined) {
         super(leftSubtree, rightSubtree);
     }
 

@@ -7,9 +7,10 @@ import {VETreeNode} from "../vetree/veTreeNode";
 import {IndexedString} from "../types/indexedString";
 import ValueParser from "../expression/valueParser";
 import {ErrorFactory} from "../error/errorFactory";
-import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
+import {insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {isInRangeAndNotInQuotes} from "./raTreeTools";
 import {language} from "../language/language";
+import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Types of theta join node.
@@ -27,7 +28,7 @@ export default class ThetaJoinNode extends BinaryNode {
 
     private readonly type: ThetaJoinType;
     private readonly condition: IndexedString;
-    private readonly stringRange: { start: number, end: number } | undefined;
+    private readonly stringRange: StartEndPair | undefined;
     private readonly nullValuesSupport: boolean;
 
     /**

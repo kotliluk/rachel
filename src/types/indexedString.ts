@@ -68,55 +68,23 @@ export class IndexedString {
     }
 
     /**
-     * Returns the index of the first character of the IndexedString. Returns undefined if empty.
+     * Returns the first index of a character of the IndexedString. Returns NaN if empty.
      */
-    public getFirstIndex(): number | undefined {
+    public getFirstIndex(): number {
         if (this.isEmpty()) {
-            return undefined;
+            return NaN;
         }
         return this.chars[0].index;
     }
 
     /**
-     * Returns the index of the last character of the IndexedString. Returns undefined if empty.
+     * Returns the last index of a character of the IndexedString. Returns NaN if empty.
      */
-    public getLastIndex(): number | undefined {
+    public getLastIndex(): number {
         if (this.isEmpty()) {
-            return undefined;
+            return NaN;
         }
         return this.chars[this.length() - 1].index;
-    }
-
-    /**
-     * Returns the first non-NaN index of a character of the IndexedString. Returns undefined if empty.
-     * If all indexes are NaN, NaN is returned.
-     */
-    public getFirstNonNaNIndex(): number | undefined {
-        if (this.isEmpty()) {
-            return undefined;
-        }
-        for (let i = 0; i < this.length(); i++) {
-            if (!isNaN(this.chars[i].index)) {
-                return this.chars[i].index;
-            }
-        }
-        return NaN;
-    }
-
-    /**
-     * Returns the last non-NaN index of a character of the IndexedString. Returns undefined if empty.
-     * If all indexes are NaN, NaN is returned.
-     */
-    public getLastNonNaNIndex(): number | undefined {
-        if (this.isEmpty()) {
-            return undefined;
-        }
-        for (let i = this.length() - 1; i >= 0; i--) {
-            if (!isNaN(this.chars[i].index)) {
-                return this.chars[i].index;
-            }
-        }
-        return NaN;
     }
 
     /**
@@ -127,25 +95,6 @@ export class IndexedString {
             return undefined;
         }
         return { start: this.chars[0].index, end: this.chars[this.length() - 1].index };
-    }
-
-    /**
-     * Returns the first and the last non-NaN indexes of characters of the IndexedString. Returns undefined if empty or
-     * if all indexes are NaN.
-     */
-    public getNonNaNRange(): StartEndPair | undefined {
-        if (this.isEmpty()) {
-            return undefined;
-        }
-        // @ts-ignore
-        const start: number = this.getFirstNonNaNIndex();
-        // returns undefined when all indexes are NaN
-        if (isNaN(start)) {
-            return undefined;
-        }
-        // @ts-ignore
-        const end: number = this.getLastNonNaNIndex();
-        return { start: start, end: end };
     }
 
     /**
@@ -297,48 +246,10 @@ export class IndexedString {
     }
 
     /**
-     * Returns the position of the first occurrence of a substring.
-     *
-     * @param searchValue The substring to search for in the string
-     * @param fromIndex The index at which to begin searching the String object. If omitted, search starts at the beginning of the string.
-     */
-    public indexOf(searchValue: string, fromIndex?: number): number {
-        return this.str.indexOf(searchValue, fromIndex);
-    }
-
-    /**
-     * Matches a string with a regular expression, and returns an array containing the results of that search.
-     *
-     * @param regexp A variable name or string literal containing the regular expression pattern and flags.
-     */
-    public match(regexp: string | RegExp): RegExpMatchArray | null {
-        return this.str.match(regexp);
-    }
-
-    /**
      * Creates a deep copy of the IndexedString.
      */
     public copy(): IndexedString {
         return new IndexedString(this.str, this.chars.map(ic => {return {char: ic.char, index: ic.index}}));
-    }
-
-    /**
-     * Returns deep copy of the string with all whitespaces removed.
-     */
-    public removeWhitespaces(): IndexedString {
-        return new IndexedString(this.str.replace(/\s/g, ''), this.chars
-            .filter(ic => {return !/\s/.test(ic.char)})
-            .map(ic => {return {char: ic.char, index: ic.index}})
-        );
-    }
-
-    /**
-     * Returns next index of the string (this.getLastIndex() + 1), if last index of the string is a number.
-     * Otherwise, returns NaN.
-     */
-    public getNextIndexOrNaN(): number {
-        const lastIndex = this.getLastIndex();
-        return lastIndex === undefined ? NaN : lastIndex + 1;
     }
 
     /**

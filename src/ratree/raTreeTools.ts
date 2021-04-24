@@ -2,6 +2,7 @@ import RATreeNode from "./raTreeNode";
 import UnaryNode from "./unaryNode";
 import BinaryNode from "./binaryNode";
 import {IndexedString} from "../types/indexedString";
+import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Finds the root in the given tree with the given index with respect to depth first search. Root has index 0.
@@ -57,7 +58,7 @@ export function getTreeDepth(root: RATreeNode): number {
  * cursor position is present (i.e., was not removed as comment).
  * Note: given range is expected to be computed from given string.
  */
-export function isInRangeAndNotInQuotes(cursor: number, range: { start: number, end: number } | undefined, str: IndexedString): boolean {
+export function isInRangeAndNotInQuotes(cursor: number, range: StartEndPair | undefined, str: IndexedString): boolean {
     if (range !== undefined && range.start < cursor && cursor <= range.end) {
         const len = range.end - range.start;
         const s = str.toString();

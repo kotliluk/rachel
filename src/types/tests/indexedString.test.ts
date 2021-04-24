@@ -28,8 +28,8 @@ describe("new", () => {
         expect(indexedString.toString()).toStrictEqual('');
         expect(indexedString.length()).toStrictEqual(0);
         expect(indexedString.getChars()).toStrictEqual([]);
-        expect(indexedString.getFirstIndex()).toBeUndefined();
-        expect(indexedString.getLastIndex()).toBeUndefined();
+        expect(indexedString.getFirstIndex()).toBeNaN();
+        expect(indexedString.getLastIndex()).toBeNaN();
     });
 
     test("number startIndex given", () => {
@@ -357,14 +357,14 @@ describe("concat", () => {
     });
 });
 
-describe("getFirstNonNaNIndex", () => {
-    test("empty string returns undefined", () => {
+describe("getFirstIndex", () => {
+    test("empty string returns NaN", () => {
         // arrange
         const is: IndexedString = IndexedString.empty();
         // act
-        const actual: number | undefined = is.getFirstNonNaNIndex();
+        const actual: number = is.getFirstIndex();
         // assert
-        expect(actual).toBeUndefined();
+        expect(actual).toBeNaN();
     });
 
     test("starting with number", () => {
@@ -373,7 +373,7 @@ describe("getFirstNonNaNIndex", () => {
             { char: 'a', index: 3 }, { char: 'a', index: 4 }, { char: 'a', index: 5 }];
         const is: IndexedString = IndexedString.newFromArray(arr);
         // act
-        const actual: number | undefined = is.getFirstNonNaNIndex();
+        const actual: number = is.getFirstIndex();
         // assert
         expect(actual).toBe(0);
     });
@@ -384,31 +384,20 @@ describe("getFirstNonNaNIndex", () => {
             { char: 'a', index: NaN }, { char: 'a', index: 4 }, { char: 'a', index: NaN }];
         const is: IndexedString = IndexedString.newFromArray(arr);
         // act
-        const actual: number | undefined = is.getFirstNonNaNIndex();
-        // assert
-        expect(actual).toBe(2);
-    });
-
-    test("all NaN", () => {
-        // arrange
-        const arr: IndexedChar[] = [{ char: 'a', index: NaN }, { char: 'a', index: NaN }, { char: 'a', index: NaN },
-            { char: 'a', index: NaN }, { char: 'a', index: NaN }, { char: 'a', index: NaN }];
-        const is: IndexedString = IndexedString.newFromArray(arr);
-        // act
-        const actual: number | undefined = is.getFirstNonNaNIndex();
+        const actual: number = is.getFirstIndex();
         // assert
         expect(actual).toBeNaN();
     });
 });
 
-describe("getLastNonNaNIndex", () => {
+describe("getLastIndex", () => {
     test("empty string returns undefined", () => {
         // arrange
         const is: IndexedString = IndexedString.empty();
         // act
-        const actual: number | undefined = is.getLastNonNaNIndex();
+        const actual: number = is.getLastIndex();
         // assert
-        expect(actual).toBeUndefined();
+        expect(actual).toBeNaN();
     });
 
     test("ending with number", () => {
@@ -417,7 +406,7 @@ describe("getLastNonNaNIndex", () => {
             { char: 'a', index: 3 }, { char: 'a', index: 4 }, { char: 'a', index: 5 }];
         const is: IndexedString = IndexedString.newFromArray(arr);
         // act
-        const actual: number | undefined = is.getLastNonNaNIndex();
+        const actual: number = is.getLastIndex();
         // assert
         expect(actual).toBe(5);
     });
@@ -428,9 +417,9 @@ describe("getLastNonNaNIndex", () => {
             { char: 'a', index: NaN }, { char: 'a', index: 4 }, { char: 'a', index: NaN }];
         const is: IndexedString = IndexedString.newFromArray(arr);
         // act
-        const actual: number | undefined = is.getLastNonNaNIndex();
+        const actual: number = is.getLastIndex();
         // assert
-        expect(actual).toBe(4);
+        expect(actual).toBeNaN()
     });
 
     test("all NaN", () => {
@@ -439,18 +428,18 @@ describe("getLastNonNaNIndex", () => {
             { char: 'a', index: NaN }, { char: 'a', index: NaN }, { char: 'a', index: NaN }];
         const is: IndexedString = IndexedString.newFromArray(arr);
         // act
-        const actual: number | undefined = is.getLastNonNaNIndex();
+        const actual: number = is.getLastIndex();
         // assert
         expect(actual).toBeNaN();
     });
 });
 
-describe("getNonNaNRange", () => {
+describe("getRange", () => {
     test("empty string returns undefined", () => {
         // arrange
         const is: IndexedString = IndexedString.empty();
         // act
-        const actual: StartEndPair | undefined = is.getNonNaNRange();
+        const actual: StartEndPair | undefined = is.getRange();
         // assert
         expect(actual).toBeUndefined();
     });
@@ -461,7 +450,7 @@ describe("getNonNaNRange", () => {
             { char: 'a', index: 3 }, { char: 'a', index: 4 }, { char: 'a', index: 5 }];
         const is: IndexedString = IndexedString.newFromArray(arr);
         // act
-        const actual: StartEndPair | undefined = is.getNonNaNRange();
+        const actual: StartEndPair | undefined = is.getRange();
         // assert
         expect(actual).toStrictEqual({start: 0, end: 5});
     });
@@ -472,9 +461,9 @@ describe("getNonNaNRange", () => {
             { char: 'a', index: NaN }, { char: 'a', index: 4 }, { char: 'a', index: NaN }];
         const is: IndexedString = IndexedString.newFromArray(arr);
         // act
-        const actual: StartEndPair | undefined = is.getNonNaNRange();
+        const actual: StartEndPair | undefined = is.getRange();
         // assert
-        expect(actual).toStrictEqual({start: 2, end: 4});
+        expect(actual).toStrictEqual({start: NaN, end: NaN});
     });
 
     test("all NaN returns undefined", () => {
@@ -483,33 +472,8 @@ describe("getNonNaNRange", () => {
             { char: 'a', index: NaN }, { char: 'a', index: NaN }, { char: 'a', index: NaN }];
         const is: IndexedString = IndexedString.newFromArray(arr);
         // act
-        const actual: StartEndPair | undefined = is.getNonNaNRange();
+        const actual: StartEndPair | undefined = is.getRange();
         // assert
-        expect(actual).toBeUndefined();
-    });
-});
-
-describe("removeWhitespaces", () => {
-    test("whitespaces and chars", () => {
-        // arrange
-        const a: string = " \n\ta b\nc ";
-        const isA = IndexedString.new(a);
-        const arr: IndexedChar[] = [{char: 'a', index: 3}, {char: 'b', index: 5}, {char: 'c', index: 7}];
-        const expected: IndexedString = IndexedString.newFromArray(arr);
-        // act
-        const actual: IndexedString = isA.removeWhitespaces();
-        // assert
-        expect(actual).toStrictEqual(expected);
-    });
-
-    test("whitespaces only", () => {
-        // arrange
-        const a: string = " \n\t\n ";
-        const isA = IndexedString.new(a);
-        const expected: IndexedString = IndexedString.empty();
-        // act
-        const actual: IndexedString = isA.removeWhitespaces();
-        // assert
-        expect(actual).toStrictEqual(expected);
+        expect(actual).toStrictEqual({start: NaN, end: NaN});
     });
 });

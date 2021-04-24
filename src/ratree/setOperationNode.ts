@@ -4,8 +4,8 @@ import Relation from "../relation/relation";
 import Row from "../relation/row";
 import { isEqual } from "lodash";
 import {ErrorFactory} from "../error/errorFactory";
-import ErrorWithTextRange from "../error/errorWithTextRange";
 import {language} from "../language/language";
+import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Types of set operation node.
@@ -24,7 +24,7 @@ export default class SetOperationNode extends BinaryNode {
     private readonly type: SetOperationType;
 
     public constructor(operator: SetOperationType, leftSubtree: RATreeNode, rightSubtree: RATreeNode,
-                       private stringRange: { start: number, end: number } | undefined) {
+                       private stringRange: StartEndPair | undefined) {
         super(leftSubtree, rightSubtree);
         this.type = operator;
     }

@@ -223,9 +223,8 @@ export class ExprParser {
             else if (rest.startsWith("*F*") || rest.startsWith("*L*") || rest.startsWith("*R*")) {
                 if (!this.nullValuesSupport) {
                     let errorRange: StartEndPair | undefined = undefined;
-                    if (rest.getFirstNonNaNIndex() !== undefined) {
-                        // @ts-ignore
-                        errorRange = {start: rest.getFirstNonNaNIndex(), end: rest.getFirstNonNaNIndex() + 2};
+                    if (!isNaN(rest.getFirstIndex())) {
+                        errorRange = {start: rest.getFirstIndex(), end: rest.getFirstIndex() + 2};
                     }
                     throw ErrorFactory.syntaxError(language().syntaxErrors.exprParser_outerJoinWhenNullNotSupported,
                         errorRange, "*F*");
@@ -352,17 +351,13 @@ export class ExprParser {
 
         // adds new pair of parentheses from margins of the given string
         const pushParentheses = (str: IndexedString) => {
-            const start = str.getFirstIndex();
-            const end = str.getLastIndex();
-            if (start !== undefined && end !== undefined) {
-                parentheses.push({start: start, end: end});
-            }
+            parentheses.push({start: str.getFirstIndex(), end: str.getLastIndex()});
         }
 
         let rest: IndexedString = expr;
         while (!rest.isEmpty()) {
             // checks whether the cursor was reached
-            const restStartIndex: number | undefined = rest.getFirstNonNaNIndex();
+            const restStartIndex: number = rest.getFirstIndex();
             if (restStartIndex === cursorIndex) {
                 whispers = [...this.relations.keys()];
             }
@@ -382,7 +377,7 @@ export class ExprParser {
 
                     if (selectionExpected) {
                         // it fakes the unclosed expression part as a selection operator
-                        tokens.push(UnaryOperatorToken.selection(rest.concat(IndexedString.new(')', rest.getNextIndexOrNaN()))));
+                        tokens.push(UnaryOperatorToken.selection(rest.concat(IndexedString.new(')', rest.getLastIndex() + 1))));
                     }
                     else {
                         // checks whether the cursor was reached after the opening parentheses
@@ -440,15 +435,14 @@ export class ExprParser {
                         errors.push(err);
                     }
                     // it fakes the unclosed expression part as a projection operator
-                    split = {first: rest.concat(IndexedString.new(']', rest.getNextIndexOrNaN())), second: IndexedString.empty()};
+                    split = {first: rest.concat(IndexedString.new(']', rest.getLastIndex() + 1)), second: IndexedString.empty()};
                 }
 
                 // saves parentheses
                 pushParentheses(split.first);
 
                 // checks whether the cursor was reached
-                const operatorEndIndex: number | undefined = split.first.getLastNonNaNIndex();
-                if (!error && operatorEndIndex === cursorIndex - 1) {
+                if (!error && split.first.getLastIndex() === cursorIndex - 1) {
                     whispers = [...this.relations.keys()];
                 }
 
@@ -475,8 +469,7 @@ export class ExprParser {
             else if (rest.startsWith("*F*") || rest.startsWith("*L*") || rest.startsWith("*R*")) {
                 const operator: IndexedString = rest.slice(0, 3);
                 // checks whether the cursor was reached
-                const operatorEndIndex: number | undefined = operator.getLastNonNaNIndex();
-                if (operatorEndIndex === cursorIndex - 1) {
+                if (operator.getLastIndex() === cursorIndex - 1) {
                     whispers = [...this.relations.keys()];
                 }
 
@@ -496,8 +489,7 @@ export class ExprParser {
             else if (rest.startsWith("<*") || rest.startsWith("*>")) {
                 const operator: IndexedString = rest.slice(0, 2);
                 // checks whether the cursor was reached
-                const operatorEndIndex: number | undefined = operator.getLastNonNaNIndex();
-                if (operatorEndIndex === cursorIndex - 1) {
+                if (operator.getLastIndex() === cursorIndex - 1) {
                     whispers = [...this.relations.keys()];
                 }
 
@@ -514,8 +506,7 @@ export class ExprParser {
             else if ("*\u2a2f\u222a\u2229\\\u22b3\u22b2\u00f7".indexOf(rest.charAt(0)) > -1) {
                 const operator: IndexedString = rest.slice(0, 1);
                 // checks whether the cursor was reached
-                const operatorEndIndex: number | undefined = operator.getLastNonNaNIndex();
-                if (operatorEndIndex === cursorIndex - 1) {
+                if (operator.getLastIndex() === cursorIndex - 1) {
                     whispers = [...this.relations.keys()];
                 }
 
@@ -553,8 +544,7 @@ export class ExprParser {
                     // saves parentheses
                     pushParentheses(split.first);
                     // checks whether the cursor was reached
-                    const operatorEndIndex: number | undefined = split.first.getLastNonNaNIndex();
-                    if (operatorEndIndex === cursorIndex - 1) {
+                    if (split.first.getLastIndex() === cursorIndex - 1) {
                         whispers = [...this.relations.keys()];
                     }
                     // found rename
@@ -572,7 +562,7 @@ export class ExprParser {
                 // catches error from nextBorderedPart
                 catch (e) {
                     // it fakes the unclosed expression part as a rename operator
-                    tokens.push(UnaryOperatorToken.rename(rest.concat(IndexedString.new('>', rest.getNextIndexOrNaN()))));
+                    tokens.push(UnaryOperatorToken.rename(rest.concat(IndexedString.new('>', rest.getLastIndex() + 1))));
                     // breaks the while cycle as all was used
                     break;
                 }
@@ -582,10 +572,7 @@ export class ExprParser {
                 const split = IndexedStringUtils.nextName(rest);
 
                 // checks whether the cursor was reached in the relation reference string
-                const relationStartIndex: number | undefined = split.first.getFirstNonNaNIndex();
-                const relationEndIndex: number | undefined = split.first.getLastNonNaNIndex();
-                if (typeof relationStartIndex === "number" && typeof relationEndIndex === "number" &&
-                    relationStartIndex <= cursorIndex - 1 && cursorIndex - 1 <= relationEndIndex) {
+                if (split.first.getFirstIndex() <= cursorIndex - 1 && cursorIndex - 1 <= split.first.getLastIndex()) {
                     whispers = [...this.relations.keys()];
                 }
 

@@ -23,7 +23,7 @@ export abstract class ValueToken {
      * Gets token start and end index in the text (if the token has IndexedString representation) or undefined.
      */
     public getRange(): StartEndPair | undefined {
-        return this.str.getNonNaNRange();
+        return this.str.getRange();
     }
 }
 

@@ -93,10 +93,10 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
         const exprParser: ExprParser = new ExprParser(this.props.relations, this.props.nullValuesSupport);
         const { errors, parentheses } = exprParser.fakeParse(text, this.state.cursorIndex);
         this.setState({
-            errors: errors.filter(err => err.range !== undefined)
+            errors: errors.filter(err => err.range !== undefined && !isNaN(err.range.start) && !isNaN(err.range.end))
                 // @ts-ignore
                 .map(err => {return {start: err.range.start, end: err.range.end + 1, msg: err.message}}),
-            parentheses: parentheses
+            parentheses: parentheses.filter(p => !isNaN(p.start) && !isNaN(p.end))
         });
     }
 
@@ -211,10 +211,10 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
             const whispers = sortWhispers(fakeParseResult.whispers, wordBeforeCursor);
             this.setState({
                 whispers: whispers,
-                errors: fakeParseResult.errors.filter(err => err.range !== undefined)
+                errors: fakeParseResult.errors.filter(err => err.range !== undefined && !isNaN(err.range.start) && !isNaN(err.range.end))
                     // @ts-ignore
                     .map(err => {return {start: err.range.start, end: err.range.end + 1, msg: err.message}}),
-                parentheses: fakeParseResult.parentheses
+                parentheses: fakeParseResult.parentheses.filter(p => !isNaN(p.start) && !isNaN(p.end))
             });
             this.lastWhisperAndErrorsUpdate = Date.now();
         }

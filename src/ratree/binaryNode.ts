@@ -1,7 +1,6 @@
 import RATreeNode from "./raTreeNode";
 import Relation from "../relation/relation";
 import ErrorWithTextRange from "../error/errorWithTextRange";
-import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Classes extending binary node.

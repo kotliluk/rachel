@@ -10,6 +10,7 @@ import {isForbiddenColumnName} from "../utils/keywords";
 import ErrorWithTextRange from "../error/errorWithTextRange";
 import {ISToISMap} from "../types/isToISMap";
 import {language} from "../language/language";
+import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Renaming node of the relational algebra syntactic tree.
@@ -17,7 +18,7 @@ import {language} from "../language/language";
 export default class RenameNode extends UnaryNode {
 
     private readonly rename: IndexedString;
-    private readonly stringRange: { start: number, end: number } | undefined;
+    private readonly stringRange: StartEndPair | undefined;
 
     /**
      * Creates a new renaming node with given subtree.

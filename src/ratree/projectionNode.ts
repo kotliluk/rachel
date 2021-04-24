@@ -5,6 +5,7 @@ import Row from "../relation/row";
 import {IndexedString} from "../types/indexedString";
 import {ErrorFactory} from "../error/errorFactory";
 import {language} from "../language/language";
+import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Projection node of the relational algebra syntactic tree.
@@ -12,7 +13,7 @@ import {language} from "../language/language";
 export default class ProjectionNode extends UnaryNode {
 
     private readonly projection: IndexedString;
-    private readonly stringRange: { start: number, end: number } | undefined;
+    private readonly stringRange: StartEndPair | undefined;
 
     /**
      * Expects the projection string to start with '[' and end with ']'.
