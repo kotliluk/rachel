@@ -5,18 +5,18 @@
 Rachel is an evaluator and syntax checker for relational algebra (RA). It provides both
 data definition and expression evaluation. It uses simplified RA notation
 and is implemented for evaluation over small data sets for teaching purposes.
-Rachel has strong, explicit error description which helps better RA understanding.
+Rachel has strong, explicit error descriptions that help better RA understanding.
 
 The application was implemented by Lukáš Kotlík as a bachelor thesis on [Faculty of
 Electrical Engineering, Czech Technical University](https://fel.cvut.cz/en/).
 
 ## Usage
 
-The application has two main parts: relation definition section and expression evaluation
-section. When the expression is evaluated, the result section is displayed as well.
+The application has two main parts: the relation definition section and the expression evaluation
+section. When we evaluate the expression, the result section is displayed as well.
 On top of the page, we can manage settings or project import/export.
 
-The common work flow is:
+The usual workflow is:
 - (data import)
 - definition of relations
 - evaluation of expressions
@@ -25,41 +25,41 @@ The common work flow is:
 
 ### Relation section
 
-We define relations for the application in a table in upper part of the screen.
-To use a relation in the expressions, we need to load it to application. The relation must be
-in a valid state to be loaded. After loading, we can continue editing the relation while 
+We define relations for the application in a table in the upper part of the screen.
+To use a relation in the expressions, we need to load it to the application
+when in a valid state. After loading, we can continue editing the relation while 
 the last loaded (valid) state is still available for the expressions.
 
-There are 4 buttons in the header menu, which affect all relations:
+There are four buttons in the header menu, which affect all relations:
 - The **Load all** button loads all valid relations into the application memory.
 If any loaded relation with the same name exists, it is overwritten. Invalid relations are skipped.
 - The **Remove loaded** button removes all loaded relations (editable relations are not changed).
 - The **Import** button enables us to import new editable relations from CSV files.
 - The **Export** button saves all editable relations in CSV files. The saved relations can be
-in invalid state.
+in an invalid state.
 
-In the menu above the table, we can choose from editable relations the current edited one.
-A star (\*) before the relation name shows changed relations since last load.
-We can add a new relation by the "**+**" button.
+In the menu above the table, we can select from editable relations the currently edited one.
+A star (\*) before the relation name shows changed relations since the last loading.
+We can add a new relation by the **+** button.
 
 In the first row of the table, we define the column names and types. Column names cannot be
-duplicit inside one relation and must contain letters, numbers and underscores only and not
+duplicated inside one relation and must contain letters, numbers, and underscores only and not
 start with a number. Also, column names "null", "true" and "false" are forbidden.
-There are 3 supported column types in Rachel: number, string, and boolean.
+There are three supported column types in Rachel: number, string, and boolean.
 
-Buttons in last column and last row adds a new column or row, respectively.
+The **+** buttons in the last column and last row adds a new column or row, respectively.
 
-Other table inputs define data itself. Numbers can be integers or decimals. Boolean values can be
+Other table inputs define the data itself. Numbers can be integers or decimals. Boolean values can be
 true or false. String values can be any character sequence. Note that margin whitespaces are trimmed
-before loading to application, so string " a b c " is loaded as "a b c".
-If null values are supported, empty inputs are valid in all column types and are loaded as "null".
+before loading to application, so the string " a b c " is loaded as "a b c".
+If null values are supported, "null" and empty inputs are valid in all column types and are loaded as null values.
 
-When the mouse is over the first row or the first column, a button for deleting a column/row appears.
+When the mouse is over the first row or the first column, a button for deleting a column or a row, respectively, appears.
 
-There are 4 buttons in the menu under the table, which affect the selected relation:
+There are four buttons in the menu under the table, which affect the selected relation:
 - The **Load** button loads the relation into the application memory. If any loaded
 relation with the same name exists, it is overwritten. 
-- The **Rename** text field renames the relation. The name cannot be changed to any
+- The **Rename** text field renames the relation. We cannot change the name to any
 existing editable relation name. Allowed characters are the same as
 in the column names, but the forbidden words are "F", "L", and "R".
 - The **Delete** button deletes the relation.
@@ -68,18 +68,18 @@ creation (adding or importing a new one) or after loading it.
 
 ### Expression section
 
-The **Import** button enables us to load new expressions from textual files.
-
-The **Export** button saves all expressions in a textual file.
+The **Import** button enables us to load new expressions from textual files. The **Export** button saves all expressions in a textual file.
 
 We can have multiple named expressions loaded in the application at the time. Again, we use the upper
-menu for choosing the current edited expression, and the **+** button for adding a new one.
+menu for choosing the currently edited expression, and the **+** button for adding a new one.
 
 In the text area, we define the expression itself. We can use buttons to insert RA operators. While
-typing, Rachel whispers available relation or column names on the cursor position. You can use
-arrows + Enter/Tab or mouse to insert the whisper. Ctrl+Space hides or displays the whisper menu.
+typing, Rachel suggests available relation or column names on the cursor position. You can use
+arrows + Enter/Tab or mouse to insert the suggestion. Ctrl+Space hides or displays the suggestions menu.
 
-There are 3 buttons in the menu under the table, which affect the selected expression:
+There is a list of buttons under the table, which insert relational algebra operators.
+
+There are three buttons on the bottom of the section, which affect the selected expression:
 - The **Evaluate** button evaluates the edited expression and updates the result section.
 - The **Rename** text field renames the edited expression. There are no restrictions on expression
 names.
@@ -88,47 +88,47 @@ names.
 ### Result section
 
 The result section appears after an evaluation of an expression. It displays the evaluation tree
-and the result relation. We can choose to display a relation from different tree nodes. The rows
-in the relation can be sorted by the specific column values. The **Export** button above the
+and the result relation. We can choose to display a relation from different tree nodes. We can sort the rows
+in a relation using the specific column values. The **Export** button above the
 evaluation tree downloads the tree as a png picture.
 
-We can add use the **Add** and **Export** buttons above the table to add the displayed relation
+We can use the **Add** and **Export** buttons above the table to add the displayed relation
 to edited ones or to save it in a CSV file.
 
 ### Management section
 
-The last mentioned section is the upper one.
+The last-mentioned section is the upper one.
 
 We can **Load** or **Save** the whole project using .rachel files. The saved file contains all
-editable relations, all expressions and selected null values support.
+editable relations, all expressions, and selected null values support.
 
-We can load prepared sample projects by **Samples** button. It can be a great start before
-your own relation and expression definition.
+We can load prepared sample projects by the **Samples** button. It can be a great start before
+you define your relations and expressions.
 
 In the **Settings**, we can set:
 
 - Null values support - allowed/forbidden - it determinates whether the application supports
 null values in relations and expressions
 - CSV separator - semicolon/comma - used value separator in downloaded CSV files
-- Theme - light/dark - theme of the application
-- Language - language of the application
+- Theme - light/dark - the theme of the application
+- Language - the language of the application
 
-The **About** button navigates to the application GitHub.
+The **About** button navigates to the application GitHub repository.
 
 ### Tips
 
-You can use standard C-style one-line comments in expressions (rest of the line after '//').
+You can use C-style line (rest of the line after '//') or block (all between '/\*' and '\*/') comments in expressions.
 
 You can use Ctrl+Enter in the relation table to load the current relation.
-In the expression textarea, you can use Ctrl-Enter to evaluate current expression.
+In the expression textarea, you can use Ctrl+Enter to evaluate the current expression.
 
-All tabulators loaded into the application in files are replaced by 4 spaces. In case you are editing
-the files outside Rachel, we recommend to use spaces as well to ensure expected indenting. Also, do not
+All tabulators loaded into the application in files are replaced by four spaces. In case you are editing
+the files outside Rachel, we recommend using spaces to ensure expected indenting. Also, do not
 insert text with tabulators by Ctrl+V.
 
-In formal Relational algebra all conditions must contain comparison (==, >, <, ...). In Rachel, boolean
-values can be used directly (e.g., "BooleanColumn", not "BooleanColumn == true"). Anyway, we recommend
-using the full comparison in theta joins to receive expected whispers behavior.
+In formal Relational algebra, all conditions must contain comparison (==, >, <, ...). In Rachel, we can use boolean
+values can directly (e.g., "BooleanColumn" not "BooleanColumn == true"). Anyway, we recommend
+using the full comparison in theta joins to receive expected suggestions behavior.
 
 ## Relational algebra
 
@@ -142,16 +142,16 @@ Example - projection of columns Name and Address of a relation Human:
 
 ### Null values
 
-In strict original relational algebra, null values are not allowed. In newer versions, null values
-are supported for compatibility with SQL. To provide both possibilities, in Rachel the user can set
+In strict original relational algebra, null values are not allowed. Newer versions support null values
+for compatibility with SQL. To provide both possibilities in Rachel, the user can set
 null values support in the settings.
 
 ### RA operators
 
-Rachel provides wide set of relational algebra operators. The RA operators do not have
+Rachel provides a wide set of relational algebra operators. The RA operators do not have
 standardized precedence, our chosen precedence values are displayed
-below (lower numbers mean higher precedence) and in the application.
-Anyway, we recommend to use parentheses to avoid unexpected precedence behavior.
+below (lower numbers mean higher precedence).
+Anyway, we recommend using parentheses to avoid unexpected precedence behavior.
 
 Unary:
 - **projection** of columns (precedence 1): Relation\[column, ...\]
@@ -177,7 +177,7 @@ Set operations:
 
 **Algebraic operators** in the conditions:
 
-These operators expect number literals or number columns as the input. If the
+These operators expect number literal or number column inputs. If the
 number column evaluates to null, null is returned. When string, boolean, or
 null constant is given, an error is triggered.
 
@@ -188,7 +188,7 @@ null constant is given, an error is triggered.
 
 **Testing operators** in the conditions:
 
-These operators except any input pair of the same type. Inequality checking
+These operators accept any input pair of the same type. Inequality checking
 of booleans uses false < true. Inequality checking of strings uses alphabetic
 comparison ("abc" < "def", "a" < "aa"). If a column is evaluated to null, the only
 possible condition to return true is "column == null". When the inputs have
@@ -203,7 +203,7 @@ different types, an error is triggered.
 
 **Logical operators** in the conditions:
 
-These operators except boolean values. When a boolean column evaluates to null,
+These operators accept boolean values. When a boolean column evaluates to null,
 it holds "!column == false", "column && boolean == false",
 "column || boolean == boolean". When number, string, or
 null constant is given, an error is triggered.

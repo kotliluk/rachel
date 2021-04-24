@@ -156,12 +156,7 @@ export default class RenameNode extends UnaryNode {
         // checks whether the cursor is in this rename block
         let whispers = source.whispers;
         if (this.stringRange !== undefined && this.stringRange.start < cursorIndex && cursorIndex <= this.stringRange.end) {
-            // if the last special character before cursor is '<' or ',' returns current available columns (subtree schema)
-            const beforeCursor: IndexedString = this.rename.slice(0, cursorIndex - this.stringRange.start).trim();
-            const regexMatch = beforeCursor.match(/.*[^\w\s]/);
-            if (regexMatch !== null && (regexMatch[0].endsWith('<') || regexMatch[0].endsWith(','))) {
-                whispers = source.result.getColumnNames();
-            }
+            whispers = source.result.getColumnNames();
         }
         // adds errors from current expression
         const errors = source.errors;
