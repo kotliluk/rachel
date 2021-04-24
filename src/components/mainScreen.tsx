@@ -442,7 +442,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
     private updateExpressionsErrors = (): void => {
         const expressionSection = this.expressionSectionRef.current;
         if (expressionSection !== null) {
-            expressionSection.updateErrors();
+            expressionSection.updateErrorsAndParentheses();
         }
     }
 

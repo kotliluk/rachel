@@ -2,7 +2,6 @@ import BinaryNode from "./binaryNode";
 import RATreeNode from "./raTreeNode";
 import Relation from "../relation/relation";
 import Row from "../relation/row";
-import ErrorWithTextRange from "../error/errorWithTextRange";
 import {language} from "../language/language";
 
 /**
@@ -68,7 +67,7 @@ export default class NaturalJoinNode extends BinaryNode {
      * Strict expectations: none
      * Returned schema: left/right/both source schema (for left-semijoin/right-semijoin/natural join)
      */
-    public fakeEval(cursorIndex: number): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
+    public fakeEval(cursorIndex: number) {
         let type: "union" | "left" | "right" = "union";
         if (this.type === NaturalJoinType.leftSemi) {
             type = "left";

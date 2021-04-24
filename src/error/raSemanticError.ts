@@ -1,5 +1,6 @@
 import ErrorWithTextRange from "./errorWithTextRange";
 import {language} from "../language/language";
+import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Codes for RASemanticErrors.
@@ -37,7 +38,7 @@ export default class RASemanticError extends ErrorWithTextRange {
      * @param msg Adds "Semantic error: " before given message
      * @param range optional text range of the error
      */
-    constructor(msg: string, range: {start: number, end: number} | undefined) {
+    constructor(msg: string, range: StartEndPair | undefined) {
         super(language().semanticError + msg, range);
         if (Error.captureStackTrace) {
             Error.captureStackTrace(this, RASemanticError);

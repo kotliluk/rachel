@@ -6,6 +6,9 @@
 
     --whisper-dark-text-color: white;
     --whisper-light-text-color: black;
+
+    --parentheses-first-pair-color: var(--light-color-c);
+    --parentheses-second-pair-color: #ff551a;
 }
 
 /* MODE INDEPENDENT */
@@ -152,6 +155,23 @@
     font-size: var(--x-textarea-font-size);
     font-family: var(--x-textarea-font-family);
     text-align: left;
+}
+
+/* PARENTHESES */
+
+.x-textarea-parentheses {
+    background-color: transparent;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    position: absolute;
+}
+
+.first-pair {
+    border-bottom-color: var(--parentheses-first-pair-color);
+}
+
+.second-pair {
+    border-bottom-color: var(--parentheses-second-pair-color);
 }
 
 /* COLORS */

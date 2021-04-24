@@ -1,6 +1,7 @@
 import RATreeNode from "./raTreeNode";
 import Relation from "../relation/relation";
 import ErrorWithTextRange from "../error/errorWithTextRange";
+import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Classes extending binary node.
@@ -41,8 +42,8 @@ export default abstract class BinaryNode extends RATreeNode {
     protected fakeEvalBinary(cursorIndex: number, type: "union" | "left" | "right"):
         {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
         // evaluates the subtrees
-        const left: {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} = this.leftSubtree.fakeEval(cursorIndex);
-        const right: {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} = this.rightSubtree.fakeEval(cursorIndex);
+        const left = this.leftSubtree.fakeEval(cursorIndex);
+        const right = this.rightSubtree.fakeEval(cursorIndex);
         // creates return relation
         const result: Relation = new Relation("");
         if (type === "left" || type === "union") {
@@ -52,6 +53,10 @@ export default abstract class BinaryNode extends RATreeNode {
             right.result.forEachColumn((type, name) => result.addColumn(name, type));
         }
         left.errors.push(...right.errors);
-        return {result, whispers: left.whispers.length !== 0 ? left.whispers : right.whispers, errors: left.errors};
+        return {
+            result,
+            whispers: left.whispers.length !== 0 ? left.whispers : right.whispers,
+            errors: left.errors
+        };
     }
 }

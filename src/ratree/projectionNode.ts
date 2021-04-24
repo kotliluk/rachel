@@ -4,7 +4,6 @@ import Relation from "../relation/relation";
 import Row from "../relation/row";
 import {IndexedString} from "../types/indexedString";
 import {ErrorFactory} from "../error/errorFactory";
-import ErrorWithTextRange from "../error/errorWithTextRange";
 import {language} from "../language/language";
 
 /**
@@ -83,8 +82,8 @@ export default class ProjectionNode extends UnaryNode {
      * Returned schema: intersection of projected names and source schema
      * Second possible approach would be to return all projected names - less strict.
      */
-    public fakeEval(cursorIndex: number): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
-        let source: {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} = this.subtree.fakeEval(cursorIndex);
+    public fakeEval(cursorIndex: number) {
+        let source = this.subtree.fakeEval(cursorIndex);
         // checks whether the cursor is in this projection block - saves current available columns
         let whispers = source.whispers;
         if (this.stringRange !== undefined && this.stringRange.start < cursorIndex && cursorIndex <= this.stringRange.end) {

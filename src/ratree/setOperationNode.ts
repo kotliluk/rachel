@@ -70,9 +70,9 @@ export default class SetOperationNode extends BinaryNode {
      * Returned schema may be empty (when there is no common column in sources).
      * Second possible approach would be to return union of source schemas (less strict).
      */
-    public fakeEval(cursorIndex: number): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
-        const left: {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} = this.leftSubtree.fakeEval(cursorIndex);
-        const right: {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} = this.rightSubtree.fakeEval(cursorIndex);
+    public fakeEval(cursorIndex: number) {
+        const left = this.leftSubtree.fakeEval(cursorIndex);
+        const right = this.rightSubtree.fakeEval(cursorIndex);
         // join of relational schema - "left intersection right"
         const result: Relation = new Relation("(" + left.result.getName() + this.type + right.result.getName() + ")");
         left.result.forEachColumn((type, name) => {
@@ -88,7 +88,11 @@ export default class SetOperationNode extends BinaryNode {
             errors.push(ErrorFactory.semanticError(language().semanticErrors.setOperationNode_notEqualColumns,
                 this.stringRange, left.result.getSchemaString(), right.result.getSchemaString(), typeStr));
         }
-        return {result, whispers: left.whispers.length !== 0 ? left.whispers : right.whispers, errors};
+        return {
+            result,
+            whispers: left.whispers.length !== 0 ? left.whispers : right.whispers,
+            errors: left.errors
+        };
     }
 
     public printInLine(): string {

@@ -2,7 +2,6 @@ import BinaryNode from "./binaryNode";
 import RATreeNode from "./raTreeNode";
 import Relation from "../relation/relation";
 import Row from "../relation/row";
-import ErrorWithTextRange from "../error/errorWithTextRange";
 import {language} from "../language/language";
 
 /**
@@ -91,7 +90,7 @@ export default class OuterJoinNode extends BinaryNode {
      * Strict expectations: none
      * Returned schema: union of source schemas (in all cases - full/left/right)
      */
-    public fakeEval(cursorIndex: number): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
+    public fakeEval(cursorIndex: number) {
         return this.fakeEvalBinary(cursorIndex, "union");
     }
 

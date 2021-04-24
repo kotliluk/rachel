@@ -186,14 +186,6 @@ describe('fakeEval' , () => {
             const actual = node.fakeEval(17);
             expect(new Set(actual.whispers)).toStrictEqual(expected);
         });
-
-        test('cursor outside - after arrow', () => {
-            const str: IndexedString = IndexedString.new("< Kola -> PocetKol >", 10);
-
-            const node: RenameNode = new RenameNode(str, sourceOne);
-            const actual = node.fakeEval(20);
-            expect(actual.whispers.length).toBe(0);
-        });
     });
 
     describe('passes found whispers' , () => {

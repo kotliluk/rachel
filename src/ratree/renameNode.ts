@@ -151,8 +151,8 @@ export default class RenameNode extends UnaryNode {
      * otherwise returns empty array (does not whisper to what the user should rename)
      * Second possible approach would be to return (source schema minus originals) union (news) - less strict.
      */
-    public fakeEval(cursorIndex: number): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
-        const source: {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} = this.subtree.fakeEval(cursorIndex);
+    public fakeEval(cursorIndex: number) {
+        const source = this.subtree.fakeEval(cursorIndex);
         // checks whether the cursor is in this rename block
         let whispers = source.whispers;
         if (this.stringRange !== undefined && this.stringRange.start < cursorIndex && cursorIndex <= this.stringRange.end) {

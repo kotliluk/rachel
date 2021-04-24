@@ -1,5 +1,6 @@
 import ErrorWithTextRange from "./errorWithTextRange";
 import {language} from "../language/language";
+import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Codes for RASyntaxErrors.
@@ -134,7 +135,7 @@ export default class RASyntaxError extends ErrorWithTextRange {
      * @param msg Adds "Syntax error: " before given message
      * @param range optional text range of the error
      */
-    constructor(msg: string, range: {start: number, end: number} | undefined) {
+    constructor(msg: string, range: StartEndPair | undefined) {
         super(language().syntaxError + msg, range);
         if (Error.captureStackTrace) {
             Error.captureStackTrace(this, RASyntaxError);

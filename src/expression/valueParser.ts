@@ -35,7 +35,7 @@ import {language} from "../language/language";
 export default class ValueParser {
 
     /**
-     * Parses given string infix boolean and algebraic expression into an value-evaluating tree and returns the tree.
+     * Parses given string infix boolean and algebraic expression into a value-evaluating tree and returns the tree.
      * Uses Shunting-yard algorithm (first, it transforms the string into reverse polish notation).
      * Supported expressions:
      * - logical: and (&&, &), or (||, |), not (!, ~)

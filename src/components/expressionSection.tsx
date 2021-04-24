@@ -13,6 +13,7 @@ import ErrorWithTextRange from "../error/errorWithTextRange";
 import RATreeNode from "../ratree/raTreeNode";
 import {MessageBox} from "./messageBox";
 import {LanguageDef} from "../language/language";
+import {StartEndPair} from "../types/startEndPair";
 
 interface ExpressionSectionProps {
     // available expressions
@@ -53,6 +54,7 @@ interface ExpressionSectionState {
     sectionClicked: boolean,
     whispers: string[],
     errors: {start: number, end: number, msg: string}[],
+    parentheses: StartEndPair[],
     cursorIndex: number
 }
 
@@ -76,6 +78,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
             sectionClicked: false,
             whispers: [],
             errors: [],
+            parentheses: [],
             cursorIndex: 0
         }
         this.textAreaRef = React.createRef<XTextArea>();
@@ -83,16 +86,17 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
     }
 
     /**
-     * Updates displayed errors in the text area input.
+     * Updates displayed errors and parentheses pairs in the text area input.
      */
-    public updateErrors = () => {
+    public updateErrorsAndParentheses = () => {
         const text = this.getCurExpr().text;
         const exprParser: ExprParser = new ExprParser(this.props.relations, this.props.nullValuesSupport);
-        const { errors } = exprParser.fakeParse(text, this.state.cursorIndex);
+        const { errors, parentheses } = exprParser.fakeParse(text, this.state.cursorIndex);
         this.setState({
             errors: errors.filter(err => err.range !== undefined)
                 // @ts-ignore
-                .map(err => {return {start: err.range.start, end: err.range.end + 1, msg: err.message}})
+                .map(err => {return {start: err.range.start, end: err.range.end + 1, msg: err.message}}),
+            parentheses: parentheses
         });
     }
 
@@ -101,7 +105,6 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
     }
 
     private handleSelectDifferentExpression(index: number): void {
-        this.setState({errors: []});
         this.props.onSelectDifferentExpression(index);
     }
 
@@ -137,7 +140,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
     }
 
     private deleteExpression = (): void => {
-        this.props.onDeleteExpression(this.updateErrors);
+        this.props.onDeleteExpression(this.updateErrorsAndParentheses);
     }
 
     private exportExpressions = (): void => {
@@ -145,10 +148,9 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
     }
 
     private importExpressions = (): void => {
-        this.setState({errors: []});
         this.props.onImportExpressions((msg) => {
             MessageBox.message(msg);
-            this.updateErrors();
+            this.updateErrorsAndParentheses();
         });
     }
 
@@ -211,7 +213,8 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                 whispers: whispers,
                 errors: fakeParseResult.errors.filter(err => err.range !== undefined)
                     // @ts-ignore
-                    .map(err => {return {start: err.range.start, end: err.range.end + 1, msg: err.message}})
+                    .map(err => {return {start: err.range.start, end: err.range.end + 1, msg: err.message}}),
+                parentheses: fakeParseResult.parentheses
             });
             this.lastWhisperAndErrorsUpdate = Date.now();
         }
@@ -298,6 +301,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                     placeholder={lang.expressionTextareaPlaceholder}
                     errors={this.state.errors}
                     whispers={this.state.whispers}
+                    parentheses={this.state.parentheses}
 
                     onChange={this.handleExprChange}
                     onCtrlInput={this.handleCtrlInput}

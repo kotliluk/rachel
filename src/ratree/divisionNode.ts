@@ -4,7 +4,6 @@ import Relation from "../relation/relation";
 import Row from "../relation/row";
 import {SupportedColumnType} from "../relation/columnType";
 import {ErrorFactory} from "../error/errorFactory";
-import ErrorWithTextRange from "../error/errorWithTextRange";
 import {language} from "../language/language";
 
 /**
@@ -78,9 +77,9 @@ export default class DivisionNode extends BinaryNode {
      * Returned schema: left source schema minus right source schema
      * Returned fake schema may be empty (right source schema may contain all left source columns).
      */
-    public fakeEval(cursorIndex: number): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
-        const left: {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} = this.leftSubtree.fakeEval(cursorIndex);
-        const right: {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} = this.rightSubtree.fakeEval(cursorIndex);
+    public fakeEval(cursorIndex: number) {
+        const left = this.leftSubtree.fakeEval(cursorIndex);
+        const right = this.rightSubtree.fakeEval(cursorIndex);
         const leftColumns = left.result.getColumns();
         const rightColumns = right.result.getColumns();
         // creates relation schema - "left columns minus right columns"
@@ -99,7 +98,11 @@ export default class DivisionNode extends BinaryNode {
             errors.push(ErrorFactory.semanticError(language().semanticErrors.divisionNode_rightColumnsNotProperSubset,
                 this.stringRange, right.result.getNamesSchemaString(), left.result.getNamesSchemaString()));
         }
-        return {result, whispers: left.whispers.length !== 0 ? left.whispers : right.whispers, errors};
+        return {
+            result,
+            whispers: left.whispers.length !== 0 ? left.whispers : right.whispers,
+            errors: left.errors
+        };
     }
 
     public printInLine(): string {

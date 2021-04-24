@@ -2,7 +2,6 @@ import BinaryNode from "./binaryNode";
 import RATreeNode from "./raTreeNode";
 import Relation from "../relation/relation";
 import Row from "../relation/row";
-import ErrorWithTextRange from "../error/errorWithTextRange";
 import {language} from "../language/language";
 
 /**
@@ -69,7 +68,7 @@ export default class AntijoinNode extends BinaryNode {
      * Strict expectations: none
      * Returned schema: left/right source schema (for left/right antijoin)
      */
-    public fakeEval(cursorIndex: number): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
+    public fakeEval(cursorIndex: number) {
         const type = this.type === AntijoinType.left ? "left" : "right";
         return this.fakeEvalBinary(cursorIndex, type);
     }

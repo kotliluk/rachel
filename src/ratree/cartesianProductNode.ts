@@ -3,7 +3,6 @@ import RATreeNode from "./raTreeNode";
 import Relation from "../relation/relation";
 import Row from "../relation/row";
 import {ErrorFactory} from "../error/errorFactory";
-import ErrorWithTextRange from "../error/errorWithTextRange";
 import {language} from "../language/language";
 
 /**
@@ -50,10 +49,10 @@ export default class CartesianProductNode extends BinaryNode {
      * Returned schema: union of source schemas
      * Returned fake schema is not affected when disjointness is not held
      */
-    public fakeEval(cursorIndex: number): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]}{
+    public fakeEval(cursorIndex: number) {
         // evaluates the subtrees
-        const left: {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} = this.leftSubtree.fakeEval(cursorIndex);
-        const right: {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} = this.rightSubtree.fakeEval(cursorIndex);
+        const left = this.leftSubtree.fakeEval(cursorIndex);
+        const right = this.rightSubtree.fakeEval(cursorIndex);
         // creates return relation
         const result: Relation = new Relation("");
         left.result.forEachColumn((type, name) => result.addColumn(name, type));
@@ -70,7 +69,11 @@ export default class CartesianProductNode extends BinaryNode {
             left.errors.push(ErrorFactory.semanticError(language().semanticErrors.binaryNode_commonColumns,
                 this.stringRange, "cartesian product", commonColumns.join('", "')));
         }
-        return {result, whispers: left.whispers.length !== 0 ? left.whispers : right.whispers, errors: left.errors};
+        return {
+            result,
+            whispers: left.whispers.length !== 0 ? left.whispers : right.whispers,
+            errors: left.errors
+        };
     }
 
     public printInLine(): string {

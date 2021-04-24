@@ -1,6 +1,7 @@
 import {BinaryNodeClass} from "../ratree/binaryNode";
 import {IndexedString} from "../types/indexedString";
 import {UnaryNodeClass} from "../ratree/unaryNode";
+import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Abstract parent class for all RATokens.
@@ -12,7 +13,7 @@ export abstract class ExprToken {
     /**
      * Gets token start and end index in the text (if the token has IndexedString representation) or undefined.
      */
-    public getRange(): {start: number, end: number} | undefined {
+    public getRange(): StartEndPair | undefined {
         return this.str.getRange();
     }
 }

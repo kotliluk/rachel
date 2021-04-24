@@ -3,6 +3,7 @@ import {VETreeNode} from "./veTreeNode";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
 import {ErrorFactory} from "../error/errorFactory";
 import {language} from "../language/language";
+import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Types of ComputingOperator class.
@@ -26,7 +27,7 @@ export class ComputingOperator extends VETreeNode {
      * @param right Right subtree evaluating to a number value
      * @param range Range of the operator in the input string to highlight errors
      */
-    public static add(left: VETreeNode, right: VETreeNode, range: {start: number, end: number} | undefined): ComputingOperator {
+    public static add(left: VETreeNode, right: VETreeNode, range: StartEndPair | undefined): ComputingOperator {
         return new ComputingOperator(ComputingOperatorType.plus, left, right, range);
     }
 
@@ -37,7 +38,7 @@ export class ComputingOperator extends VETreeNode {
      * @param right Right subtree evaluating to a number value
      * @param range Range of the operator in the input string to highlight errors
      */
-    public static deduct(left: VETreeNode, right: VETreeNode, range: {start: number, end: number} | undefined): ComputingOperator {
+    public static deduct(left: VETreeNode, right: VETreeNode, range: StartEndPair | undefined): ComputingOperator {
         return new ComputingOperator(ComputingOperatorType.minus, left, right, range);
     }
 
@@ -48,7 +49,7 @@ export class ComputingOperator extends VETreeNode {
      * @param right Right subtree evaluating to a number value
      * @param range Range of the operator in the input string to highlight errors
      */
-    public static multiply(left: VETreeNode, right: VETreeNode, range: {start: number, end: number} | undefined): ComputingOperator {
+    public static multiply(left: VETreeNode, right: VETreeNode, range: StartEndPair | undefined): ComputingOperator {
         return new ComputingOperator(ComputingOperatorType.multiplication, left, right, range);
     }
 
@@ -59,12 +60,12 @@ export class ComputingOperator extends VETreeNode {
      * @param right Right subtree evaluating to a number value
      * @param range Range of the operator in the input string to highlight errors
      */
-    public static divide(left: VETreeNode, right: VETreeNode, range: {start: number, end: number} | undefined): ComputingOperator {
+    public static divide(left: VETreeNode, right: VETreeNode, range: StartEndPair | undefined): ComputingOperator {
         return new ComputingOperator(ComputingOperatorType.division, left, right, range);
     }
 
     private constructor(private readonly type: ComputingOperatorType, private readonly left: VETreeNode,
-                        private readonly right: VETreeNode, private readonly range: {start: number, end: number} | undefined) {
+                        private readonly right: VETreeNode, private readonly range: StartEndPair | undefined) {
         super();
     }
 

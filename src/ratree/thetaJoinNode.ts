@@ -111,9 +111,9 @@ export default class ThetaJoinNode extends BinaryNode {
      * Returned schema: left/right/both source schema (for left/right/full semijoin)
      * Returned fake schema is not affected when disjointness is not held
      */
-    public fakeEval(cursorIndex: number): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
-        const left: {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} = this.leftSubtree.fakeEval(cursorIndex);
-        const right: {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} = this.rightSubtree.fakeEval(cursorIndex);
+    public fakeEval(cursorIndex: number) {
+        const left = this.leftSubtree.fakeEval(cursorIndex);
+        const right = this.rightSubtree.fakeEval(cursorIndex);
         const sourceColumns: string[] = [];
         sourceColumns.push(...left.result.getColumnNames());
         sourceColumns.push(...right.result.getColumnNames());

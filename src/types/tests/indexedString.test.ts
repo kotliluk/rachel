@@ -1,4 +1,5 @@
 import {IndexedChar, IndexedString} from "../indexedString";
+import {StartEndPair} from "../startEndPair";
 
 const strOne: string = "Str with \n and řý87\"6§.)";
 const indexedStrOne: IndexedChar[] = strOne.split('').map((char, index) => {return {char: char, index: index}});
@@ -449,7 +450,7 @@ describe("getNonNaNRange", () => {
         // arrange
         const is: IndexedString = IndexedString.empty();
         // act
-        const actual: {start: number, end: number} | undefined = is.getNonNaNRange();
+        const actual: StartEndPair | undefined = is.getNonNaNRange();
         // assert
         expect(actual).toBeUndefined();
     });
@@ -460,7 +461,7 @@ describe("getNonNaNRange", () => {
             { char: 'a', index: 3 }, { char: 'a', index: 4 }, { char: 'a', index: 5 }];
         const is: IndexedString = IndexedString.newFromArray(arr);
         // act
-        const actual: {start: number, end: number} | undefined = is.getNonNaNRange();
+        const actual: StartEndPair | undefined = is.getNonNaNRange();
         // assert
         expect(actual).toStrictEqual({start: 0, end: 5});
     });
@@ -471,7 +472,7 @@ describe("getNonNaNRange", () => {
             { char: 'a', index: NaN }, { char: 'a', index: 4 }, { char: 'a', index: NaN }];
         const is: IndexedString = IndexedString.newFromArray(arr);
         // act
-        const actual: {start: number, end: number} | undefined = is.getNonNaNRange();
+        const actual: StartEndPair | undefined = is.getNonNaNRange();
         // assert
         expect(actual).toStrictEqual({start: 2, end: 4});
     });
@@ -482,7 +483,7 @@ describe("getNonNaNRange", () => {
             { char: 'a', index: NaN }, { char: 'a', index: NaN }, { char: 'a', index: NaN }];
         const is: IndexedString = IndexedString.newFromArray(arr);
         // act
-        const actual: {start: number, end: number} | undefined = is.getNonNaNRange();
+        const actual: StartEndPair | undefined = is.getNonNaNRange();
         // assert
         expect(actual).toBeUndefined();
     });

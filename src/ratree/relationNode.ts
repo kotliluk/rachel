@@ -1,6 +1,5 @@
 import Relation from "../relation/relation";
 import RATreeNode from "./raTreeNode";
-import ErrorWithTextRange from "../error/errorWithTextRange";
 
 /**
  * Leave node of the relational algebra syntactic tree with reference to a source relation.
@@ -16,9 +15,10 @@ export default class RelationNode extends RATreeNode {
         // nothing to evaluate
     }
 
-    public fakeEval(cursorIndex: number): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
+    public fakeEval(cursorIndex: number) {
         // @ts-ignore
-        return {result: this.resultRelation, whispers: [], errors: []};
+        const relation: Relation = this.resultRelation;
+        return {result: relation, whispers: [], errors: []};
     }
 
     public printInLine(): string {

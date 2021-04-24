@@ -1,8 +1,10 @@
+import {StartEndPair} from "../types/startEndPair";
+
 /**
  * Error with optional text range of the error.
  */
 export default class ErrorWithTextRange extends Error {
-    constructor(msg: string, public range?: {start: number, end: number} | undefined) {
+    constructor(msg: string, public range?: StartEndPair | undefined) {
         super(msg);
     }
 }
@@ -14,7 +16,7 @@ export default class ErrorWithTextRange extends Error {
  * @param err
  * @param range
  */
-export function insertRangeIfUndefined<T>(err: T, range: {start: number, end: number} | undefined): T {
+export function insertRangeIfUndefined<T>(err: T, range: StartEndPair | undefined): T {
     if (err instanceof ErrorWithTextRange && err.range === undefined) {
         err.range = range;
     }

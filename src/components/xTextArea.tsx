@@ -3,6 +3,7 @@ import './css/xTextArea.css';
 import {mod} from "../utils/math";
 import {computeFontSizeInPx} from "../utils/fontUtils";
 import {getStartOfWordBeforeIndex} from "../utils/whisperUtils";
+import {StartEndPair} from "../types/startEndPair";
 
 interface XTextAreaProps {
     // id of the component
@@ -13,6 +14,8 @@ interface XTextAreaProps {
     placeholder: string;
     // error messages and ranges to be highlighted in text area
     errors: {start: number, end: number, msg: string}[];
+    // pairs of parentheses
+    parentheses: StartEndPair[];
     // strings whispered to the user to be added at the current position
     whispers: string[];
     // handler of text change
@@ -82,7 +85,20 @@ type ExtendedHTMLTextArea = HTMLTextAreaElement & {
      */
     moveErrors: () => void,
     // div elements for highlighting errors
-    errorDivs: ErrorDiv[]
+    errorDivs: ErrorDiv[],
+
+    /**
+     * Creates parentheses div elements for parentheses next to the cursor.
+     */
+    updateParentheses: () => void,
+    /**
+     * Moves parentheses div elements to current position.
+     */
+    moveParentheses: () => void,
+    // positions of parentheses pairs in text
+    parentheses: StartEndPair[],
+    // div elements for highlighting parentheses
+    parenthesesDivs: ParenthesesDiv[]
 };
 
 /**
@@ -122,6 +138,11 @@ type ErrorDiv = HTMLDivElement & {
     messageSpan: HTMLSpanElement
 }
 
+type ParenthesesDiv = HTMLDivElement & {
+    startLine: number,
+    startColumn: number
+}
+
 // @ts-ignore
 const cssConstants: CSSStyleDeclaration = getComputedStyle(document.querySelector(':root'));
 
@@ -146,7 +167,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
     /**
      * Returns current text area selection start and end.
      */
-    public getSelection(): {start: number, end: number} {
+    public getSelection(): StartEndPair {
         return {start: this.textarea.selectionStart, end: this.textarea.selectionEnd};
     }
 
@@ -288,6 +309,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                 this.style.height = (this.scrollHeight + lineHeight + 10) + "px";
             }
             this.paintLineNumbers(darkTheme);
+            this.updateParentheses();
         }
 
         ta.createWhisper = function (whispers: string[]): void {
@@ -452,26 +474,100 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
             this.moveErrors();
         }
 
+        ta.parentheses = [];
+        ta.parenthesesDivs = [];
+
+        ta.updateParentheses = function () {
+            ta.parenthesesDivs.forEach(div => {
+                div.remove();
+            });
+            ta.parenthesesDivs = [];
+            if (ta.selectionStart === ta.selectionEnd) {
+                const c1 = ta.selectionStart;
+                const c2 = c1 - 1;
+                const around = ta.parentheses.filter(p => p.start === c1 || p.start === c2 || p.end === c1 || p.end === c2);
+                // true when the first pair is processed
+                let first = true;
+                around.forEach(parentheses => {
+                    // finds highlight start and end lines and columns
+                    const start = getPositionLineAndColumn(ta.value, parentheses.start);
+                    const end = getPositionLineAndColumn(ta.value, parentheses.end);
+                    console.log(start, end);
+                    const div1 = createParenthesesDiv(start.line, start.column, ta);
+                    const div2 = createParenthesesDiv(end.line, end.column, ta);
+                    // @ts-ignore
+                    ta.parentElement.appendChild(div1);
+                    // @ts-ignore
+                    ta.parentElement.appendChild(div2);
+                    ta.parenthesesDivs.push(div1);
+                    ta.parenthesesDivs.push(div2);
+                    // changes color to distinguish two pairs
+                    div1.classList.toggle('first-pair', first);
+                    div1.classList.toggle('second-pair', !first);
+                    div2.classList.toggle('first-pair', first);
+                    div2.classList.toggle('second-pair', !first);
+                    first = false;
+                });
+                ta.moveParentheses();
+            }
+        }
+
+        ta.moveParentheses = function () {
+            ta.parenthesesDivs.forEach(div => {
+                // computes position of the highlight relative to the text
+                const yPos: number = (div.startLine + 1) * lineHeight + 1 - this.scrollTop;
+                // shows the div at computed position if the line is visible
+                if (1 < yPos && yPos < this.clientHeight) {
+                    let width: number = fontWidth;
+                    let xPos: number = div.startColumn * fontWidth + 7 - this.scrollLeft;
+                    // if the whole highlight is out of the width, does not display it
+                    if (xPos > this.clientWidth || xPos + width < 3) {
+                        div.setAttribute('style', `display: none;`);
+                    }
+                    else {
+                        // updates position of highlights starting before first visible column
+                        if (xPos < 3) {
+                            width += xPos - 3;
+                            xPos = 3;
+                        }
+                        // updates width of highlights ending after last visible column
+                        if (xPos + width > this.clientWidth) {
+                            width = this.clientWidth - xPos;
+                        }
+                        div.setAttribute('style', `display: block; top: ${yPos}px; left: ${xPos}px; width: ${width}px`);
+                    }
+                }
+                // hides the div if the line is not visible
+                else {
+                    div.setAttribute('style', `display: none;`);
+                }
+            });
+        }
+
         // handles whisper div position when scrolling on page
         window.addEventListener('scroll', () => ta.moveWhisper());
         window.addEventListener('resize', () => {
             ta.moveWhisper();
             ta.moveErrors();
+            ta.moveParentheses();
         });
         window.addEventListener('click', () => ta.hideWhisper());
         ta.onscroll     = () => {
             ta.paintLineNumbers(this.props.darkTheme);
             ta.moveWhisper();
             ta.moveErrors();
+            ta.moveParentheses();
         };
         //ta.addEventListener("focusout", () => ta.hideWhisper());
         ta.onmousedown  = event => {
             ta.mouseIsDown = true;
+            setTimeout(ta.updateParentheses, 0);
             event.stopPropagation();
         }
         ta.onmouseup    = () => {
             ta.mouseIsDown = false;
             ta.paintLineNumbers(this.props.darkTheme);
+            setTimeout(ta.updateParentheses, 0);
         };
         ta.onmousemove  = () => {
             if (ta.mouseIsDown) ta.paintLineNumbers(this.props.darkTheme);
@@ -553,6 +649,10 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                 }
                 this.props.onCtrlInput(ev);
             }
+            if (ev.key === "ArrowLeft" || ev.key === "ArrowRight" || ev.key === "ArrowUp" || ev.key === "ArrowDown" ||
+                ev.key === "Home" || ev.key === "End") {
+                setTimeout(ta.updateParentheses, 0);
+            }
         }
 
         // make sure numbers are painted
@@ -586,6 +686,11 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
         // first undefined highlight removes 'x-textarea-err' from textarea.className to show selection with blue color
         else if (this.props.errors !== prevProps.errors) {
             this.textarea.classList.remove('x-textarea-err');
+        }
+        // highlights parentheses
+        if (this.props.parentheses !== prevProps.parentheses) {
+            this.textarea.parentheses = this.props.parentheses;
+            this.textarea.updateParentheses();
         }
     }
 
@@ -634,7 +739,7 @@ function getLineLength(text: string, line: number): number {
 }
 
 /**
- * Creates a div for highlighting text in the given textarea.
+ * Creates a div for highlighting errors in the given textarea.
  */
 function createHighlightDiv(startLine: number, startColumn: number, rangeLength: number, msg: string,
                             textarea: ExtendedHTMLTextArea): ErrorDiv {
@@ -656,4 +761,22 @@ function createHighlightDiv(startLine: number, startColumn: number, rangeLength:
     highlight.messageSpan = span;
     highlight.appendChild(span);
     return highlight;
+}
+
+/**
+ * Creates a div for highlighting parentheses in the given textarea.
+ */
+function createParenthesesDiv(startLine: number, startColumn: number, textarea: ExtendedHTMLTextArea): ParenthesesDiv {
+    // @ts-ignore
+    const div: ParenthesesDiv = document.createElement('div');
+    div.classList.add("x-textarea-parentheses");
+    div.startLine = startLine;
+    div.startColumn = startColumn;
+    // dispatches click event to not block textarea underneath highlights
+    div.onclick = (ev: MouseEvent) => {
+        const newEvent: MouseEvent = new MouseEvent(ev.type, {...ev});
+        textarea.dispatchEvent(newEvent);
+        ev.stopPropagation();
+    }
+    return div;
 }

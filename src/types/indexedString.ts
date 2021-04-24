@@ -1,3 +1,5 @@
+import {StartEndPair} from "./startEndPair";
+
 /**
  * String representation with index of each character. Provides some usual string functions.
  */
@@ -120,7 +122,7 @@ export class IndexedString {
     /**
      * Returns indexes of the first and the last character of the IndexedString. Returns undefined if empty.
      */
-    public getRange(): {start: number, end: number} | undefined {
+    public getRange(): StartEndPair | undefined {
         if (this.isEmpty()) {
             return undefined;
         }
@@ -131,7 +133,7 @@ export class IndexedString {
      * Returns the first and the last non-NaN indexes of characters of the IndexedString. Returns undefined if empty or
      * if all indexes are NaN.
      */
-    public getNonNaNRange(): {start: number, end: number} | undefined {
+    public getNonNaNRange(): StartEndPair | undefined {
         if (this.isEmpty()) {
             return undefined;
         }

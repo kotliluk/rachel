@@ -1,6 +1,7 @@
 import {ComparingOperatorType} from "../vetree/comparingOperator";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
 import {IndexedString} from "../types/indexedString";
+import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Precedence value for all token types.
@@ -21,7 +22,7 @@ export abstract class ValueToken {
     /**
      * Gets token start and end index in the text (if the token has IndexedString representation) or undefined.
      */
-    public getRange(): {start: number, end: number} | undefined {
+    public getRange(): StartEndPair | undefined {
         return this.str.getNonNaNRange();
     }
 }

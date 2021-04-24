@@ -1,6 +1,7 @@
 import RASemanticError from "./raSemanticError";
 import RASyntaxError from "./raSyntaxError";
 import CodeError from "./codeError";
+import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Factory for creating custom application errors: CodeError, RASemanticError, RASyntaxError.
@@ -26,7 +27,7 @@ export class ErrorFactory {
      * @param range text range of the error in the input when defined
      * @param params textual specification
      */
-    public static semanticError(msg: string[], range: {start: number, end: number} | undefined, ...params: string[]): RASemanticError {
+    public static semanticError(msg: string[], range: StartEndPair | undefined, ...params: string[]): RASemanticError {
         assertParamsCount(msg.length - 1, params);
         return new RASemanticError(joinStringArrays(msg, params), range);
     }
@@ -38,7 +39,7 @@ export class ErrorFactory {
      * @param range text range of the error in the input when defined
      * @param params textual specification
      */
-    public static syntaxError(msg: string[], range: {start: number, end: number} | undefined, ...params: string[]): RASyntaxError {
+    public static syntaxError(msg: string[], range: StartEndPair | undefined, ...params: string[]): RASyntaxError {
         assertParamsCount(msg.length - 1, params);
         return new RASyntaxError(joinStringArrays(msg, params), range);
     }

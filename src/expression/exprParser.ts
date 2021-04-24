@@ -20,6 +20,7 @@ import IndexedStringUtils from "../utils/indexedStringUtils";
 import ErrorWithTextRange from "../error/errorWithTextRange";
 import RATreeFactory from "../ratree/raTreeFactory";
 import {language} from "../language/language";
+import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Assertion types for assertValidInfixTokens function.
@@ -92,18 +93,19 @@ export class ExprParser {
      * names at given place.
      * If a parsing error occurs, it is faked to work or ignored and reported in returning errors array.
      */
-    public fakeParse(expr: string, cursorIndex: number): {whispers: string[], errors: ErrorWithTextRange[]} {
+    public fakeParse(expr: string, cursorIndex: number):
+      {whispers: string[], errors: ErrorWithTextRange[], parentheses: StartEndPair[]} {
         if (expr.trim() === "") {
-            return {whispers: [...this.relations.keys()], errors: []};
+            return {whispers: [...this.relations.keys()], errors: [], parentheses: []};
         }
         const {str, err} = IndexedStringUtils.deleteAllComments(IndexedString.new(expr));
-        const {whispers, tokens, errors} = this.fakeParseTokens(str, cursorIndex);
+        const {whispers, tokens, errors, parentheses} = this.fakeParseTokens(str, cursorIndex);
         if (err !== undefined) {
             errors.push(err);
         }
         // prevent errors in creation of RPN
         if (tokens.length === 0) {
-            return {whispers: whispers, errors: errors};
+            return {whispers: whispers, errors: errors, parentheses: parentheses};
         }
         // fakes found errors to valid parse
         this.assertValidInfixTokens(tokens, AssertType.NOT_THROW, errors);
@@ -114,10 +116,10 @@ export class ExprParser {
         errors.push(...innerResult.errors);
         // if there are whispers from inner operators, returns them
         if (innerResult.whispers.length > 0) {
-            return {whispers: innerResult.whispers, errors: errors};
+            return {whispers: innerResult.whispers, errors: errors, parentheses: parentheses};
         }
         // otherwise returns outer whispers (or empty array if no were found)
-        return {whispers: whispers, errors: errors};
+        return {whispers: whispers, errors: errors, parentheses: parentheses};
     }
 
     /**
@@ -220,7 +222,7 @@ export class ExprParser {
             // BINARY OPERATORS
             else if (rest.startsWith("*F*") || rest.startsWith("*L*") || rest.startsWith("*R*")) {
                 if (!this.nullValuesSupport) {
-                    let errorRange: {start: number, end: number} | undefined = undefined;
+                    let errorRange: StartEndPair | undefined = undefined;
                     if (rest.getFirstNonNaNIndex() !== undefined) {
                         // @ts-ignore
                         errorRange = {start: rest.getFirstNonNaNIndex(), end: rest.getFirstNonNaNIndex() + 2};
@@ -342,10 +344,20 @@ export class ExprParser {
      * was a relation or an unary operator (default false)
      */
     public fakeParseTokens(expr: IndexedString, cursorIndex: number, selectionExpected: boolean = false):
-        { tokens: ExprToken[], whispers: string[], errors: ErrorWithTextRange[] } {
+        { tokens: ExprToken[], whispers: string[], errors: ErrorWithTextRange[], parentheses: StartEndPair[] } {
         let whispers: string[] = [];
         let tokens: ExprToken[] = [];
         let errors: ErrorWithTextRange[] = [];
+        let parentheses: StartEndPair[] = [];
+
+        // adds new pair of parentheses from margins of the given string
+        const pushParentheses = (str: IndexedString) => {
+            const start = str.getFirstIndex();
+            const end = str.getLastIndex();
+            if (start !== undefined && end !== undefined) {
+                parentheses.push({start: start, end: end});
+            }
+        }
 
         let rest: IndexedString = expr;
         while (!rest.isEmpty()) {
@@ -385,12 +397,16 @@ export class ExprParser {
                         errors.push(...recursiveReturn.errors);
                         whispers.push(...recursiveReturn.whispers);
                         tokens.push(...recursiveReturn.tokens);
+                        parentheses.push(...recursiveReturn.parentheses);
                         // gives invalid index (NaN for not reporting errors with this imaginary parentheses
                         tokens.push(new ClosingParenthesis(IndexedString.new(')', NaN)));
                     }
                     // breaks the while cycle because rest was parsed recursively
                     break;
                 }
+
+                // saves parentheses
+                pushParentheses(split.first);
 
                 // whole "(...)" part pushed as selection
                 if (selectionExpected) {
@@ -403,6 +419,7 @@ export class ExprParser {
                     errors.push(...recursiveReturn.errors);
                     whispers.push(...recursiveReturn.whispers);
                     tokens.push(...recursiveReturn.tokens);
+                    parentheses.push(...recursiveReturn.parentheses);
                     tokens.push(new ClosingParenthesis(split.first.slice(-1)));
                     selectionExpected = true;
                 }
@@ -425,6 +442,9 @@ export class ExprParser {
                     // it fakes the unclosed expression part as a projection operator
                     split = {first: rest.concat(IndexedString.new(']', rest.getNextIndexOrNaN())), second: IndexedString.empty()};
                 }
+
+                // saves parentheses
+                pushParentheses(split.first);
 
                 // checks whether the cursor was reached
                 const operatorEndIndex: number | undefined = split.first.getLastNonNaNIndex();
@@ -530,6 +550,8 @@ export class ExprParser {
             else if (rest.startsWith('<')) {
                 try {
                     const split = IndexedStringUtils.nextBorderedPart(rest, '<', '>]', '-');
+                    // saves parentheses
+                    pushParentheses(split.first);
                     // checks whether the cursor was reached
                     const operatorEndIndex: number | undefined = split.first.getLastNonNaNIndex();
                     if (operatorEndIndex === cursorIndex - 1) {
@@ -591,7 +613,7 @@ export class ExprParser {
                 rest = rest.slice(split.first.length());
             }
         }
-        return { tokens, whispers, errors };
+        return { tokens, whispers, errors, parentheses };
     }
 
     /**
@@ -614,7 +636,7 @@ export class ExprParser {
          * missing is "binary", otherwise, it is a relation with empty name.
          */
         const handleError = (index: number, missing: "binary" | "relation",
-                             msg: string[], range: {start: number, end: number} | undefined, ...params: string[]) => {
+                             msg: string[], range: StartEndPair | undefined, ...params: string[]) => {
             const error = ErrorFactory.syntaxError(msg, range, ...params);
             if (type !== AssertType.NOT_THROW) {
                 throw error;
