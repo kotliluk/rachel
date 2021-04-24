@@ -5,9 +5,9 @@
 /* PARAGRAPHS */
 
 .result-section > .upper-p {
-    margin: 15px 5px 15px var(--left-text-margin);
+    margin: 15px 5px 15px 2px;
 }
 
 .result-section > .lower-p {
-    margin: 20px 5px 0 var(--left-text-margin);
+    margin: 20px 5px 0 2px;
 }

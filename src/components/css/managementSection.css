@@ -3,17 +3,17 @@
     flex-wrap: wrap;
     justify-content: flex-start;
     align-items: center;
-    padding: 10px 0 8px var(--left-text-margin);
+    padding: 10px 0 8px 0;
     width: 100%;
     box-sizing: border-box;
     background-color: var(--light-color-c);
-    border-radius: 20px;
+    border-radius: 5px;
 }
 
 /* APP NAME */
 
 .management-section h1 {
-    margin: 0 20px 0 0;
+    margin: 0 20px 0 20px;
     cursor: default;
     color: var(--light-color-e);
 }

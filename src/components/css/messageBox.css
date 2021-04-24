@@ -13,7 +13,7 @@
 
     padding: var(--message-box-padding);
     box-sizing: border-box;
-    border-radius: 12px;
+    border-radius: 5px;
 
     font-size: var(--font-size);
     text-overflow: clip;

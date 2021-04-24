@@ -6,10 +6,8 @@
     box-sizing: border-box;
     overflow: auto;
 
-    border-radius: 12px;
+    border-radius: 5px;
     padding: 2px;
-    margin-left: 4px;
-    margin-right: 4px;
 }
 
 .body-light .result-table-container {

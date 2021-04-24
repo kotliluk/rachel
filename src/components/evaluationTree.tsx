@@ -148,7 +148,7 @@ function TreeNodeComponent({ node, selected, onClick, darkTheme }:
         <Group top={node.y} left={node.x}>
             <rect
                 height={nodeHeight} width={nodeWidth}
-                y={-nodeHeight / 2} x={-nodeWidth / 2} rx={20}
+                y={-nodeHeight / 2} x={-nodeWidth / 2} rx={5}
                 fill={darkTheme ?
                     (selected ? selectedNodeColorDark : (tooltipOpen ? selectedNodeColorDark : unselectedNodeColorDark)) :
                     (selected ? selectedNodeColorLight : (tooltipOpen ? selectedNodeColorLight : unselectedNodeColorLight))}

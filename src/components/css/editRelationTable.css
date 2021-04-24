@@ -14,10 +14,8 @@
     box-sizing: border-box;
     overflow: auto;
 
-    border-radius: 12px;
+    border-radius: 5px;
     padding: 2px;
-    margin-left: 4px;
-    margin-right: 4px;
 }
 
 .body-light .edit-table-container {
@@ -116,7 +114,7 @@
     height: 21px;
     padding: 2px var(--cell-padding-sides) 2px var(--cell-padding-sides);
     white-space: nowrap;
-    border-radius: 6px;
+    border-radius: 5px;
 }
 
 .edit-table td .tooltip {
@@ -179,14 +177,14 @@
 .name-th {
     border-width: 1px 1px 0 1px;
     border-style: solid;
-    border-radius: 8px 8px 0 0;
+    border-radius: 5px 5px 0 0;
     padding: 2px var(--cell-padding-sides) 4px var(--cell-padding-sides);
 }
 
 .type-th {
     border-width: 0 1px 1px 1px;
     border-style: solid;
-    border-radius: 0 0 8px 8px;
+    border-radius: 0 0 5px 5px;
     padding: 0 var(--cell-padding-sides) 2px var(--cell-padding-sides);
 }
 
@@ -208,14 +206,14 @@
     border-width: 1px;
     padding-bottom: 2px;
     border-color: var(--light-color-d);
-    border-radius: 8px;
+    border-radius: 5px;
 }
 
 .body-dark .edit-table .name-th:hover {
     border-width: 1px;
     padding-bottom: 2px;
     border-color: var(--dark-color-d);
-    border-radius: 8px;
+    border-radius: 5px;
 }
 
 .body-light .edit-table .name-th:focus-within {
@@ -223,7 +221,7 @@
     padding-bottom: 2px;
     background-color: var(--light-color-d);
     border-color: var(--light-color-d);
-    border-radius: 8px;
+    border-radius: 5px;
 }
 
 .body-dark .edit-table .name-th:focus-within {
@@ -231,7 +229,7 @@
     padding-bottom: 2px;
     background-color: var(--dark-color-d);
     border-color: var(--dark-color-d);
-    border-radius: 8px;
+    border-radius: 5px;
 }
 
 /* ERROR INPUT */
@@ -240,7 +238,7 @@
     border-width: 1px;
     padding-bottom: 2px;
     border-color: var(--error-color) !important;
-    border-radius: 8px;
+    border-radius: 5px;
 }
 
 td.error-input {
@@ -252,7 +250,7 @@ td.error-input {
 .edit-table select {
     background-color: transparent;
     color: inherit;
-    border-radius: 4px;
+    border-radius: 5px;
     min-width: 80px;
     cursor: pointer;
     font-size: inherit;
