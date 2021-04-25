@@ -573,7 +573,8 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                     const prev = this.value.charAt(prevI);
                     const next = this.value.charAt(nextI);
                     // if the cursor is between pair symbol
-                    if ((prev === '(' && next === ')') || (prev === '[' && next === ']') || (prev === '"' && next === '"')) {
+                    if ((prev === '(' && next === ')') || (prev === '[' && next === ']') ||
+                      (prev === '"' && next === '"' && this.value.charAt(prevI - 1) !== '\\')) {
                         const before: string = ta.value.slice(0, prevI);
                         const after: string = ta.value.slice(nextI + 1);
                         props.onChange(before + after, prevI);
@@ -701,7 +702,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                 ta.insertPairSymbol("[", "]");
                 ev.preventDefault();
             }
-            if (ev.key === '"') {
+            if (ev.key === '"' && ta.value.charAt(ta.selectionStart - 1) !== "\\") {
                 ta.insertPairSymbol('"', '"');
                 ev.preventDefault();
             }
