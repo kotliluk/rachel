@@ -70,7 +70,7 @@ type ExtendedHTMLTextArea = HTMLTextAreaElement & {
      *
      * @param onChange callback to the parent after text change
      */
-    insertCurrentSelectedWhisper: (onChange: (text: string, cursorIndex: number) => void) => void,
+    insertCurrentSelectedWhisper: () => void,
     // true when the whisper should not be shown automatically (e.g., after pressing Enter)
     notAutoShowWhisper: boolean,
     // reference to whisper div
@@ -98,7 +98,18 @@ type ExtendedHTMLTextArea = HTMLTextAreaElement & {
     // positions of parentheses pairs in text
     parentheses: StartEndPair[],
     // div elements for highlighting parentheses
-    parenthesesDivs: ParenthesesDiv[]
+    parenthesesDivs: ParenthesesDiv[],
+
+    /**
+     * Insert given pair of symbols at the cursor position. If a part of text is selected, it inserts the first symbol
+     * before it and the second symbol after it.
+     */
+    insertPairSymbol: (first: string, second: string) => void,
+    /**
+     * Deletes characters before and after the cursor if the adjacent characters are pair symbols: (), [], <>, "".
+     * If the pair was deleted, returns true, otherwise returns false.
+     */
+    checkPairSymbolDelete: () => boolean
 };
 
 /**
@@ -328,7 +339,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                     };
                     div.ondblclick = event => {
                         this.focus();
-                        this.insertCurrentSelectedWhisper(props.onChange);
+                        this.insertCurrentSelectedWhisper();
                         this.notAutoShowWhisper = true;
                         event.stopPropagation();
                     };
@@ -378,14 +389,14 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
             this.whisperDiv.isShown = false;
         }
 
-        ta.insertCurrentSelectedWhisper = function (onChange: (text: string, cursorIndex: number) => void) {
+        ta.insertCurrentSelectedWhisper = function () {
             const currWhisper: string | undefined = this.whisperDiv.getSelectedWhisper();
             if (currWhisper !== undefined) {
                 const i: number = getStartOfWordBeforeIndex(this.value, this.selectionEnd);
                 const beforeAdd: string = this.value.slice(0, i);
                 const afterAdd: string = this.value.slice(this.selectionEnd);
                 const newCursorPos: number = i + currWhisper.length;
-                onChange(beforeAdd + currWhisper + afterAdd, newCursorPos);
+                props.onChange(beforeAdd + currWhisper + afterAdd, newCursorPos);
                 this.setSelectionRange(newCursorPos, newCursorPos);
                 this.hideWhisper();
             }
@@ -543,6 +554,37 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
             });
         }
 
+        ta.insertPairSymbol = function (first: string, second: string) {
+            const before: string = ta.value.slice(0, this.selectionStart);
+            const between: string = ta.value.slice(this.selectionStart, this.selectionEnd)
+            const after: string = ta.value.slice(this.selectionEnd);
+            const newCursorPos: number = ta.selectionEnd + 1;
+            props.onChange(before + first + between + second + after, newCursorPos);
+            this.setSelectionRange(newCursorPos, newCursorPos);
+            this.hideWhisper();
+        }
+
+        ta.checkPairSymbolDelete = function (): boolean {
+            // only if nothing is selected
+            if (ta.selectionStart === ta.selectionEnd) {
+                const prevI = ta.selectionStart - 1;
+                const nextI = ta.selectionStart;
+                if (0 <= prevI && nextI < ta.value.length) {
+                    const prev = this.value.charAt(prevI);
+                    const next = this.value.charAt(nextI);
+                    // if the cursor is between pair symbol
+                    if ((prev === '(' && next === ')') || (prev === '[' && next === ']') || (prev === '"' && next === '"')) {
+                        const before: string = ta.value.slice(0, prevI);
+                        const after: string = ta.value.slice(nextI + 1);
+                        props.onChange(before + after, prevI);
+                        this.setSelectionRange(prevI, prevI);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         // handles whisper div position when scrolling on page
         window.addEventListener('scroll', () => ta.moveWhisper());
         window.addEventListener('resize', () => {
@@ -557,7 +599,6 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
             ta.moveErrors();
             ta.moveParentheses();
         };
-        //ta.addEventListener("focusout", () => ta.hideWhisper());
         ta.onmousedown  = event => {
             ta.mouseIsDown = true;
             setTimeout(ta.updateParentheses, 0);
@@ -605,7 +646,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                     ev.preventDefault();
                 }
                 if (ev.key === "Enter" && !ev.ctrlKey) {
-                    ta.insertCurrentSelectedWhisper(this.props.onChange);
+                    ta.insertCurrentSelectedWhisper();
                     ev.preventDefault();
                 }
                 if (ev.key === "Enter" && ev.ctrlKey) {
@@ -613,7 +654,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
                     ev.preventDefault();
                 }
                 if (ev.key === "Tab") {
-                    ta.insertCurrentSelectedWhisper(this.props.onChange);
+                    ta.insertCurrentSelectedWhisper();
                     ev.preventDefault();
                 }
                 if (ev.key === "ArrowLeft") {
@@ -651,6 +692,22 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
             if (ev.key === "ArrowLeft" || ev.key === "ArrowRight" || ev.key === "ArrowUp" || ev.key === "ArrowDown" ||
                 ev.key === "Home" || ev.key === "End" || ev.key === "PageUp" || ev.key === "PageDown") {
                 setTimeout(ta.updateParentheses, 0);
+            }
+            if (ev.key === "(") {
+                ta.insertPairSymbol("(", ")");
+                ev.preventDefault();
+            }
+            if (ev.key === "[") {
+                ta.insertPairSymbol("[", "]");
+                ev.preventDefault();
+            }
+            if (ev.key === '"') {
+                ta.insertPairSymbol('"', '"');
+                ev.preventDefault();
+            }
+            // if the text area deletes pair symbol, default backspace behavior is prevented
+            if (ev.key === "Backspace" && ta.checkPairSymbolDelete()) {
+                ev.preventDefault();
             }
         }
 

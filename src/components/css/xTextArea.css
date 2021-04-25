@@ -8,7 +8,7 @@
     --whisper-light-text-color: black;
 
     --parentheses-first-pair-color: var(--light-color-c);
-    --parentheses-second-pair-color: #ff551a;
+    --parentheses-second-pair-color: #ff6836;
 }
 
 /* MODE INDEPENDENT */
@@ -131,6 +131,7 @@
     background-color: transparent;
     border-bottom: 2px dotted var(--error-color);
     position: absolute;
+    z-index: 1;
 }
 
 .x-textarea-highlight:hover .highlight-tooltip {
@@ -142,7 +143,7 @@
     width: max-content;
     max-width: 400px;
     position: absolute;
-    z-index: 1;
+    z-index: 2;
     top: calc(100% + 2px);
     left: 50%;
     padding: 5px;
