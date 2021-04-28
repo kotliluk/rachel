@@ -67,33 +67,24 @@ export class UnaryOperatorToken extends ExprToken {
 }
 
 /**
- * Precedence values for binary operators (highest to lowest). As there is no fixed precedence order for RA and set
- * operation, we chose the following.
+ * Precedence values for binary operators (highest to lowest).
  */
 const precedenceLevelA: number = 10;
 const cartesianPrecedence: number = precedenceLevelA;
 const naturalPrecedence: number = precedenceLevelA;
 const thetaPrecedence: number = precedenceLevelA;
+const semiPrecedence: number = precedenceLevelA;
+const antiPrecedence: number = precedenceLevelA;
+const thetaSemiPrecedence: number = precedenceLevelA;
+const outerPrecedence: number = precedenceLevelA;
+const divisionPrecedence: number = precedenceLevelA;
 
 const precedenceLevelB: number = precedenceLevelA - 1;
-const semiPrecedence: number = precedenceLevelB;
-const antiPrecedence: number = precedenceLevelB;
-const thetaSemiPrecedence: number = precedenceLevelB;
+const intersectionPrecedence: number = precedenceLevelB;
 
 const precedenceLevelC: number = precedenceLevelB - 1;
-const outerPrecedence: number = precedenceLevelC;
-
-const precedenceLevelD: number = precedenceLevelC - 1;
-const divisionPrecedence: number = precedenceLevelD;
-
-const precedenceLevelE: number = precedenceLevelD - 1;
-const intersectionPrecedence: number = precedenceLevelE;
-
-const precedenceLevelF: number = precedenceLevelE - 1;
-const differencePrecedence: number = precedenceLevelF;
-
-const precedenceLevelG: number = precedenceLevelF - 1;
-const unionPrecedence: number = precedenceLevelG;
+const differencePrecedence: number = precedenceLevelC;
+const unionPrecedence: number = precedenceLevelC;
 
 /**
  * Binary operators.

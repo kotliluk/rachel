@@ -206,7 +206,6 @@ export default class StringUtils {
             const curChar = str.charAt(i);
             // increases index for using "i" in slicing
             ++i;
-            // found quote - changes ignoring of special chars
             if (curChar === '"' && (backslashes % 2) === 0) {
                 return { first: str.slice(0, i), second: str.slice(i), error: undefined };
             }

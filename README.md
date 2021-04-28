@@ -79,6 +79,10 @@ arrows + Enter/Tab or mouse to insert the suggestion. Ctrl+Space hides or displa
 
 There is a list of buttons under the table, which insert relational algebra operators.
 
+To use quote '"' characters inside string literals in expressions, you must escape their default behavior
+(i.e., starting or ending a string) by a backslash as '\\"'. Similarly, to use a backslash character,
+you must type it twice '\\\\'.
+
 There are three buttons on the bottom of the section, which affect the selected expression:
 - The **Evaluate** button evaluates the edited expression and updates the result section.
 - The **Rename** text field renames the edited expression. There are no restrictions on expression
@@ -148,9 +152,8 @@ null values support in the settings.
 
 ### RA operators
 
-Rachel provides a wide set of relational algebra operators. The RA operators do not have
-standardized precedence, our chosen precedence values are displayed
-below (lower numbers mean higher precedence).
+Rachel provides a wide set of relational algebra operators. In the following list,
+we show their syntax and precedence (lower numbers mean higher precedence).
 Anyway, we recommend using parentheses to avoid unexpected precedence behavior.
 
 Unary:
@@ -162,16 +165,16 @@ Binary:
 - **natural join** (precedence 2): A*B
 - **cartesian product** (precedence 2): A⨯B
 - **theta join** (precedence 2): A\[condition\]B
-- **left/right semijoin** (precedence 3): A<\*B, A\*>B
-- **left/right antijoin** (precedence 3): A⊳B, A⊲B
-- **left/right theta join** (precedence 3): A<condition\]B, A\[condition>B
-- **full/left/right outer join** (precedence 4): A\*F\*B, A\*L\*B, A\*R\*B
-- **division** (precedence 5): A÷B
+- **left/right semijoin** (precedence 2): A<\*B, A\*>B
+- **left/right antijoin** (precedence 2): A⊳B, A⊲B
+- **left/right theta join** (precedence 2): A<condition\]B, A\[condition>B
+- **full/left/right outer join** (precedence 2): A\*F\*B, A\*L\*B, A\*R\*B
+- **division** (precedence 2): A÷B
 
 Set operations:
-- **union** (precedence 6): A∩B
-- **difference** (precedence 7): A\B
-- **intersection** (precedence 8): A∪B
+- **intersection** (precedence 3): A∩B
+- **union** (precedence 4): A∪B
+- **difference** (precedence 4): A\B
 
 ### Algebraic and logical operators
 
