@@ -134,6 +134,8 @@ In formal Relational algebra, all conditions must contain comparison (==, >, <, 
 values can directly (e.g., "BooleanColumn" not "BooleanColumn == true"). Anyway, we recommend
 using the full comparison in theta joins to receive expected suggestions behavior.
 
+You can use drag-and-drop to move relations and expressions in their menus.
+
 ## Relational algebra
 
 ### Notation

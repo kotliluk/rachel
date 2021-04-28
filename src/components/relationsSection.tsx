@@ -38,6 +38,8 @@ interface RelationsSectionProps {
 
     // handler of selecting a different relation as current
     onSelectDifferentRelation: (newIndex: number) => void,
+    // handler of moving a relation on a new position using drag and drop
+    onDragRelation: (from: number, to: number) => void,
     // handler of creating a new relation
     onNewRelation: () => void,
     // handler of loading the current selected relation into the application
@@ -180,9 +182,24 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                     onClick={() => this.handleSelectDifferentRelation(i)}
                     className={className}
                     style={style}
+                    draggable={true}
+                    onDragStart={e => e.dataTransfer.setData("text/plain", String(i))}
+                    onDragOver={e => e.preventDefault()}
+                    onDrop={e => this.handleDragDrop(e, i)}
                 >{actuality + rel.getName()}</button>
             );
         });
+    }
+
+    /**
+     * Requests relation move when the drag ends.
+     */
+    // @ts-ignore
+    private handleDragDrop = (e: DragEvent<HTMLDivElement>, i: number) => {
+        const from = Number(e.dataTransfer.getData("text/plain"));
+        if (!isNaN(from)) {
+            this.props.onDragRelation(from, i);
+        }
     }
 
     public render() {

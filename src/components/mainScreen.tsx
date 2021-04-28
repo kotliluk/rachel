@@ -311,6 +311,30 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
     }
 
     /**
+     * Moves a relation from the given "from" index to the given "to" index.
+     */
+    private handleDragRelation = (from: number, to: number): void => {
+        // dragging left
+        if (from > to) {
+            const before = this.state.storedRelations.slice(0, to);
+            const moved = this.state.storedRelations.slice(to, from);
+            const fromValue = this.state.storedRelations[from];
+            const after = this.state.storedRelations.slice(from + 1);
+            const newArray = [...before, fromValue, ...moved, ...after];
+            this.setState({storedRelations: newArray, selectedRelation: to});
+        }
+        // dragging right
+        else if (from < to) {
+            const before = this.state.storedRelations.slice(0, from);
+            const fromValue = this.state.storedRelations[from];
+            const moved = this.state.storedRelations.slice(from + 1, to + 1);
+            const after = this.state.storedRelations.slice(to + 1);
+            const newArray = [...before, ...moved, fromValue, ...after];
+            this.setState({storedRelations: newArray, selectedRelation: to});
+        }
+    }
+
+    /**
      * Creates a new empty relation and adds it in the relation list.
      */
     private handleCreateNewRelation = (): void => {
@@ -475,6 +499,30 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
     }
 
     /**
+     * Moves a expression from the given "from" index to the given "to" index.
+     */
+    private handleDragExpression = (from: number, to: number): void => {
+        // dragging left
+        if (from > to) {
+            const before = this.state.expressions.slice(0, to);
+            const moved = this.state.expressions.slice(to, from);
+            const fromValue = this.state.expressions[from];
+            const after = this.state.expressions.slice(from + 1);
+            const newArray = [...before, fromValue, ...moved, ...after];
+            this.setState({expressions: newArray, selectedExpression: to});
+        }
+        // dragging right
+        else if (from < to) {
+            const before = this.state.expressions.slice(0, from);
+            const fromValue = this.state.expressions[from];
+            const moved = this.state.expressions.slice(from + 1, to + 1);
+            const after = this.state.expressions.slice(to + 1);
+            const newArray = [...before, ...moved, fromValue, ...after];
+            this.setState({expressions: newArray, selectedExpression: to});
+        }
+    }
+
+    /**
      * Creates a new empty expression and adds it in the expression list.
      */
     private handleCreateNewExpression = (): void => {
@@ -603,6 +651,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
                     onDeleteColumn={this.handleRelationDeleteColumn}
 
                     onSelectDifferentRelation={this.handleSelectDifferentRelation}
+                    onDragRelation={this.handleDragRelation}
                     onNewRelation={this.handleCreateNewRelation}
                     onLoadRelation={this.handleLoadRelation}
                     onDeleteStoredRelation={this.handleDeleteRelation}
@@ -628,6 +677,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
                     onEval={this.handleExprEval}
 
                     onSelectDifferentExpression={this.handleSelectDifferentExpression}
+                    onDragExpression={this.handleDragExpression}
                     onNewExpression={this.handleCreateNewExpression}
                     onDeleteExpression={this.handleDeleteExpression}
                     onExportExpressions={this.handleExportExpressions}

@@ -26,6 +26,8 @@ interface ExpressionSectionProps {
 
     // handler of selecting different expression as current
     onSelectDifferentExpression: (newIndex: number) => void,
+    // handler of moving an expression on a new position using drag and drop
+    onDragExpression: (from: number, to: number) => void,
     // handler of creating the new expression
     onNewExpression: () => void,
     // handler of deleting the current expression
@@ -242,6 +244,17 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
         }
     }
 
+    /**
+     * Requests expressions move when the drag ends.
+     */
+    // @ts-ignore
+    private handleDragDrop = (e: DragEvent<HTMLDivElement>, i: number) => {
+        const from = Number(e.dataTransfer.getData("text/plain"));
+        if (!isNaN(from)) {
+            this.props.onDragExpression(from, i);
+        }
+    }
+
     public render() {
         const lang = this.props.language.expressionSection;
         const ops = this.props.language.operations;
@@ -253,6 +266,10 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                     key={i}
                     onClick={() => this.handleSelectDifferentExpression(i)}
                     className={className}
+                    draggable={true}
+                    onDragStart={e => e.dataTransfer.setData("text/plain", String(i))}
+                    onDragOver={e => e.preventDefault()}
+                    onDrop={e => this.handleDragDrop(e, i)}
                 >{expr.name}</button>);
             });
         }
