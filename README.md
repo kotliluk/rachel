@@ -217,6 +217,11 @@ null constant is given, an error is triggered.
 - and (&& or & or ∧): boolean && boolean, ...
 - or (|| or | or ∨): boolean || boolean, ...
 
+## Known issues
+
+The application does not support the Internet Explorer browser. We decided not to support it as
+Microsoft recommends using the newer browsers and announced the end of its support as well.
+
 ## Language contribution
 
 If you want to extend Rachel by a new language, feel free to define it by the steps

@@ -16,6 +16,7 @@ import {StoredRelation} from "../relation/storedRelation";
 import {SupportedColumnType} from "../relation/columnType";
 import {RelationStoreManager} from "../relation/relationStoreManager";
 import {Mail} from "../utils/mail";
+import {POSTMAIL_ACCESS_TOKEN} from "../postMailAccessToken";
 import {copyProject, Project} from "../project/project";
 import {getSamples} from "../project/samples";
 
@@ -92,7 +93,7 @@ export default class MainScreen extends Component<MainScreenProps, MainScreenSta
      * @param err unexpected error
      */
     private reportUnexpectedError = (err: Error): void => {
-        const postMail: Mail = new Mail("5uog26ex8q9qu7sqib8ea0qd");
+        const postMail: Mail = new Mail(POSTMAIL_ACCESS_TOKEN);
         let body: string = "Unexpected error " + err.name + " in Rachel application." +
             "\n\nMessage:\n" + err.message +
             "\n\nDate:\n" + new Date().toString() +
