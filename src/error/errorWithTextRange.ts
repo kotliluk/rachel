@@ -12,9 +12,6 @@ export default class ErrorWithTextRange extends Error {
 /**
  * If the given error is ErrorWithTextRange instance and has undefined range, sets its range to given value.
  * Returns (possibly modified) input error.
- *
- * @param err
- * @param range
  */
 export function insertRangeIfUndefined<T>(err: T, range: StartEndPair | undefined): T {
     if (err instanceof ErrorWithTextRange && err.range === undefined) {

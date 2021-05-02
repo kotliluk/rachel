@@ -60,6 +60,7 @@ describe('eval' , () => {
             e1a.addValue("Bydliste", "Praha, CR");
             expected.addRow(e1a);
 
+            // act
             const node: CartesianProductNode = new CartesianProductNode(new RelationNode(left), new RelationNode(right), undefined);
             const actual = node.getResult();
             expect(expected.equals(actual)).toBeTruthy();
@@ -168,6 +169,8 @@ describe('eval' , () => {
             e1d.addValue("Bydliste", "Velke Mezirici");
             expected.addRow(e1d);
 
+            // act
+            // act
             const node: CartesianProductNode = new CartesianProductNode(new RelationNode(left), new RelationNode(right), undefined);
             const actual = node.getResult();
             expect(expected.equals(actual)).toBeTruthy();
@@ -178,32 +181,17 @@ describe('eval' , () => {
         test('common Id column', () => {
             const left: Relation = new Relation("Auto");
             left.addColumn("Id", "number");
-            left.addColumn("Majitel", "number");
-            left.addColumn("Kola", "number");
-            left.addColumn("Motor", "string");
-            left.addColumn("Vyrobce", "string");
-            left.addColumn("Barva", "string");
             const l1a: Row = new Row(left.getColumns());
             l1a.addValue("Id", 1);
-            l1a.addValue("Majitel", 1);
-            l1a.addValue("Kola", 4);
-            l1a.addValue("Motor", "Motor V4");
-            l1a.addValue("Vyrobce", "Skoda");
-            l1a.addValue("Barva", "Modra");
             left.addRow(l1a);
 
             const right: Relation = new Relation("Majitel");
             right.addColumn("Id", "number");
-            right.addColumn("Jmeno", "string");
-            right.addColumn("Prijmeni", "string");
-            right.addColumn("Bydliste", "string");
             const r1a: Row = new Row(right.getColumns());
             r1a.addValue("Id", 1);
-            r1a.addValue("Jmeno", "Lukas");
-            r1a.addValue("Prijmeni", "Kotlik");
-            r1a.addValue("Bydliste", "Praha, CR");
             right.addRow(r1a);
 
+            // act
             const node: CartesianProductNode = new CartesianProductNode(new RelationNode(left), new RelationNode(right), undefined);
             expect(() => node.getResult()).toThrow();
         });

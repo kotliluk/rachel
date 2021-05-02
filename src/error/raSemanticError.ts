@@ -3,7 +3,7 @@ import {language} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";
 
 /**
- * Codes for RASemanticErrors.
+ * Messages for RASemanticErrors.
  * The description is a string array - between its members are inserted error parameters (names of invalid relations,
  * invalid input parts, etc.). See english language definition for expected structure of each error description.
  */
@@ -35,7 +35,7 @@ export interface SemanticErrorMessages {
  */
 export default class RASemanticError extends ErrorWithTextRange {
     /**
-     * @param msg Adds "Semantic error: " before given message
+     * @param msg error message
      * @param range optional text range of the error
      */
     constructor(msg: string, range: StartEndPair | undefined) {

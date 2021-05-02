@@ -1,5 +1,5 @@
 /**
- * Codes for CodeErrors.
+ * Messages for CodeErrors.
  * The description is a string array - between its members are inserted error parameters (names of invalid relations,
  * invalid input parts, etc.). See english language definition for expected structure of each error description.
  */
@@ -28,7 +28,7 @@ export interface CodeErrorMessages {
 }
 
 /**
- * Error caused by fatal error in code of the application.
+ * Error caused by an unexpected error in code of the application.
  */
 export default class CodeError extends Error {
     constructor(msg: string) {

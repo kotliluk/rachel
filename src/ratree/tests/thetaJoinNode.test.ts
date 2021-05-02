@@ -317,6 +317,7 @@ describe('fakeEval' , () => {
                 expected.addColumn("LMajitel", "string");
                 expected.addColumn("LKola", "number");
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(-5);
                 expect(expected.equals(actual.result)).toBeTruthy();
@@ -329,6 +330,7 @@ describe('fakeEval' , () => {
                 expected.addColumn("LMajitel", "string");
                 expected.addColumn("LKola", "number");
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(-5);
                 expect(expected.equals(actual.result)).toBeTruthy();
@@ -341,6 +343,7 @@ describe('fakeEval' , () => {
                 expected.addColumn("LMajitel", "string");
                 expected.addColumn("LKola", "number");
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(-5);
                 expect(expected.equals(actual.result)).toBeTruthy();
@@ -355,6 +358,7 @@ describe('fakeEval' , () => {
                 expected.addColumn("RMajitel", "string");
                 expected.addColumn("RKola", "number");
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(-5);
                 expect(expected.equals(actual.result)).toBeTruthy();
@@ -367,6 +371,7 @@ describe('fakeEval' , () => {
                 expected.addColumn("RMajitel", "string");
                 expected.addColumn("RKola", "number");
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(-5);
                 expect(expected.equals(actual.result)).toBeTruthy();
@@ -379,6 +384,7 @@ describe('fakeEval' , () => {
                 expected.addColumn("RMajitel", "string");
                 expected.addColumn("RKola", "number");
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(-5);
                 expect(expected.equals(actual.result)).toBeTruthy();
@@ -396,6 +402,7 @@ describe('fakeEval' , () => {
                 expected.addColumn("RMajitel", "string");
                 expected.addColumn("RKola", "number");
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.full, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(-5);
                 expect(expected.equals(actual.result)).toBeTruthy();
@@ -411,6 +418,7 @@ describe('fakeEval' , () => {
                 expected.addColumn("RMajitel", "string");
                 expected.addColumn("RKola", "number");
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.full, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(-5);
                 expect(expected.equals(actual.result)).toBeTruthy();
@@ -426,6 +434,7 @@ describe('fakeEval' , () => {
                 expected.addColumn("RMajitel", "string");
                 expected.addColumn("RKola", "number");
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.full, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(-5);
                 expect(expected.equals(actual.result)).toBeTruthy();
@@ -439,6 +448,7 @@ describe('fakeEval' , () => {
                 const str: IndexedString = IndexedString.new('<LKola = RKola]', 10);
                 const expected: Set<string> = new Set(["LId", "LMajitel", "LKola", "RId", "RMajitel", "RKola"]);
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(11);
                 expect(new Set(actual.whispers)).toStrictEqual(expected);
@@ -447,6 +457,7 @@ describe('fakeEval' , () => {
             test('cursor outside - left margin', () => {
                 const str: IndexedString = IndexedString.new('<LKola = RKola]', 10);
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(10);
                 expect(actual.whispers.length).toBe(0);
@@ -456,6 +467,7 @@ describe('fakeEval' , () => {
                 const str: IndexedString = IndexedString.new('<LKola = RKola]', 10);
                 const expected: Set<string> = new Set(["LId", "LMajitel", "LKola", "RId", "RMajitel", "RKola"]);
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(24);
                 expect(new Set(actual.whispers)).toStrictEqual(expected);
@@ -464,6 +476,7 @@ describe('fakeEval' , () => {
             test('cursor outside - right margin', () => {
                 const str: IndexedString = IndexedString.new('<LKola = RKola]', 10);
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(25);
                 expect(actual.whispers.length).toBe(0);
@@ -475,6 +488,7 @@ describe('fakeEval' , () => {
                 const str: IndexedString = IndexedString.new('[LKola > RKola>', 10);
                 const expected: Set<string> = new Set(["LId", "LMajitel", "LKola", "RId", "RMajitel", "RKola"]);
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(11);
                 expect(new Set(actual.whispers)).toStrictEqual(expected);
@@ -483,6 +497,7 @@ describe('fakeEval' , () => {
             test('cursor outside - left margin', () => {
                 const str: IndexedString = IndexedString.new('[LKola > RKola>', 10);
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(10);
                 expect(actual.whispers.length).toBe(0);
@@ -492,6 +507,7 @@ describe('fakeEval' , () => {
                 const str: IndexedString = IndexedString.new('[LKola > RKola>', 10);
                 const expected: Set<string> = new Set(["LId", "LMajitel", "LKola", "RId", "RMajitel", "RKola"]);
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(24);
                 expect(new Set(actual.whispers)).toStrictEqual(expected);
@@ -500,6 +516,7 @@ describe('fakeEval' , () => {
             test('cursor outside - right margin', () => {
                 const str: IndexedString = IndexedString.new('[LKola > RKola>', 10);
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(25);
                 expect(actual.whispers.length).toBe(0);
@@ -511,6 +528,7 @@ describe('fakeEval' , () => {
                 const str: IndexedString = IndexedString.new('[LKola > RKola]', 10);
                 const expected: Set<string> = new Set(["LId", "LMajitel", "LKola", "RId", "RMajitel", "RKola"]);
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.full, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(11);
                 expect(new Set(actual.whispers)).toStrictEqual(expected);
@@ -519,6 +537,7 @@ describe('fakeEval' , () => {
             test('cursor outside - left margin', () => {
                 const str: IndexedString = IndexedString.new('[LKola > RKola]', 10);
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.full, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(10);
                 expect(actual.whispers.length).toBe(0);
@@ -528,6 +547,7 @@ describe('fakeEval' , () => {
                 const str: IndexedString = IndexedString.new('[LKola > RKola]', 10);
                 const expected: Set<string> = new Set(["LId", "LMajitel", "LKola", "RId", "RMajitel", "RKola"]);
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.full, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(24);
                 expect(new Set(actual.whispers)).toStrictEqual(expected);
@@ -536,6 +556,7 @@ describe('fakeEval' , () => {
             test('cursor outside - right margin', () => {
                 const str: IndexedString = IndexedString.new('[LKola > RKola]', 10);
 
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.full, str, leftSource, rightSource, true);
                 const actual = node.fakeEval(25);
                 expect(actual.whispers.length).toBe(0);
@@ -551,6 +572,7 @@ describe('fakeEval' , () => {
                 const expected: Set<string> = new Set(["LId", "LMajitel", "LKola"]);
 
                 const nodePrev: SelectionNode = new SelectionNode(exprPrev, leftSource, true);
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, expr, nodePrev, rightSource, true);
                 const actual = node.fakeEval(15);
                 expect(new Set(actual.whispers)).toStrictEqual(expected);
@@ -562,6 +584,7 @@ describe('fakeEval' , () => {
                 const expected: Set<string> = new Set(["RId", "RMajitel", "RKola"]);
 
                 const nodePrev: SelectionNode = new SelectionNode(exprPrev, rightSource, true);
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, expr, leftSource, nodePrev, true);
                 const actual = node.fakeEval(35);
                 expect(new Set(actual.whispers)).toStrictEqual(expected);
@@ -575,6 +598,7 @@ describe('fakeEval' , () => {
                 const expected: Set<string> = new Set(["LId", "LMajitel", "LKola"]);
 
                 const nodePrev: SelectionNode = new SelectionNode(exprPrev, leftSource, true);
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, expr, nodePrev, rightSource, true);
                 const actual = node.fakeEval(15);
                 expect(new Set(actual.whispers)).toStrictEqual(expected);
@@ -586,6 +610,7 @@ describe('fakeEval' , () => {
                 const expected: Set<string> = new Set(["RId", "RMajitel", "RKola"]);
 
                 const nodePrev: SelectionNode = new SelectionNode(exprPrev, rightSource, true);
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, expr, leftSource, nodePrev, true);
                 const actual = node.fakeEval(35);
                 expect(new Set(actual.whispers)).toStrictEqual(expected);
@@ -599,6 +624,7 @@ describe('fakeEval' , () => {
                 const expected: Set<string> = new Set(["LId", "LMajitel", "LKola"]);
 
                 const nodePrev: SelectionNode = new SelectionNode(exprPrev, leftSource, true);
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.full, expr, nodePrev, rightSource, true);
                 const actual = node.fakeEval(15);
                 expect(new Set(actual.whispers)).toStrictEqual(expected);
@@ -610,6 +636,7 @@ describe('fakeEval' , () => {
                 const expected: Set<string> = new Set(["RId", "RMajitel", "RKola"]);
 
                 const nodePrev: SelectionNode = new SelectionNode(exprPrev, rightSource, true);
+                // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.full, expr, leftSource, nodePrev, true);
                 const actual = node.fakeEval(35);
                 expect(new Set(actual.whispers)).toStrictEqual(expected);

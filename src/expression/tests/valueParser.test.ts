@@ -461,25 +461,25 @@ describe('rpnToVETree', () => {
             input.push(literalToken("null", null, "null"));
             input.push(comparingToken(ComparingOperatorType.nonEqual, '!='));
             input.push(logicalOrToken('||'));
-            const expected: VETreeNode = LogicalOperator.or('||',
-                LogicalOperator.not('!',
-                    LogicalOperator.and('&&',
-                        new ComparingOperator(ComparingOperatorType.lessOrEqual, '<=',
+            const expected: VETreeNode = LogicalOperator.or(IndexedString.new('||'),
+                LogicalOperator.not(IndexedString.new('!'),
+                    LogicalOperator.and(IndexedString.new('&&'),
+                        new ComparingOperator(ComparingOperatorType.lessOrEqual, IndexedString.new('<='),
                             ComputingOperator.multiply(
-                                new ReferenceValue("Column"),
+                                new ReferenceValue(IndexedString.new("Column")),
                                 new LiteralValue(3, "number"),
                                 undefined
                             ),
                             new LiteralValue(4.5, "number")
                         ),
-                        ComparingOperator.equal('==',
-                            new ReferenceValue("Name"),
+                        ComparingOperator.equal(IndexedString.new('=='),
+                            new ReferenceValue(IndexedString.new("Name")),
                             new LiteralValue("Lukas \\\".55", "string")
                         )
                     )
                 ),
-                ComparingOperator.nonEqual('!=',
-                    new ReferenceValue('Id'),
+                ComparingOperator.nonEqual(IndexedString.new('!='),
+                    new ReferenceValue(IndexedString.new('Id')),
                     new LiteralValue(null, "null")
                 )
             );
@@ -498,11 +498,11 @@ describe('rpnToVETree', () => {
             input.push(logicalNotToken('!'));
             input.push(literalToken("true", true, "boolean"));
             input.push(logicalAndToken('&&'));
-            const expected: VETreeNode = LogicalOperator.and('&&',
-                LogicalOperator.not('!',
-                    new ComparingOperator(ComparingOperatorType.lessOrEqual, '<=',
+            const expected: VETreeNode = LogicalOperator.and(IndexedString.new('&&'),
+                LogicalOperator.not(IndexedString.new('!'),
+                    new ComparingOperator(ComparingOperatorType.lessOrEqual, IndexedString.new('<='),
                         ComputingOperator.multiply(
-                            new ReferenceValue("Column"),
+                            new ReferenceValue(IndexedString.new("Column")),
                             new LiteralValue(3, "number"),
                             undefined
                         ),

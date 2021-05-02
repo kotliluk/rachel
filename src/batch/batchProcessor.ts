@@ -23,7 +23,7 @@ import {Expression} from "../expression/expression";
 import {MessageBox} from "../components/messageBox";
 
 /**
- * Class for processing multiple input .txt files with expressions.
+ * Class for processing multiple input .rachel files and generating their reports.
  */
 export class BatchProcessor {
 
@@ -125,7 +125,7 @@ export class BatchProcessor {
     }
 
     /**
-     * Creates full Relation representation for given StoredRelationData array.
+     * Creates Relation representation for given StoredRelationData array.
      */
     private static parseRelations(storedData: StoredRelationData[], nullValuesSupport: boolean): Map<string, Relation> {
         const map: Map<string, Relation> = new Map();
@@ -136,14 +136,14 @@ export class BatchProcessor {
                     map.set(storedRelation.getName(), storedRelation.createRelation());
                 }
             }
-            catch (ignored) { }
-        })
+            catch (ignored) {}
+        });
         return map;
     }
 
     /**
-     * Processes given expression in context of given parser. Returns formatted expression and its result (or error),
-     * count of used RA operations and 0/1 error indicator.
+     * Processes the given expression in the context of given parser. Returns a formatted expression and its result
+     * (or error), a count of used RA operations and 0/1 error indicator.
      */
     private static processExpression = (expr: Expression, parser: ExprParser): {text: string, counts: OperationsCount, error: number} => {
         try {
@@ -193,11 +193,11 @@ export class BatchProcessor {
             '    Theta Semijoin: ' + operations.thetaSemijoin + '\n\n' +
             '    Outer Join: ' + operations.outerJoin + '\n\n' +
             '    Division: ' + operations.division + '\n\n' +
-            (nullValuesSupport ? 'Null values ALLOWED.\n\n' : 'Null values FORBIDDEN.\n\n');
+            'Null values ' + (nullValuesSupport ? 'ALLOWED.\n\n' : 'FORBIDDEN.\n\n');
     }
 
     /**
-     * Returns formatted string for given StoredRelationsData array.
+     * Returns formatted string for the given StoredRelationsData array.
      */
     private static formatRelations = (storedData: StoredRelationData[]): string => {
         const inlines = storedData.map(data => {
@@ -230,14 +230,14 @@ interface OperationsCount {
 }
 
 /**
- * @return zero count of all operations
+ * Creates zero counts for all operations.
  */
 function zeroOperations(): OperationsCount {
     return addOperations();
 }
 
 /**
- * @return adds given OperationsCounts together
+ * Adds given OperationsCounts together.
  */
 function addOperations(...counts: OperationsCount[]): OperationsCount {
     return {
@@ -257,28 +257,28 @@ function addOperations(...counts: OperationsCount[]): OperationsCount {
 }
 
 /**
- * @return sum of all operation counts
+ * Sums all operation counts.
  */
 function totalOperations(o: OperationsCount): number {
     return binaryOperations(o) + unaryOperations(o);
 }
 
 /**
- * @return sum of all binary operation counts
+ * Sums all binary operation counts.
  */
 function binaryOperations(o: OperationsCount): number {
     return o.antijoin + o.cartesian + o.division + o.natural + o.outerJoin + o.semijoin + o.setOperation + o.thetaJoin + o.thetaSemijoin;
 }
 
 /**
- * @return sum of all unary operation counts
+ * Sums all unary operation counts.
  */
 function unaryOperations(o: OperationsCount): number {
     return o.projection + o.rename + o.selection;
 }
 
 /**
- * @return counts all operations used in the given tree.
+ * Counts all operations used in the given tree.
  */
 function operationsOfTree(tree: RATreeNode): OperationsCount {
     if (tree instanceof UnaryNode) {
@@ -292,7 +292,7 @@ function operationsOfTree(tree: RATreeNode): OperationsCount {
 }
 
 /**
- * @return OperationsCount with one given unary operation count set to 1, other 0
+ * Returns OperationsCount with one given unary operation count set to 1, other operators to 0.
  */
 function operationOfUnaryNode(node: UnaryNode): OperationsCount {
     let ret: OperationsCount = zeroOperations();
@@ -312,7 +312,7 @@ function operationOfUnaryNode(node: UnaryNode): OperationsCount {
 }
 
 /**
- * @return OperationsCount with one given binary operation count set to 1, other 0
+ * Returns OperationsCount with one given binary operation count set to 1, other operators to 0.
  */
 function operationOfBinaryNode(node: BinaryNode): OperationsCount {
     let ret: OperationsCount = zeroOperations();

@@ -5,6 +5,92 @@ import AntijoinNode, {AntijoinType} from "../antijoinNode";
 import {IndexedString} from "../../types/indexedString";
 import SelectionNode from "../selectionNode";
 
+const leftWithOneRow: Relation = new Relation("Auto");
+leftWithOneRow.addColumn("AutoId", "number");
+leftWithOneRow.addColumn("Majitel", "number");
+leftWithOneRow.addColumn("Kola", "number");
+leftWithOneRow.addColumn("Motor", "string");
+leftWithOneRow.addColumn("Vyrobce", "string");
+leftWithOneRow.addColumn("Barva", "string");
+const lWOR1: Row = new Row(leftWithOneRow.getColumns());
+lWOR1.addValue("AutoId", 1);
+lWOR1.addValue("Majitel", 1);
+lWOR1.addValue("Kola", 4);
+lWOR1.addValue("Motor", "Motor V4");
+lWOR1.addValue("Vyrobce", "Skoda");
+lWOR1.addValue("Barva", "Modra");
+leftWithOneRow.addRow(lWOR1);
+
+const leftWithFourRows: Relation = new Relation("Auto");
+leftWithFourRows.addColumn("AutoId", "number");
+leftWithFourRows.addColumn("MajitelId", "number");
+leftWithFourRows.addColumn("Kola", "number");
+leftWithFourRows.addColumn("Motor", "string");
+leftWithFourRows.addColumn("Vyrobce", "string");
+leftWithFourRows.addColumn("Barva", "string");
+const lWFR1: Row = new Row(leftWithFourRows.getColumns());
+lWFR1.addValue("AutoId", 1);
+lWFR1.addValue("MajitelId", 1);
+lWFR1.addValue("Kola", 4);
+lWFR1.addValue("Motor", "Motor V4");
+lWFR1.addValue("Vyrobce", "Skoda");
+lWFR1.addValue("Barva", "Modra");
+leftWithFourRows.addRow(lWFR1);
+const lWFR2: Row = new Row(leftWithFourRows.getColumns());
+lWFR2.addValue("AutoId", 2);
+lWFR2.addValue("MajitelId", 2);
+lWFR2.addValue("Kola", 8);
+lWFR2.addValue("Motor", "Motor V16");
+lWFR2.addValue("Vyrobce", "Tatra");
+lWFR2.addValue("Barva", "Modra");
+leftWithFourRows.addRow(lWFR2);
+const lWFR3: Row = new Row(leftWithFourRows.getColumns());
+lWFR3.addValue("AutoId", 3);
+lWFR3.addValue("MajitelId", 2);
+lWFR3.addValue("Kola", 6);
+lWFR3.addValue("Motor", "Motor V8");
+lWFR3.addValue("Vyrobce", "Tatra");
+lWFR3.addValue("Barva", "Cervena");
+leftWithFourRows.addRow(lWFR3);
+const lWFR4: Row = new Row(leftWithFourRows.getColumns());
+lWFR4.addValue("AutoId", 4);
+lWFR4.addValue("MajitelId", 3);   // Majitel with ID 3 does not exist
+lWFR4.addValue("Kola", 6);
+lWFR4.addValue("Motor", "Motor V8");
+lWFR4.addValue("Vyrobce", "Tatra");
+lWFR4.addValue("Barva", "Cervena");
+leftWithFourRows.addRow(lWFR4);
+
+const rightWithOneRow: Relation = new Relation("Majitel");
+rightWithOneRow.addColumn("MajitelId", "number");
+rightWithOneRow.addColumn("Jmeno", "string");
+rightWithOneRow.addColumn("Prijmeni", "string");
+rightWithOneRow.addColumn("Bydliste", "string");
+const rWOR1: Row = new Row(rightWithOneRow.getColumns());
+rWOR1.addValue("MajitelId", 1);
+rWOR1.addValue("Jmeno", "Lukas");
+rWOR1.addValue("Prijmeni", "Kotlik");
+rWOR1.addValue("Bydliste", "Praha, CR");
+rightWithOneRow.addRow(rWOR1);
+
+const rightWithTwoRows: Relation = new Relation("Majitel");
+rightWithTwoRows.addColumn("MajitelId", "number");
+rightWithTwoRows.addColumn("Jmeno", "string");
+rightWithTwoRows.addColumn("Prijmeni", "string");
+rightWithTwoRows.addColumn("Bydliste", "string");
+const r1a: Row = new Row(rightWithTwoRows.getColumns());
+r1a.addValue("MajitelId", 1);
+r1a.addValue("Jmeno", "Lukas");
+r1a.addValue("Prijmeni", "Kotlik");
+r1a.addValue("Bydliste", "Praha, CR");
+rightWithTwoRows.addRow(r1a);
+const r1b: Row = new Row(rightWithTwoRows.getColumns());
+r1b.addValue("MajitelId", 2);
+r1b.addValue("Jmeno", "Pepa");
+r1b.addValue("Prijmeni", "Ridic");
+r1b.addValue("Bydliste", "Velke Mezirici");
+rightWithTwoRows.addRow(r1b);
+
 describe('eval' , () => {
     describe('left antijoin', () => {
         describe('joins relations correctly', () => {
@@ -25,18 +111,6 @@ describe('eval' , () => {
                 l1a.addValue("Barva", "Modra");
                 left.addRow(l1a);
 
-                const right: Relation = new Relation("Majitel");
-                right.addColumn("MajitelId", "number");
-                right.addColumn("Jmeno", "string");
-                right.addColumn("Prijmeni", "string");
-                right.addColumn("Bydliste", "string");
-                const r1a: Row = new Row(right.getColumns());
-                r1a.addValue("MajitelId", 1);
-                r1a.addValue("Jmeno", "Lukas");
-                r1a.addValue("Prijmeni", "Kotlik");
-                r1a.addValue("Bydliste", "Praha, CR");
-                right.addRow(r1a);
-
                 const expected: Relation = new Relation("(Auto\u22b3Majitel)");
                 expected.addColumn("AutoId", "number");
                 expected.addColumn("Kola", "number");
@@ -45,70 +119,13 @@ describe('eval' , () => {
                 expected.addColumn("Barva", "string");
                 expected.addColumn("MajitelId", "number");
 
-                const node: AntijoinNode = new AntijoinNode(AntijoinType.left, new RelationNode(left), new RelationNode(right));
+                // act
+                const node: AntijoinNode = new AntijoinNode(AntijoinType.left, new RelationNode(left), new RelationNode(rightWithOneRow));
                 const actual = node.getResult();
                 expect(expected.equals(actual)).toBeTruthy();
             });
 
             test('Majitel 1 with 2 Autos, Majitel 2 with 1 Autos, 1 Auto without a Majitel -> natural join does not use forth Auto, antijoin should return 1 row', () => {
-                const left: Relation = new Relation("Auto");
-                left.addColumn("AutoId", "number");
-                left.addColumn("MajitelId", "number");
-                left.addColumn("Kola", "number");
-                left.addColumn("Motor", "string");
-                left.addColumn("Vyrobce", "string");
-                left.addColumn("Barva", "string");
-                const l1a: Row = new Row(left.getColumns());
-                l1a.addValue("AutoId", 1);
-                l1a.addValue("MajitelId", 1);
-                l1a.addValue("Kola", 4);
-                l1a.addValue("Motor", "Motor V4");
-                l1a.addValue("Vyrobce", "Skoda");
-                l1a.addValue("Barva", "Modra");
-                left.addRow(l1a);
-                const l1b: Row = new Row(left.getColumns());
-                l1b.addValue("AutoId", 2);
-                l1b.addValue("MajitelId", 2);
-                l1b.addValue("Kola", 8);
-                l1b.addValue("Motor", "Motor V16");
-                l1b.addValue("Vyrobce", "Tatra");
-                l1b.addValue("Barva", "Modra");
-                left.addRow(l1b);
-                const l1c: Row = new Row(left.getColumns());
-                l1c.addValue("AutoId", 3);
-                l1c.addValue("MajitelId", 2);
-                l1c.addValue("Kola", 6);
-                l1c.addValue("Motor", "Motor V8");
-                l1c.addValue("Vyrobce", "Tatra");
-                l1c.addValue("Barva", "Cervena");
-                left.addRow(l1c);
-                const l1d: Row = new Row(left.getColumns());
-                l1d.addValue("AutoId", 4);
-                l1d.addValue("MajitelId", 3);   // Majitel with ID 3 does not exist
-                l1d.addValue("Kola", 6);
-                l1d.addValue("Motor", "Motor V8");
-                l1d.addValue("Vyrobce", "Tatra");
-                l1d.addValue("Barva", "Cervena");
-                left.addRow(l1d);
-
-                const right: Relation = new Relation("Majitel");
-                right.addColumn("MajitelId", "number");
-                right.addColumn("Jmeno", "string");
-                right.addColumn("Prijmeni", "string");
-                right.addColumn("Bydliste", "string");
-                const r1a: Row = new Row(right.getColumns());
-                r1a.addValue("MajitelId", 1);
-                r1a.addValue("Jmeno", "Lukas");
-                r1a.addValue("Prijmeni", "Kotlik");
-                r1a.addValue("Bydliste", "Praha, CR");
-                right.addRow(r1a);
-                const r1b: Row = new Row(right.getColumns());
-                r1b.addValue("MajitelId", 2);
-                r1b.addValue("Jmeno", "Pepa");
-                r1b.addValue("Prijmeni", "Ridic");
-                r1b.addValue("Bydliste", "Velke Mezirici");
-                right.addRow(r1b);
-
                 const expected: Relation = new Relation("(Auto\u22b3Majitel)");
                 expected.addColumn("AutoId", "number");
                 expected.addColumn("Kola", "number");
@@ -125,7 +142,8 @@ describe('eval' , () => {
                 e1a.addValue("MajitelId", 3);
                 expected.addRow(e1a);
 
-                const node: AntijoinNode = new AntijoinNode(AntijoinType.left, new RelationNode(left), new RelationNode(right));
+                // act
+                const node: AntijoinNode = new AntijoinNode(AntijoinType.left, new RelationNode(leftWithFourRows), new RelationNode(rightWithTwoRows));
                 const actual = node.getResult();
                 expect(expected.equals(actual)).toBeTruthy();
             });
@@ -147,18 +165,6 @@ describe('eval' , () => {
                 l1a.addValue("Barva", "Modra");
                 left.addRow(l1a);
 
-                const right: Relation = new Relation("Majitel");
-                right.addColumn("MajitelId", "number");
-                right.addColumn("Jmeno", "string");
-                right.addColumn("Prijmeni", "string");
-                right.addColumn("Bydliste", "string");
-                const r1a: Row = new Row(right.getColumns());
-                r1a.addValue("MajitelId", 1);
-                r1a.addValue("Jmeno", "Lukas");
-                r1a.addValue("Prijmeni", "Kotlik");
-                r1a.addValue("Bydliste", "Praha, CR");
-                right.addRow(r1a);
-
                 const expected: Relation = new Relation("(Auto\u22b3Majitel)");
                 expected.addColumn("AutoId", "number");
                 expected.addColumn("Majitel", "number");
@@ -167,7 +173,8 @@ describe('eval' , () => {
                 expected.addColumn("Vyrobce", "string");
                 expected.addColumn("Barva", "string");
 
-                const node: AntijoinNode = new AntijoinNode(AntijoinType.left, new RelationNode(left), new RelationNode(right));
+                // act
+                const node: AntijoinNode = new AntijoinNode(AntijoinType.left, new RelationNode(leftWithOneRow), new RelationNode(rightWithOneRow));
                 const actual = node.getResult();
                 expect(expected.equals(actual)).toBeTruthy();
             });
@@ -189,18 +196,6 @@ describe('eval' , () => {
                 l1a.addValue("Barva", "Modra");
                 left.addRow(l1a);
 
-                const right: Relation = new Relation("Majitel");
-                right.addColumn("MajitelId", "number");
-                right.addColumn("Jmeno", "string");
-                right.addColumn("Prijmeni", "string");
-                right.addColumn("Bydliste", "string");
-                const r1a: Row = new Row(right.getColumns());
-                r1a.addValue("MajitelId", 1);
-                r1a.addValue("Jmeno", "Lukas");
-                r1a.addValue("Prijmeni", "Kotlik");
-                r1a.addValue("Bydliste", "Praha, CR");
-                right.addRow(r1a);
-
                 const expected: Relation = new Relation("(Auto\u22b3Majitel)");
                 expected.addColumn("AutoId", "number");
                 expected.addColumn("Kola", "number");
@@ -217,7 +212,8 @@ describe('eval' , () => {
                 e1a.addValue("MajitelId", 2);
                 expected.addRow(e1a);
 
-                const node: AntijoinNode = new AntijoinNode(AntijoinType.left, new RelationNode(left), new RelationNode(right));
+                // act
+                const node: AntijoinNode = new AntijoinNode(AntijoinType.left, new RelationNode(left), new RelationNode(rightWithOneRow));
                 const actual = node.getResult();
                 expect(expected.equals(actual)).toBeTruthy();
             });
@@ -227,111 +223,27 @@ describe('eval' , () => {
     describe('right antijoin', () => {
         describe('joins relations correctly', () => {
             test('1 Auto and 1 Majitel with common MajitelId = 1 -> natural join uses both, antijoin should return 0 rows', () => {
-                const left: Relation = new Relation("Auto");
-                left.addColumn("AutoId", "number");
-                left.addColumn("MajitelId", "number");
-                left.addColumn("Kola", "number");
-                left.addColumn("Motor", "string");
-                left.addColumn("Vyrobce", "string");
-                left.addColumn("Barva", "string");
-                const l1a: Row = new Row(left.getColumns());
-                l1a.addValue("AutoId", 1);
-                l1a.addValue("MajitelId", 1);
-                l1a.addValue("Kola", 4);
-                l1a.addValue("Motor", "Motor V4");
-                l1a.addValue("Vyrobce", "Skoda");
-                l1a.addValue("Barva", "Modra");
-                left.addRow(l1a);
-
-                const right: Relation = new Relation("Majitel");
-                right.addColumn("MajitelId", "number");
-                right.addColumn("Jmeno", "string");
-                right.addColumn("Prijmeni", "string");
-                right.addColumn("Bydliste", "string");
-                const r1a: Row = new Row(right.getColumns());
-                r1a.addValue("MajitelId", 1);
-                r1a.addValue("Jmeno", "Lukas");
-                r1a.addValue("Prijmeni", "Kotlik");
-                r1a.addValue("Bydliste", "Praha, CR");
-                right.addRow(r1a);
-
                 const expected: Relation = new Relation("(Auto\u22b2Majitel)");
                 expected.addColumn("MajitelId", "number");
                 expected.addColumn("Jmeno", "string");
                 expected.addColumn("Prijmeni", "string");
                 expected.addColumn("Bydliste", "string");
 
-                const node: AntijoinNode = new AntijoinNode(AntijoinType.right, new RelationNode(left), new RelationNode(right));
+                // act
+                const node: AntijoinNode = new AntijoinNode(AntijoinType.right, new RelationNode(leftWithOneRow), new RelationNode(rightWithOneRow));
                 const actual = node.getResult();
                 expect(expected.equals(actual)).toBeTruthy();
             });
 
             test('Majitel 1 with 2 Autos, Majitel 2 with 1 Autos, 1 Auto without a Majitel -> natural join uses both Majitels, antijoin should return no row', () => {
-                const left: Relation = new Relation("Auto");
-                left.addColumn("AutoId", "number");
-                left.addColumn("MajitelId", "number");
-                left.addColumn("Kola", "number");
-                left.addColumn("Motor", "string");
-                left.addColumn("Vyrobce", "string");
-                left.addColumn("Barva", "string");
-                const l1a: Row = new Row(left.getColumns());
-                l1a.addValue("AutoId", 1);
-                l1a.addValue("MajitelId", 1);
-                l1a.addValue("Kola", 4);
-                l1a.addValue("Motor", "Motor V4");
-                l1a.addValue("Vyrobce", "Skoda");
-                l1a.addValue("Barva", "Modra");
-                left.addRow(l1a);
-                const l1b: Row = new Row(left.getColumns());
-                l1b.addValue("AutoId", 2);
-                l1b.addValue("MajitelId", 2);
-                l1b.addValue("Kola", 8);
-                l1b.addValue("Motor", "Motor V16");
-                l1b.addValue("Vyrobce", "Tatra");
-                l1b.addValue("Barva", "Modra");
-                left.addRow(l1b);
-                const l1c: Row = new Row(left.getColumns());
-                l1c.addValue("AutoId", 3);
-                l1c.addValue("MajitelId", 2);
-                l1c.addValue("Kola", 6);
-                l1c.addValue("Motor", "Motor V8");
-                l1c.addValue("Vyrobce", "Tatra");
-                l1c.addValue("Barva", "Cervena");
-                left.addRow(l1c);
-                const l1d: Row = new Row(left.getColumns());
-                l1d.addValue("AutoId", 4);
-                l1d.addValue("MajitelId", 3);   // Majitel with ID 3 does not exist
-                l1d.addValue("Kola", 6);
-                l1d.addValue("Motor", "Motor V8");
-                l1d.addValue("Vyrobce", "Tatra");
-                l1d.addValue("Barva", "Cervena");
-                left.addRow(l1d);
-
-                const right: Relation = new Relation("Majitel");
-                right.addColumn("MajitelId", "number");
-                right.addColumn("Jmeno", "string");
-                right.addColumn("Prijmeni", "string");
-                right.addColumn("Bydliste", "string");
-                const r1a: Row = new Row(right.getColumns());
-                r1a.addValue("MajitelId", 1);
-                r1a.addValue("Jmeno", "Lukas");
-                r1a.addValue("Prijmeni", "Kotlik");
-                r1a.addValue("Bydliste", "Praha, CR");
-                right.addRow(r1a);
-                const r1b: Row = new Row(right.getColumns());
-                r1b.addValue("MajitelId", 2);
-                r1b.addValue("Jmeno", "Pepa");
-                r1b.addValue("Prijmeni", "Ridic");
-                r1b.addValue("Bydliste", "Velke Mezirici");
-                right.addRow(r1b);
-
                 const expected: Relation = new Relation("(Auto\u22b2Majitel)");
                 expected.addColumn("MajitelId", "number");
                 expected.addColumn("Jmeno", "string");
                 expected.addColumn("Prijmeni", "string");
                 expected.addColumn("Bydliste", "string");
 
-                const node: AntijoinNode = new AntijoinNode(AntijoinType.right, new RelationNode(left), new RelationNode(right));
+                // act
+                const node: AntijoinNode = new AntijoinNode(AntijoinType.right, new RelationNode(leftWithFourRows), new RelationNode(rightWithTwoRows));
                 const actual = node.getResult();
                 expect(expected.equals(actual)).toBeTruthy();
             });
@@ -353,25 +265,14 @@ describe('eval' , () => {
                 l1a.addValue("Barva", "Modra");
                 left.addRow(l1a);
 
-                const right: Relation = new Relation("Majitel");
-                right.addColumn("MajitelId", "number");
-                right.addColumn("Jmeno", "string");
-                right.addColumn("Prijmeni", "string");
-                right.addColumn("Bydliste", "string");
-                const r1a: Row = new Row(right.getColumns());
-                r1a.addValue("MajitelId", 1);
-                r1a.addValue("Jmeno", "Lukas");
-                r1a.addValue("Prijmeni", "Kotlik");
-                r1a.addValue("Bydliste", "Praha, CR");
-                right.addRow(r1a);
-
                 const expected: Relation = new Relation("(Auto\u22b2Majitel)");
                 expected.addColumn("MajitelId", "number");
                 expected.addColumn("Jmeno", "string");
                 expected.addColumn("Prijmeni", "string");
                 expected.addColumn("Bydliste", "string");
 
-                const node: AntijoinNode = new AntijoinNode(AntijoinType.right, new RelationNode(left), new RelationNode(right));
+                // act
+                const node: AntijoinNode = new AntijoinNode(AntijoinType.right, new RelationNode(leftWithOneRow), new RelationNode(rightWithOneRow));
                 const actual = node.getResult();
                 expect(expected.equals(actual)).toBeTruthy();
             });
@@ -393,18 +294,6 @@ describe('eval' , () => {
                 l1a.addValue("Barva", "Modra");
                 left.addRow(l1a);
 
-                const right: Relation = new Relation("Majitel");
-                right.addColumn("MajitelId", "number");
-                right.addColumn("Jmeno", "string");
-                right.addColumn("Prijmeni", "string");
-                right.addColumn("Bydliste", "string");
-                const r1a: Row = new Row(right.getColumns());
-                r1a.addValue("MajitelId", 1);
-                r1a.addValue("Jmeno", "Lukas");
-                r1a.addValue("Prijmeni", "Kotlik");
-                r1a.addValue("Bydliste", "Praha, CR");
-                right.addRow(r1a);
-
                 const expected: Relation = new Relation("(Auto\u22b2Majitel)");
                 expected.addColumn("MajitelId", "number");
                 expected.addColumn("Jmeno", "string");
@@ -417,7 +306,8 @@ describe('eval' , () => {
                 e1a.addValue("Bydliste", "Praha, CR");
                 expected.addRow(e1a);
 
-                const node: AntijoinNode = new AntijoinNode(AntijoinType.right, new RelationNode(left), new RelationNode(right));
+                // act
+                const node: AntijoinNode = new AntijoinNode(AntijoinType.right, new RelationNode(left), new RelationNode(rightWithOneRow));
                 const actual = node.getResult();
                 expect(expected.equals(actual)).toBeTruthy();
             });

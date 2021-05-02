@@ -3,17 +3,15 @@ import {FileDialog} from "../utils/fileDialog";
 import {saveAs} from "file-saver";
 
 /**
- * Class for loading and saving project relations and expressions relation.
+ * Class for loading and saving all project data.
+ *
+ * @see Project
  */
 export class ProjectStoreManager {
 
     /**
      * Loads asynchronously the project from a .rachel (JSON) file selected by the user.
-     * The file must contain the representation of the project object: {
-     * relations: StoredRelationData[],
-     * expressionTexts: string[],
-     * nullValuesSupport: boolean
-     * }.
+     * The file must contain the representation of the project object.
      * Returned string values always use '\n' as line separator.
      */
     public static load(): Promise<Project> {
@@ -46,8 +44,8 @@ export class ProjectStoreManager {
     /**
      * Saves the given Project into the .rachel (JSON) file.
      *
-     * @param project the Project object with all project relation
-     * @param filename name of the downloaded file (without extension)
+     * @param project the Project object with all project data
+     * @param filename name of the downloaded file (without extension, .rachel is added)
      */
     public static save(project: Project, filename: string): void {
         const blob = new Blob([JSON.stringify(project)], {type: "text/plain;charset=utf-8"});

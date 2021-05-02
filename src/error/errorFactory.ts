@@ -10,7 +10,9 @@ import {StartEndPair} from "../types/startEndPair";
 export class ErrorFactory {
 
     /**
-     * Creates a new code error. Params are used to join error messages. See CodeErrorMessages interface definition.
+     * Creates a new code error. Params are used to join error messages.
+     *
+     * @see CodeErrorMessages
      *
      * @param msg predefined error description
      * @param params textual specification
@@ -21,7 +23,9 @@ export class ErrorFactory {
     }
 
     /**
-     * Creates a new RASemanticError. Params are used to join error messages. See SemanticErrorMessages interface definition.
+     * Creates a new RASemanticError. Params are used to join error messages.
+     *
+     * @see SemanticErrorMessages
      *
      * @param msg predefined error description
      * @param range text range of the error in the input when defined
@@ -33,7 +37,9 @@ export class ErrorFactory {
     }
 
     /**
-     * Creates a new RASyntaxError. Params are used to join error messages. See SyntaxErrorMessages interface definition.
+     * Creates a new RASyntaxError. Params are used to join error messages.
+     *
+     * @see SyntaxErrorMessages
      *
      * @param msg predefined error description
      * @param range text range of the error in the input when defined
@@ -47,10 +53,7 @@ export class ErrorFactory {
 
 /**
  * Extends the given params array with empty strings to have the length of expectedCount. When the initial length of the
- * given params array is same or greater, the array is not changed.
- *
- * @param expectedCount
- * @param params
+ * given params array is the same or greater, the array is not changed.
  */
 export function assertParamsCount(expectedCount: number, params: string[]): void {
     if (params.length !== expectedCount) {

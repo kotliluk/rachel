@@ -3,8 +3,8 @@ import {language} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";
 
 /**
- * Codes for RASyntaxErrors.
- * The description is a string array - between its members are inserted error parameters (names of invalid relations: string[],
+ * Messages for RASyntaxErrors.
+ * The description is a string array - between its members are inserted error parameters (names of invalid relations,
  * invalid input parts, etc.). See english language definition for expected structure of each error description.
  */
 export interface SyntaxErrorMessages {
@@ -132,7 +132,7 @@ export interface SyntaxErrorMessages {
  */
 export default class RASyntaxError extends ErrorWithTextRange {
     /**
-     * @param msg Adds "Syntax error: " before given message
+     * @param msg error message
      * @param range optional text range of the error
      */
     constructor(msg: string, range: StartEndPair | undefined) {

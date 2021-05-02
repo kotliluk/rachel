@@ -1,5 +1,10 @@
 import {Project} from "./project";
 
+/**
+ * Sample of the application Project with a name.
+ *
+ * @see Project
+ */
 export interface ProjectSample {
     name: string,
     project: Project

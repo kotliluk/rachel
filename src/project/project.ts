@@ -2,7 +2,7 @@ import {copyExpression, Expression, isExpression} from "../expression/expression
 import {copyStoredRelationData, isStoredRelationData, StoredRelationData} from "../relation/storedRelation";
 
 /**
- * Project interface to store information about project relations and expressions relation.
+ * Project interface to store information about project relations, expressions, and null values support.
  * Does not store custom settings about saving file types etc.
  */
 export interface Project {
@@ -12,7 +12,7 @@ export interface Project {
 }
 
 /**
- * Checks whether the given value is Project (i.e., has all required fields of required types).
+ * Checks whether the given object is Project (i.e., has all required fields of required types).
  *
  * @param obj value to be checked
  * @return "OK" string if the given obj is Project or string description of found error in the structure
