@@ -1,4 +1,4 @@
-import ErrorWithTextRange from "./errorWithTextRange";
+import {ErrorWithTextRange} from "./errorWithTextRange";
 import {language} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";
 
@@ -6,6 +6,7 @@ import {StartEndPair} from "../types/startEndPair";
  * Messages for RASyntaxErrors.
  * The description is a string array - between its members are inserted error parameters (names of invalid relations,
  * invalid input parts, etc.). See english language definition for expected structure of each error description.
+ * @public
  */
 export interface SyntaxErrorMessages {
     // expects 1 part
@@ -129,11 +130,15 @@ export interface SyntaxErrorMessages {
 
 /**
  * Syntax error in an expression structure.
+ * @public
  */
-export default class RASyntaxError extends ErrorWithTextRange {
+export class RASyntaxError extends ErrorWithTextRange {
     /**
-     * @param msg error message
-     * @param range optional text range of the error
+     * Creates a new RASyntaxError with the given message.
+     *
+     * @param msg error message {@type String}
+     * @param range optional text range of the error {@type StartEndPair?}
+     * @public
      */
     constructor(msg: string, range: StartEndPair | undefined) {
         super(language().syntaxError + msg, range);

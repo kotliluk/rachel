@@ -1,7 +1,7 @@
 import BinaryNode from "./binaryNode";
 import RATreeNode from "./raTreeNode";
-import Relation from "../relation/relation";
-import Row from "../relation/row";
+import {Relation}  from "../relation/relation";
+import {Row}  from "../relation/row";
 import { isEqual } from "lodash";
 import {ErrorFactory} from "../error/errorFactory";
 import {language} from "../language/language";

@@ -1,21 +1,21 @@
-import RASemanticError from "./raSemanticError";
-import RASyntaxError from "./raSyntaxError";
-import CodeError from "./codeError";
+import {RASemanticError} from "./raSemanticError";
+import {RASyntaxError} from "./raSyntaxError";
+import {CodeError} from "./codeError";
 import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Factory for creating custom application errors: CodeError, RASemanticError, RASyntaxError.
  * It creates an error message by given error code and string parameters.
+ * @public
  */
 export class ErrorFactory {
 
     /**
      * Creates a new code error. Params are used to join error messages.
      *
-     * @see CodeErrorMessages
-     *
-     * @param msg predefined error description
-     * @param params textual specification
+     * @param msg predefined error description {@link CodeErrorMessages} {@type String[]}
+     * @param params textual specification {@type String[]}
+     * @public
      */
     public static codeError(msg: string[], ...params: string[]): CodeError {
         assertParamsCount(msg.length - 1, params);
@@ -25,11 +25,10 @@ export class ErrorFactory {
     /**
      * Creates a new RASemanticError. Params are used to join error messages.
      *
-     * @see SemanticErrorMessages
-     *
-     * @param msg predefined error description
-     * @param range text range of the error in the input when defined
-     * @param params textual specification
+     * @param msg predefined error description {@link SemanticErrorMessages} {@type String[]}
+     * @param range text range of the error in the input when defined {@type StartEndPair?}
+     * @param params textual specification {@type String[]}
+     * @public
      */
     public static semanticError(msg: string[], range: StartEndPair | undefined, ...params: string[]): RASemanticError {
         assertParamsCount(msg.length - 1, params);
@@ -39,11 +38,10 @@ export class ErrorFactory {
     /**
      * Creates a new RASyntaxError. Params are used to join error messages.
      *
-     * @see SyntaxErrorMessages
-     *
-     * @param msg predefined error description
-     * @param range text range of the error in the input when defined
-     * @param params textual specification
+     * @param msg predefined error description {@link SyntaxErrorMessages} {@type String[]}
+     * @param range text range of the error in the input when defined {@type StartEndPair?}
+     * @param params textual specification {@type String[]}
+     * @public
      */
     public static syntaxError(msg: string[], range: StartEndPair | undefined, ...params: string[]): RASyntaxError {
         assertParamsCount(msg.length - 1, params);

@@ -6,7 +6,7 @@ import UnaryNode, {UnaryNodeClass} from "./unaryNode";
 import AntijoinNode, {AntijoinType} from "./antijoinNode";
 import CartesianProductNode from "./cartesianProductNode";
 import DivisionNode from "./divisionNode";
-import OuterJoinNode, {OuterJoinType} from "./outerJoinNode";
+import {OuterJoinNode, OuterJoinType} from "./outerJoinNode";
 import NaturalJoinNode, {NaturalJoinType} from "./naturalJoinNode";
 import SetOperationNode, {SetOperationType} from "./setOperationNode";
 import BinaryNode, {BinaryNodeClass} from "./binaryNode";

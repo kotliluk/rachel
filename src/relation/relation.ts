@@ -1,12 +1,14 @@
-import Row from "./row";
+import {Row}  from "./row";
 import {SupportedColumnType} from "./columnType";
 import { isEqual } from "lodash";
 
 /**
- * Relation from relational algebra. It contains relational schema (set of columns' names and types)
- * and relation's relation (set of rows).
+ * Formal relational algebra relation. It contains relational schema (set of column names and types)
+ * and data tuples (set of rows). For editable representation which may happen to be invalid, use {@link StoredRelation}.
+ *
+ * @public
  */
-export default class Relation {
+export class Relation {
 
     public readonly name: string;
     private columns = new Map<string, SupportedColumnType>();
@@ -17,7 +19,8 @@ export default class Relation {
     /**
      * Creates an empty relation of the given name.
      *
-     * @param name name of the relation
+     * @param name name of the relation {@type String}
+     * @public
      */
     constructor(name: string) {
         this.name = name;
@@ -25,13 +28,19 @@ export default class Relation {
 
     /**
      * Returns name of the relation.
+     *
+     * @return relation name {@type String}
+     * @public
      */
     public getName(): string {
         return this.name;
     }
 
     /**
-     * @return true if the relational schema is finished (no more columns can be added)
+     * Returns true if the relational schema is finished (no more columns can be added).
+     *
+     * @return true if the relational schema is finished (no more columns can be added) {@type Boolean}
+     * @public
      */
     public hasFinishedSchema(): boolean {
         return this.finishedSchema;
@@ -39,6 +48,7 @@ export default class Relation {
 
     /**
      * Sets the relational schema finished (no more columns can be added).
+     * @public
      */
     public finishSchema(): void {
         this.finishedSchema = true;
@@ -47,9 +57,10 @@ export default class Relation {
     /**
      * Adds a column to a relational schema if the relational schema is not finished yet.
      *
-     * @param name name of the column
-     * @param type type of the column
-     * @return true if the column was added (relation did not contain a column with the same name before)
+     * @param name name of the column {@type String}
+     * @param type type of the column {@type SupportedColumnType}
+     * @return true if the column was added (relation did not contain a column with the same name before) {@type Boolean}
+     * @public
      */
     public addColumn(name: string, type: SupportedColumnType): boolean {
         if (!this.hasColumn(name) && !this.hasFinishedSchema()) {
@@ -64,36 +75,49 @@ export default class Relation {
      * Checks whether the relation has a column with the same name
      * (NOTE: type of the column does not matter).
      *
-     * @param name Column name to be checked
-     * @return true if the relation has a column with the same name
+     * @param name Column name to be checked {@type String}
+     * @return true if the relation has a column with the same name {@type Boolean}
+     * @public
      */
     public hasColumn(name: string): boolean {
         return this.columnNames.some(cn => cn === name);
     }
 
     /**
-     * @return map (name -> value) of columns' values in a relation.
+     * Returns map (name -> value) of columns' values in a relation.
+     *
+     * @return map of columns' values in a relation {@type Map<String, SupportedColumnType>}
+     * @public
      */
     public getColumns(): Map<string, SupportedColumnType> {
         return this.columns;
     }
 
     /**
-     * @param f function to be applied for each column in the relation
+     * Applies the given function to each column in the relation.
+     *
+     * @param f function to be applied to each column in the relation {@type Function}
+     * @public
      */
     public forEachColumn(f: (type: SupportedColumnType, name: string) => void): void {
         return this.columns.forEach(f);
     }
 
     /**
-     * @return array of column names in a relation.
+     * Return column names  in a relation.
+     *
+     * @return array of column names in a relation {@type String[]}
+     * @public
      */
     public getColumnNames(): string[] {
         return this.columnNames;
     }
 
     /**
-     * @return Number of columns in a relation.
+     * Returns number of columns in a relation.
+     *
+     * @return number of columns in a relation {@type Number}
+     * @public
      */
     public getColumnsCount(): number {
         return this.columnNames.length;
@@ -105,8 +129,9 @@ export default class Relation {
      * is set finished (no more columns can be added). If the row was not added, returns false.
      * NOTE: Rows in a relation cannot be duplicit, adding a duplicit row returns true, but only one is kept.
      *
-     * @param row row to be added
-     * @return true if the row was added, false otherwise
+     * @param row row to be added {@type Row}
+     * @return true if the row was added, false otherwise {@type Boolean}
+     * @public
      */
     public addRow(row: Row): boolean {
         if (isEqual(row.getTypes(), this.columns)) {
@@ -121,14 +146,20 @@ export default class Relation {
     }
 
     /**
-     * @return array of rows in a relation.
+     * Returns all rows in a relation.
+     *
+     * @return array of rows in a relation {@type Row[]}
+     * @public
      */
     public getRows(): Row[] {
         return this.rows;
     }
 
     /**
-     * @return Number of rows in a relation.
+     * Returns the number of rows in a relation.
+     *
+     * @return number of rows in a relation {@type Number}
+     * @public
      */
     public getRowsCount(): number {
         return this.rows.length;
@@ -138,7 +169,8 @@ export default class Relation {
      * Returns a relational schema in a format: RelationName(ColumnOneName: ColumnOneType, ...) - both column names
      * and column types are used.
      *
-     * @return relational schema as a string
+     * @return relational schema as a string {@type String}
+     * @public
      */
     public getSchemaString(): string {
         return this.name + "(" + [...this.columns].map(s => s[0] + ": " + s[1]).join(", ") + ")";
@@ -147,7 +179,8 @@ export default class Relation {
     /**
      * Returns a relational schema in a format: RelationName(ColumnOneName, ...) - only column names are used.
      *
-     * @return relational schema as a string
+     * @return relational schema as a string {@type String}
+     * @public
      */
     public getNamesSchemaString(): string {
         return this.name + "(" + this.columnNames.join(", ") + ")";
@@ -156,7 +189,8 @@ export default class Relation {
     /**
      * Returns a formatted string representation of the relation content (column names, column types and rows).
      *
-     * @return string representation of the relation
+     * @return string representation of the relation {@type String}
+     * @public
      */
     public contentString(): string {
         // @ts-ignore - prepares array representation of types and rows
@@ -187,7 +221,9 @@ export default class Relation {
     /**
      * Custom equals function for testing purposes.
      *
-     * @param other
+     * @param other an object to compare {@type any}
+     * @return true if this and given objects have same name, columns, and rows {@type Boolean}
+     * @public
      */
     public equals(other: any): boolean {
         if (other instanceof Relation) {

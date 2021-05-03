@@ -1,5 +1,5 @@
 import {ErrorFactory} from "../error/errorFactory";
-import RASyntaxError from "../error/raSyntaxError";
+import {RASyntaxError} from "../error/raSyntaxError";
 import {language} from "../language/language";
 
 /**

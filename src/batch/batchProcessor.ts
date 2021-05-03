@@ -1,7 +1,7 @@
 import {FileDialog} from "../utils/fileDialog";
 import JSZip from "jszip";
 import {saveAs} from "file-saver";
-import Relation from "../relation/relation";
+import {Relation}  from "../relation/relation";
 import RATreeNode from "../ratree/raTreeNode";
 import UnaryNode from "../ratree/unaryNode";
 import ProjectionNode from "../ratree/projectionNode";
@@ -11,7 +11,7 @@ import BinaryNode from "../ratree/binaryNode";
 import AntijoinNode from "../ratree/antijoinNode";
 import CartesianProductNode from "../ratree/cartesianProductNode";
 import DivisionNode from "../ratree/divisionNode";
-import OuterJoinNode from "../ratree/outerJoinNode";
+import {OuterJoinNode} from "../ratree/outerJoinNode";
 import NaturalJoinNode, {NaturalJoinType} from "../ratree/naturalJoinNode";
 import SetOperationNode from "../ratree/setOperationNode";
 import {formatDate} from "../utils/dateUtils";
@@ -24,12 +24,18 @@ import {MessageBox} from "../components/messageBox";
 
 /**
  * Class for processing multiple input .rachel files and generating their reports.
+ *
+ * @public
  */
 export class BatchProcessor {
 
     /**
      * Opens file dialog and processes files selected by the user. For each .rachel file creates a textual evaluation
      * report. Files are expected to contain valid project data. Returns promise with string message about process.
+     *
+     * @param filename name of the downloaded zip file - individual reports has names derived from their original files {@type String}
+     *
+     * @public
      */
     public static process(filename: string): void {
         FileDialog.openFiles(".rachel").then(files => {
@@ -142,7 +148,7 @@ export class BatchProcessor {
     }
 
     /**
-     * Processes the given expression in the context of given parser. Returns a formatted expression and its result
+     * Processes the given expression in the context of the given parser. Returns a formatted expression and its result
      * (or error), a count of used RA operations and 0/1 error indicator.
      */
     private static processExpression = (expr: Expression, parser: ExprParser): {text: string, counts: OperationsCount, error: number} => {
@@ -172,7 +178,7 @@ export class BatchProcessor {
      * @param expressions count of expressions
      * @param errors count of errors
      * @param operations count of operations
-     * @param nullValuesSupport
+     * @param nullValuesSupport whether null values are supported
      */
     private static reportHeader = (expressions: number, errors: number, operations: OperationsCount, nullValuesSupport: boolean): string => {
         const total: number = totalOperations(operations);

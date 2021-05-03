@@ -1,7 +1,7 @@
 import BinaryNode from "./binaryNode";
 import RATreeNode from "./raTreeNode";
-import Relation from "../relation/relation";
-import Row from "../relation/row";
+import {Relation}  from "../relation/relation";
+import {Row}  from "../relation/row";
 import {language} from "../language/language";
 
 /**
@@ -16,7 +16,7 @@ export enum OuterJoinType {
 /**
  * Outer join node of the relational algebra syntactic tree.
  */
-export default class OuterJoinNode extends BinaryNode {
+export class OuterJoinNode extends BinaryNode {
 
     private readonly type: OuterJoinType;
 

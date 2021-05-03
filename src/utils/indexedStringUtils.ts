@@ -1,7 +1,7 @@
 import {IndexedString} from "../types/indexedString";
 import StringUtils from "./stringUtils";
 import {insertRangeIfUndefined} from "../error/errorWithTextRange";
-import RASyntaxError from "../error/raSyntaxError";
+import {RASyntaxError} from "../error/raSyntaxError";
 import {ErrorFactory} from "../error/errorFactory";
 import {language} from "../language/language";
 

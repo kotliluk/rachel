@@ -2,8 +2,8 @@ import BinaryNode from "../binaryNode";
 import UnaryNode from "../unaryNode";
 import RATreeNode from "../raTreeNode";
 import {depthSearch, getTreeDepth} from "../raTreeTools";
-import Relation from "../../relation/relation";
-import ErrorWithTextRange from "../../error/errorWithTextRange";
+import {Relation}  from "../../relation/relation";
+import {ErrorWithTextRange} from "../../error/errorWithTextRange";
 
 /**
  * Testing binary node class. Used only for searching by index.

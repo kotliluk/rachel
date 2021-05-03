@@ -1,4 +1,4 @@
-import Row from "../relation/row";
+import {Row}  from "../relation/row";
 import {VETreeNode} from "./veTreeNode";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
 

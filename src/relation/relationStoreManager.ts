@@ -10,15 +10,18 @@ import JSZip from "jszip";
 import StringUtils from "../utils/stringUtils";
 
 /**
- * Class for loading and saving relation definitions.
+ * Class for loading and saving relation definitions as {@link StoredRelation}.
+ * @public
  */
 export class RelationStoreManager {
 
     /**
-     * Loads textual relation representations from multiple csv files selected by the user. If the csv does not have
-     * valid stricture, it is skipped. Loaded csv are parsed to StoredRelations and returned in a promise.
+     * Loads textual relation representations from multiple CSV files selected by the user. If the csv does not have
+     * valid stricture, it is skipped. Loaded CSVs are parsed to StoredRelations and returned in a promise.
      *
-     * @param nullValuesSupport null values support to set in created StoredRelations
+     * @param nullValuesSupport null values support to set in created StoredRelations {@type Boolean}
+     * @return parsed StoredRelations and number of skipped files in a promise {@type Promise}
+     * @public
      */
     public static load(nullValuesSupport: boolean): Promise<{relations: StoredRelation[], skipped: number}> {
         return new Promise<{relations: StoredRelation[], skipped: number}>(resolve => {
@@ -49,9 +52,10 @@ export class RelationStoreManager {
     /**
      * Saves given relations into csv files (in one csv file each relation). Uses given value separator.
      *
-     * @param relations map of the relations to be saved
-     * @param filename name of the downloaded file (without .zip/.csv extension)
-     * @param valueSeparator the separator of values
+     * @param relations map of the relations to be  {@type StoredRelation[]}
+     * @param filename name of the downloaded file (without .zip/.csv extension) {@type String}
+     * @param valueSeparator the separator of values {@type CsvValueSeparator}
+     * @public
      */
     public static save(relations: StoredRelation[], filename: string, valueSeparator: CsvValueSeparator): void {
         if (relations.length === 0) {

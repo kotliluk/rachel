@@ -1,4 +1,4 @@
-import Relation from "../relation/relation";
+import {Relation}  from "../relation/relation";
 import {ErrorFactory} from "../error/errorFactory";
 import {
     BinaryOperatorToken,
@@ -10,14 +10,14 @@ import {
     UnaryOperatorToken
 } from "./exprTokens";
 import StringUtils from "../utils/stringUtils";
-import CodeError from "../error/codeError";
+import {CodeError} from "../error/codeError";
 import RATreeNode from "../ratree/raTreeNode";
 import RelationNode from "../ratree/relationNode";
 import {
     IndexedString
 } from "../types/indexedString";
 import IndexedStringUtils from "../utils/indexedStringUtils";
-import ErrorWithTextRange from "../error/errorWithTextRange";
+import {ErrorWithTextRange} from "../error/errorWithTextRange";
 import RATreeFactory from "../ratree/raTreeFactory";
 import {language} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";

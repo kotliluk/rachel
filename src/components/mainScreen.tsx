@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Relation from '../relation/relation';
+import {Relation}  from '../relation/relation';
 import RATreeNode from "../ratree/raTreeNode";
 import {ExpressionSection} from "./expressionSection";
 import {ResultSection} from "./resultSection";
@@ -44,7 +44,7 @@ interface MainScreenState {
 /**
  * Main component of Rachel web page. It wraps all page sections and passes messages between them.
  */
-export default class MainScreen extends Component<MainScreenProps, MainScreenState> {
+export class MainScreen extends Component<MainScreenProps, MainScreenState> {
 
     private readonly expressionSectionRef: React.RefObject<ExpressionSection>;
 

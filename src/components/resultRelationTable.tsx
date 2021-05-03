@@ -1,7 +1,7 @@
 import React from "react";
-import Relation from "../relation/relation";
+import {Relation}  from "../relation/relation";
 import './css/resultRelationTable.css'
-import Row from "../relation/row";
+import {Row}  from "../relation/row";
 
 interface RelationTableProps {
     // relation to be shown

@@ -1,4 +1,4 @@
-import Relation from "../../relation/relation";
+import {Relation}  from "../../relation/relation";
 import {
     BinaryOperatorToken, ClosingParenthesis,
     ExprToken,
@@ -13,7 +13,7 @@ import RenameNode from "../../ratree/renameNode";
 import NaturalJoinNode, {NaturalJoinType} from "../../ratree/naturalJoinNode";
 import AntijoinNode, {AntijoinType} from "../../ratree/antijoinNode";
 import DivisionNode from "../../ratree/divisionNode";
-import OuterJoinNode, {OuterJoinType} from "../../ratree/outerJoinNode";
+import {OuterJoinNode, OuterJoinType} from "../../ratree/outerJoinNode";
 import {IndexedString} from "../../types/indexedString";
 
 enum AssertType {

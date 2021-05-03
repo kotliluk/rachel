@@ -1,11 +1,11 @@
 import BinaryNode from "./binaryNode";
 import RATreeNode from "./raTreeNode";
-import Relation from "../relation/relation";
-import Row from "../relation/row";
+import {Relation}  from "../relation/relation";
+import {Row}  from "../relation/row";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
 import {VETreeNode} from "../vetree/veTreeNode";
 import {IndexedString} from "../types/indexedString";
-import ValueParser from "../expression/valueParser";
+import {ValueParser} from "../expression/valueParser";
 import {ErrorFactory} from "../error/errorFactory";
 import {insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {isInRangeAndNotInQuotes} from "./raTreeTools";

@@ -1,12 +1,12 @@
 import UnaryNode from "./unaryNode";
 import RATreeNode from "./raTreeNode";
-import Relation from "../relation/relation";
+import {Relation}  from "../relation/relation";
 import {VETreeNode} from "../vetree/veTreeNode";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
 import {IndexedString} from "../types/indexedString";
-import ValueParser from "../expression/valueParser";
+import {ValueParser} from "../expression/valueParser";
 import {ErrorFactory} from "../error/errorFactory";
-import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
+import {ErrorWithTextRange, insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {isInRangeAndNotInQuotes} from "./raTreeTools";
 import {language} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";

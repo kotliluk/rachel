@@ -1,5 +1,5 @@
-import Relation from "../../relation/relation";
-import Row from "../../relation/row";
+import {Relation}  from "../../relation/relation";
+import {Row}  from "../../relation/row";
 import RelationNode from "../relationNode";
 import NaturalJoinNode, {NaturalJoinType} from "../naturalJoinNode";
 import {IndexedString} from "../../types/indexedString";

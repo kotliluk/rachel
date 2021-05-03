@@ -1,4 +1,4 @@
-import Row from "../../relation/row";
+import {Row}  from "../../relation/row";
 import {ColumnContent, SupportedColumnType} from "../../relation/columnType";
 import {ReferenceValue} from "../referenceValue";
 import {IndexedString} from "../../types/indexedString";

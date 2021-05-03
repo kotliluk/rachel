@@ -1,4 +1,4 @@
-import Row from "../row";
+import {Row}  from "../row";
 import {SupportedColumnType} from "../columnType";
 
 let columns = new Map<string, SupportedColumnType>();

@@ -1,4 +1,4 @@
-import ValueParser from "../valueParser"
+import {ValueParser} from "../valueParser"
 import {
     ClosingParentheses,
     ComparingToken,

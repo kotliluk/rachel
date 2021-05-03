@@ -1,5 +1,5 @@
-import Relation from "../relation/relation";
-import ErrorWithTextRange from "../error/errorWithTextRange";
+import {Relation}  from "../relation/relation";
+import {ErrorWithTextRange} from "../error/errorWithTextRange";
 
 /**
  * Abstract general node of the relational algebra syntactic tree.

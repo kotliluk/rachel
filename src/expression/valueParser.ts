@@ -24,15 +24,15 @@ import {
 import {VETreeNode} from "../vetree/veTreeNode";
 import {IndexedString} from "../types/indexedString";
 import IndexedStringUtils from "../utils/indexedStringUtils";
-import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
+import {ErrorWithTextRange, insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {ErrorFactory} from "../error/errorFactory";
-import RASyntaxError from "../error/raSyntaxError";
+import {RASyntaxError} from "../error/raSyntaxError";
 import {language} from "../language/language";
 
 /**
  * StringUtils of string infix boolean and algebraic expression to value-evaluating tree.
  */
-export default class ValueParser {
+export class ValueParser {
 
     /**
      * Parses given string infix boolean and algebraic expression into a value-evaluating tree and returns the tree.

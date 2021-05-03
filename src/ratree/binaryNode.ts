@@ -1,6 +1,6 @@
 import RATreeNode from "./raTreeNode";
-import Relation from "../relation/relation";
-import ErrorWithTextRange from "../error/errorWithTextRange";
+import {Relation}  from "../relation/relation";
+import {ErrorWithTextRange} from "../error/errorWithTextRange";
 
 /**
  * Classes extending binary node.

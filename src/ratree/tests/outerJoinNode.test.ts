@@ -1,8 +1,7 @@
-import Relation from "../../relation/relation";
-import Row from "../../relation/row";
+import {Relation}  from "../../relation/relation";
+import {Row}  from "../../relation/row";
 import RelationNode from "../relationNode";
-import outerJoinNode from "../outerJoinNode";
-import OuterJoinNode, {OuterJoinType} from "../outerJoinNode";
+import {OuterJoinNode, OuterJoinType} from "../outerJoinNode";
 import {IndexedString} from "../../types/indexedString";
 import SelectionNode from "../selectionNode";
 
@@ -58,7 +57,7 @@ describe('full outer join', () => {
         expectedA.addValue("Bydliste", "Praha, CR");
         expected.addRow(expectedA);
 
-        const node: outerJoinNode = new outerJoinNode(OuterJoinType.full, new RelationNode(left), new RelationNode(right));
+        const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.full, new RelationNode(left), new RelationNode(right));
         const actual = node.getResult();
         expect(expected.equals(actual)).toBeTruthy();
     });
@@ -365,7 +364,7 @@ describe('left outer join', () => {
         expectedA.addValue("Bydliste", "Praha, CR");
         expected.addRow(expectedA);
 
-        const node: outerJoinNode = new outerJoinNode(OuterJoinType.left, new RelationNode(left), new RelationNode(right));
+        const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.left, new RelationNode(left), new RelationNode(right));
         const actual = node.getResult();
         expect(expected.equals(actual)).toBeTruthy();
     });
@@ -660,7 +659,7 @@ describe('right outer join', () => {
         expectedA.addValue("Bydliste", "Praha, CR");
         expected.addRow(expectedA);
 
-        const node: outerJoinNode = new outerJoinNode(OuterJoinType.right, new RelationNode(left), new RelationNode(right));
+        const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.right, new RelationNode(left), new RelationNode(right));
         const actual = node.getResult();
         expect(expected.equals(actual)).toBeTruthy();
     });
@@ -973,15 +972,15 @@ describe('fakeEval' , () => {
         expected.addColumn("Jmeno", "string");
         expected.addColumn("Prijmeni", "string");
 
-        const nodeFull: outerJoinNode = new outerJoinNode(OuterJoinType.full, new RelationNode(left), new RelationNode(right));
+        const nodeFull: OuterJoinNode = new OuterJoinNode(OuterJoinType.full, new RelationNode(left), new RelationNode(right));
         const actualFull = nodeFull.fakeEval(-5);
         expect(expected.equals(actualFull.result)).toBeTruthy();
 
-        const nodeLeft: outerJoinNode = new outerJoinNode(OuterJoinType.left, new RelationNode(left), new RelationNode(right));
+        const nodeLeft: OuterJoinNode = new OuterJoinNode(OuterJoinType.left, new RelationNode(left), new RelationNode(right));
         const actualLeft = nodeLeft.fakeEval(-5);
         expect(expected.equals(actualLeft.result)).toBeTruthy();
 
-        const nodeRight: outerJoinNode = new outerJoinNode(OuterJoinType.right, new RelationNode(left), new RelationNode(right));
+        const nodeRight: OuterJoinNode = new OuterJoinNode(OuterJoinType.right, new RelationNode(left), new RelationNode(right));
         const actualRight = nodeRight.fakeEval(-5);
         expect(expected.equals(actualRight.result)).toBeTruthy();
     });

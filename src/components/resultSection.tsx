@@ -1,7 +1,7 @@
 import React from "react";
 // @ts-ignore - type declaration is not needed for its short usage
 import downloadSVG from "export-svg-with-styles";
-import Relation from "../relation/relation";
+import {Relation}  from "../relation/relation";
 import {ResultRelationTable} from "./resultRelationTable";
 import {TooltipButton} from "./tooltipButton";
 import RATreeNode from "../ratree/raTreeNode";

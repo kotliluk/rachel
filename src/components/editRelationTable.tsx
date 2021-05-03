@@ -51,8 +51,10 @@ const inputMarginSides: number = Number(cssConstants.getPropertyValue('--input-m
  * - onDeleteRow: (rowIndex: number) => void // handler of deleting the row of given index
  * - onDeleteColumn: (columnIndex: number) => void // handler of deleting the column of given index
  * - onCtrlInput: (ev: React.KeyboardEvent) => void  // handler of input with Ctrl key
+ *
+ * @public
  */
-export default class EditRelationTable extends React.Component<EditRelationTableProps, EditRelationTableState> {
+export class EditRelationTable extends React.Component<EditRelationTableProps, EditRelationTableState> {
     // reference to the table container div
     private readonly containerRef: React.RefObject<HTMLDivElement>;
     // reference to the head row with columns names
@@ -411,7 +413,7 @@ export default class EditRelationTable extends React.Component<EditRelationTable
         );
     }
 
-    public render() {
+    render() {
         let divClassName: string = "edit-table-container scrollbar-container";
         let tableClassName: string = "edit-table";
 
