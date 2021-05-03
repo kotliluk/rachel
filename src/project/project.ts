@@ -14,6 +14,8 @@ export interface Project {
 /**
  * Checks whether the given object is Project (i.e., has all required fields of required types).
  *
+ * @see Project
+ *
  * @param obj value to be checked
  * @return "OK" string if the given obj is Project or string description of found error in the structure
  */

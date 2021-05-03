@@ -40,9 +40,20 @@ const inputMarginSides: number = Number(cssConstants.getPropertyValue('--input-m
 /**
  * Table for editing a relation relation. It supports adding new columns and rows and editing all relation (column names,
  * column types and row inputs).
+ *
+ * Props:
+ * - relation: StoredRelation // storing representation of the relation to be edited
+ * - onColumnNameChange: (columnName: string, columnIndex: number) => void // handler of column name change
+ * - onColumnTypeChange: (columnType: SupportedColumnType, columnIndex: number) => void // handler of column type change
+ * - onRowInputChange: (input: string, columnIndex: number, rowIndex: number) => void // handler of row input change
+ * - onNewRow: (onDone: () => void) => void // handler of adding new row
+ * - onNewColumn: (onDone: () => void) => void // handler of adding new column
+ * - onDeleteRow: (rowIndex: number) => void // handler of deleting the row of given index
+ * - onDeleteColumn: (columnIndex: number) => void // handler of deleting the column of given index
+ * - onCtrlInput: (ev: React.KeyboardEvent) => void  // handler of input with Ctrl key
  */
 export default class EditRelationTable extends React.Component<EditRelationTableProps, EditRelationTableState> {
-
+    // reference to the table container div
     private readonly containerRef: React.RefObject<HTMLDivElement>;
     // reference to the head row with columns names
     private readonly tableHeadRowRef: React.RefObject<HTMLTableRowElement>;

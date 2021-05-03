@@ -77,7 +77,7 @@ export default class StringUtils {
      * NOTE: if the string does not start with a letter, as a word is returned an empty string.
      *
      * @param str string to be split
-     * @return split string in a pair { word, rest }
+     * @return split string in a pair (word, rest)
      */
     public static nextWord(str: string): { first: string, second: string } {
         if (str === "") {
@@ -99,7 +99,7 @@ export default class StringUtils {
      * NOTE: if the string does not start with a letter, or an underscore, as a name is returned an empty string.
      *
      * @param str string to be split
-     * @return split string in a pair { name, rest }
+     * @return split string in a pair (name, rest)
      */
     public static nextName(str: string): { first: string, second: string } {
         if (str === "") {
@@ -123,7 +123,7 @@ export default class StringUtils {
      * Splits given string to a starting sequence of non-whitespace characters and its rest and returns these parts in a pair.
      *
      * @param str string to be split
-     * @return split string in a pair { word, rest }
+     * @return split string in a pair (start, rest)
      */
     public static nextNonWhitespacePart(str: string): { first: string, second: string } {
         if (str === "") {

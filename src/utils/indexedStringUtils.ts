@@ -72,7 +72,7 @@ export default class IndexedStringUtils {
      * NOTE: if the string does not start with a letter, as a word is returned an empty string.
      *
      * @param str indexed string to be split
-     * @return split indexed string in a pair { word, rest }
+     * @return split indexed string in a pair (word, rest)
      */
     public static nextWord(str: IndexedString): { first: IndexedString, second: IndexedString } {
         const strParts: { first: string, second: string } = StringUtils.nextWord(str.toString());
@@ -85,7 +85,7 @@ export default class IndexedStringUtils {
      * NOTE: if the string does not start with a letter, or an underscore, as a name is returned an empty string.
      *
      * @param str string to be split
-     * @return split indexed string in a pair { name, rest }
+     * @return split indexed string in a pair (name, rest)
      */
     public static nextName(str: IndexedString): { first: IndexedString, second: IndexedString } {
         const strParts: { first: string, second: string } = StringUtils.nextName(str.toString());
@@ -97,7 +97,7 @@ export default class IndexedStringUtils {
      * parts in a pair.
      *
      * @param str string to be split
-     * @return split indexed string in a pair { name, rest }
+     * @return split indexed string in a pair (name, rest)
      */
     public static nextNonWhitespacePart(str: IndexedString): { first: IndexedString, second: IndexedString } {
         const strParts: { first: string, second: string } = StringUtils.nextNonWhitespacePart(str.toString());

@@ -27,3 +27,6 @@ yarn-error.log*
 /.idea
 
 /src/postMailAccessToken.ts
+
+# documentation
+/docs

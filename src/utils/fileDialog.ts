@@ -49,8 +49,7 @@ export class FileDialog {
      * Loads textual content from multiple files selected by the user in the file browser.
      * Multiple file input handling inspired by xaedes on https://stackoverflow.com/a/13975217.
      *
-     * @param resolve - function called when the loading is done, it should accept an array of file information
-     * {name: string, text: string | null}[] where name contains the filename and text contains the content of the file.
+     * @param resolve - resolving function accepting an array of file information
      * @param accept comma-separated list of extensions for filter
      */
     private static openFilesHelper(resolve: (files: File[]) => void, accept: string): void {
