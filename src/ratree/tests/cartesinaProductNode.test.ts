@@ -1,9 +1,9 @@
 import {Relation}  from "../../relation/relation";
 import {Row}  from "../../relation/row";
-import RelationNode from "../relationNode";
-import CartesianProductNode from "../cartesianProductNode";
+import {RelationNode} from "../relationNode";
+import {CartesianProductNode} from "../cartesianProductNode";
 import {IndexedString} from "../../types/indexedString";
-import SelectionNode from "../selectionNode";
+import {SelectionNode} from "../selectionNode";
 
 describe('eval' , () => {
     describe('joins relations correctly', () => {

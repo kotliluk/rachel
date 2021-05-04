@@ -77,7 +77,7 @@ export class MessageBox {
 
     /**
      * Displays given message in a message box fixed on the page bottom.
-     * @param msg message to display {@type String}
+     * @param msg message to display {@type string}
      * @public
      */
     public static message(msg: string): void {
@@ -86,7 +86,7 @@ export class MessageBox {
 
     /**
      * Displays given error in a message box fixed on the page bottom.
-     * @param msg error to display {@type String}
+     * @param msg error to display {@type string}
      * @public
      */
     public static error(msg: string): void {

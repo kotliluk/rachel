@@ -34,7 +34,7 @@ export class Row {
     /**
      * Returns whether the row is finished and no more column change is possible.
      *
-     * @return true if the row is finished {@type Boolean}
+     * @return true if the row is finished {@type boolean}
      * @public
      */
     public isFinished(): boolean {
@@ -63,9 +63,9 @@ export class Row {
      * Adds a value to the row. If the addition succeeded, returns true. It can fail, if the row is finished,
      * if there is no column of the given name or if there is a column with the name, but different type.
      *
-     * @param name name of the column {@type String}
+     * @param name name of the column {@type string}
      * @param value new value of the column {@type ColumnContent}
-     * @return true if addition succeeded {@type Boolean}
+     * @return true if addition succeeded {@type boolean}
      * @public
      */
     public addValue(name: string, value: ColumnContent): boolean {
@@ -85,7 +85,7 @@ export class Row {
     /**
      * Gets the value (possibly null) of the column with the given name. If there is no column with this name, undefined is returned.
      *
-     * @param name name of the column {@type String}
+     * @param name name of the column {@type string}
      * @return value of the column or undefined if there is no such column {@type ColumnContent?}
      * @public
      */
@@ -96,7 +96,7 @@ export class Row {
     /**
      * Returns the type of the given column or undefined if the column is absent.
      *
-     * @param name name of the column {@type String}
+     * @param name name of the column {@type string}
      * @return the type of the column {@type SupportedColumnType?}
      * @public
      */
@@ -129,8 +129,8 @@ export class Row {
      * relation that contains the row. The returned values are converted to string type. String column values are
      * changed to printing representation - escaped '\\' and '"' are returned without the escape '\\'.
      *
-     * @param orderedColumns order of columns to be returned {@type String[]}
-     * @return ordered array of values {@type String[]}
+     * @param orderedColumns order of columns to be returned {@type string[]}
+     * @return ordered array of values {@type string[]}
      * @public
      */
     public getOrderedPrintValues(orderedColumns: string[]): string[] {

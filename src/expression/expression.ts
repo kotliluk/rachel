@@ -5,13 +5,13 @@
 export interface Expression {
     /**
      * name of the expression
-     * @type String
+     * @type string
      * @public
      */
     name: string,
     /**
      * text of the expression
-     * @type String
+     * @type string
      * @public
      */
     text: string
@@ -21,7 +21,7 @@ export interface Expression {
  * Checks whether the given obj is an {@link Expression}.
  *
  * @param obj object to check {@type any}
- * @return whether the given obj is an Expression {@type Boolean}
+ * @return whether the given obj is an Expression {@type boolean}
  * @public
  */
 export function isExpression(obj: any): boolean {

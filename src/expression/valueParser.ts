@@ -47,7 +47,7 @@ export class ValueParser {
      * - column references (ColumnNameAsStringWithoutQuotes, Id, etc.)
      *
      * @param str infix boolean and algebraic expression to be parsed {@type IndexedString}
-     * @param nullValuesSupport whether null values are supported {@type Boolean}
+     * @param nullValuesSupport whether null values are supported {@type boolean}
      * @return VETreeNode root of the evaluation tree {@type VETreeNode}
      * @public
      */
@@ -69,8 +69,8 @@ export class ValueParser {
      * For supported operations see {@link parse}.
      *
      * @param str infix boolean and algebraic expression to be parsed {@type IndexedString}
-     * @param nullValuesSupport whether null values are supported {@type Boolean}
-     * @param columns available source column names {@type String[]}
+     * @param nullValuesSupport whether null values are supported {@type boolean}
+     * @param columns available source column names {@type string[]}
      * @return detected errors {@type ErrorWithTextRange[]}
      * @public
      */

@@ -1,6 +1,6 @@
-import BinaryNode from "../binaryNode";
-import UnaryNode from "../unaryNode";
-import RATreeNode from "../raTreeNode";
+import {BinaryNode} from "../binaryNode";
+import {UnaryNode} from "../unaryNode";
+import {NodeFakeEvalResult, RATreeNode} from "../raTreeNode";
 import {depthSearch, getTreeDepth} from "../raTreeTools";
 import {Relation}  from "../../relation/relation";
 import {ErrorWithTextRange} from "../../error/errorWithTextRange";
@@ -24,7 +24,7 @@ class TestBinary extends BinaryNode {
         return this.name;
     }
 
-    fakeEval(cursorIndex: number): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
+    fakeEval(cursorIndex: number): NodeFakeEvalResult {
         // @ts-ignore
         return;
     }
@@ -53,7 +53,7 @@ class TestUnary extends UnaryNode {
         return this.name;
     }
 
-    fakeEval(cursorIndex: number): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
+    fakeEval(cursorIndex: number): NodeFakeEvalResult {
         // @ts-ignore
         return;
     }
@@ -82,7 +82,7 @@ class TestLeaf extends RATreeNode {
         return this.name;
     }
 
-    fakeEval(cursorIndex: number): {result: Relation, whispers: string[], errors: ErrorWithTextRange[]} {
+    fakeEval(cursorIndex: number): NodeFakeEvalResult {
         // @ts-ignore
         return;
     }

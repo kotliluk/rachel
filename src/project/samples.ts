@@ -7,7 +7,7 @@ import {Project} from "./project";
 export interface ProjectSample {
     /**
      * name of the sample
-     * @type String
+     * @type string
      * @public
      */
     name: string,

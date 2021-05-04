@@ -47,7 +47,7 @@ export class ProjectStoreManager {
      * Saves the given Project into the .rachel (JSON) file.
      *
      * @param project the Project object with all project data {@type Project}
-     * @param filename name of the downloaded file (without extension, .rachel is added) {@type String}
+     * @param filename name of the downloaded file (without extension, .rachel is added) {@type string}
      * @public
      */
     public static save(project: Project, filename: string): void {

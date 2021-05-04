@@ -7,7 +7,7 @@ import React from "react";
 interface TooltipButtonProps {
     /**
      * text on the button
-     * @type String
+     * @type string
      * @public
      */
     text: string,
@@ -19,7 +19,7 @@ interface TooltipButtonProps {
     onClick: () => void,
     /**
      * css class of the button
-     * @type String?
+     * @type string?
      * @public
      */
     className?: string,
@@ -31,13 +31,13 @@ interface TooltipButtonProps {
     style?: React.CSSProperties,
     /**
      * text of the tooltip
-     * @type String
+     * @type string
      * @public
      */
     tooltip: string,
     /**
      * css class of the tooltip (it always has default .tooltip class)
-     * @type String?
+     * @type string?
      * @public
      */
     tooltipClassName?: string,

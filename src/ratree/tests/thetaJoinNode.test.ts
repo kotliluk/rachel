@@ -1,9 +1,9 @@
-import RelationNode from "../relationNode";
+import {RelationNode} from "../relationNode";
 import {Relation}  from "../../relation/relation";
 import {Row}  from "../../relation/row";
 import {IndexedString} from "../../types/indexedString";
-import SelectionNode from "../selectionNode";
-import ThetaJoinNode, {ThetaJoinType} from "../thetaJoinNode";
+import {SelectionNode} from "../selectionNode";
+import {ThetaJoinNode, ThetaJoinType} from "../thetaJoinNode";
 
 const leftRelation: Relation = new Relation("LAuto");
 leftRelation.addColumn("LId", "number");

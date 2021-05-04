@@ -13,8 +13,8 @@ export class ErrorFactory {
     /**
      * Creates a new code error. Params are used to join error messages.
      *
-     * @param msg predefined error description {@link CodeErrorMessages} {@type String[]}
-     * @param params textual specification {@type String[]}
+     * @param msg predefined error description {@link CodeErrorMessages} {@type string[]}
+     * @param params textual specification {@type string[]}
      * @public
      */
     public static codeError(msg: string[], ...params: string[]): CodeError {
@@ -25,9 +25,9 @@ export class ErrorFactory {
     /**
      * Creates a new RASemanticError. Params are used to join error messages.
      *
-     * @param msg predefined error description {@link SemanticErrorMessages} {@type String[]}
+     * @param msg predefined error description {@link SemanticErrorMessages} {@type string[]}
      * @param range text range of the error in the input when defined {@type StartEndPair?}
-     * @param params textual specification {@type String[]}
+     * @param params textual specification {@type string[]}
      * @public
      */
     public static semanticError(msg: string[], range: StartEndPair | undefined, ...params: string[]): RASemanticError {
@@ -38,9 +38,9 @@ export class ErrorFactory {
     /**
      * Creates a new RASyntaxError. Params are used to join error messages.
      *
-     * @param msg predefined error description {@link SyntaxErrorMessages} {@type String[]}
+     * @param msg predefined error description {@link SyntaxErrorMessages} {@type string[]}
      * @param range text range of the error in the input when defined {@type StartEndPair?}
-     * @param params textual specification {@type String[]}
+     * @param params textual specification {@type string[]}
      * @public
      */
     public static syntaxError(msg: string[], range: StartEndPair | undefined, ...params: string[]): RASyntaxError {

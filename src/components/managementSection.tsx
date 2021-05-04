@@ -48,13 +48,13 @@ interface ManagementSectionProps {
     language: LanguageDef,
     /**
      * current selected null values support
-     * @type Boolean
+     * @type boolean
      * @public
      */
     nullValuesSupport: boolean,
     /**
      * true if dark theme should be applied
-     * @type Boolean
+     * @type boolean
      * @public
      */
     darkTheme: boolean,

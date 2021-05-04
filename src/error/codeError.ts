@@ -38,7 +38,7 @@ export class CodeError extends Error {
     /**
      * Creates a new CodeError with the given message.
      *
-     * @param msg error message {@type String}
+     * @param msg error message {@type string}
      * @public
      */
     constructor(msg: string) {

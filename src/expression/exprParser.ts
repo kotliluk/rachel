@@ -11,12 +11,12 @@ import {
 } from "./exprTokens";
 import StringUtils from "../utils/stringUtils";
 import {CodeError} from "../error/codeError";
-import RATreeNode from "../ratree/raTreeNode";
-import RelationNode from "../ratree/relationNode";
+import {RATreeNode} from "../ratree/raTreeNode";
+import {RelationNode} from "../ratree/relationNode";
 import {IndexedString} from "../types/indexedString";
 import IndexedStringUtils from "../utils/indexedStringUtils";
 import {ErrorWithTextRange} from "../error/errorWithTextRange";
-import RATreeFactory from "../ratree/raTreeFactory";
+import {RATreeFactory} from "../ratree/raTreeFactory";
 import {language} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";
 
@@ -36,7 +36,7 @@ enum AssertType {
 export interface ExprFakeParseResult {
     /**
      * found words to whisper (relation or column names)
-     * @type String[]
+     * @type string[]
      * @public
      */
     whispers: string[],
@@ -64,7 +64,7 @@ export class ExprParser {
      * Creates a parser with given source relations.
      *
      * @param relations map of relations used as source for leave nodes {@type Map<String, Relation>}
-     * @param nullValuesSupport whether to support null values {@type Boolean}
+     * @param nullValuesSupport whether to support null values {@type boolean}
      * @public
      */
     public constructor(readonly relations: Map<string, Relation>, readonly nullValuesSupport: boolean) {}
@@ -94,7 +94,7 @@ export class ExprParser {
      *
      * See {@link ValueParser} for condition-subexpressions constraints.
      *
-     * @param expr relational algebra expression in expected format {@type String}
+     * @param expr relational algebra expression in expected format {@type string}
      * @return tree structure of the given expression {@type RATreeNode}
      * @public
      */
@@ -120,8 +120,8 @@ export class ExprParser {
      * If a parsing error occurs, it is faked to work or ignored and reported in returning errors array.
      * For supported operations see {@link parse}.
      *
-     * @param expr input expression to fake parse {@type String}
-     * @param cursorIndex current index of the cursor {@type Number}
+     * @param expr input expression to fake parse {@type string}
+     * @param cursorIndex current index of the cursor {@type number}
      * @return parsed information {@type ExprFakeParseResult}
      * @public
      */

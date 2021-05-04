@@ -22,7 +22,7 @@ export interface Project {
     expressions: Expression[],
     /**
      * whether the project supports null values
-     * @type Boolean
+     * @type boolean
      * @public
      */
     nullValuesSupport: boolean
@@ -32,7 +32,7 @@ export interface Project {
  * Checks whether the given object is {@link Project} (i.e., has all required fields of required types).
  *
  * @param obj value to be checked {@type any}
- * @return "OK" string if the given obj is Project or string description of found error in the structure {@type String}
+ * @return "OK" string if the given obj is Project or string description of found error in the structure {@type string}
  *
  * @public
  */

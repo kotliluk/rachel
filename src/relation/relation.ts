@@ -19,7 +19,7 @@ export class Relation {
     /**
      * Creates an empty relation of the given name.
      *
-     * @param name name of the relation {@type String}
+     * @param name name of the relation {@type string}
      * @public
      */
     constructor(name: string) {
@@ -29,7 +29,7 @@ export class Relation {
     /**
      * Returns name of the relation.
      *
-     * @return relation name {@type String}
+     * @return relation name {@type string}
      * @public
      */
     public getName(): string {
@@ -39,7 +39,7 @@ export class Relation {
     /**
      * Returns true if the relational schema is finished (no more columns can be added).
      *
-     * @return true if the relational schema is finished (no more columns can be added) {@type Boolean}
+     * @return true if the relational schema is finished (no more columns can be added) {@type boolean}
      * @public
      */
     public hasFinishedSchema(): boolean {
@@ -57,9 +57,9 @@ export class Relation {
     /**
      * Adds a column to a relational schema if the relational schema is not finished yet.
      *
-     * @param name name of the column {@type String}
+     * @param name name of the column {@type string}
      * @param type type of the column {@type SupportedColumnType}
-     * @return true if the column was added (relation did not contain a column with the same name before) {@type Boolean}
+     * @return true if the column was added (relation did not contain a column with the same name before) {@type boolean}
      * @public
      */
     public addColumn(name: string, type: SupportedColumnType): boolean {
@@ -75,8 +75,8 @@ export class Relation {
      * Checks whether the relation has a column with the same name
      * (NOTE: type of the column does not matter).
      *
-     * @param name Column name to be checked {@type String}
-     * @return true if the relation has a column with the same name {@type Boolean}
+     * @param name Column name to be checked {@type string}
+     * @return true if the relation has a column with the same name {@type boolean}
      * @public
      */
     public hasColumn(name: string): boolean {
@@ -106,7 +106,7 @@ export class Relation {
     /**
      * Return column names  in a relation.
      *
-     * @return array of column names in a relation {@type String[]}
+     * @return array of column names in a relation {@type string[]}
      * @public
      */
     public getColumnNames(): string[] {
@@ -116,7 +116,7 @@ export class Relation {
     /**
      * Returns number of columns in a relation.
      *
-     * @return number of columns in a relation {@type Number}
+     * @return number of columns in a relation {@type number}
      * @public
      */
     public getColumnsCount(): number {
@@ -130,7 +130,7 @@ export class Relation {
      * NOTE: Rows in a relation cannot be duplicit, adding a duplicit row returns true, but only one is kept.
      *
      * @param row row to be added {@type Row}
-     * @return true if the row was added, false otherwise {@type Boolean}
+     * @return true if the row was added, false otherwise {@type boolean}
      * @public
      */
     public addRow(row: Row): boolean {
@@ -158,7 +158,7 @@ export class Relation {
     /**
      * Returns the number of rows in a relation.
      *
-     * @return number of rows in a relation {@type Number}
+     * @return number of rows in a relation {@type number}
      * @public
      */
     public getRowsCount(): number {
@@ -169,7 +169,7 @@ export class Relation {
      * Returns a relational schema in a format: RelationName(ColumnOneName: ColumnOneType, ...) - both column names
      * and column types are used.
      *
-     * @return relational schema as a string {@type String}
+     * @return relational schema as a string {@type string}
      * @public
      */
     public getSchemaString(): string {
@@ -179,7 +179,7 @@ export class Relation {
     /**
      * Returns a relational schema in a format: RelationName(ColumnOneName, ...) - only column names are used.
      *
-     * @return relational schema as a string {@type String}
+     * @return relational schema as a string {@type string}
      * @public
      */
     public getNamesSchemaString(): string {
@@ -189,7 +189,7 @@ export class Relation {
     /**
      * Returns a formatted string representation of the relation content (column names, column types and rows).
      *
-     * @return string representation of the relation {@type String}
+     * @return string representation of the relation {@type string}
      * @public
      */
     public contentString(): string {
@@ -222,7 +222,7 @@ export class Relation {
      * Custom equals function for testing purposes.
      *
      * @param other an object to compare {@type any}
-     * @return true if this and given objects have same name, columns, and rows {@type Boolean}
+     * @return true if this and given objects have same name, columns, and rows {@type boolean}
      * @public
      */
     public equals(other: any): boolean {

@@ -1,9 +1,9 @@
 import {Relation}  from "../../relation/relation";
 import {Row}  from "../../relation/row";
-import RelationNode from "../relationNode";
-import NaturalJoinNode, {NaturalJoinType} from "../naturalJoinNode";
+import {RelationNode} from "../relationNode";
+import {NaturalJoinNode, NaturalJoinType} from "../naturalJoinNode";
 import {IndexedString} from "../../types/indexedString";
-import SelectionNode from "../selectionNode";
+import {SelectionNode} from "../selectionNode";
 
 const leftWithOneRow: Relation = new Relation("Auto");
 leftWithOneRow.addColumn("AutoId", "number");

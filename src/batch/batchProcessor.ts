@@ -2,20 +2,20 @@ import {FileDialog} from "../utils/fileDialog";
 import JSZip from "jszip";
 import {saveAs} from "file-saver";
 import {Relation}  from "../relation/relation";
-import RATreeNode from "../ratree/raTreeNode";
-import UnaryNode from "../ratree/unaryNode";
-import ProjectionNode from "../ratree/projectionNode";
-import RenameNode from "../ratree/renameNode";
-import SelectionNode from "../ratree/selectionNode";
-import BinaryNode from "../ratree/binaryNode";
-import AntijoinNode from "../ratree/antijoinNode";
-import CartesianProductNode from "../ratree/cartesianProductNode";
-import DivisionNode from "../ratree/divisionNode";
+import {RATreeNode} from "../ratree/raTreeNode";
+import {UnaryNode} from "../ratree/unaryNode";
+import {ProjectionNode} from "../ratree/projectionNode";
+import {RenameNode} from "../ratree/renameNode";
+import {SelectionNode} from "../ratree/selectionNode";
+import {BinaryNode} from "../ratree/binaryNode";
+import {AntijoinNode}  from "../ratree/antijoinNode";
+import {CartesianProductNode} from "../ratree/cartesianProductNode";
+import {DivisionNode} from "../ratree/divisionNode";
 import {OuterJoinNode} from "../ratree/outerJoinNode";
-import NaturalJoinNode, {NaturalJoinType} from "../ratree/naturalJoinNode";
-import SetOperationNode from "../ratree/setOperationNode";
+import {NaturalJoinNode, NaturalJoinType} from "../ratree/naturalJoinNode";
+import {SetOperationNode} from "../ratree/setOperationNode";
 import {formatDate} from "../utils/dateUtils";
-import ThetaJoinNode, {ThetaJoinType} from "../ratree/thetaJoinNode";
+import {ThetaJoinNode, ThetaJoinType} from "../ratree/thetaJoinNode";
 import {isProjectObject, Project} from "../project/project";
 import {ExprParser} from "../expression/exprParser";
 import {StoredRelation, StoredRelationData} from "../relation/storedRelation";
@@ -33,7 +33,7 @@ export class BatchProcessor {
      * Opens file dialog and processes files selected by the user. For each .rachel file creates a textual evaluation
      * report. Files are expected to contain valid project data. Returns promise with string message about process.
      *
-     * @param filename name of the downloaded zip file - individual reports has names derived from their original files {@type String}
+     * @param filename name of the downloaded zip file - individual reports has names derived from their original files {@type string}
      *
      * @public
      */

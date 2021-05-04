@@ -19,7 +19,7 @@ export class RelationStoreManager {
      * Loads textual relation representations from multiple CSV files selected by the user. If the csv does not have
      * valid stricture, it is skipped. Loaded CSVs are parsed to StoredRelations and returned in a promise.
      *
-     * @param nullValuesSupport null values support to set in created StoredRelations {@type Boolean}
+     * @param nullValuesSupport null values support to set in created StoredRelations {@type boolean}
      * @return parsed StoredRelations and number of skipped files in a promise {@type Promise}
      * @public
      */
@@ -53,7 +53,7 @@ export class RelationStoreManager {
      * Saves given relations into csv files (in one csv file each relation). Uses given value separator.
      *
      * @param relations map of the relations to be  {@type StoredRelation[]}
-     * @param filename name of the downloaded file (without .zip/.csv extension) {@type String}
+     * @param filename name of the downloaded file (without .zip/.csv extension) {@type string}
      * @param valueSeparator the separator of values {@type CsvValueSeparator}
      * @public
      */

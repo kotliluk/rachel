@@ -19,7 +19,7 @@ export type ColumnContent = string | number | boolean | null;
 /**
  * Returns true if the given obj is string with value SupportedColumnType value.
  * @param obj checked object {@type any}
- * @return whether the given obj is string with value SupportedColumnType value {@type Boolean}
+ * @return whether the given obj is string with value SupportedColumnType value {@type boolean}
  * @public
  */
 export function isSupportedColumnType(obj: any): boolean {

@@ -15,19 +15,19 @@ export interface ExpressionLoadData {
     expressions: Expression[],
     /**
      * number of skipped expressions (from successfully loaded files)
-     * @type Number
+     * @type number
      * @public
      */
     skippedExpressions: number,
     /**
      * number of successfully loaded files
-     * @type Number
+     * @type number
      * @public
      */
     loadedFiles: number,
     /**
      * number of skipped files (not .txt, null loaded...)
-     * @type Number
+     * @type number
      * @public
      */
     skippedFiles: number
@@ -106,7 +106,7 @@ export class ExpressionStoreManager {
      * Saves given expressions to a textual file. Each expression starts with "### Expression name ###\n" line.
      *
      * @param expressions array of expressions to be saved {@type Expression[]}
-     * @param filename name of the downloaded file (without extension) {@type String}
+     * @param filename name of the downloaded file (without extension) {@type string}
      * @public
      */
     public static save(expressions: Expression[], filename: string): void {

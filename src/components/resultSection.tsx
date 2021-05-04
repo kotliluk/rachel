@@ -4,7 +4,7 @@ import downloadSVG from "export-svg-with-styles";
 import {Relation}  from "../relation/relation";
 import {ResultRelationTable} from "./resultRelationTable";
 import {TooltipButton} from "./tooltipButton";
-import RATreeNode from "../ratree/raTreeNode";
+import {RATreeNode} from "../ratree/raTreeNode";
 import {CsvValueSeparator} from "../types/csvSupport";
 import {evalTreeSVGId, EvaluationTree} from "./evaluationTree";
 import {depthSearch} from "../ratree/raTreeTools";
@@ -27,7 +27,7 @@ interface ResultSectionProps {
     evaluationTreeRoot: RATreeNode,
     /**
      * name of the evaluated expression
-     * @type String
+     * @type string
      * @public
      */
     expressionName: string,
@@ -51,7 +51,7 @@ interface ResultSectionProps {
     csvValueSeparator: CsvValueSeparator,
     /**
      * true if dark theme should be applied
-     * @type Boolean
+     * @type boolean
      * @public
      */
     darkTheme: boolean,

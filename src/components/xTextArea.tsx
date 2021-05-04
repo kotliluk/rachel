@@ -12,19 +12,19 @@ import {StartEndPair} from "../types/startEndPair";
 export interface LocatedError {
     /**
      * index of the first error character
-     * @type Number
+     * @type number
      * @public
      */
     start: number,
     /**
      * index of the last error character
-     * @type Number
+     * @type number
      * @public
      */
     end: number,
     /**
      * error message
-     * @type String
+     * @type string
      * @public
      */
     msg: string
@@ -37,19 +37,19 @@ export interface LocatedError {
 interface XTextAreaProps {
     /**
      * id of the component
-     * @type String
+     * @type string
      * @public
      */
     id: string;
     /**
      * current text content of the textarea
-     * @type String
+     * @type string
      * @public
      */
     text: string;
     /**
      * text to be shown as textarea placeholder
-     * @type String
+     * @type string
      * @public
      */
     placeholder: string;
@@ -67,7 +67,7 @@ interface XTextAreaProps {
     parentheses: StartEndPair[];
     /**
      * strings whispered to the user to be added at the current position
-     * @type String[]
+     * @type string[]
      * @public
      */
     whispers: string[];
@@ -85,7 +85,7 @@ interface XTextAreaProps {
     onCtrlInput: (ev: KeyboardEvent) => void;
     /**
      * true if dark theme should be applied
-     * @type Boolean
+     * @type boolean
      * @public
      */
     darkTheme: boolean;
@@ -255,8 +255,8 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
     /**
      * Sets text area selection start and end. If end is not given, start value is used as end value as well.
      *
-     * @param start start index {@type Number}
-     * @param end end index {@type Number}
+     * @param start start index {@type number}
+     * @param end end index {@type number}
      * @public
      */
     public setSelection(start: number, end?: number): void {
@@ -265,7 +265,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
 
     /**
      * Returns true if the textarea has focus.
-     * @return true if the textarea has focus {@type Boolean}
+     * @return true if the textarea has focus {@type boolean}
      * @public
      */
     public isFocused(): boolean {

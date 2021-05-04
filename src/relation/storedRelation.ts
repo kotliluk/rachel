@@ -48,8 +48,8 @@ export class StoredRelation {
     /**
      * Creates a new stored relation with given name, one column and no rows.
      *
-     * @param name name of the relation {@type String}
-     * @param nullValuesSupport whether null values are supported {@type Boolean}
+     * @param name name of the relation {@type string}
+     * @param nullValuesSupport whether null values are supported {@type boolean}
      * @return stored relation {@type StoredRelation}
      * @public
      */
@@ -62,7 +62,7 @@ export class StoredRelation {
      * throws error.
      *
      * @param data input object {@type any}
-     * @param nullValuesSupport whether null values are supported {@type Boolean}
+     * @param nullValuesSupport whether null values are supported {@type boolean}
      * @return stored relation {@type StoredRelation}
      * @public
      */
@@ -77,9 +77,9 @@ export class StoredRelation {
     /**
      * Creates a new stored relation from given full relation representation.
      *
-     * @param name name to overwrite original relation name {@type String}
+     * @param name name to overwrite original relation name {@type string}
      * @param relation formal relation representation {@type Relation}
-     * @param nullValuesSupport whether null values are supported {@type Boolean}
+     * @param nullValuesSupport whether null values are supported {@type boolean}
      * @return stored relation {@type StoredRelation}
      * @public
      */
@@ -116,7 +116,7 @@ export class StoredRelation {
      * Returns formatted string representation of StoredRelation or StoredRelationData.
      *
      * @param rel relation to stringify {@type StoredRelation}
-     * @return formatted string representation {@type String}
+     * @return formatted string representation {@type string}
      * @public
      */
     public static format(rel: StoredRelation | StoredRelationData): string {
@@ -156,11 +156,11 @@ export class StoredRelation {
     /**
      * Creates new relation with given name, one default column and no rows.
      *
-     * @param name relation name {@type String}
-     * @param columnNames column names {@type String[]}
+     * @param name relation name {@type string}
+     * @param columnNames column names {@type string[]}
      * @param columnTypes column types {@type SupportedColumnType[]}
-     * @param rows data tuples as 2D string array [row, column] {@type String[][]}
-     * @param nullValuesSupport whether null values are supported {@type Boolean}
+     * @param rows data tuples as 2D string array [row, column] {@type string[][]}
+     * @param nullValuesSupport whether null values are supported {@type boolean}
      * @public
      */
     constructor(name: string, columnNames: string[], columnTypes: SupportedColumnType[],
@@ -323,7 +323,7 @@ export class StoredRelation {
     /**
      * Returns true if there are no errors in the relation.
      *
-     * @return true if there are no errors in the relation {@type Boolean}
+     * @return true if there are no errors in the relation {@type boolean}
      * @public
      */
     public isValid(): boolean {
@@ -333,7 +333,7 @@ export class StoredRelation {
     /**
      * Sets null values support to check null errors in the relation.
      *
-     * @param nullValuesSupport whether null values are supported {@type Boolean}
+     * @param nullValuesSupport whether null values are supported {@type boolean}
      * @public
      */
     public setNullValuesSupport(nullValuesSupport: boolean): void {
@@ -393,7 +393,7 @@ export class StoredRelation {
      * Deletes a column with the given index. If the last column was deleted, removes all rows and creates
      * new default column.
      *
-     * @param columnIndex column to delete {@type Number}
+     * @param columnIndex column to delete {@type number}
      * @public
      */
     public deleteColumn(columnIndex: number): void {
@@ -423,7 +423,7 @@ export class StoredRelation {
     /**
      * Deletes a row with given index.
      *
-     * @param rowIndex row to delete {@type Number}
+     * @param rowIndex row to delete {@type number}
      * @public
      */
     public deleteRow(rowIndex: number): void {
@@ -446,7 +446,7 @@ export class StoredRelation {
     /**
      * Returns row count.
      *
-     * @return row count {@type Number}
+     * @return row count {@type number}
      * @public
      */
     public getRowCount(): number {
@@ -456,7 +456,7 @@ export class StoredRelation {
     /**
      * Returns column count.
      *
-     * @return column count {@type Number}
+     * @return column count {@type number}
      * @public
      */
     public getColumnCount(): number {
@@ -466,7 +466,7 @@ export class StoredRelation {
     /**
      * Sets relation name.
      *
-     * @param name new relation name {@type String}
+     * @param name new relation name {@type string}
      * @public
      */
     public setName(name: string): void {
@@ -477,7 +477,7 @@ export class StoredRelation {
     /**
      * Gets relation name.
      *
-     * @return relation name {@type String}
+     * @return relation name {@type string}
      * @public
      */
     public getName(): string {
@@ -487,7 +487,7 @@ export class StoredRelation {
     /**
      * Gets column names.
      *
-     * @return column names {@type String[]}
+     * @return column names {@type string[]}
      * @public
      */
     public getColumnNames(): string[] {
@@ -497,8 +497,8 @@ export class StoredRelation {
     /**
      * Sets column name on the given index.
      *
-     * @param columnName name to set {@type String}
-     * @param columnIndex column to update {@type Number}
+     * @param columnName name to set {@type string}
+     * @param columnIndex column to update {@type number}
      * @public
      */
     public setColumnName(columnName: string, columnIndex: number): void {
@@ -521,7 +521,7 @@ export class StoredRelation {
      * Sets column type on the given index.
      *
      * @param columnType type to set {@type SupportedColumnType}
-     * @param columnIndex column to update {@type Number}
+     * @param columnIndex column to update {@type number}
      * @public
      */
     public setColumnType(columnType: SupportedColumnType, columnIndex: number): void {
@@ -533,7 +533,7 @@ export class StoredRelation {
     /**
      * Gets all rows.
      *
-     * @return data tuples as 2D string array [row, column] {@type String[][]}
+     * @return data tuples as 2D string array [row, column] {@type string[][]}
      * @public
      */
     public getRows(): string[][] {
@@ -543,9 +543,9 @@ export class StoredRelation {
     /**
      * Sets value in the row in the given row and column.
      *
-     * @param input value to set {@type String}
-     * @param rowIndex row to insert {@type Number}
-     * @param columnIndex column to insert {@type Number}
+     * @param input value to set {@type string}
+     * @param rowIndex row to insert {@type number}
+     * @param columnIndex column to insert {@type number}
      * @public
      */
     public setRowInput(input: string, rowIndex: number, columnIndex: number): void {
@@ -558,7 +558,7 @@ export class StoredRelation {
      * Returns true if no changes were made after last setActual(true) call.
      * The StoredRelation is created with isActual() = false.
      *
-     * @return actual value {@type Boolean}
+     * @return actual value {@type boolean}
      * @public
      */
     public isActual(): boolean {
@@ -569,7 +569,7 @@ export class StoredRelation {
      * Sets current StoredRelation state as actual. Any change sets the state as not actual automatically.
      * If it is set to actual, the current state is saved as the revert state.
      *
-     * @param actual set relation actual value to the given value {@type Boolean}
+     * @param actual set relation actual value to the given value {@type boolean}
      * @public
      */
     public setActual(actual: boolean): void {
@@ -582,7 +582,7 @@ export class StoredRelation {
     /**
      * Returns name of the saved relation state to revert or empty string.
      *
-     * @return name of the saver relation state to revert or empty string {@type String}
+     * @return name of the saver relation state to revert or empty string {@type string}
      * @public
      */
     public getRevertName(): string {
@@ -616,7 +616,7 @@ export class StoredRelation {
 /**
  * Returns true if the given object is a {@link StoredRelationData}, has at least one column, and all rows has the same length.
  * @param obj checked object {@type any}
- * @return whether the given object is a valid StoredRelationData {@type Boolean}
+ * @return whether the given object is a valid StoredRelationData {@type boolean}
  * @public
  */
 export function isStoredRelationData(obj: any): boolean {

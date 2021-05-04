@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Relation}  from '../relation/relation';
-import RATreeNode from "../ratree/raTreeNode";
+import {RATreeNode} from "../ratree/raTreeNode";
 import {ExpressionSection} from "./expressionSection";
 import {ResultSection} from "./resultSection";
 import {ExpressionStoreManager} from "../expression/expressionStoreManager";

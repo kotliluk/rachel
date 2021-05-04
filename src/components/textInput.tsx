@@ -7,13 +7,13 @@ import React from "react";
 interface TextInputProps {
     /**
      * initial value for the input
-     * @type String
+     * @type string
      * @public
      */
     value: string,
     /**
      * text on the submit button
-     * @type String
+     * @type string
      * @public
      */
     buttonText: string,
@@ -31,7 +31,7 @@ interface TextInputProps {
     forbidden: (text: string) => boolean,
     /**
      * id of the input
-     * @type String
+     * @type string
      * @public
      */
     id: string

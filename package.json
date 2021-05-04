@@ -41,7 +41,7 @@
     "build": "set 'GENERATE_SOURCEMAP=false' && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "docs": "rimraf docs && jsdoc src/language -r -a public -c jsdoc.json"
+    "docs": "rimraf docs && jsdoc src/ratree -r -a public -c jsdoc.json"
   },
   "eslintConfig": {
     "extends": "react-app"

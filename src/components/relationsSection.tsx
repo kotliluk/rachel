@@ -23,7 +23,7 @@ interface RelationsSectionProps {
     storedRelations: StoredRelation[],
     /**
      * index of the current selected relation
-     * @type Number
+     * @type number
      * @public
      */
     storedRelationIndex: number,
@@ -143,7 +143,7 @@ interface RelationsSectionProps {
     onImportRelations: (onDone: (msg: string) => void) => void,
     /**
      * whether to support null values
-     * @type Boolean
+     * @type boolean
      * @public
      */
     nullValuesSupport: boolean,

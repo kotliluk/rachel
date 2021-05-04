@@ -6,9 +6,9 @@ import { LinkVertical } from '@visx/shape';
 import ParentSize from "@visx/responsive/lib/components/ParentSize";
 import {useTooltip} from '@visx/tooltip';
 import './css/evaluationTree.css';
-import RATreeNode from "../ratree/raTreeNode";
-import UnaryNode from "../ratree/unaryNode";
-import BinaryNode from "../ratree/binaryNode";
+import {RATreeNode} from "../ratree/raTreeNode";
+import {UnaryNode} from "../ratree/unaryNode";
+import {BinaryNode} from "../ratree/binaryNode";
 import {getTreeDepth} from "../ratree/raTreeTools";
 import {computeFontSizeInPx} from "../utils/fontUtils";
 
@@ -31,7 +31,7 @@ interface EvaluationTreeProps {
     tree: RATreeNode,
     /**
      * index of the current selected node (with respect to depth first search)
-     * @type Number
+     * @type number
      * @public
      */
     selected: number,
@@ -43,7 +43,7 @@ interface EvaluationTreeProps {
     onClick: (index: number) => void,
     /**
      * true if dark theme should be applied
-     * @type Boolean
+     * @type boolean
      * @public
      */
     darkTheme: boolean

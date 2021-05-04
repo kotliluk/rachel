@@ -80,7 +80,7 @@ export interface LanguageDef {
      */
     syntaxErrors: SyntaxErrorMessages,
     /**
-     * Default syntex error message.
+     * Default syntax error message.
      * @public
      */
     syntaxError: string,
@@ -236,7 +236,7 @@ const languageMap: Map<SupportedLanguage, LanguageDef> = new Map<SupportedLangua
 /**
  * Returns true if the given value is a supported language.
  * @param lan checked value {@type any}
- * @return true if the given value is a supported language {@type Boolean}
+ * @return true if the given value is a supported language {@type boolean}
  * @public
  */
 export function isSupportedLanguage(lan: any): boolean {
@@ -245,7 +245,7 @@ export function isSupportedLanguage(lan: any): boolean {
 
 /**
  * Returns definition of the current selected language.
- * @return definition of the current selected language {@type Boolean}
+ * @return definition of the current selected language {@type LanguageDef}
  * @public
  */
 export function language(): LanguageDef {

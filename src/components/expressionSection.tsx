@@ -10,7 +10,7 @@ import {getStartOfWordBeforeIndex, sortWhispers} from "../utils/whisperUtils";
 import {Expression} from "../expression/expression";
 import {TextInput} from "./textInput";
 import {ErrorWithTextRange} from "../error/errorWithTextRange";
-import RATreeNode from "../ratree/raTreeNode";
+import {RATreeNode} from "../ratree/raTreeNode";
 import {MessageBox} from "./messageBox";
 import {LanguageDef} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";
@@ -28,7 +28,7 @@ interface ExpressionSectionProps {
     expressions: Expression[],
     /**
      * index of the current selected expression in the expression list
-     * @type Number
+     * @type number
      * @public
      */
     currentExpressionIndex: number,
@@ -94,13 +94,13 @@ interface ExpressionSectionProps {
     onUnexpectedError: (e: Error) => void,
     /**
      * whether to support null values
-     * @type Boolean
+     * @type boolean
      * @public
      */
     nullValuesSupport: boolean,
     /**
      * true if dark theme should be applied
-     * @type Boolean
+     * @type boolean
      * @public
      */
     darkTheme: boolean,

@@ -136,7 +136,7 @@ export class RASyntaxError extends ErrorWithTextRange {
     /**
      * Creates a new RASyntaxError with the given message.
      *
-     * @param msg error message {@type String}
+     * @param msg error message {@type string}
      * @param range optional text range of the error {@type StartEndPair?}
      * @public
      */

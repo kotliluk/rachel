@@ -1,9 +1,9 @@
 import {Relation}  from "../../relation/relation";
 import {Row}  from "../../relation/row";
-import RelationNode from "../relationNode";
+import {RelationNode} from "../relationNode";
 import {OuterJoinNode, OuterJoinType} from "../outerJoinNode";
 import {IndexedString} from "../../types/indexedString";
-import SelectionNode from "../selectionNode";
+import {SelectionNode} from "../selectionNode";
 
 describe('full outer join', () => {
     test('1 Auto and 1 Majitel with common MajitelId = 1 -> should be joined as 1 row', () => {

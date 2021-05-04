@@ -6,7 +6,7 @@ import {StartEndPair} from "../types/startEndPair";
  */
 export class ErrorWithTextRange extends Error {
     /**
-     * @param msg error message {@type String}
+     * @param msg error message {@type string}
      * @param range optional text range of the error {@type StartEndPair?}
      * @public
      */
