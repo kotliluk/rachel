@@ -5,34 +5,82 @@ import "./css/managementSection.css"
 import {getSamples} from "../project/samples";
 import {Project} from "../project/project";
 
+/**
+ * Props of ManagementSection component.
+ * @public
+ */
 interface ManagementSectionProps {
-    // handler of batch processing
+    /**
+     * handler of batch processing
+     * @type Function
+     * @public
+     */
     onBatch: () => void,
-
-    // handler of project loading
+    /**
+     * handler of project loading
+     * @type Function
+     * @public
+     */
     onLoadProject: () => void,
-    // handler of project saving
+    /**
+     * handler of project saving
+     * @type Function
+     * @public
+     */
     onSaveProject: () => void,
-
-    // handler of loading the selected sample project
+    /**
+     * handler of loading the selected sample project
+     * @type Function
+     * @public
+     */
     onLoadSample: (sample: Project) => void,
-
-    // current selected value separator in csv files
+    /**
+     * current selected value separator in csv files
+     * @type CsvValueSeparator
+     * @public
+     */
     csvValueSeparator: CsvValueSeparator,
-    // current selected language of the application
+    /**
+     * current selected language of the application
+     * @type LanguageDef
+     * @public
+     */
     language: LanguageDef,
-    // current selected null values support
+    /**
+     * current selected null values support
+     * @type Boolean
+     * @public
+     */
     nullValuesSupport: boolean,
-    // true if dark theme should be applied
+    /**
+     * true if dark theme should be applied
+     * @type Boolean
+     * @public
+     */
     darkTheme: boolean,
-
-    // handler of change of the current selected value separator in csv files
+    /**
+     * handler of change of the current selected value separator in csv files
+     * @type Function
+     * @public
+     */
     onCsvValueSeparatorChange: (csvValueSeparator: CsvValueSeparator) => void,
-    // handler of change of the current selected language of the application
+    /**
+     * handler of change of the current selected language of the application
+     * @type Function
+     * @public
+     */
     onLanguageChange: (language: SupportedLanguage) => void,
-    // handler of change of the current selected null values support
+    /**
+     * handler of change of the current selected null values support
+     * @type Function
+     * @public
+     */
     onNullValuesSupportChange: (nullValuesSupport: boolean) => void,
-    // handler of change of the current selected theme
+    /**
+     * handler of change of the current selected theme
+     * @type Function
+     * @public
+     */
     onDarkModeChange: (darkTheme: boolean) => void
 }
 
@@ -42,6 +90,9 @@ interface ManagementSectionState {
 
 /**
  * Section to manage batch processing, importing/exporting the project, and settings.
+ * Accepts {@link ManagementSectionProps} props.
+ *
+ * @public
  */
 export class ManagementSection extends React.Component<ManagementSectionProps, ManagementSectionState> {
 

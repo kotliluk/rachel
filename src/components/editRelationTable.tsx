@@ -4,26 +4,64 @@ import {StoredRelation} from "../relation/storedRelation";
 import {SupportedColumnType} from "../relation/columnType";
 import {NNToSMap} from "../types/nnToSMap";
 
+/**
+ * Props of EditRelationTable component.
+ * @public
+ */
 interface EditRelationTableProps {
-    // storing representation of the relation to be edited
+    /**
+     * stored representation of the relation to be edited
+     * @type StoredRelation
+     * @public
+     */
     relation: StoredRelation,
-
-    // handler of column name change
+    /**
+     * handler of column name change
+     * @type Function
+     * @public
+     */
     onColumnNameChange: (columnName: string, columnIndex: number) => void,
-    // handler of column type change
+    /**
+     * handler of column type change
+     * @type Function
+     * @public
+     */
     onColumnTypeChange: (columnType: SupportedColumnType, columnIndex: number) => void,
-    // handler of row input change
+    /**
+     * handler of row input change
+     * @type Function
+     * @public
+     */
     onRowInputChange: (input: string, columnIndex: number, rowIndex: number) => void,
-    // handler of adding new row
+    /**
+     * handler of adding new row
+     * @type Function
+     * @public
+     */
     onNewRow: (onDone: () => void) => void,
-    // handler of adding new column
+    /**
+     * handler of adding new column
+     * @type Function
+     * @public
+     */
     onNewColumn: (onDone: () => void) => void,
-    // handler of deleting the row of given index
+    /**
+     * handler of deleting the row of given index
+     * @type Function
+     * @public 
+     */
     onDeleteRow: (rowIndex: number) => void,
-    // handler of deleting the column of given index
+    /**
+     * handler of deleting the column of given index
+     * @type Function
+     * @public
+     */
     onDeleteColumn: (columnIndex: number) => void,
-
-    // handler of input with Ctrl key
+    /**
+     * handler of input with Ctrl key
+     * @type Function
+     * @public 
+     */
     onCtrlInput: (ev: React.KeyboardEvent) => void
 }
 
@@ -40,17 +78,7 @@ const inputMarginSides: number = Number(cssConstants.getPropertyValue('--input-m
 /**
  * Table for editing a relation relation. It supports adding new columns and rows and editing all relation (column names,
  * column types and row inputs).
- *
- * Props:
- * - relation: StoredRelation // storing representation of the relation to be edited
- * - onColumnNameChange: (columnName: string, columnIndex: number) => void // handler of column name change
- * - onColumnTypeChange: (columnType: SupportedColumnType, columnIndex: number) => void // handler of column type change
- * - onRowInputChange: (input: string, columnIndex: number, rowIndex: number) => void // handler of row input change
- * - onNewRow: (onDone: () => void) => void // handler of adding new row
- * - onNewColumn: (onDone: () => void) => void // handler of adding new column
- * - onDeleteRow: (rowIndex: number) => void // handler of deleting the row of given index
- * - onDeleteColumn: (columnIndex: number) => void // handler of deleting the column of given index
- * - onCtrlInput: (ev: React.KeyboardEvent) => void  // handler of input with Ctrl key
+ * Accepts {@link EditRelationTableProps} props.
  *
  * @public
  */

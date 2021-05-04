@@ -9,15 +9,21 @@ import {copyStoredRelationData, isStoredRelationData, StoredRelationData} from "
  */
 export interface Project {
     /**
-     * Stored relation data in compressed representation {@type StoredRelationData[]}
+     * stored relation data in compressed representation
+     * @type StoredRelationData[]
+     * @public
      */
     relations: StoredRelationData[],
     /**
-     * Expressions {@type Expression[]}
+     * expressions
+     * @type Expression[]
+     * @public
      */
     expressions: Expression[],
     /**
-     * Whether the project supports null values {@type Boolean}
+     * whether the project supports null values
+     * @type Boolean
+     * @public
      */
     nullValuesSupport: boolean
 }

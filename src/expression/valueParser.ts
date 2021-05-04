@@ -30,7 +30,8 @@ import {RASyntaxError} from "../error/raSyntaxError";
 import {language} from "../language/language";
 
 /**
- * StringUtils of string infix boolean and algebraic expression to value-evaluating tree.
+ * Parser of the logic-algebraic subexpressions in relational algebra expressions.
+ * @public
  */
 export class ValueParser {
 
@@ -45,9 +46,10 @@ export class ValueParser {
      * booleans (true, false)
      * - column references (ColumnNameAsStringWithoutQuotes, Id, etc.)
      *
-     * @param str infix boolean and algebraic expression to be parsed
-     * @param nullValuesSupport whether null values are supported
-     * @return VETreeNode tree (its root)
+     * @param str infix boolean and algebraic expression to be parsed {@type IndexedString}
+     * @param nullValuesSupport whether null values are supported {@type Boolean}
+     * @return VETreeNode root of the evaluation tree {@type VETreeNode}
+     * @public
      */
     public static parse(str: IndexedString, nullValuesSupport: boolean): VETreeNode {
         let tokens: ValueToken[] = ValueParser.parseTokens(str, nullValuesSupport, true);
@@ -64,11 +66,13 @@ export class ValueParser {
 
     /**
      * Parses given string infix boolean and algebraic expression and returns errors in it.
-     * For supported operations see ValueParser.parse().
+     * For supported operations see {@link parse}.
      *
-     * @param str infix boolean and algebraic expression to be parsed
-     * @param nullValuesSupport whether null values are supported
-     * @param columns
+     * @param str infix boolean and algebraic expression to be parsed {@type IndexedString}
+     * @param nullValuesSupport whether null values are supported {@type Boolean}
+     * @param columns available source column names {@type String[]}
+     * @return detected errors {@type ErrorWithTextRange[]}
+     * @public
      */
     public static fakeParse(str: IndexedString, nullValuesSupport: boolean, columns: string[]): ErrorWithTextRange[] {
         const errors: ErrorWithTextRange[] = [];

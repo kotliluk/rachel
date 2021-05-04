@@ -84,9 +84,9 @@ export class Relation {
     }
 
     /**
-     * Returns map (name -> value) of columns' values in a relation.
+     * Returns map (name -> value) of column values in a relation.
      *
-     * @return map of columns' values in a relation {@type Map<String, SupportedColumnType>}
+     * @return map of column values in a relation {@type Map<String, SupportedColumnType>}
      * @public
      */
     public getColumns(): Map<string, SupportedColumnType> {

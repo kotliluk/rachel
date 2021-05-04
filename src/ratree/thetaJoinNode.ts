@@ -86,7 +86,7 @@ export default class ThetaJoinNode extends BinaryNode {
                 const testRow: Row = new Row(bothSourceColumns);
                 leftRow.getValues().forEach((value, name) => testRow.addValue(name, value));
                 rightRow.getValues().forEach((value, name) => testRow.addValue(name, value));
-                // checks whether the combined row from both relations' columns satisfies the condition
+                // checks whether the combined row from both relation columns satisfies the condition
                 let booleanResult: { value: ColumnContent, type: SupportedColumnType | "null" } = boolExpr.eval(testRow);
                 if (booleanResult.type !== "boolean") {
                     throw ErrorFactory.syntaxError(language().syntaxErrors.thetaJoinNode_resultNotBoolean,

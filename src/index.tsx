@@ -76,6 +76,16 @@ import {MainScreen} from "./components/mainScreen";
  * https://github.com/microsoft/TypeScript
  * Apache License 2.0
  *
+ * JSDoc - An API documentation generator for JavaScript.
+ * Version: 3.6.6
+ * https://github.com/jsdoc/jsdoc
+ * Apache License 2.0
+ *
+ * better-docs - Beautiful toolbox for jsdoc generated documentation - with 'typescript', `category` and `component` plugins
+ * Version: 2.3.2
+ * https://github.com/SoftwareBrothers/better-docs
+ * MIT License - Copyright 2019 SoftwareBrothers.co
+ *
  * ********* Used, not Licensed, free to use code and services: *********
  *
  * PostMail - Send email from JavaScript or static HTML without backend code

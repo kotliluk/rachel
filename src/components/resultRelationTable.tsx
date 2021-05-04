@@ -3,8 +3,16 @@ import {Relation}  from "../relation/relation";
 import './css/resultRelationTable.css'
 import {Row}  from "../relation/row";
 
+/**
+ * Props of RelationTable component.
+ * @public
+ */
 interface RelationTableProps {
-    // relation to be shown
+    /**
+     * relation to be shown
+     * @type Relation
+     * @public
+     */
     relation: Relation
 }
 
@@ -19,6 +27,9 @@ interface RelationTableState {
  * Table which shows given relation. The relation cannot be edited
  * Rows can be ordered by column values when the column header is clicked.
  * When the same column header is clicked for the second time, the order direction is changed (asc, des, asc, des, ...).
+ * Accepts {@link RelationTableProps} props.
+ *
+ * @public
  */
 export class ResultRelationTable extends React.Component<RelationTableProps, RelationTableState> {
 

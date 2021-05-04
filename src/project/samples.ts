@@ -6,11 +6,15 @@ import {Project} from "./project";
  */
 export interface ProjectSample {
     /**
-     * Name of the sample.
+     * name of the sample
+     * @type String
+     * @public
      */
     name: string,
     /**
-     * Sample project.
+     * sample project
+     * @type Project
+     * @public
      */
     project: Project
 }

@@ -23,11 +23,13 @@ import {SyntaxErrorMessages} from "../error/raSyntaxError";
 /**
  * All languages supported in the application.
  * NOTE FOR NEW LANGUAGES: If you define a new language file "lang.ts", add "LANG" to this array.
+ * @public
  */
 export const allSupportedLanguages = (<L extends string>(arr: L[]) => arr)(["EN", "CS"]);
 
 /**
  * Abbreviation of supported languages in the application.
+ * @public
  */
 export type SupportedLanguage = (typeof allSupportedLanguages)[number];
 
@@ -35,14 +37,17 @@ export type SupportedLanguage = (typeof allSupportedLanguages)[number];
  * Definition of a language for Rachel.
  * NOTE FOR NEW LANGUAGES: If you want to define a new language, it must be through this interface in a new file in
  * this package (see en.ts file as an example of English language definition).
+ * @public
  */
 export interface LanguageDef {
     /**
      * Abbreviation of the language
+     * @public
      */
     abbr: SupportedLanguage,
     /**
      * Description of errors in relation definitions.
+     * @public
      */
     relationErrors: {
         emptyColumn: string,
@@ -56,20 +61,32 @@ export interface LanguageDef {
     },
     /**
      * Description of unexpected errors.
+     * @public
      */
     codeErrors: CodeErrorMessages,
     /**
      * Description of semantic errors in expressions.
+     * @public
      */
     semanticErrors: SemanticErrorMessages,
+    /**
+     * Default semantic error message.
+     * @public
+     */
     semanticError: string,
     /**
      * Description of syntactic errors in expressions.
+     * @public
      */
     syntaxErrors: SyntaxErrorMessages,
+    /**
+     * Default syntex error message.
+     * @public
+     */
     syntaxError: string,
     /**
      * Info messages for the user in pop-up message box.
+     * @public
      */
     userMessages: {
         loadedRelationsTotalNo: string,
@@ -91,6 +108,7 @@ export interface LanguageDef {
     },
     /**
      * Names of RA operations.
+     * @public
      */
     operations: {
         selection: string,
@@ -115,6 +133,7 @@ export interface LanguageDef {
     }
     /**
      * Description of elements in management section.
+     * @public
      */
     managementSection: {
         batchButton: string,
@@ -140,6 +159,7 @@ export interface LanguageDef {
     },
     /**
      * Description of elements in relation section.
+     * @public
      */
     relationSection: {
         relationSectionHeader: string,
@@ -163,6 +183,7 @@ export interface LanguageDef {
     },
     /**
      * Description of elements in expression section.
+     * @public
      */
     expressionSection: {
         expressionSectionHeader: string,
@@ -185,6 +206,7 @@ export interface LanguageDef {
     }
     /**
      * Description of elements in result section.
+     * @public
      */
     resultSection: {
         resultSectionHeader: string,
@@ -213,13 +235,18 @@ const languageMap: Map<SupportedLanguage, LanguageDef> = new Map<SupportedLangua
 
 /**
  * Returns true if the given value is a supported language.
+ * @param lan checked value {@type any}
+ * @return true if the given value is a supported language {@type Boolean}
+ * @public
  */
-export function isSupportedLanguage(x: any): boolean {
-    return allSupportedLanguages.includes(x);
+export function isSupportedLanguage(lan: any): boolean {
+    return allSupportedLanguages.includes(lan);
 }
 
 /**
- * Returns definition of the current select language.
+ * Returns definition of the current selected language.
+ * @return definition of the current selected language {@type Boolean}
+ * @public
  */
 export function language(): LanguageDef {
     const lang = languageMap.get(LocalStorage.getLanguage());

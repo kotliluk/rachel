@@ -61,7 +61,7 @@ export class LogicalOperator extends VETreeNode {
      * If any subtree evaluates to string or number, throws error.
      *
      * @param source row with actual values of columns recursively passed to leaf reference nodes
-     * @return boolean comparing left and right subtrees' values
+     * @return boolean comparing left and right subtree values
      */
     public eval(source: Row): { value: boolean, type: "boolean" } {
 

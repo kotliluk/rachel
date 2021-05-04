@@ -110,11 +110,11 @@ export class ComparingOperator extends VETreeNode {
     /**
      * Evaluate the node and its subtrees and compares their value results to produce a boolean value. It needs to
      * receive results of the same type from its subtrees.
-     * NOTE: If one of the subtrees' results is null, only equality and non-equality are valid. Other comparing
+     * NOTE: If one of the subtree results is null, only equality and non-equality are valid. Other comparing
      * operations returns always false.
      *
      * @param source row with actual values of columns recursively passed to leaf reference nodes
-     * @return boolean comparing left and right subtrees' values
+     * @return boolean comparing left and right subtree values
      */
     public eval(source: Row): { value: boolean, type: "boolean" } {
         const leftResult: { value: ColumnContent, type: SupportedColumnType | "null" } = this.left.eval(source);

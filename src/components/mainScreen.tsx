@@ -20,6 +20,10 @@ import {POSTMAIL_ACCESS_TOKEN} from "../postMailAccessToken";
 import {copyProject, Project} from "../project/project";
 import {getSamples} from "../project/samples";
 
+/**
+ * Props of MainScreen component.
+ * @public
+ */
 interface MainScreenProps {}
 
 interface MainScreenState {
@@ -43,6 +47,9 @@ interface MainScreenState {
 
 /**
  * Main component of Rachel web page. It wraps all page sections and passes messages between them.
+ * Accepts {@link MainScreenProps} props.
+ *
+ * @public
  */
 export class MainScreen extends Component<MainScreenProps, MainScreenState> {
 

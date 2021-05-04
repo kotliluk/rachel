@@ -14,23 +14,52 @@ import {StoredRelation} from "../relation/storedRelation";
 import "./css/resultSection.css"
 import {language, LanguageDef} from "../language/language";
 
+/**
+ * Props of ResultSection component.
+ * @public
+ */
 interface ResultSectionProps {
-    // the root of the current evaluation tree to display
+    /**
+     * the root of the current evaluation tree to display
+     * @type RATreeNode
+     * @public
+     */
     evaluationTreeRoot: RATreeNode,
-    // name of the evaluated expression
+    /**
+     * name of the evaluated expression
+     * @type String
+     * @public
+     */
     expressionName: string,
-
-    // handler of adding the given relation to defined relations
+    /**
+     * handler of adding the given relation to defined relations
+     * @type Function
+     * @public
+     */
     onAddResult: (relation: Relation) => void,
-
-    // handler of unexpected errors
+    /**
+     * handler of unexpected errors
+     * @type Function
+     * @public
+     */
     onUnexpectedError: (e: Error) => void,
-
-    // current selected value separator in csv files
-    csvValueSeparator: CsvValueSeparator
-    // true if dark theme should be applied
+    /**
+     * current selected value separator in csv files
+     * @type CsvValueSeparator
+     * @public
+     */
+    csvValueSeparator: CsvValueSeparator,
+    /**
+     * true if dark theme should be applied
+     * @type Boolean
+     * @public
+     */
     darkTheme: boolean,
-    // current application language
+    /**
+     * current application language
+     * @type LanguageDef
+     * @public
+     */
     language: LanguageDef
 }
 
@@ -41,6 +70,9 @@ interface ResultSectionState {
 /**
  * Section to show the evaluation result. It contains a table with a result and text input and buttons to save it.
  * The component is hidden if given resultRelation is null.
+ * Accepts {@link ResultSectionProps} props.
+ *
+ * @public
  */
 export class ResultSection extends React.Component<ResultSectionProps, ResultSectionState> {
 

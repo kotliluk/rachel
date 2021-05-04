@@ -12,21 +12,48 @@ import BinaryNode from "../ratree/binaryNode";
 import {getTreeDepth} from "../ratree/raTreeTools";
 import {computeFontSizeInPx} from "../utils/fontUtils";
 
+/**
+ * Id of the SVG element for evaluation tree rendereing.
+ * @public
+ */
 export const evalTreeSVGId: string = "eval-tree-svg";
 
+/**
+ * Props of EvaluationTree component.
+ * @public
+ */
 interface EvaluationTreeProps {
-    // root of the evaluation tree to be displayed
+    /**
+     * root of the evaluation tree to be displayed
+     * @type RATreeNode
+     * @public
+     */
     tree: RATreeNode,
-    // index of the current selected node (with respect to depth first search)
+    /**
+     * index of the current selected node (with respect to depth first search)
+     * @type Number
+     * @public
+     */
     selected: number,
-    // handler of click on nodes, it receives the index of the clicked node (with respect to depth first search)
+    /**
+     * handler of click on nodes, it receives the index of the clicked node (with respect to depth first search)
+     * @type Function
+     * @public
+     */
     onClick: (index: number) => void,
-    // true if dark theme should be applied
+    /**
+     * true if dark theme should be applied
+     * @type Boolean
+     * @public
+     */
     darkTheme: boolean
 }
 
 /**
  * Component displaying an evaluation tree. The tree is interactive and handles clicking on the nodes.
+ * Accepts {@link EvaluationTreeProps} props.
+ *
+ * @public
  */
 export class EvaluationTree extends React.Component<EvaluationTreeProps, {}> {
     render() {
@@ -63,6 +90,9 @@ const unselectedNodeColorLight = cssConstants.getPropertyValue('--light-color-b'
 const selectedNodeColorDark = cssConstants.getPropertyValue('--dark-color-d');
 const unselectedNodeColorDark = cssConstants.getPropertyValue('--dark-color-c');
 
+/**
+ * Data for evaluation tree nodes.
+ */
 interface DisplayTreeNode {
     title: string;
     symbol: string,

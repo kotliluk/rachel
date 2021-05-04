@@ -1,16 +1,39 @@
 import React from "react";
 
+/**
+ * Props of TextInput component.
+ * @public
+ */
 interface TextInputProps {
-    // initial value for the input
+    /**
+     * initial value for the input
+     * @type String
+     * @public
+     */
     value: string,
-    // text on the submit button
+    /**
+     * text on the submit button
+     * @type String
+     * @public
+     */
     buttonText: string,
-    // handler of input submit
+    /**
+     * handler of input submit
+     * @type Function
+     * @public
+     */
     onSubmit: (text: string) => void,
-    // function which returns true for forbidden inputs which cannot be submitted
+    /**
+     * function which returns true for forbidden inputs which cannot be submitted
+     * @type Function
+     * @public
+     */
     forbidden: (text: string) => boolean,
-
-    // id of the input
+    /**
+     * id of the input
+     * @type String
+     * @public
+     */
     id: string
 }
 
@@ -22,6 +45,9 @@ interface TextInputState {
 /**
  * Basic text input with submit button (without label). The input cannot be submit if the current value is forbidden.
  * All inserted tabulators are replaced by 4 spaces.
+ * Accepts {@link TextInputProps} props.
+ *
+ * @public
  */
 export class TextInput extends React.Component<TextInputProps, TextInputState> {
 
