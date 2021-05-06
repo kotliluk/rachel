@@ -1,8 +1,7 @@
 import {UnaryNode} from "./unaryNode";
 import {RATreeNode} from "./raTreeNode";
-import {Relation}  from "../relation/relation";
-import {VETreeNode} from "../vetree/veTreeNode";
-import {ColumnContent, SupportedColumnType} from "../relation/columnType";
+import {Relation} from "../relation/relation";
+import {VEResult, VETreeNode} from "../vetree/veTreeNode";
 import {IndexedString} from "../types/indexedString";
 import {ValueParser} from "../expression/valueParser";
 import {ErrorFactory} from "../error/errorFactory";
@@ -62,7 +61,7 @@ export class SelectionNode extends UnaryNode {
         source.forEachColumn((type, name) => result.addColumn(name, type));
 
         source.getRows().forEach(row => {
-            let bool: { value: ColumnContent, type: SupportedColumnType | "null" } = boolExpr.eval(row);
+            let bool: VEResult = boolExpr.eval(row);
             if (bool.type !== "boolean") {
                 throw ErrorFactory.syntaxError(language().syntaxErrors.selectionNode_resultNotBoolean,
                     this.stringRange, this.selection.replace(/\s+/g, " "), bool.type);
@@ -73,6 +72,7 @@ export class SelectionNode extends UnaryNode {
         });
         this.resultRelation = result;
     }
+
     /**
      * Evaluates the RA query in this node and its subtree.
      * It searches for given cursor index in parametrized nodes and if it finds it, returns the available columns.

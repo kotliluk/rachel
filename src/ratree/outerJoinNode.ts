@@ -1,11 +1,12 @@
 import {BinaryNode} from "./binaryNode";
 import {RATreeNode} from "./raTreeNode";
-import {Relation}  from "../relation/relation";
-import {Row}  from "../relation/row";
+import {Relation} from "../relation/relation";
+import {Row} from "../relation/row";
 import {language} from "../language/language";
 
 /**
- * Types of outer join node: full, left, right.
+ * Enum of types of outer join node: full, left, right.
+ * @enum {string}
  * @public
  */
 export enum OuterJoinType {

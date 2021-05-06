@@ -1,8 +1,8 @@
 import {isSupportedColumnType, SupportedColumnType} from "./columnType";
-import StringUtils from "../utils/stringUtils";
+import {StringUtils} from "../utils/stringUtils";
 import {NNToSMap} from "../types/nnToSMap";
-import {Relation}  from "./relation";
-import {Row}  from "./row";
+import {Relation} from "./relation";
+import {Row} from "./row";
 import {isForbiddenColumnName} from "../utils/keywords";
 import {language} from "../language/language";
 

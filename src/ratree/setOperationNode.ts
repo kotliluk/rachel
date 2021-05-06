@@ -1,14 +1,15 @@
 import {BinaryNode} from "./binaryNode";
 import {RATreeNode} from "./raTreeNode";
-import {Relation}  from "../relation/relation";
-import {Row}  from "../relation/row";
-import { isEqual } from "lodash";
+import {Relation} from "../relation/relation";
+import {Row} from "../relation/row";
+import {isEqual} from "lodash";
 import {ErrorFactory} from "../error/errorFactory";
 import {language} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";
 
 /**
- * Types of set operation node: union, intersection, difference.
+ * Enum of types of set operation node: union, intersection, difference.
+ * @enum {string}
  * @public
  */
 export enum SetOperationType {

@@ -1,20 +1,20 @@
-import {Relation}  from "../relation/relation";
+import {Relation} from "../relation/relation";
 import {ErrorFactory} from "../error/errorFactory";
 import {
-    BinaryOperatorToken,
-    ClosingParenthesis,
-    ExprToken,
-    OpeningParenthesis,
-    ParenthesisToken,
-    RelationToken,
-    UnaryOperatorToken
+  BinaryOperatorToken,
+  ClosingParenthesis,
+  ExprToken,
+  OpeningParenthesis,
+  ParenthesisToken,
+  RelationToken,
+  UnaryOperatorToken
 } from "./exprTokens";
-import StringUtils from "../utils/stringUtils";
+import {StringUtils} from "../utils/stringUtils";
 import {CodeError} from "../error/codeError";
 import {RATreeNode} from "../ratree/raTreeNode";
 import {RelationNode} from "../ratree/relationNode";
 import {IndexedString} from "../types/indexedString";
-import IndexedStringUtils from "../utils/indexedStringUtils";
+import {IndexedStringUtils} from "../utils/indexedStringUtils";
 import {ErrorWithTextRange} from "../error/errorWithTextRange";
 import {RATreeFactory} from "../ratree/raTreeFactory";
 import {language} from "../language/language";

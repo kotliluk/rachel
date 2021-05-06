@@ -1,17 +1,34 @@
+/**
+ * Textual file information.
+ * @public
+ */
 export interface File {
+    /**
+     * name of the file
+     * @type string
+     * @public
+     */
     name: string,
+    /**
+     * textual content of the file
+     * @type string?
+     * @public
+     */
     text: string | null
 }
 
 /**
  * FileDialog for loading files to the application.
+ * @public
  */
 export class FileDialog {
 
     /**
      * Loads asynchronously a textual content from one file selected by the user in the file browser.
      *
-     * @param accept comma-separated list of extensions for filter (default are all extensions)
+     * @param accept comma-separated list of extensions for filter (default are all extensions) {@type string}
+     * @return a file in a promise {@type Promise<File>}
+     * @public
      */
     public static openFile(accept: string = "*"): Promise<File> {
         return new Promise<File>(resolve => {
@@ -37,7 +54,9 @@ export class FileDialog {
     /**
      * Asynchronously loads textual content from multiple files selected by the user in the file browser.
      *
-     * @param accept comma-separated list of extensions for filter (default are all extensions)
+     * @param accept comma-separated list of extensions for filter (default are all extensions) {@type string}
+     * @return array of files in a promise {@type Promise<File[]>}
+     * @public
      */
     public static openFiles(accept: string = "*"): Promise<File[]> {
         return new Promise<File[]>(resolve => {

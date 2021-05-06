@@ -1,8 +1,10 @@
 /**
- * Returns start index of the word before given index in the given string.
+ * Returns start index of the word before the given index in the given string.
  *
- * @param str
- * @param index
+ * @param str string to search in {@type string}
+ * @param index index before which the word starts {@type number}
+ * @return start index of the word before the given index in the given string {@type number}
+ * @public
  */
 export function getStartOfWordBeforeIndex(str: string, index: number): number {
     const prefixText: string = str.slice(0, index);
@@ -24,6 +26,11 @@ export function getStartOfWordBeforeIndex(str: string, index: number): number {
 /**
  * Returns sorted given array of whispers with respect to given last word before cursor.
  * Matched word parts in the whispers are highlighted by CSS span. Not-matched words are made grey.
+ *
+ * @param whispers whispers to sort (not modified) {@type string[]}
+ * @param wordBeforeCursor string to use for sorting {@type string}
+ * @return sorted whispers {@type string[]}
+ * @public
  */
 export function sortWhispers(whispers: string[], wordBeforeCursor: string): string[] {
     // values for sorting whispers

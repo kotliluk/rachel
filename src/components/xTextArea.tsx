@@ -73,13 +73,13 @@ interface XTextAreaProps {
     whispers: string[];
     /**
      * handler of text change
-     * @type Function
+     * @type function
      * @public
      */
     onChange: (text: string, cursorIndex: number) => void;
     /**
      * handler of input with Ctrl key
-     * @type Function
+     * @type function
      * @public
      */
     onCtrlInput: (ev: KeyboardEvent) => void;

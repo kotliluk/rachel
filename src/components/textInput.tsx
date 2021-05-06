@@ -19,13 +19,13 @@ interface TextInputProps {
     buttonText: string,
     /**
      * handler of input submit
-     * @type Function
+     * @type function
      * @public
      */
     onSubmit: (text: string) => void,
     /**
      * function which returns true for forbidden inputs which cannot be submitted
-     * @type Function
+     * @type function
      * @public
      */
     forbidden: (text: string) => boolean,

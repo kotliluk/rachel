@@ -1,4 +1,4 @@
-import IndexedStringUtils from "../indexedStringUtils";
+import {IndexedStringUtils} from "../indexedStringUtils";
 import {IndexedString} from "../../types/indexedString";
 
 describe('isWord', () => {

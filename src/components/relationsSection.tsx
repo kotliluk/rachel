@@ -1,12 +1,12 @@
 import React from "react";
-import {Relation}  from "../relation/relation";
+import {Relation} from "../relation/relation";
 import {TooltipButton} from "./tooltipButton";
 import {SupportedColumnType} from "../relation/columnType";
 import {EditRelationTable} from "./editRelationTable";
 import {StoredRelation} from "../relation/storedRelation";
 import {TextInput} from "./textInput";
 import {isForbiddenRelationName} from "../utils/keywords";
-import StringUtils from "../utils/stringUtils";
+import {StringUtils} from "../utils/stringUtils";
 import {MessageBox} from "./messageBox";
 import {LanguageDef} from "../language/language";
 
@@ -35,109 +35,109 @@ interface RelationsSectionProps {
     loadedRelations: Relation[],
     /**
      * handler of change of the name of the current selected relation
-     * @type Function
+     * @type function
      * @public
      */
     onRelationNameChange: (newName: string) => void,
     /**
      * handler of change of the name of the column at given index in the current selected relation
-     * @type Function
+     * @type function
      * @public
      */
     onColumnNameChange: (columnName: string, columnIndex: number) => void,
     /**
      * handler of change of the type of the column at given index in the current selected relation
-     * @type Function
+     * @type function
      * @public
      */
     onColumnTypeChange: (columnType: SupportedColumnType, columnIndex: number) => void,
     /**
      * handler of change of the row input at given column/row index in the current selected relation
-     * @type Function
+     * @type function
      * @public
      */
     onRowInputChange: (input: string, columnIndex: number, rowIndex: number) => void,
     /**
      * handler of adding a new row in the current selected relation
-     * @type Function
+     * @type function
      * @public
      */
     onNewRow: (onDone: () => void) => void,
     /**
      * handler of adding a new column in the current selected relation
-     * @type Function
+     * @type function
      * @public
      */
     onNewColumn: (onDone: () => void) => void,
     /**
      * handler of deleting the row on given index
-     * @type Function
+     * @type function
      * @public
      */
     onDeleteRow: (rowIndex: number) => void,
     /**
      * handler of deleting the column on given index
-     * @type Function
+     * @type function
      * @public
      */
     onDeleteColumn: (columnIndex: number) => void,
     /**
      * handler of selecting a different relation as current
-     * @type Function
+     * @type function
      * @public
      */
     onSelectDifferentRelation: (newIndex: number) => void,
     /**
      * handler of moving a relation on a new position using drag and drop
-     * @type Function
+     * @type function
      * @public
      */
     onDragRelation: (from: number, to: number) => void,
     /**
      * handler of creating a new relation
-     * @type Function
+     * @type function
      * @public
      */
     onNewRelation: () => void,
     /**
      * handler of loading the current selected relation into the application
-     * @type Function
+     * @type function
      * @public
      */
     onLoadRelation: (onDone: (msg: string) => void) => void,
     /**
      * handler of deleting the current stored relation
-     * @type Function
+     * @type function
      * @public
      */
     onDeleteStoredRelation: () => void,
     /**
      * handler of reverting the current relation to its last saved (valid) state
-     * @type Function
+     * @type function
      * @public
      */
     onRevertRelation: () => void,
     /**
      * handler of loading all valid relations into the application
-     * @type Function
+     * @type function
      * @public
      */
     onLoadAllRelations: (onDone: (msg: string) => void) => void,
     /**
      * handler of deleting the loaded relations
-     * @type Function
+     * @type function
      * @public
      */
     onRemoveLoadedRelations: (onDone: (msg: string) => void) => void,
     /**
      * handler of saving the stored relations into the files
-     * @type Function
+     * @type function
      * @public
      */
     onExportRelations: (onDone: (msg: string) => void) => void,
     /**
      * handler of loading new relations from files
-     * @type Function
+     * @type function
      * @public
      */
     onImportRelations: (onDone: (msg: string) => void) => void,

@@ -9,7 +9,7 @@ import {DivisionNode} from "./divisionNode";
 import {OuterJoinNode, OuterJoinType} from "./outerJoinNode";
 import {NaturalJoinNode, NaturalJoinType} from "./naturalJoinNode";
 import {SetOperationNode, SetOperationType} from "./setOperationNode";
-import {BinaryNode,  BinaryNodeClass} from "./binaryNode";
+import {BinaryNode, BinaryNodeClass} from "./binaryNode";
 import {IndexedString} from "../types/indexedString";
 import {ThetaJoinNode, ThetaJoinType} from "./thetaJoinNode";
 

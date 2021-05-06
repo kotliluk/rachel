@@ -1,11 +1,12 @@
 import {BinaryNode} from "./binaryNode";
 import {RATreeNode} from "./raTreeNode";
-import {Relation}  from "../relation/relation";
-import {Row}  from "../relation/row";
+import {Relation} from "../relation/relation";
+import {Row} from "../relation/row";
 import {language} from "../language/language";
 
 /**
- * Types of antijoin node: left, right.
+ * Enum of types of antijoin node: left, right.
+ * @enum {string}
  * @public
  */
 export enum AntijoinType {

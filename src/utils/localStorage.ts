@@ -3,12 +3,13 @@ import {isSupportedLanguage, SupportedLanguage} from "../language/language";
 
 const defaultCsvValueSeparator: CsvValueSeparator = ";";
 const defaultLanguage: SupportedLanguage = "EN";
-const defaultDarkMode: string = "false";
+const defaultDarkTheme: string = "false";
 
 /**
  * Static class for maintaining the access to local storage of the browser. It handles user settings:
  * saving file type, csv value separator, language, light/dark theme of the application.
  * If the local storage is not used, it uses the application memory and the default values.
+ * @public
  */
 export class LocalStorage {
 
@@ -47,8 +48,8 @@ export class LocalStorage {
 
             if (localStorage.getItem("darkTheme") !== "true" && localStorage.getItem("darkTheme") !== "false") {
                 console.log("darkTheme not found in localStorage and set to default");
-                localStorage.setItem("darkTheme", defaultDarkMode);
-                LocalStorage.darkTheme = defaultDarkMode;
+                localStorage.setItem("darkTheme", defaultDarkTheme);
+                LocalStorage.darkTheme = defaultDarkTheme;
             }
             else {
                 // @ts-ignore
@@ -59,11 +60,17 @@ export class LocalStorage {
             console.warn("LocalStorage not supported in the browser. Default values used.");
             LocalStorage.csvValueSeparator = defaultCsvValueSeparator;
             LocalStorage.language = defaultLanguage;
-            LocalStorage.darkTheme = defaultDarkMode;
+            LocalStorage.darkTheme = defaultDarkTheme;
         }
         LocalStorage.isInit = true;
     }
 
+    /**
+     * Returns stored CSV value separator.
+     *
+     * @return stored CSV value separator {@type CsvValueSeparator}
+     * @public
+     */
     public static getCsvValueSeparator(): CsvValueSeparator {
         if (!LocalStorage.isInit) {
             LocalStorage.init();
@@ -71,6 +78,12 @@ export class LocalStorage {
         return LocalStorage.csvValueSeparator;
     }
 
+    /**
+     * Stores the given CSV value separator.
+     *
+     * @param csvValueSeparator CSV value separator to store {@type CsvValueSeparator}
+     * @public
+     */
     public static setCsvValueSeparator(csvValueSeparator: CsvValueSeparator): void {
         LocalStorage.csvValueSeparator = csvValueSeparator;
         if (LocalStorage.storageSupported) {
@@ -78,6 +91,12 @@ export class LocalStorage {
         }
     }
 
+    /**
+     * Returns stored language settings.
+     *
+     * @return stored language {@type SupportedLanguage}
+     * @public
+     */
     public static getLanguage(): SupportedLanguage {
         if (!LocalStorage.isInit) {
             LocalStorage.init();
@@ -85,6 +104,12 @@ export class LocalStorage {
         return LocalStorage.language;
     }
 
+    /**
+     * Stores the given language settings.
+     *
+     * @param language language settings to store {@type SupportedLanguage}
+     * @public
+     */
     public static setLanguage(language: SupportedLanguage): void {
         LocalStorage.language = language;
         if (LocalStorage.storageSupported) {
@@ -92,14 +117,26 @@ export class LocalStorage {
         }
     }
 
-    public static getDarkMode(): boolean {
+    /**
+     * Returns stored theme settings: true if the stored theme is dark, false if light.
+     *
+     * @return true if the stored theme is dark, false if light {@type boolean}
+     * @public
+     */
+    public static getDarkTheme(): boolean {
         if (!LocalStorage.isInit) {
             LocalStorage.init();
         }
         return LocalStorage.darkTheme === "true";
     }
 
-    public static setDarkMode(darkTheme: boolean): void {
+    /**
+     * Stores the given theme settings: true if the stored theme is dark, false if light.
+     *
+     * @param darkTheme theme settings to store {@type boolean}
+     * @public
+     */
+    public static setDarkTheme(darkTheme: boolean): void {
         LocalStorage.darkTheme = String(darkTheme);
         if (LocalStorage.storageSupported) {
             localStorage.setItem("darkTheme", String(darkTheme));

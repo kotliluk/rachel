@@ -1,5 +1,5 @@
-import {Relation}  from "../../relation/relation";
-import {Row}  from "../../relation/row";
+import {Relation} from "../../relation/relation";
+import {Row} from "../../relation/row";
 import {ProjectionNode} from "../projectionNode";
 import {RelationNode} from "../relationNode";
 import {IndexedString} from "../../types/indexedString";

@@ -1,8 +1,8 @@
 import React from "react";
-import { Group } from '@visx/group';
-import { hierarchy, Tree } from '@visx/hierarchy';
-import { HierarchyPointNode, HierarchyPointLink } from '@visx/hierarchy/lib/types';
-import { LinkVertical } from '@visx/shape';
+import {Group} from '@visx/group';
+import {hierarchy, Tree} from '@visx/hierarchy';
+import {HierarchyPointLink, HierarchyPointNode} from '@visx/hierarchy/lib/types';
+import {LinkVertical} from '@visx/shape';
 import ParentSize from "@visx/responsive/lib/components/ParentSize";
 import {useTooltip} from '@visx/tooltip';
 import './css/evaluationTree.css';
@@ -37,7 +37,7 @@ interface EvaluationTreeProps {
     selected: number,
     /**
      * handler of click on nodes, it receives the index of the clicked node (with respect to depth first search)
-     * @type Function
+     * @type function
      * @public
      */
     onClick: (index: number) => void,

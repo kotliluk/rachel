@@ -1,9 +1,9 @@
 import {BinaryNode} from "./binaryNode";
 import {RATreeNode} from "./raTreeNode";
-import {Relation}  from "../relation/relation";
-import {Row}  from "../relation/row";
-import {ColumnContent, SupportedColumnType} from "../relation/columnType";
-import {VETreeNode} from "../vetree/veTreeNode";
+import {Relation} from "../relation/relation";
+import {Row} from "../relation/row";
+import {SupportedColumnType} from "../relation/columnType";
+import {VEResult, VETreeNode} from "../vetree/veTreeNode";
 import {IndexedString} from "../types/indexedString";
 import {ValueParser} from "../expression/valueParser";
 import {ErrorFactory} from "../error/errorFactory";
@@ -13,7 +13,8 @@ import {language} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";
 
 /**
- * Types of theta join node: full (theta), left (theta semi), right (theta semi).
+ * Enum of types of theta join node: full (theta), left (theta semi), right (theta semi).
+ * @enum {string}
  * @public
  */
 export enum ThetaJoinType {
@@ -100,7 +101,7 @@ export class ThetaJoinNode extends BinaryNode {
                 leftRow.getValues().forEach((value, name) => testRow.addValue(name, value));
                 rightRow.getValues().forEach((value, name) => testRow.addValue(name, value));
                 // checks whether the combined row from both relation columns satisfies the condition
-                let booleanResult: { value: ColumnContent, type: SupportedColumnType | "null" } = boolExpr.eval(testRow);
+                let booleanResult: VEResult = boolExpr.eval(testRow);
                 if (booleanResult.type !== "boolean") {
                     throw ErrorFactory.syntaxError(language().syntaxErrors.thetaJoinNode_resultNotBoolean,
                         this.stringRange, this.condition.replace(/\s+/g, " "), booleanResult.type);

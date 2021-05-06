@@ -17,49 +17,49 @@ interface EditRelationTableProps {
     relation: StoredRelation,
     /**
      * handler of column name change
-     * @type Function
+     * @type function
      * @public
      */
     onColumnNameChange: (columnName: string, columnIndex: number) => void,
     /**
      * handler of column type change
-     * @type Function
+     * @type function
      * @public
      */
     onColumnTypeChange: (columnType: SupportedColumnType, columnIndex: number) => void,
     /**
      * handler of row input change
-     * @type Function
+     * @type function
      * @public
      */
     onRowInputChange: (input: string, columnIndex: number, rowIndex: number) => void,
     /**
      * handler of adding new row
-     * @type Function
+     * @type function
      * @public
      */
     onNewRow: (onDone: () => void) => void,
     /**
      * handler of adding new column
-     * @type Function
+     * @type function
      * @public
      */
     onNewColumn: (onDone: () => void) => void,
     /**
      * handler of deleting the row of given index
-     * @type Function
+     * @type function
      * @public 
      */
     onDeleteRow: (rowIndex: number) => void,
     /**
      * handler of deleting the column of given index
-     * @type Function
+     * @type function
      * @public
      */
     onDeleteColumn: (columnIndex: number) => void,
     /**
      * handler of input with Ctrl key
-     * @type Function
+     * @type function
      * @public 
      */
     onCtrlInput: (ev: React.KeyboardEvent) => void

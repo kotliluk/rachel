@@ -1,13 +1,10 @@
 import {FileDialog} from "../utils/fileDialog";
-import {
-    CsvValueSeparator,
-    findValueSeparator
-} from "../types/csvSupport";
+import {CsvValueSeparator, findValueSeparator} from "../types/csvSupport";
 import {StoredRelation} from "./storedRelation";
 import {SupportedColumnType} from "./columnType";
 import {saveAs} from "file-saver";
 import JSZip from "jszip";
-import StringUtils from "../utils/stringUtils";
+import {StringUtils} from "../utils/stringUtils";
 
 /**
  * Class for loading and saving relation definitions as {@link StoredRelation}.

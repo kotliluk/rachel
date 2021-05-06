@@ -1,4 +1,4 @@
-import StringUtils from "../utils/stringUtils";
+import {StringUtils} from "../utils/stringUtils";
 import {ComparingOperator, ComparingOperatorType} from "../vetree/comparingOperator";
 import {LogicalOperator} from "../vetree/logicalOperator";
 import {LiteralValue} from "../vetree/literalValue";
@@ -23,7 +23,7 @@ import {
 } from "./valueTokens"
 import {VETreeNode} from "../vetree/veTreeNode";
 import {IndexedString} from "../types/indexedString";
-import IndexedStringUtils from "../utils/indexedStringUtils";
+import {IndexedStringUtils} from "../utils/indexedStringUtils";
 import {ErrorWithTextRange, insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {ErrorFactory} from "../error/errorFactory";
 import {RASyntaxError} from "../error/raSyntaxError";

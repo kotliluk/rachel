@@ -1,5 +1,5 @@
-import {Relation}  from "../relation";
-import {Row}  from "../row";
+import {Relation} from "../relation";
+import {Row} from "../row";
 import {SupportedColumnType} from "../columnType";
 
 describe('addColumn', () => {

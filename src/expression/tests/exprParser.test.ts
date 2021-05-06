@@ -1,8 +1,11 @@
-import {Relation}  from "../../relation/relation";
+import {Relation} from "../../relation/relation";
 import {
-    BinaryOperatorToken, ClosingParenthesis,
-    ExprToken,
-    RelationToken, UnaryOperatorToken, OpeningParenthesis
+  BinaryOperatorToken,
+  ClosingParenthesis,
+  ExprToken,
+  OpeningParenthesis,
+  RelationToken,
+  UnaryOperatorToken
 } from "../exprTokens";
 import {ExprParser} from "../exprParser";
 import {RATreeNode} from "../../ratree/raTreeNode";

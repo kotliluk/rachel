@@ -20,6 +20,9 @@ const forbiddenRelationNames: string[] = ["F", "L", "R", ""];
  * - Null value: null
  * - Boolean values: true, false
  * - Empty string: ""
+ *
+ * @return lowercase reserved column-keywords {@type string[]}
+ * @public
  */
 export function getForbiddenColumnNames(): string[] {
     return forbiddenColumnNames;
@@ -29,6 +32,9 @@ export function getForbiddenColumnNames(): string[] {
  * Returns reserved keywords which cannot be used for relation names. They are:
  * - First characters of outer joins: F, L, R, f, l, r
  * - Empty string: ""
+ *
+ * @return lowercase reserved relation-keywords {@type string[]}
+ * @public
  */
 export function getForbiddenRelationNames(): string[] {
     return forbiddenRelationNames;
@@ -36,6 +42,10 @@ export function getForbiddenRelationNames(): string[] {
 
 /**
  * Returns true if the given string is forbidden as a column name.
+ *
+ * @param str string to check {@type (string | IndexedString)}
+ * @return true if the given string is forbidden as a column name {@type boolean}
+ * @public
  */
 export function isForbiddenColumnName(str: string | IndexedString): boolean {
     return forbiddenColumnNames.indexOf(str.toString().toLowerCase()) > -1;
@@ -43,6 +53,10 @@ export function isForbiddenColumnName(str: string | IndexedString): boolean {
 
 /**
  * Returns true if the given string is forbidden as a relation name.
+ *
+ * @param str string to check {@type (string | IndexedString)}
+ * @return true if the given string is forbidden as a relation name {@type boolean}
+ * @public
  */
 export function isForbiddenRelationName(str: string | IndexedString): boolean {
     // does not use to lower because forbidden names are upper

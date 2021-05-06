@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Relation}  from '../relation/relation';
+import {Relation} from '../relation/relation';
 import {RATreeNode} from "../ratree/raTreeNode";
 import {ExpressionSection} from "./expressionSection";
 import {ResultSection} from "./resultSection";
@@ -59,8 +59,8 @@ export class MainScreen extends Component<MainScreenProps, MainScreenState> {
         super(props);
 
         // sets body template by settings from local storage
-        document.body.classList.toggle('body-dark', LocalStorage.getDarkMode());
-        document.body.classList.toggle('body-light', !LocalStorage.getDarkMode());
+        document.body.classList.toggle('body-dark', LocalStorage.getDarkTheme());
+        document.body.classList.toggle('body-light', !LocalStorage.getDarkTheme());
 
         const initRelationData = {
             name: "Relation",
@@ -89,7 +89,7 @@ export class MainScreen extends Component<MainScreenProps, MainScreenState> {
             nullValuesSupport: true,
             csvValueSeparator: LocalStorage.getCsvValueSeparator(),
             language: language(),
-            darkTheme: LocalStorage.getDarkMode()
+            darkTheme: LocalStorage.getDarkTheme()
         }
         this.expressionSectionRef = React.createRef();
     }
@@ -246,8 +246,8 @@ export class MainScreen extends Component<MainScreenProps, MainScreenState> {
      *
      * @param darkTheme true if dark theme is on
      */
-    private handleDarkModeChange = (darkTheme: boolean) => {
-        LocalStorage.setDarkMode(darkTheme);
+    private handleDarkThemeChange = (darkTheme: boolean) => {
+        LocalStorage.setDarkTheme(darkTheme);
         this.setState({darkTheme: darkTheme});
         document.body.classList.toggle( 'body-dark', darkTheme);
         document.body.classList.toggle( 'body-light', !darkTheme);
@@ -640,7 +640,7 @@ export class MainScreen extends Component<MainScreenProps, MainScreenState> {
                     onCsvValueSeparatorChange={this.handleCsvValueSeparatorChange}
                     onLanguageChange={this.handleLanguageChange}
                     onNullValuesSupportChange={this.handleNullValuesSupportChange}
-                    onDarkModeChange={this.handleDarkModeChange}
+                    onDarkThemeChange={this.handleDarkThemeChange}
                 />
 
                 <RelationsSection

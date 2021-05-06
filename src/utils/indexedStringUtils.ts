@@ -1,67 +1,91 @@
 import {IndexedString} from "../types/indexedString";
-import StringUtils from "./stringUtils";
+import {StringUtils} from "./stringUtils";
 import {insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {RASyntaxError} from "../error/raSyntaxError";
 import {ErrorFactory} from "../error/errorFactory";
 import {language} from "../language/language";
+import {Pair} from "../types/pair";
 
 /**
  * Class providing general helper functions for IndexedString.
+ * @public
  */
-export default class IndexedStringUtils {
+export class IndexedStringUtils {
 
     /**
-     * @param str Checked indexed string
-     * @return true if the string contains letters only and has length at least 1
+     * Returns true if the string contains letters only and has length at least 1.
+     * 
+     * @param str Checked indexed string {@type IndexedString}
+     * @return true if the string contains letters only and has length at least 1 {@type boolean}
+     * @public
      */
     public static isWord(str: IndexedString): boolean {
         return StringUtils.isWord(str.toString());
     }
 
     /**
-     * @param str Checked string
+     * Returns true if the string contains letters, numbers and underscores only, has length at least 1 and starts with
+     * a letter or an underscore.
+     *
+     * @param str Checked string {@type IndexedString}
      * @return true if the string contains letters, numbers and underscores only, has length at least 1 and starts with
-     * a letter or an underscore
+     * a letter or an underscore {@type boolean}
+     * @public
      */
     public static isName(str: IndexedString): boolean {
         return StringUtils.isName(str.toString());
     }
 
     /**
-     * @param str Checked string
-     * @return true if the string contains whitespaces only
+     * Returns true if the string contains whitespaces only.
+     *
+     * @param str Checked string {@type IndexedString}
+     * @return true if the string contains whitespaces only {@type boolean}
+     * @public
      */
     public static isWhitespacesOnly(str: IndexedString): boolean {
         return StringUtils.isWhitespacesOnly(str.toString());
     }
 
     /**
-     * @param c Checked character
-     * @return true if the given string has length one and the character is a letter
+     * Returns true if the given string has length one and the character is a letter.
+     *
+     * @param c Checked character {@type IndexedString}
+     * @return true if the given string has length one and the character is a letter {@type boolean}
+     * @public
      */
     public static isLetter(c: IndexedString): boolean {
         return StringUtils.isLetter(c.toString());
     }
 
     /**
-     * @param c Checked character
-     * @return true if the given string has length one and the character is a letter, a number or an underscore
+     * Returns true if the given string has length one and the character is a letter, a number or an underscore.
+     *
+     * @param c Checked character {@type IndexedString}
+     * @return true if the given string has length one and the character is a letter, a number or an underscore {@type boolean}
+     * @public
      */
     public static isNameChar(c: IndexedString): boolean {
         return StringUtils.isNameChar(c.toString());
     }
 
     /**
-     * @param c Checked character
-     * @return true if the given string has length one and the character is a digit
+     * Returns true if the given string has length one and the character is a digit.
+     *
+     * @param c Checked character {@type IndexedString}
+     * @return true if the given string has length one and the character is a digit {@type boolean}
+     * @public
      */
     public static isDigit(c: IndexedString): boolean {
         return StringUtils.isDigit(c.toString());
     }
 
     /**
-     * @param str Checked string
-     * @return true if the string represents a decimal number
+     * Returns true if the string represents a decimal number.
+     *
+     * @param str Checked string {@type IndexedString}
+     * @return true if the string represents a decimal number {@type boolean}
+     * @public
      */
     public static isNumber(str: IndexedString): boolean {
         return StringUtils.isNumber(str.toString());
@@ -71,11 +95,12 @@ export default class IndexedStringUtils {
      * Splits given indexed string to a starting sequence of letters and its rest and returns these parts in a pair.
      * NOTE: if the string does not start with a letter, as a word is returned an empty string.
      *
-     * @param str indexed string to be split
-     * @return split indexed string in a pair (word, rest)
+     * @param str indexed string to be split {@type IndexedString}
+     * @return split indexed string in a pair (word, rest) {@type Pair<IndexedString>}
+     * @public
      */
-    public static nextWord(str: IndexedString): { first: IndexedString, second: IndexedString } {
-        const strParts: { first: string, second: string } = StringUtils.nextWord(str.toString());
+    public static nextWord(str: IndexedString): Pair<IndexedString> {
+        const strParts: Pair<string> = StringUtils.nextWord(str.toString());
         return { first: str.slice(0, strParts.first.length), second: str.slice(strParts.first.length)};
     }
 
@@ -84,11 +109,12 @@ export default class IndexedStringUtils {
      * an underscore and its rest and returns these parts in a pair.
      * NOTE: if the string does not start with a letter, or an underscore, as a name is returned an empty string.
      *
-     * @param str string to be split
-     * @return split indexed string in a pair (name, rest)
+     * @param str string to be split {@type IndexedString}
+     * @return split indexed string in a pair (name, rest) {@type Pair<IndexedString>}
+     * @public
      */
-    public static nextName(str: IndexedString): { first: IndexedString, second: IndexedString } {
-        const strParts: { first: string, second: string } = StringUtils.nextName(str.toString());
+    public static nextName(str: IndexedString): Pair<IndexedString> {
+        const strParts: Pair<string> = StringUtils.nextName(str.toString());
         return { first: str.slice(0, strParts.first.length), second: str.slice(strParts.first.length)};
     }
 
@@ -96,11 +122,12 @@ export default class IndexedStringUtils {
      * Splits given indexed string to a starting sequence of non-whitespace characters and its rest and returns these
      * parts in a pair.
      *
-     * @param str string to be split
-     * @return split indexed string in a pair (name, rest)
+     * @param str string to be split {@type IndexedString}
+     * @return split indexed string in a pair (name, rest) {@type Pair<IndexedString>}
+     * @public
      */
-    public static nextNonWhitespacePart(str: IndexedString): { first: IndexedString, second: IndexedString } {
-        const strParts: { first: string, second: string } = StringUtils.nextNonWhitespacePart(str.toString());
+    public static nextNonWhitespacePart(str: IndexedString): Pair<IndexedString> {
+        const strParts: Pair<string> = StringUtils.nextNonWhitespacePart(str.toString());
         return { first: str.slice(0, strParts.first.length), second: str.slice(strParts.first.length)};
     }
 
@@ -108,11 +135,12 @@ export default class IndexedStringUtils {
      * Splits given indexed string to a starting number and its rest and returns these parts in a pair.
      * NOTE: if the string does not start with a digit, as a number is returned an empty string.
      *
-     * @param str indexed string to be split
-     * @return split indexed string in a pair (word, rest)
+     * @param str indexed string to be split {@type IndexedString}
+     * @return split indexed string in a pair (word, rest) {@type Pair<IndexedString>}
+     * @public
      */
-    static nextNumber(str: IndexedString): { first: IndexedString, second: IndexedString } {
-        const strParts: { first: string, second: string } = StringUtils.nextNumber(str.toString());
+    static nextNumber(str: IndexedString): Pair<IndexedString> {
+        const strParts: Pair<string> = StringUtils.nextNumber(str.toString());
         return { first: str.slice(0, strParts.first.length), second: str.slice(strParts.first.length)};
     }
 
@@ -123,8 +151,9 @@ export default class IndexedStringUtils {
      * => the error is not thrown, it is only added to the return object.
      * NOTE: First character of the string is expected to be '"'.
      *
-     * @param str string to be split
-     * @return pair of the starting bordered part and the rest
+     * @param str string to be split {@type IndexedString}
+     * @return pair of the starting bordered part and the rest {@type Object}
+     * @public
      */
     static nextQuotedString(str: IndexedString): { first: IndexedString, second: IndexedString, error: RASyntaxError | undefined } {
         const strParts: { first: string, second: string, error: RASyntaxError | undefined } = StringUtils.nextQuotedString(str.toString());
@@ -144,16 +173,16 @@ export default class IndexedStringUtils {
      * NOTE: Should not be used for slicing quoted strings, use nextQuotedString instead.
      * NOTE: It is expected, that there are no comments in the given string.
      *
-     * @param str indexed string to be split
-     * @param start starting character of the string and also starting character of the bordered part (one character)
-     * @param end ending characters of the bordered part (one or more characters)
-     * @param escape character which makes next character being ignored (default '\0')
-     * @return pair of the starting bordered part and the rest as indexed strings
+     * @param str indexed string to be split {@type IndexedString}
+     * @param start starting character of the string and also starting character of the bordered part (one character) {@type string}
+     * @param end ending characters of the bordered part (one or more characters) {@type string}
+     * @param escape character which makes next character being ignored (default '\0') {@type string}
+     * @return pair of the starting bordered part and the rest as indexed strings {@type Pair<IndexedString>}
+     * @public
      */
-    static nextBorderedPart(str: IndexedString, start: string, end: string, escape: string = '\0'):
-        { first: IndexedString, second: IndexedString } {
+    static nextBorderedPart(str: IndexedString, start: string, end: string, escape: string = '\0'): Pair<IndexedString> {
         try {
-            const strParts: { first: string, second: string } = StringUtils.nextBorderedPart(str.toString(), start, end, escape);
+            const strParts: Pair<string> = StringUtils.nextBorderedPart(str.toString(), start, end, escape);
             return { first: str.slice(0, strParts.first.length), second: str.slice(strParts.first.length)};
         }
         catch (err) {
@@ -166,6 +195,10 @@ export default class IndexedStringUtils {
      * If there is unclosed block comment, return the error as well.
      * Line comment "//comment\n" will be changed to "\n" - new line is kept.
      * Block comment "/\*comment* /" will be changed to " " - it is replaced by a space to ensure splitting of the content around.
+     *
+     * @param str string to delete comments in {@type IndexedString}
+     * @return string with deleted comments and optimal error {@type Object}
+     * @public
      */
     public static deleteAllComments(str: IndexedString): {str: IndexedString, err: RASyntaxError | undefined} {
         const chars = str.copy().getChars();
@@ -230,9 +263,10 @@ export default class IndexedStringUtils {
      * Skips all whitespaces and exactly one given character and returns rest of the string.
      * If the string does not match this pattern, throws error.
      *
-     * @param str string to be skipped in
-     * @param char char to be skipped exactly one time (expected to be string of length 1)
-     * @return given string without starting sequence of whitespaces and exactly one char
+     * @param str string to be skipped in {@type IndexedString}
+     * @param char char to be skipped exactly one time (expected to be string of length 1) {@type string}
+     * @return given string without starting sequence of whitespaces and exactly one char {@type IndexedString}
+     * @public
      */
     public static skipWhitespacesAndChar(str: IndexedString, char: string): IndexedString {
         try {

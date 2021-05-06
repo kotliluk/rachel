@@ -1,11 +1,12 @@
 import {BinaryNode} from "./binaryNode";
 import {RATreeNode} from "./raTreeNode";
-import {Relation}  from "../relation/relation";
-import {Row}  from "../relation/row";
+import {Relation} from "../relation/relation";
+import {Row} from "../relation/row";
 import {language} from "../language/language";
 
 /**
- * Types of natural join node: natural, left semi, right semi.
+ * Enum of types of natural join node: natural, left semi, right semi.
+ * @enum {string}
  * @public
  */
 export enum NaturalJoinType {

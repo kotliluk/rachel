@@ -13,7 +13,7 @@ interface TooltipButtonProps {
     text: string,
     /**
      * handler of the button click
-     * @type Function
+     * @type function
      * @public
      */
     onClick: () => void,

@@ -1,4 +1,4 @@
-import {Relation}  from "../relation/relation";
+import {Relation} from "../relation/relation";
 import {ErrorWithTextRange} from "../error/errorWithTextRange";
 
 /**

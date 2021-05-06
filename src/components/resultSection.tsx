@@ -1,7 +1,7 @@
 import React from "react";
 // @ts-ignore - type declaration is not needed for its short usage
 import downloadSVG from "export-svg-with-styles";
-import {Relation}  from "../relation/relation";
+import {Relation} from "../relation/relation";
 import {ResultRelationTable} from "./resultRelationTable";
 import {TooltipButton} from "./tooltipButton";
 import {RATreeNode} from "../ratree/raTreeNode";
@@ -33,13 +33,13 @@ interface ResultSectionProps {
     expressionName: string,
     /**
      * handler of adding the given relation to defined relations
-     * @type Function
+     * @type function
      * @public
      */
     onAddResult: (relation: Relation) => void,
     /**
      * handler of unexpected errors
-     * @type Function
+     * @type function
      * @public
      */
     onUnexpectedError: (e: Error) => void,

@@ -1,8 +1,10 @@
 /**
  * Computes width (average on sample of characters) and its height of the given font with given size in pixels.
  *
- * @param fontFamily
- * @param fontSize
+ * @param fontFamily font to use {@type string}
+ * @param fontSize size to use {@type string}
+ * @return average width and height of the given font {@type {{fontWidth: number, fontHeight: number}}}
+ * @public
  */
 export function computeFontSizeInPx(fontFamily: string, fontSize: string): {fontWidth: number, fontHeight: number} {
     const text: string = "0123456789qwertyuiopasdfghjkllzxcvbnmQWERTYUIOOPASDFGHJKLLZXCVBNM!@#$%^&*()_+[];',./";

@@ -1,18 +1,18 @@
 import {ValueParser} from "../valueParser"
 import {
-    ClosingParentheses,
-    ComparingToken,
-    ComputingDivisionToken,
-    ComputingMinusToken,
-    ComputingMultiplicationToken,
-    ComputingPlusToken,
-    LiteralToken,
-    LogicalAndToken,
-    LogicalNotToken,
-    LogicalOrToken,
-    OpeningParentheses,
-    ReferenceToken,
-    ValueToken
+  ClosingParentheses,
+  ComparingToken,
+  ComputingDivisionToken,
+  ComputingMinusToken,
+  ComputingMultiplicationToken,
+  ComputingPlusToken,
+  LiteralToken,
+  LogicalAndToken,
+  LogicalNotToken,
+  LogicalOrToken,
+  OpeningParentheses,
+  ReferenceToken,
+  ValueToken
 } from "../valueTokens";
 import {ComparingOperator, ComparingOperatorType} from "../../vetree/comparingOperator";
 import {ComputingOperator} from "../../vetree/computingOperator";

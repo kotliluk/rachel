@@ -1,5 +1,5 @@
 import {NodeFakeEvalResult, RATreeNode} from "./raTreeNode";
-import {Relation}  from "../relation/relation";
+import {Relation} from "../relation/relation";
 
 /**
  * Classes extending binary node.

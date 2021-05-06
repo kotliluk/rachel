@@ -1,6 +1,6 @@
-import {Row}  from "./row";
+import {Row} from "./row";
 import {SupportedColumnType} from "./columnType";
-import { isEqual } from "lodash";
+import {isEqual} from "lodash";
 
 /**
  * Formal relational algebra relation. It contains relational schema (set of column names and types)
@@ -96,7 +96,7 @@ export class Relation {
     /**
      * Applies the given function to each column in the relation.
      *
-     * @param f function to be applied to each column in the relation {@type Function}
+     * @param f function to be applied to each column in the relation {@type function}
      * @public
      */
     public forEachColumn(f: (type: SupportedColumnType, name: string) => void): void {

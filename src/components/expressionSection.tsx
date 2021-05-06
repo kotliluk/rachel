@@ -1,6 +1,6 @@
 import React from "react";
 import "./css/expressionSection.css"
-import {Relation}  from "../relation/relation";
+import {Relation} from "../relation/relation";
 import {TooltipButton} from "./tooltipButton";
 import {RASyntaxError} from "../error/raSyntaxError";
 import {RASemanticError} from "../error/raSemanticError";
@@ -40,55 +40,55 @@ interface ExpressionSectionProps {
     relations: Map<string, Relation>,
     /**
      * handler of selecting different expression as current
-     * @type Function
+     * @type function
      * @public
      */
     onSelectDifferentExpression: (newIndex: number) => void,
     /**
      * handler of moving an expression on a new position using drag and drop
-     * @type Function
+     * @type function
      * @public
      */
     onDragExpression: (from: number, to: number) => void,
     /**
      * handler of creating the new expression
-     * @type Function
+     * @type function
      * @public
      */
     onNewExpression: () => void,
     /**
      * handler of deleting the current expression
-     * @type Function
+     * @type function
      * @public
      */
     onDeleteExpression: (onDone: () => void) => void,
     /**
      * handler of saving the expressions
-     * @type Function
+     * @type function
      * @public
      */
     onExportExpressions: (onDone: (msg: string) => void) => void,
     /**
      * handler of loading the expressions
-     * @type Function
+     * @type function
      * @public
      */
     onImportExpressions: (onDone: (msg: string) => void) => void,
     /**
      * handler of change in the current selected expression
-     * @type Function
+     * @type function
      * @public
      */
     onChange: (name: string, text: string) => void,
     /**
      * handler of evaluation, it accepts the parsed tree from the expression text
-     * @type Function
+     * @type function
      * @public
      */
     onEval: (tree: RATreeNode) => void,
     /**
      * handler of unexpected errors
-     * @type Function
+     * @type function
      * @public
      */
     onUnexpectedError: (e: Error) => void,
