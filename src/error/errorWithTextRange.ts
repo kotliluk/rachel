@@ -2,6 +2,8 @@ import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Error with optional text range of the error.
+ * @extends Error
+ * @category Errors
  * @public
  */
 export class ErrorWithTextRange extends Error {
@@ -21,6 +23,7 @@ export class ErrorWithTextRange extends Error {
  *
  * @param err error tu be inserted in {@type ErrorWithTextRange}
  * @param range inserted range {@type StartEndPair?}
+ * @category Errors
  * @public
  */
 export function insertRangeIfUndefined<T>(err: T, range: StartEndPair | undefined): T {

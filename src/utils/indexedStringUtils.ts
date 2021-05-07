@@ -8,6 +8,7 @@ import {Pair} from "../types/pair";
 
 /**
  * Class providing general helper functions for IndexedString.
+ * @category Utils
  * @public
  */
 export class IndexedStringUtils {

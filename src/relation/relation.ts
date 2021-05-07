@@ -6,6 +6,7 @@ import {isEqual} from "lodash";
  * Formal relational algebra relation. It contains relational schema (set of column names and types)
  * and data tuples (set of rows). For editable representation which may happen to be invalid, use {@link StoredRelation}.
  *
+ * @category Relation
  * @public
  */
 export class Relation {

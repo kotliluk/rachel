@@ -4,10 +4,11 @@
     "destination": "./docs/"
   },
   "tags": {
-    "allowUnknownTags": ["optional"]
+    "allowUnknownTags": ["category", "optional"]
   },
   "plugins": [
-    "node_modules/better-docs/typescript"
+    "node_modules/better-docs/typescript",
+    "node_modules/better-docs/category"
   ],
   "source": {
     "includePattern": "\\.(jsx|js|ts|tsx)$"

@@ -15,6 +15,7 @@ import {ThetaJoinNode, ThetaJoinType} from "./thetaJoinNode";
 
 /**
  * Factory for creating unary and binary nodes of given class.
+ * @category RATree
  * @public
  */
 export class RATreeFactory {

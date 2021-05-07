@@ -12,6 +12,7 @@ import {LanguageDef} from "../language/language";
 
 /**
  * Props of RelationsSection component.
+ * @category Components
  * @public
  */
 interface RelationsSectionProps {
@@ -162,7 +163,7 @@ interface RelationsSectionState {
 /**
  * Section to type the RA expression. It contains textarea for relations definition and control buttons.
  * Accepts {@link RelationsSectionProps} props.
- *
+ * @category Components
  * @public
  */
 export class RelationsSection extends React.Component<RelationsSectionProps, RelationsSectionState> {

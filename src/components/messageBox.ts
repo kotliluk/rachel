@@ -6,6 +6,7 @@ const boxMargin: number = Number(cssConstants.getPropertyValue('--message-box-ma
 
 /**
  * Class for displaying messages and errors to the user in a pop-up box.
+ * @category Components
  * @public
  */
 export class MessageBox {

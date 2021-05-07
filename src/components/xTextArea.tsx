@@ -7,6 +7,7 @@ import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Description of an error located in the input text.
+ * @category Components
  * @public
  */
 export interface LocatedError {
@@ -32,6 +33,7 @@ export interface LocatedError {
 
 /**
  * Props of XTextArea component.
+ * @category Components
  * @public
  */
 interface XTextAreaProps {
@@ -207,6 +209,9 @@ type WhisperDiv = HTMLDivElement & {
     getSelectedWhisper: () => string | undefined
 };
 
+/**
+ * HTMLDivElement extended by data for error highlighting.
+ */
 type ErrorDiv = HTMLDivElement & {
     startLine: number,
     startColumn: number,
@@ -214,6 +219,9 @@ type ErrorDiv = HTMLDivElement & {
     messageSpan: HTMLSpanElement
 }
 
+/**
+ * HTMLDivElement extended by data for parentheses highlighting.
+ */
 type ParenthesesDiv = HTMLDivElement & {
     startLine: number,
     startColumn: number
@@ -236,7 +244,7 @@ const canvasWidth: number = 24;
  * TextArea extended by line numbers and text highlighting. The component is maintained by JavaScript HTML functions,
  * not by React.
  * Accepts {@link XTextAreaProps} props.
- *
+ * @category Components
  * @public
  */
 export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {

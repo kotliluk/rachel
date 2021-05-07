@@ -3,6 +3,7 @@ import {Relation} from "../relation/relation";
 
 /**
  * Classes extending binary node.
+ * @category RATree
  * @public
  */
 export type BinaryNodeClass = "left antijoin" | "right antijoin" | "cartesian product" | "division" | "natural join"
@@ -12,6 +13,7 @@ export type BinaryNodeClass = "left antijoin" | "right antijoin" | "cartesian pr
 /**
  * Abstract node of the relational algebra syntactic tree with two subtrees.
  * @extends RATreeNode
+ * @category RATree
  * @public
  */
 export abstract class BinaryNode extends RATreeNode {

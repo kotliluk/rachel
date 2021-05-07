@@ -16,6 +16,7 @@ import {language, LanguageDef} from "../language/language";
 
 /**
  * Props of ResultSection component.
+ * @category Components
  * @public
  */
 interface ResultSectionProps {
@@ -71,7 +72,7 @@ interface ResultSectionState {
  * Section to show the evaluation result. It contains a table with a result and text input and buttons to save it.
  * The component is hidden if given resultRelation is null.
  * Accepts {@link ResultSectionProps} props.
- *
+ * @category Components
  * @public
  */
 export class ResultSection extends React.Component<ResultSectionProps, ResultSectionState> {

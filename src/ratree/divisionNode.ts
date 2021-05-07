@@ -10,6 +10,7 @@ import {StartEndPair} from "../types/startEndPair";
 /**
  * Division node of the relational algebra syntactic tree.
  * @extends BinaryNode
+ * @category RATree
  * @public
  */
 export class DivisionNode extends BinaryNode {

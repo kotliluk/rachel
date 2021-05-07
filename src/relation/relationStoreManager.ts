@@ -8,6 +8,7 @@ import {StringUtils} from "../utils/stringUtils";
 
 /**
  * Class for loading and saving relation definitions as {@link StoredRelation}.
+ * @category Relation
  * @public
  */
 export class RelationStoreManager {

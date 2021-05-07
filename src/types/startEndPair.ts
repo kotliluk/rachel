@@ -1,5 +1,6 @@
 /**
  * Pair of numbers "start" and "end".
+ * @category Types
  * @public
  */
 export interface StartEndPair {

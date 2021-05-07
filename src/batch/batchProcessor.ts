@@ -23,18 +23,17 @@ import {Expression} from "../expression/expression";
 import {MessageBox} from "../components/messageBox";
 
 /**
- * Class for processing multiple input .rachel files and generating their reports.
- *
+ * Class for processing multiple input .rachel project files and generating their reports.
+ * @category Batch
  * @public
  */
 export class BatchProcessor {
 
     /**
-     * Opens file dialog and processes files selected by the user. For each .rachel file creates a textual evaluation
-     * report. Files are expected to contain valid project data. Returns promise with string message about process.
+     * Opens file dialog and processes project files selected by the user. For each .rachel file creates a textual evaluation
+     * report.
      *
      * @param filename name of the downloaded zip file - individual reports has names derived from their original files {@type string}
-     *
      * @public
      */
     public static process(filename: string): void {

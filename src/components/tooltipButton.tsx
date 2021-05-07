@@ -2,6 +2,7 @@ import React from "react";
 
 /**
  * Props of TooltipButton component.
+ * @category Components
  * @public
  */
 interface TooltipButtonProps {
@@ -55,7 +56,7 @@ interface TooltipButtonState {
 /**
  * Button with a tooltip text.
  * Accepts {@link TooltipButtonProps} props.
- *
+ * @category Components
  * @public
  */
 export class TooltipButton extends React.Component<TooltipButtonProps, TooltipButtonState> {

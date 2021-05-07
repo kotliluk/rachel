@@ -22,6 +22,7 @@ const forbiddenRelationNames: string[] = ["F", "L", "R", ""];
  * - Empty string: ""
  *
  * @return lowercase reserved column-keywords {@type string[]}
+ * @category Utils
  * @public
  */
 export function getForbiddenColumnNames(): string[] {
@@ -34,6 +35,7 @@ export function getForbiddenColumnNames(): string[] {
  * - Empty string: ""
  *
  * @return lowercase reserved relation-keywords {@type string[]}
+ * @category Utils
  * @public
  */
 export function getForbiddenRelationNames(): string[] {
@@ -45,6 +47,7 @@ export function getForbiddenRelationNames(): string[] {
  *
  * @param str string to check {@type (string | IndexedString)}
  * @return true if the given string is forbidden as a column name {@type boolean}
+ * @category Utils
  * @public
  */
 export function isForbiddenColumnName(str: string | IndexedString): boolean {
@@ -56,6 +59,7 @@ export function isForbiddenColumnName(str: string | IndexedString): boolean {
  *
  * @param str string to check {@type (string | IndexedString)}
  * @return true if the given string is forbidden as a relation name {@type boolean}
+ * @category Utils
  * @public
  */
 export function isForbiddenRelationName(str: string | IndexedString): boolean {

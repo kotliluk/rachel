@@ -3,6 +3,7 @@
  *
  * @param date date to format {@type Date}
  * @return formatted date {@type string}
+ * @category Utils
  * @public
  */
 export function formatDate(date: Date): string {

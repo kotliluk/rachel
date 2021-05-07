@@ -2,6 +2,7 @@ import React from "react";
 
 /**
  * Props of TextInput component.
+ * @category Components
  * @public
  */
 interface TextInputProps {
@@ -46,7 +47,7 @@ interface TextInputState {
  * Basic text input with submit button (without label). The input cannot be submit if the current value is forbidden.
  * All inserted tabulators are replaced by 4 spaces.
  * Accepts {@link TextInputProps} props.
- *
+ * @category Components
  * @public
  */
 export class TextInput extends React.Component<TextInputProps, TextInputState> {

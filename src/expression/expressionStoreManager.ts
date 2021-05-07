@@ -4,6 +4,7 @@ import {Expression} from "./expression";
 
 /**
  * Promised expression information in {@link ExpressionStoreManager}.load() function.
+ * @category Expression
  * @public
  */
 export interface ExpressionLoadData {
@@ -35,6 +36,7 @@ export interface ExpressionLoadData {
 
 /**
  * Class for loading and saving expressions.
+ * @category Expression
  * @public
  */
 export class ExpressionStoreManager {

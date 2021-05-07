@@ -10,6 +10,7 @@ import {StartEndPair} from "../types/startEndPair";
 /**
  * Projection node of the relational algebra syntactic tree.
  * @extends UnaryNode
+ * @category RATree
  * @public
  */
 export class ProjectionNode extends UnaryNode {

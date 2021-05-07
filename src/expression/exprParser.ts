@@ -31,6 +31,7 @@ enum AssertType {
 
 /**
  * Fake parsing result in {@link ExprParser}.
+ * @category Expression
  * @public
  */
 export interface ExprFakeParseResult {
@@ -56,6 +57,7 @@ export interface ExprFakeParseResult {
 
 /**
  * Parser of relational algebra expressions from textual inputs.
+ * @category Expression
  * @public
  */
 export class ExprParser {

@@ -9,6 +9,7 @@ import {language} from "../language/language";
 /**
  * Plain object representation of the stored relation.
  *
+ * @category Relation
  * @public
  */
 export interface StoredRelationData {
@@ -25,6 +26,7 @@ export interface StoredRelationData {
  *
  * @param data stored relation data to copy {@type StoredRelationData}
  * @return deep copied stored relation data {@type StoredRelationData}
+ * @category Relation
  * @public
  */
 export function copyStoredRelationData(data: StoredRelationData): StoredRelationData {
@@ -41,6 +43,7 @@ export function copyStoredRelationData(data: StoredRelationData): StoredRelation
 /**
  * String-arrays representation of the relation for its storing. The relation may happen to be in inconsistent state.
  * For formal representation (sets of concrete types) use {@link Relation}.
+ * @category Relation
  * @public
  */
 export class StoredRelation {
@@ -617,6 +620,7 @@ export class StoredRelation {
  * Returns true if the given object is a {@link StoredRelationData}, has at least one column, and all rows has the same length.
  * @param obj checked object {@type any}
  * @return whether the given object is a valid StoredRelationData {@type boolean}
+ * @category Relation
  * @public
  */
 export function isStoredRelationData(obj: any): boolean {

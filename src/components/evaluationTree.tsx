@@ -13,13 +13,16 @@ import {getTreeDepth} from "../ratree/raTreeTools";
 import {computeFontSizeInPx} from "../utils/fontUtils";
 
 /**
- * Id of the SVG element for evaluation tree rendereing.
+ * Id of the SVG element for evaluation tree rendering.
+ * @type string
+ * @category Components
  * @public
  */
 export const evalTreeSVGId: string = "eval-tree-svg";
 
 /**
  * Props of EvaluationTree component.
+ * @category Components
  * @public
  */
 interface EvaluationTreeProps {
@@ -52,7 +55,7 @@ interface EvaluationTreeProps {
 /**
  * Component displaying an evaluation tree. The tree is interactive and handles clicking on the nodes.
  * Accepts {@link EvaluationTreeProps} props.
- *
+ * @category Components
  * @public
  */
 export class EvaluationTree extends React.Component<EvaluationTreeProps, {}> {
@@ -156,7 +159,7 @@ function parseTreeForDisplay(tree: RATreeNode): DisplayTreeNode {
  * respect to depth first search)
  */
 function TreeNodeComponent({ node, selected, onClick, darkTheme }:
-                               { node: HierarchyPointNode<DisplayTreeNode>, selected: boolean, onClick: (index: number) => void, darkTheme: boolean }): JSX.Element {
+            { node: HierarchyPointNode<DisplayTreeNode>, selected: boolean, onClick: (index: number) => void, darkTheme: boolean }): JSX.Element {
     const {
         tooltipOpen, // true when mouse is over
         showTooltip,
@@ -220,7 +223,7 @@ function TreeNodeComponent({ node, selected, onClick, darkTheme }:
  * respect to depth first search)
  */
 function TreeComponent({raTree, selected, width, onClick, darkTheme}:
-                           {raTree: RATreeNode, selected: number, width: number, onClick: (index: number) => void, darkTheme: boolean}): JSX.Element | null {
+            {raTree: RATreeNode, selected: number, width: number, onClick: (index: number) => void, darkTheme: boolean}): JSX.Element | null {
     const treeDepth: number = getTreeDepth(raTree);
     // height = "nodes height" + "gaps between nodes" + "margin up and under"
     const height = (treeDepth + 1) * nodeHeight + treeDepth * nodeHeight / 2 + nodeHeight;

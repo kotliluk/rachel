@@ -4,6 +4,7 @@ import {RATreeNode} from "./raTreeNode";
 /**
  * Leave node of the relational algebra syntactic tree with reference to a source relation.
  * @extends RATreeNode
+ * @category RATree
  * @public
  */
 export class RelationNode extends RATreeNode {

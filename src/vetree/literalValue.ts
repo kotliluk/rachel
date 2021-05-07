@@ -5,6 +5,7 @@ import {ColumnContent, SupportedColumnType} from "../relation/columnType";
 /**
  * Class storing literal value of number, string or null type.
  * @extends VETreeNode
+ * @category VETree
  * @public
  */
 export class LiteralValue extends VETreeNode {

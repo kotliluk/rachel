@@ -5,6 +5,7 @@ import {Row} from "../relation/row";
 
 /**
  * Props of RelationTable component.
+ * @category Components
  * @public
  */
 interface RelationTableProps {
@@ -28,7 +29,7 @@ interface RelationTableState {
  * Rows can be ordered by column values when the column header is clicked.
  * When the same column header is clicked for the second time, the order direction is changed (asc, des, asc, des, ...).
  * Accepts {@link RelationTableProps} props.
- *
+ * @category Components
  * @public
  */
 export class ResultRelationTable extends React.Component<RelationTableProps, RelationTableState> {

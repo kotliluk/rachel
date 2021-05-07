@@ -3,6 +3,7 @@ import {StartEndPair} from "./startEndPair";
 /**
  * String representation with index of each character. The index is not changed by the mutating the string.
  * Provides some usual string functions. Uses array of {@link IndexedChar}.
+ * @category Types
  * @public
  */
 export class IndexedString {
@@ -304,6 +305,7 @@ export class IndexedString {
 /**
  * Indexed representation of one character in {@link IndexedString}.
  * WARNING: It is always assumed that IndexedChar.char is a string of length 1.
+ * @category Types
  * @public
  */
 export interface IndexedChar {

@@ -15,6 +15,7 @@ import {StartEndPair} from "../types/startEndPair";
 /**
  * Enum of types of theta join node: full (theta), left (theta semi), right (theta semi).
  * @enum {string}
+ * @category RATree
  * @public
  */
 export enum ThetaJoinType {
@@ -26,6 +27,7 @@ export enum ThetaJoinType {
 /**
  * Theta join or theta semijoin node of the relational algebra syntactic tree.
  * @extends BinaryNode
+ * @category RATree
  * @public
  */
 export class ThetaJoinNode extends BinaryNode {

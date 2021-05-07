@@ -7,6 +7,7 @@ import {Project} from "../project/project";
 
 /**
  * Props of ManagementSection component.
+ * @category Components
  * @public
  */
 interface ManagementSectionProps {
@@ -91,7 +92,7 @@ interface ManagementSectionState {
 /**
  * Section to manage batch processing, importing/exporting the project, and settings.
  * Accepts {@link ManagementSectionProps} props.
- *
+ * @category Components
  * @public
  */
 export class ManagementSection extends React.Component<ManagementSectionProps, ManagementSectionState> {

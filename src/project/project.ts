@@ -5,6 +5,7 @@ import {copyStoredRelationData, isStoredRelationData, StoredRelationData} from "
  * Project interface to store information about project relations, expressions, and null values support.
  * Does not store custom settings about saving file types etc.
  *
+ * @category Project
  * @public
  */
 export interface Project {
@@ -34,6 +35,7 @@ export interface Project {
  * @param obj value to be checked {@type any}
  * @return "OK" string if the given obj is Project or string description of found error in the structure {@type string}
  *
+ * @category Project
  * @public
  */
 export function isProjectObject(obj: any): string {
@@ -59,6 +61,7 @@ export function isProjectObject(obj: any): string {
  *
  * @param proj project to copy {@type Project}
  * @return deep copied project {@type Project}
+ * @category Project
  * @public
  */
 export function copyProject(proj: Project): Project {

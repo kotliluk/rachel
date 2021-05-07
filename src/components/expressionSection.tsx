@@ -17,6 +17,7 @@ import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Props of ExpressionSection component.
+ * @category Components
  * @public
  */
 interface ExpressionSectionProps {
@@ -123,7 +124,7 @@ interface ExpressionSectionState {
 /**
  * Section to edit, manage, and eval relational algebra expressions.
  * Accepts {@link ExpressionSectionProps} props.
- *
+ * @category Components
  * @public
  */
 export class ExpressionSection extends React.Component<ExpressionSectionProps, ExpressionSectionState> {

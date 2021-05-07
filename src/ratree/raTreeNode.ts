@@ -3,6 +3,7 @@ import {ErrorWithTextRange} from "../error/errorWithTextRange";
 
 /**
  * Result of fake evaluation of RATreeNode.
+ * @category RATree
  * @public
  */
 export interface NodeFakeEvalResult {
@@ -28,6 +29,7 @@ export interface NodeFakeEvalResult {
 
 /**
  * Abstract general node of the relational algebra syntactic tree.
+ * @category RATree
  * @public
  */
 export abstract class RATreeNode {

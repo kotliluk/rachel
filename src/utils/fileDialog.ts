@@ -1,5 +1,6 @@
 /**
  * Textual file information.
+ * @category Utils
  * @public
  */
 export interface File {
@@ -19,6 +20,7 @@ export interface File {
 
 /**
  * FileDialog for loading files to the application.
+ * @category Utils
  * @public
  */
 export class FileDialog {

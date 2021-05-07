@@ -22,6 +22,7 @@ import {getSamples} from "../project/samples";
 
 /**
  * Props of MainScreen component.
+ * @category Components
  * @public
  */
 interface MainScreenProps {}
@@ -48,7 +49,7 @@ interface MainScreenState {
 /**
  * Main component of Rachel web page. It wraps all page sections and passes messages between them.
  * Accepts {@link MainScreenProps} props.
- *
+ * @category Components
  * @public
  */
 export class MainScreen extends Component<MainScreenProps, MainScreenState> {

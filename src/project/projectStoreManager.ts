@@ -4,6 +4,7 @@ import {saveAs} from "file-saver";
 
 /**
  * Class for loading and saving all project data as {@link Project} objects.
+ * @category Project
  * @public
  */
 export class ProjectStoreManager {

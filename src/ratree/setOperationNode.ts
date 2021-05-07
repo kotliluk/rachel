@@ -10,6 +10,7 @@ import {StartEndPair} from "../types/startEndPair";
 /**
  * Enum of types of set operation node: union, intersection, difference.
  * @enum {string}
+ * @category RATree
  * @public
  */
 export enum SetOperationType {
@@ -21,6 +22,7 @@ export enum SetOperationType {
 /**
  * Set operation node of the relational algebra syntactic tree.
  * @extends BinaryNode
+ * @category RATree
  * @public
  */
 export class SetOperationNode extends BinaryNode {

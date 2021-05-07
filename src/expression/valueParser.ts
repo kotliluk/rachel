@@ -31,6 +31,7 @@ import {language} from "../language/language";
 
 /**
  * Parser of the logic-algebraic subexpressions in relational algebra expressions.
+ * @category Expression
  * @public
  */
 export class ValueParser {

@@ -1,6 +1,7 @@
 /**
  * Wrapper of JavaScript Map object to provide usage of object (row: number | "name", column: number) as a key for
  * string values.
+ * @category Types
  * @public
  */
 export class NNToSMap {

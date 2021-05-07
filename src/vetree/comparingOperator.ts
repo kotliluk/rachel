@@ -7,6 +7,7 @@ import {language} from "../language/language";
 /**
  * Enum of types of ComparingOperator class.
  * @enum {number}
+ * @category VETree
  * @public
  */
 export enum ComparingOperatorType {
@@ -21,6 +22,7 @@ export enum ComparingOperatorType {
 /**
  * Comparing operator compares two values and returns boolean.
  * @extends VETreeNode
+ * @category VETree
  * @public
  */
 export class ComparingOperator extends VETreeNode {

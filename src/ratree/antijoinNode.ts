@@ -7,6 +7,7 @@ import {language} from "../language/language";
 /**
  * Enum of types of antijoin node: left, right.
  * @enum {string}
+ * @category RATree
  * @public
  */
 export enum AntijoinType {
@@ -17,6 +18,7 @@ export enum AntijoinType {
 /**
  * Antijoin node of the relational algebra syntactic tree.
  * @extends BinaryNode
+ * @category RATree
  * @public
  */
 export class AntijoinNode extends BinaryNode {
@@ -77,6 +79,7 @@ export class AntijoinNode extends BinaryNode {
         });
         this.resultRelation = result;
     }
+
     /**
      * Evaluates the RA query in this node and its subtree.
      * It searches for given cursor index in parametrized nodes and if it finds it, returns the available columns.

@@ -5,7 +5,8 @@ import {language} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";
 
 /**
- * Types of ComputingOperator class.
+ * Enum of types of ComputingOperator class.
+ * @category VETree
  * @public
  */
 enum ComputingOperatorType {
@@ -18,6 +19,7 @@ enum ComputingOperatorType {
 /**
  * Comparing operator takes two number values and returns a new computed number.
  * @extends VETreeNode
+ * @category VETree
  * @public
  */
 export class ComputingOperator extends VETreeNode {

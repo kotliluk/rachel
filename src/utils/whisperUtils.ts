@@ -4,6 +4,7 @@
  * @param str string to search in {@type string}
  * @param index index before which the word starts {@type number}
  * @return start index of the word before the given index in the given string {@type number}
+ * @category Utils
  * @public
  */
 export function getStartOfWordBeforeIndex(str: string, index: number): number {
@@ -30,6 +31,7 @@ export function getStartOfWordBeforeIndex(str: string, index: number): number {
  * @param whispers whispers to sort (not modified) {@type string[]}
  * @param wordBeforeCursor string to use for sorting {@type string}
  * @return sorted whispers {@type string[]}
+ * @category Utils
  * @public
  */
 export function sortWhispers(whispers: string[], wordBeforeCursor: string): string[] {

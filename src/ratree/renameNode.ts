@@ -15,6 +15,7 @@ import {StartEndPair} from "../types/startEndPair";
 /**
  * Renaming node of the relational algebra syntactic tree.
  * @extends UnaryNode
+ * @category RATree
  * @public
  */
 export class RenameNode extends UnaryNode {

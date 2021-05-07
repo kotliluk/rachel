@@ -1,8 +1,8 @@
 /**
- * Messages for {@link CodeErrors}.
+ * Messages for {@link CodeError}.
  * The description is a string array - between its members are inserted error parameters (names of invalid relations,
  * invalid input parts, etc.). See english language definition for expected structure of each error description.
- *
+ * @category Errors
  * @public
  */
 export interface CodeErrorMessages {
@@ -31,7 +31,8 @@ export interface CodeErrorMessages {
 
 /**
  * Error caused by an unexpected error in code of the application.
- *
+ * @extends Error
+ * @category Errors
  * @public
  */
 export class CodeError extends Error {

@@ -10,6 +10,7 @@ import {StartEndPair} from "../types/startEndPair";
  * @param root root of the searched tree {@type RATreeNode}
  * @param index index to be found {@type number}
  * @return found root with given index or null if not found {@type RATreeNode?}
+ * @category RATree
  * @public
  */
 export function depthSearch(root: RATreeNode, index: number): RATreeNode | null {
@@ -41,6 +42,7 @@ export function depthSearch(root: RATreeNode, index: number): RATreeNode | null 
  *
  * @param root root of the tree to compute the depth for {@type RATreeNode}
  * @return tree depth {@type number}
+ * @category RATree
  * @public
  */
 export function getTreeDepth(root: RATreeNode): number {
@@ -65,6 +67,7 @@ export function getTreeDepth(root: RATreeNode): number {
  * @param str string to search in {@type IndexedString}
  * @return true if the given cursor position is in the given range, it is not inside quotes, and the character at the
  * cursor position is present {@type boolean}
+ * @category RATree
  * @public
  */
 export function isInRangeAndNotInQuotes(cursor: number, range: StartEndPair | undefined, str: IndexedString): boolean {

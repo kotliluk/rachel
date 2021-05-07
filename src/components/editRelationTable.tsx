@@ -6,6 +6,7 @@ import {NNToSMap} from "../types/nnToSMap";
 
 /**
  * Props of EditRelationTable component.
+ * @category Components
  * @public
  */
 interface EditRelationTableProps {
@@ -79,7 +80,7 @@ const inputMarginSides: number = Number(cssConstants.getPropertyValue('--input-m
  * Table for editing a relation relation. It supports adding new columns and rows and editing all relation (column names,
  * column types and row inputs).
  * Accepts {@link EditRelationTableProps} props.
- *
+ * @category Components
  * @public
  */
 export class EditRelationTable extends React.Component<EditRelationTableProps, EditRelationTableState> {

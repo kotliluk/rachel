@@ -3,6 +3,7 @@ import {ColumnContent, SupportedColumnType} from "../relation/columnType";
 
 /**
  * Result of the VETreeNode evaluation.
+ * @category VETree
  * @public
  */
 export interface VEResult {
@@ -22,6 +23,7 @@ export interface VEResult {
 
 /**
  * Abstract class for value-evaluating nodes producing new values.
+ * @category VETree
  * @public
  */
 export abstract class VETreeNode {

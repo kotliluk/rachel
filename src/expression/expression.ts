@@ -1,5 +1,6 @@
 /**
  * Representation of named relational algebra expression.
+ * @category Expression
  * @public
  */
 export interface Expression {
@@ -22,6 +23,7 @@ export interface Expression {
  *
  * @param obj object to check {@type any}
  * @return whether the given obj is an Expression {@type boolean}
+ * @category Expression
  * @public
  */
 export function isExpression(obj: any): boolean {
@@ -36,6 +38,7 @@ export function isExpression(obj: any): boolean {
  *
  * @param exp Expression to copy {@type Expression}
  * @return deep copied expression {@type Expression}
+ * @category Expression
  * @public
  */
 export function copyExpression(exp: Expression): Expression {

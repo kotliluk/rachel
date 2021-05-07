@@ -9,6 +9,7 @@ export type CsvValueSeparator = "," | ";";
  *
  * @param str string to search in {@type string}
  * @return found separator or undefined {@type CsvValueSeparator?}
+ * @category Types
  * @public
  */
 export function findValueSeparator(str: string): CsvValueSeparator | undefined {

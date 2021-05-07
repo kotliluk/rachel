@@ -5,7 +5,8 @@ import {IndexedString} from "../types/indexedString";
 import {language} from "../language/language";
 
 /**
- * Types of LogicalOperator class.
+ * Enum of types of LogicalOperator class.
+ * @category VETree
  * @public
  */
 enum LogicalOperatorType {
@@ -17,6 +18,7 @@ enum LogicalOperatorType {
 /**
  * Logical operator chains boolean values and produces new ones.
  * @extends VETreeNode
+ * @category VETree
  * @public
  */
 export class LogicalOperator extends VETreeNode {

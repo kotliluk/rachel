@@ -1,5 +1,6 @@
 /**
  * Pair of values of the same type.
+ * @category Types
  * @public
  */
 export interface Pair<T> {

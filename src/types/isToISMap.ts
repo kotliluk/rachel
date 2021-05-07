@@ -7,6 +7,7 @@ interface KeyValue {
 
 /**
  * Wrapper of JavaScript Map object to provide usage of object {@link IndexedString} as a key for {@link IndexedString} values.
+ * @category Types
  * @public
  */
 export class ISToISMap {

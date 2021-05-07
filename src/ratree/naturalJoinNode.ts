@@ -7,6 +7,7 @@ import {language} from "../language/language";
 /**
  * Enum of types of natural join node: natural, left semi, right semi.
  * @enum {string}
+ * @category RATree
  * @public
  */
 export enum NaturalJoinType {
@@ -18,6 +19,7 @@ export enum NaturalJoinType {
 /**
  * Natural join or semi join node of the relational algebra syntactic tree.
  * @extends BinaryNode
+ * @category RATree
  * @public
  */
 export class NaturalJoinNode extends BinaryNode {

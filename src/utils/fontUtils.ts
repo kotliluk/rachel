@@ -4,6 +4,7 @@
  * @param fontFamily font to use {@type string}
  * @param fontSize size to use {@type string}
  * @return average width and height of the given font {@type {{fontWidth: number, fontHeight: number}}}
+ * @category Utils
  * @public
  */
 export function computeFontSizeInPx(fontFamily: string, fontSize: string): {fontWidth: number, fontHeight: number} {

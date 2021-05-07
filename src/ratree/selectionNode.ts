@@ -13,6 +13,7 @@ import {StartEndPair} from "../types/startEndPair";
 /**
  * Selection node of the relational algebra syntactic tree.
  * @extends UnaryNode
+ * @category RATree
  * @public
  */
 export class SelectionNode extends UnaryNode {

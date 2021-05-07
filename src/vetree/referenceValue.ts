@@ -8,6 +8,7 @@ import {language} from "../language/language";
 /**
  * Class storing reference to a column.
  * @extends VETreeNode
+ * @category VETree
  * @public
  */
 export class ReferenceValue extends VETreeNode {

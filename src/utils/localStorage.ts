@@ -9,6 +9,7 @@ const defaultDarkTheme: string = "false";
  * Static class for maintaining the access to local storage of the browser. It handles user settings:
  * saving file type, csv value separator, language, light/dark theme of the application.
  * If the local storage is not used, it uses the application memory and the default values.
+ * @category Utils
  * @public
  */
 export class LocalStorage {

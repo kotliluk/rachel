@@ -6,6 +6,7 @@ import {StartEndPair} from "../types/startEndPair";
 /**
  * Factory for creating custom application errors: CodeError, RASemanticError, RASyntaxError.
  * It creates an error message by given error code and string parameters.
+ * @category Errors
  * @public
  */
 export class ErrorFactory {

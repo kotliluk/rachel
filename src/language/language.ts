@@ -23,12 +23,15 @@ import {SyntaxErrorMessages} from "../error/raSyntaxError";
 /**
  * All languages supported in the application.
  * NOTE FOR NEW LANGUAGES: If you define a new language file "lang.ts", add "LANG" to this array.
+ * @type string[]
+ * @category Language
  * @public
  */
-export const allSupportedLanguages = (<L extends string>(arr: L[]) => arr)(["EN", "CS"]);
+export const allSupportedLanguages: string[] = (<L extends string>(arr: L[]) => arr)(["EN", "CS"]);
 
 /**
  * Abbreviation of supported languages in the application.
+ * @category Language
  * @public
  */
 export type SupportedLanguage = (typeof allSupportedLanguages)[number];
@@ -37,6 +40,7 @@ export type SupportedLanguage = (typeof allSupportedLanguages)[number];
  * Definition of a language for Rachel.
  * NOTE FOR NEW LANGUAGES: If you want to define a new language, it must be through this interface in a new file in
  * this package (see en.ts file as an example of English language definition).
+ * @category Language
  * @public
  */
 export interface LanguageDef {
@@ -237,6 +241,7 @@ const languageMap: Map<SupportedLanguage, LanguageDef> = new Map<SupportedLangua
  * Returns true if the given value is a supported language.
  * @param lan checked value {@type any}
  * @return true if the given value is a supported language {@type boolean}
+ * @category Language
  * @public
  */
 export function isSupportedLanguage(lan: any): boolean {
@@ -246,6 +251,7 @@ export function isSupportedLanguage(lan: any): boolean {
 /**
  * Returns definition of the current selected language.
  * @return definition of the current selected language {@type LanguageDef}
+ * @category Language
  * @public
  */
 export function language(): LanguageDef {

@@ -6,6 +6,7 @@ import {language} from "../language/language";
 /**
  * Row stores a set of column values in a formal {@link Relation} representation.
  *
+ * @category Relation
  * @public
  */
 export class Row {

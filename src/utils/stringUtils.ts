@@ -5,6 +5,7 @@ import {Pair} from "../types/pair";
 
 /**
  * Class providing general helper functions for strings.
+ * @category Utils
  * @public
  */
 export class StringUtils {
