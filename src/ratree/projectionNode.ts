@@ -1,7 +1,7 @@
-import UnaryNode from "./unaryNode";
-import RATreeNode from "./raTreeNode";
-import Relation from "../relation/relation";
-import Row from "../relation/row";
+import {UnaryNode} from "./unaryNode";
+import {RATreeNode} from "./raTreeNode";
+import {Relation} from "../relation/relation";
+import {Row} from "../relation/row";
 import {IndexedString} from "../types/indexedString";
 import {ErrorFactory} from "../error/errorFactory";
 import {language} from "../language/language";
@@ -9,17 +9,22 @@ import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Projection node of the relational algebra syntactic tree.
+ * @extends UnaryNode
+ * @category RATree
+ * @public
  */
-export default class ProjectionNode extends UnaryNode {
+export class ProjectionNode extends UnaryNode {
 
     private readonly projection: IndexedString;
     private readonly stringRange: StartEndPair | undefined;
 
     /**
+     * Creates a new ProjectionNode.
      * Expects the projection string to start with '[' and end with ']'.
      *
-     * @param projection
-     * @param subtree
+     * @param projection string describing projected columns {@type IndexedString}
+     * @param subtree source subtree {@type RATreeNode}
+     * @public
      */
     constructor(projection: IndexedString, subtree: RATreeNode) {
         super(subtree);
@@ -41,7 +46,10 @@ export default class ProjectionNode extends UnaryNode {
     }
 
     /**
+     * Evaluates the RA query in this node and its subtree.
+     * After successful call, this.resultRelation must be set to valid Relation.
      * Expectations: projected names are subset of source schema
+     * @public
      */
     public eval(): void {
         if (this.isEvaluated()) {
@@ -77,11 +85,18 @@ export default class ProjectionNode extends UnaryNode {
         });
         this.resultRelation = result;
     }
-
     /**
+     * Evaluates the RA query in this node and its subtree.
+     * It searches for given cursor index in parametrized nodes and if it finds it, returns the available columns.
+     * Otherwise returns the result relation schema (only column names, no rows).
+     * When an error occurs, it is faked to work, and adds it to the errors array.
+     *
      * Strict expectations: projected names are subset of source schema
      * Returned schema: intersection of projected names and source schema
-     * Second possible approach would be to return all projected names - less strict.
+     *
+     * @param cursorIndex index of the cursor in original text input {@type number}
+     * @return resulting relation schema gained by evaluating this node and its subtree or found columns to whisper {@type NodeFakeEvalResult}
+     * @public
      */
     public fakeEval(cursorIndex: number) {
         let source = this.subtree.fakeEval(cursorIndex);
@@ -114,14 +129,34 @@ export default class ProjectionNode extends UnaryNode {
         return {result, whispers, errors};
     }
 
+    /**
+     * Creates a string with a structure of the RA tree in one line.
+     *
+     * @return string with a structure of the RA tree in one line {@type string}
+     * @public
+     */
     public printInLine(): string {
         return this.subtree.printInLine() + this.getOperationSymbol();
     }
 
+    /**
+     * Return the word name of the RA operation of the node.
+     * Example: returns "Selection" for SelectionNode.
+     *
+     * @return name of the RA operation of the node {@type string}
+     * @public
+     */
     public getOperationName(): string {
         return language().operations.projection;
     }
 
+    /**
+     * Return the symbolic representation of the RA operation of the node.
+     * Example: returns "(some + expr = 15)" for SelectionNode.
+     *
+     * @return name of the RA operation of the node {@type string}
+     * @public
+     */
     public getOperationSymbol(): string {
         return this.projection.replace(/\s+/g, ' ');
     }

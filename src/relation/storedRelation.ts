@@ -1,13 +1,16 @@
 import {isSupportedColumnType, SupportedColumnType} from "./columnType";
-import StringUtils from "../utils/stringUtils";
+import {StringUtils} from "../utils/stringUtils";
 import {NNToSMap} from "../types/nnToSMap";
-import Relation from "./relation";
-import Row from "./row";
+import {Relation} from "./relation";
+import {Row} from "./row";
 import {isForbiddenColumnName} from "../utils/keywords";
 import {language} from "../language/language";
 
 /**
  * Plain object representation of the stored relation.
+ *
+ * @category Relation
+ * @public
  */
 export interface StoredRelationData {
     name: string;
@@ -20,6 +23,11 @@ export interface StoredRelationData {
 
 /**
  * Creates a copy of the given stored relation data.
+ *
+ * @param data stored relation data to copy {@type StoredRelationData}
+ * @return deep copied stored relation data {@type StoredRelationData}
+ * @category Relation
+ * @public
  */
 export function copyStoredRelationData(data: StoredRelationData): StoredRelationData {
     return {
@@ -33,22 +41,35 @@ export function copyStoredRelationData(data: StoredRelationData): StoredRelation
 }
 
 /**
- * String representation of the relation for its storing. The relation may happen to be in inconsistent state.
+ * String-arrays representation of the relation for its storing. The relation may happen to be in inconsistent state.
+ * For formal representation (sets of concrete types) use {@link Relation}.
+ * @category Relation
+ * @public
  */
 export class StoredRelation {
 
     /**
      * Creates a new stored relation with given name, one column and no rows.
+     *
+     * @param name name of the relation {@type string}
+     * @param nullValuesSupport whether null values are supported {@type boolean}
+     * @return stored relation {@type StoredRelation}
+     * @public
      */
-    static new(name: string, nullValuesSupport: boolean): StoredRelation {
+    public static new(name: string, nullValuesSupport: boolean): StoredRelation {
         return new StoredRelation(name, ["Column1"], ["number"], [], nullValuesSupport);
     }
 
     /**
      * Creates a new stored relation from given plain relation object. If the object is not a valid StoredRelationData,
      * throws error.
+     *
+     * @param data input object {@type any}
+     * @param nullValuesSupport whether null values are supported {@type boolean}
+     * @return stored relation {@type StoredRelation}
+     * @public
      */
-    static fromData(data: any, nullValuesSupport: boolean): StoredRelation {
+    public static fromData(data: any, nullValuesSupport: boolean): StoredRelation {
         if (isStoredRelationData(data)) {
             const d: StoredRelationData = data as StoredRelationData;
             return new StoredRelation(d.name, d.columnNames, d.columnTypes, d.rows, nullValuesSupport);
@@ -58,8 +79,14 @@ export class StoredRelation {
 
     /**
      * Creates a new stored relation from given full relation representation.
+     *
+     * @param name name to overwrite original relation name {@type string}
+     * @param relation formal relation representation {@type Relation}
+     * @param nullValuesSupport whether null values are supported {@type boolean}
+     * @return stored relation {@type StoredRelation}
+     * @public
      */
-    static fromRelation(name: string, relation: Relation, nullValuesSupport: boolean): StoredRelation {
+    public static fromRelation(name: string, relation: Relation, nullValuesSupport: boolean): StoredRelation {
         const columnNames: string[] = [];
         const columnTypes: SupportedColumnType[] = [];
         relation.getColumns().forEach((type, name) => {
@@ -74,8 +101,12 @@ export class StoredRelation {
 
     /**
      * Creates a new relation with the same name, columns, rows a null values support.
+     *
+     * @param relation relation to copy {@type StoredRelation}
+     * @return deep copied relation {@type StoredRelation}
+     * @public
      */
-    static copy(relation: StoredRelation): StoredRelation {
+    public static copy(relation: StoredRelation): StoredRelation {
         const name = relation.name;
         const columnNames = [...relation.columnNames];
         const columnTypes = [...relation.columnTypes];
@@ -86,8 +117,12 @@ export class StoredRelation {
 
     /**
      * Returns formatted string representation of StoredRelation or StoredRelationData.
+     *
+     * @param rel relation to stringify {@type StoredRelation}
+     * @return formatted string representation {@type string}
+     * @public
      */
-    static format(rel: StoredRelation | StoredRelationData): string {
+    public static format(rel: StoredRelation | StoredRelationData): string {
         // finds longest inputs in each column
         const longest = rel.columnNames.map(n => n.length);
         rel.columnTypes.forEach((t, i) => {
@@ -123,6 +158,13 @@ export class StoredRelation {
 
     /**
      * Creates new relation with given name, one default column and no rows.
+     *
+     * @param name relation name {@type string}
+     * @param columnNames column names {@type string[]}
+     * @param columnTypes column types {@type SupportedColumnType[]}
+     * @param rows data tuples as 2D string array [row, column] {@type string[][]}
+     * @param nullValuesSupport whether null values are supported {@type boolean}
+     * @public
      */
     constructor(name: string, columnNames: string[], columnTypes: SupportedColumnType[],
                         rows: string[][], nullValuesSupport: boolean) {
@@ -141,6 +183,7 @@ export class StoredRelation {
 
     /**
      * Checks all possible errors in the relation.
+     * @public
      */
     public recomputeErrors(): void {
         this.errors.clear();
@@ -217,6 +260,9 @@ export class StoredRelation {
     /**
      * Creates a relation with full schema.
      * WARNING: It expects that there are no errors in the stored relation before call.
+     *
+     * @return formal relation representation {@type Relation}
+     * @public
      */
     public createRelation(): Relation {
         const relation: Relation = new Relation(this.name);
@@ -252,6 +298,9 @@ export class StoredRelation {
 
     /**
      * Creates plain object representation of the stored relation.
+     *
+     * @return compressed representation {@type StoredRelationData}
+     * @public
      */
     public toDataObject(): StoredRelationData {
         return {
@@ -266,6 +315,9 @@ export class StoredRelation {
 
     /**
      * Returns map "row/column => error". Numeric row keys are for relation rows, row key "name" is for column name row.
+     *
+     * @return map of errors in the relation {@type NNToSMap}
+     * @public
      */
     public getErrors(): NNToSMap {
         return this.errors;
@@ -273,6 +325,9 @@ export class StoredRelation {
 
     /**
      * Returns true if there are no errors in the relation.
+     *
+     * @return true if there are no errors in the relation {@type boolean}
+     * @public
      */
     public isValid(): boolean {
         return this.errors.size() === 0;
@@ -280,6 +335,9 @@ export class StoredRelation {
 
     /**
      * Sets null values support to check null errors in the relation.
+     *
+     * @param nullValuesSupport whether null values are supported {@type boolean}
+     * @public
      */
     public setNullValuesSupport(nullValuesSupport: boolean): void {
         if (nullValuesSupport !== this.nullValuesSupport) {
@@ -290,6 +348,7 @@ export class StoredRelation {
 
     /**
      * Adds a new column with default name "Column n", default type "number", and empty inputs "" in all rows.
+     * @public
      */
     public addNewColumn(): void {
         let i = (this.columnNames.length + 1);
@@ -312,6 +371,7 @@ export class StoredRelation {
 
     /**
      * Adds a new row with empty inputs "" in all columns.
+     * @public
      */
     public addNewRow(): void {
         if (this.nullValuesSupport) {
@@ -336,7 +396,8 @@ export class StoredRelation {
      * Deletes a column with the given index. If the last column was deleted, removes all rows and creates
      * new default column.
      *
-     * @param columnIndex
+     * @param columnIndex column to delete {@type number}
+     * @public
      */
     public deleteColumn(columnIndex: number): void {
         this.columnNames.splice(columnIndex, 1);
@@ -365,7 +426,8 @@ export class StoredRelation {
     /**
      * Deletes a row with given index.
      *
-     * @param rowIndex
+     * @param rowIndex row to delete {@type number}
+     * @public
      */
     public deleteRow(rowIndex: number): void {
         this.rows.splice(rowIndex, 1);
@@ -384,47 +446,111 @@ export class StoredRelation {
         this.actual = false;
     }
 
+    /**
+     * Returns row count.
+     *
+     * @return row count {@type number}
+     * @public
+     */
     public getRowCount(): number {
         return this.rowCount;
     }
 
+    /**
+     * Returns column count.
+     *
+     * @return column count {@type number}
+     * @public
+     */
     public getColumnCount(): number {
         return this.columnCount;
     }
 
+    /**
+     * Sets relation name.
+     *
+     * @param name new relation name {@type string}
+     * @public
+     */
     public setName(name: string): void {
         this.name = name;
         this.actual = false;
     }
 
+    /**
+     * Gets relation name.
+     *
+     * @return relation name {@type string}
+     * @public
+     */
     public getName(): string {
         return this.name;
     }
 
+    /**
+     * Gets column names.
+     *
+     * @return column names {@type string[]}
+     * @public
+     */
     public getColumnNames(): string[] {
         return this.columnNames;
     }
 
+    /**
+     * Sets column name on the given index.
+     *
+     * @param columnName name to set {@type string}
+     * @param columnIndex column to update {@type number}
+     * @public
+     */
     public setColumnName(columnName: string, columnIndex: number): void {
         this.columnNames[columnIndex] = columnName;
         this.checkColumnNames();
         this.actual = false;
     }
 
+    /**
+     * Gets column types.
+     *
+     * @return column types {@type SupportedColumnType[]}
+     * @public
+     */
     public getColumnTypes(): SupportedColumnType[] {
         return this.columnTypes;
     }
 
+    /**
+     * Sets column type on the given index.
+     *
+     * @param columnType type to set {@type SupportedColumnType}
+     * @param columnIndex column to update {@type number}
+     * @public
+     */
     public setColumnType(columnType: SupportedColumnType, columnIndex: number): void {
         this.columnTypes[columnIndex] = columnType;
         this.checkColumnTypes(columnIndex);
         this.actual = false;
     }
 
+    /**
+     * Gets all rows.
+     *
+     * @return data tuples as 2D string array [row, column] {@type string[][]}
+     * @public
+     */
     public getRows(): string[][] {
         return this.rows;
     }
 
+    /**
+     * Sets value in the row in the given row and column.
+     *
+     * @param input value to set {@type string}
+     * @param rowIndex row to insert {@type number}
+     * @param columnIndex column to insert {@type number}
+     * @public
+     */
     public setRowInput(input: string, rowIndex: number, columnIndex: number): void {
         this.rows[rowIndex][columnIndex] = input;
         this.checkRowInput(columnIndex, rowIndex);
@@ -434,6 +560,9 @@ export class StoredRelation {
     /**
      * Returns true if no changes were made after last setActual(true) call.
      * The StoredRelation is created with isActual() = false.
+     *
+     * @return actual value {@type boolean}
+     * @public
      */
     public isActual(): boolean {
         return this.actual;
@@ -442,6 +571,9 @@ export class StoredRelation {
     /**
      * Sets current StoredRelation state as actual. Any change sets the state as not actual automatically.
      * If it is set to actual, the current state is saved as the revert state.
+     *
+     * @param actual set relation actual value to the given value {@type boolean}
+     * @public
      */
     public setActual(actual: boolean): void {
         this.actual = actual;
@@ -452,6 +584,9 @@ export class StoredRelation {
 
     /**
      * Returns name of the saved relation state to revert or empty string.
+     *
+     * @return name of the saver relation state to revert or empty string {@type string}
+     * @public
      */
     public getRevertName(): string {
         if (this.revertState !== undefined) {
@@ -465,6 +600,7 @@ export class StoredRelation {
     /**
      * Reverts the current relation to its last loaded state (if any exists, call canRevert() to check).
      * The relation is set as not actual, null values support and saved revert state is not reverted.
+     * @public
      */
     public revert(): void {
         if (this.revertState !== undefined) {
@@ -481,7 +617,11 @@ export class StoredRelation {
 }
 
 /**
- * Returns true if the relation relation object has at least one column, and all rows has the same length.
+ * Returns true if the given object is a {@link StoredRelationData}, has at least one column, and all rows has the same length.
+ * @param obj checked object {@type any}
+ * @return whether the given object is a valid StoredRelationData {@type boolean}
+ * @category Relation
+ * @public
  */
 export function isStoredRelationData(obj: any): boolean {
     if (typeof obj !== "object") {

@@ -1,15 +1,17 @@
-import RATreeNode from "./raTreeNode";
-import UnaryNode from "./unaryNode";
-import BinaryNode from "./binaryNode";
+import {RATreeNode} from "./raTreeNode";
+import {UnaryNode} from "./unaryNode";
+import {BinaryNode} from "./binaryNode";
 import {IndexedString} from "../types/indexedString";
 import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Finds the root in the given tree with the given index with respect to depth first search. Root has index 0.
  *
- * @param root root of the searched tree
- * @param index index to be found
- * @return found root with given index or null if not found
+ * @param root root of the searched tree {@type RATreeNode}
+ * @param index index to be found {@type number}
+ * @return found root with given index or null if not found {@type RATreeNode?}
+ * @category RATree
+ * @public
  */
 export function depthSearch(root: RATreeNode, index: number): RATreeNode | null {
     let i: number = 0;
@@ -38,8 +40,10 @@ export function depthSearch(root: RATreeNode, index: number): RATreeNode | null 
 /**
  * Computes depth of the tree. One node has depth 0.
  *
- * @param root root of the tree to compute the depth for
- * @return tree depth
+ * @param root root of the tree to compute the depth for {@type RATreeNode}
+ * @return tree depth {@type number}
+ * @category RATree
+ * @public
  */
 export function getTreeDepth(root: RATreeNode): number {
     if (root instanceof BinaryNode) {
@@ -54,9 +58,17 @@ export function getTreeDepth(root: RATreeNode): number {
 }
 
 /**
- * Returns true, if the given cursor position is in the given range, it is not inside quotes, and the character at the
+ * Returns true if the given cursor position is in the given range, it is not inside quotes, and the character at the
  * cursor position is present (i.e., was not removed as comment).
  * Note: given range is expected to be computed from given string.
+ *
+ * @param cursor index of the cursor {@type number}
+ * @param range range of the string {@type StartEndPair?}
+ * @param str string to search in {@type IndexedString}
+ * @return true if the given cursor position is in the given range, it is not inside quotes, and the character at the
+ * cursor position is present {@type boolean}
+ * @category RATree
+ * @public
  */
 export function isInRangeAndNotInQuotes(cursor: number, range: StartEndPair | undefined, str: IndexedString): boolean {
     if (range !== undefined && range.start < cursor && cursor <= range.end) {

@@ -1,22 +1,35 @@
-import BinaryNode from "./binaryNode";
-import RATreeNode from "./raTreeNode";
-import Relation from "../relation/relation";
-import Row from "../relation/row";
+import {BinaryNode} from "./binaryNode";
+import {RATreeNode} from "./raTreeNode";
+import {Relation} from "../relation/relation";
+import {Row} from "../relation/row";
 import {ErrorFactory} from "../error/errorFactory";
 import {language} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Cartesian product node of the relational algebra syntactic tree.
+ * @extends BinaryNode
+ * @category RATree
+ * @public
  */
-export default class CartesianProductNode extends BinaryNode {
+export class CartesianProductNode extends BinaryNode {
 
+    /**
+     * Creates a new CartesianProductNode.
+     *
+     * @param leftSubtree left subtree {@type RATreeNode}
+     * @param rightSubtree right subtree {@type RATreeNode}
+     * @param stringRange position of the operator in the original text {@type StartEndPair?}
+     * @public
+     */
     public constructor(leftSubtree: RATreeNode, rightSubtree: RATreeNode, private stringRange: StartEndPair | undefined) {
         super(leftSubtree, rightSubtree);
     }
 
     /**
+     * Evaluates the RA query in this node and its subtree.
      * Expectations on source schemas: disjointness
+     * @public
      */
     public eval(): void {
         if (this.isEvaluated()) {
@@ -44,11 +57,19 @@ export default class CartesianProductNode extends BinaryNode {
         });
         this.resultRelation = result;
     }
-
     /**
+     * Evaluates the RA query in this node and its subtree.
+     * It searches for given cursor index in parametrized nodes and if it finds it, returns the available columns.
+     * Otherwise returns the result relation schema (only column names, no rows).
+     * When an error occurs, it is faked to work, and adds it to the errors array.
+     *
      * Strict expectations: disjointness
      * Returned schema: union of source schemas
      * Returned fake schema is not affected when disjointness is not held
+     *
+     * @param cursorIndex index of the cursor in original text input {@type number}
+     * @return resulting relation schema gained by evaluating this node and its subtree or found columns to whisper {@type NodeFakeEvalResult}
+     * @public
      */
     public fakeEval(cursorIndex: number) {
         // evaluates the subtrees
@@ -77,14 +98,34 @@ export default class CartesianProductNode extends BinaryNode {
         };
     }
 
+    /**
+     * Creates a string with a structure of the RA tree in one line.
+     *
+     * @return string with a structure of the RA tree in one line {@type string}
+     * @public
+     */
     public printInLine(): string {
         return "(" + this.leftSubtree.printInLine() + this.getOperationSymbol() + this.rightSubtree.printInLine() + ")";
     }
 
+    /**
+     * Return the word name of the RA operation of the node.
+     * Example: returns "Selection" for SelectionNode.
+     *
+     * @return name of the RA operation of the node {@type string}
+     * @public
+     */
     public getOperationName(): string {
         return language().operations.cartesianProduct;
     }
 
+    /**
+     * Return the symbolic representation of the RA operation of the node.
+     * Example: returns "(some + expr = 15)" for SelectionNode.
+     *
+     * @return name of the RA operation of the node {@type string}
+     * @public
+     */
     public getOperationSymbol(): string {
         return "⨯";
     }

@@ -1,66 +1,158 @@
 import React from "react";
-import Relation from "../relation/relation";
+import {Relation} from "../relation/relation";
 import {TooltipButton} from "./tooltipButton";
 import {SupportedColumnType} from "../relation/columnType";
-import EditRelationTable from "./editRelationTable";
+import {EditRelationTable} from "./editRelationTable";
 import {StoredRelation} from "../relation/storedRelation";
 import {TextInput} from "./textInput";
 import {isForbiddenRelationName} from "../utils/keywords";
-import StringUtils from "../utils/stringUtils";
+import {StringUtils} from "../utils/stringUtils";
 import {MessageBox} from "./messageBox";
 import {LanguageDef} from "../language/language";
 
+/**
+ * Props of RelationsSection component.
+ * @category Components
+ * @public
+ */
 interface RelationsSectionProps {
-    // all stored relations
+    /**
+     * all stored relations
+     * @type StoredRelation[]
+     * @public
+     */
     storedRelations: StoredRelation[],
-    // index of the current selected relation
+    /**
+     * index of the current selected relation
+     * @type number
+     * @public
+     */
     storedRelationIndex: number,
-
-    // all currently loaded relations in the application
+    /**
+     * all currently loaded relations in the application
+     * @type Relation[]
+     * @public
+     */
     loadedRelations: Relation[],
-
-    // handler of change of the name of the current selected relation
+    /**
+     * handler of change of the name of the current selected relation
+     * @type function
+     * @public
+     */
     onRelationNameChange: (newName: string) => void,
-    // handler of change of the name of the column at given index in the current selected relation
+    /**
+     * handler of change of the name of the column at given index in the current selected relation
+     * @type function
+     * @public
+     */
     onColumnNameChange: (columnName: string, columnIndex: number) => void,
-    // handler of change of the type of the column at given index in the current selected relation
+    /**
+     * handler of change of the type of the column at given index in the current selected relation
+     * @type function
+     * @public
+     */
     onColumnTypeChange: (columnType: SupportedColumnType, columnIndex: number) => void,
-    // handler of change of the row input at given column/row index in the current selected relation
+    /**
+     * handler of change of the row input at given column/row index in the current selected relation
+     * @type function
+     * @public
+     */
     onRowInputChange: (input: string, columnIndex: number, rowIndex: number) => void,
-    // handler of adding a new row in the current selected relation
+    /**
+     * handler of adding a new row in the current selected relation
+     * @type function
+     * @public
+     */
     onNewRow: (onDone: () => void) => void,
-    // handler of adding a new column in the current selected relation
+    /**
+     * handler of adding a new column in the current selected relation
+     * @type function
+     * @public
+     */
     onNewColumn: (onDone: () => void) => void,
-    // handler of deleting the row on given index
+    /**
+     * handler of deleting the row on given index
+     * @type function
+     * @public
+     */
     onDeleteRow: (rowIndex: number) => void,
-    // handler of deleting the column on given index
+    /**
+     * handler of deleting the column on given index
+     * @type function
+     * @public
+     */
     onDeleteColumn: (columnIndex: number) => void,
-
-    // handler of selecting a different relation as current
+    /**
+     * handler of selecting a different relation as current
+     * @type function
+     * @public
+     */
     onSelectDifferentRelation: (newIndex: number) => void,
-    // handler of moving a relation on a new position using drag and drop
+    /**
+     * handler of moving a relation on a new position using drag and drop
+     * @type function
+     * @public
+     */
     onDragRelation: (from: number, to: number) => void,
-    // handler of creating a new relation
+    /**
+     * handler of creating a new relation
+     * @type function
+     * @public
+     */
     onNewRelation: () => void,
-    // handler of loading the current selected relation into the application
+    /**
+     * handler of loading the current selected relation into the application
+     * @type function
+     * @public
+     */
     onLoadRelation: (onDone: (msg: string) => void) => void,
-    // handler of deleting the current stored relation
+    /**
+     * handler of deleting the current stored relation
+     * @type function
+     * @public
+     */
     onDeleteStoredRelation: () => void,
-
+    /**
+     * handler of reverting the current relation to its last saved (valid) state
+     * @type function
+     * @public
+     */
     onRevertRelation: () => void,
-
-    // handler of loading all valid relations into the application
+    /**
+     * handler of loading all valid relations into the application
+     * @type function
+     * @public
+     */
     onLoadAllRelations: (onDone: (msg: string) => void) => void,
-    // handler of deleting the loaded relations
+    /**
+     * handler of deleting the loaded relations
+     * @type function
+     * @public
+     */
     onRemoveLoadedRelations: (onDone: (msg: string) => void) => void,
-    // handler of saving the stored relations into the files
+    /**
+     * handler of saving the stored relations into the files
+     * @type function
+     * @public
+     */
     onExportRelations: (onDone: (msg: string) => void) => void,
-    // handler of loading new relations from files
+    /**
+     * handler of loading new relations from files
+     * @type function
+     * @public
+     */
     onImportRelations: (onDone: (msg: string) => void) => void,
-
-    // whether to support null values
+    /**
+     * whether to support null values
+     * @type boolean
+     * @public
+     */
     nullValuesSupport: boolean,
-    // current application language
+    /**
+     * current application language
+     * @type LanguageDef
+     * @public
+     */
     language: LanguageDef
 }
 
@@ -70,6 +162,9 @@ interface RelationsSectionState {
 
 /**
  * Section to type the RA expression. It contains textarea for relations definition and control buttons.
+ * Accepts {@link RelationsSectionProps} props.
+ * @category Components
+ * @public
  */
 export class RelationsSection extends React.Component<RelationsSectionProps, RelationsSectionState> {
 

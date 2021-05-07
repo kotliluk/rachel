@@ -1,19 +1,22 @@
-import RASemanticError from "./raSemanticError";
-import RASyntaxError from "./raSyntaxError";
-import CodeError from "./codeError";
+import {RASemanticError} from "./raSemanticError";
+import {RASyntaxError} from "./raSyntaxError";
+import {CodeError} from "./codeError";
 import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Factory for creating custom application errors: CodeError, RASemanticError, RASyntaxError.
  * It creates an error message by given error code and string parameters.
+ * @category Errors
+ * @public
  */
 export class ErrorFactory {
 
     /**
-     * Creates a new code error. Params are used to join error messages. See CodeErrorMessages interface definition.
+     * Creates a new code error. Params are used to join error messages.
      *
-     * @param msg predefined error description
-     * @param params textual specification
+     * @param msg predefined error description {@link CodeErrorMessages} {@type string[]}
+     * @param params textual specification {@type ...string}
+     * @public
      */
     public static codeError(msg: string[], ...params: string[]): CodeError {
         assertParamsCount(msg.length - 1, params);
@@ -21,11 +24,12 @@ export class ErrorFactory {
     }
 
     /**
-     * Creates a new RASemanticError. Params are used to join error messages. See SemanticErrorMessages interface definition.
+     * Creates a new RASemanticError. Params are used to join error messages.
      *
-     * @param msg predefined error description
-     * @param range text range of the error in the input when defined
-     * @param params textual specification
+     * @param msg predefined error description {@link SemanticErrorMessages} {@type string[]}
+     * @param range text range of the error in the input when defined {@type StartEndPair?}
+     * @param params textual specification {@type ...string}
+     * @public
      */
     public static semanticError(msg: string[], range: StartEndPair | undefined, ...params: string[]): RASemanticError {
         assertParamsCount(msg.length - 1, params);
@@ -33,11 +37,12 @@ export class ErrorFactory {
     }
 
     /**
-     * Creates a new RASyntaxError. Params are used to join error messages. See SyntaxErrorMessages interface definition.
+     * Creates a new RASyntaxError. Params are used to join error messages.
      *
-     * @param msg predefined error description
-     * @param range text range of the error in the input when defined
-     * @param params textual specification
+     * @param msg predefined error description {@link SyntaxErrorMessages} {@type string[]}
+     * @param range text range of the error in the input when defined {@type StartEndPair?}
+     * @param params textual specification {@type ...string}
+     * @public
      */
     public static syntaxError(msg: string[], range: StartEndPair | undefined, ...params: string[]): RASyntaxError {
         assertParamsCount(msg.length - 1, params);
@@ -47,10 +52,7 @@ export class ErrorFactory {
 
 /**
  * Extends the given params array with empty strings to have the length of expectedCount. When the initial length of the
- * given params array is same or greater, the array is not changed.
- *
- * @param expectedCount
- * @param params
+ * given params array is the same or greater, the array is not changed.
  */
 export function assertParamsCount(expectedCount: number, params: string[]): void {
     if (params.length !== expectedCount) {

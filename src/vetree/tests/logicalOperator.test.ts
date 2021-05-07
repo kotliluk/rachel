@@ -1,4 +1,4 @@
-import Row from "../../relation/row";
+import {Row} from "../../relation/row";
 import {LogicalOperator} from "../logicalOperator";
 import {ColumnContent, SupportedColumnType} from "../../relation/columnType";
 import {LiteralValue} from "../literalValue";

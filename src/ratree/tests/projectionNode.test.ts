@@ -1,7 +1,7 @@
-import Relation from "../../relation/relation";
-import Row from "../../relation/row";
-import ProjectionNode from "../projectionNode";
-import RelationNode from "../relationNode";
+import {Relation} from "../../relation/relation";
+import {Row} from "../../relation/row";
+import {ProjectionNode} from "../projectionNode";
+import {RelationNode} from "../relationNode";
 import {IndexedString} from "../../types/indexedString";
 
 const sourceRelation: Relation = new Relation("Auto");

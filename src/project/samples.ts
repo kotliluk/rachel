@@ -1,7 +1,22 @@
 import {Project} from "./project";
 
+/**
+ * Sample of the application {@link Project} with a name.
+ * @category Project
+ * @public
+ */
 export interface ProjectSample {
+    /**
+     * name of the sample
+     * @type string
+     * @public
+     */
     name: string,
+    /**
+     * sample project
+     * @type Project
+     * @public
+     */
     project: Project
 }
 
@@ -222,6 +237,10 @@ const samples: ProjectSample[] = [
 
 /**
  * Returns prepared project samples.
+ *
+ * @return {@type ProjectSample[]}
+ * @category Project
+ * @public
  */
 export function getSamples(): ProjectSample[] {
     return samples;

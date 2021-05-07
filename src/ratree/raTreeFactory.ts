@@ -1,30 +1,34 @@
-import RATreeNode from "./raTreeNode";
-import ProjectionNode from "./projectionNode";
-import RenameNode from "./renameNode";
-import SelectionNode from "./selectionNode";
-import UnaryNode, {UnaryNodeClass} from "./unaryNode";
-import AntijoinNode, {AntijoinType} from "./antijoinNode";
-import CartesianProductNode from "./cartesianProductNode";
-import DivisionNode from "./divisionNode";
-import OuterJoinNode, {OuterJoinType} from "./outerJoinNode";
-import NaturalJoinNode, {NaturalJoinType} from "./naturalJoinNode";
-import SetOperationNode, {SetOperationType} from "./setOperationNode";
-import BinaryNode, {BinaryNodeClass} from "./binaryNode";
+import {RATreeNode} from "./raTreeNode";
+import {ProjectionNode} from "./projectionNode";
+import {RenameNode} from "./renameNode";
+import {SelectionNode} from "./selectionNode";
+import {UnaryNode, UnaryNodeClass} from "./unaryNode";
+import {AntijoinNode, AntijoinType} from "./antijoinNode";
+import {CartesianProductNode} from "./cartesianProductNode";
+import {DivisionNode} from "./divisionNode";
+import {OuterJoinNode, OuterJoinType} from "./outerJoinNode";
+import {NaturalJoinNode, NaturalJoinType} from "./naturalJoinNode";
+import {SetOperationNode, SetOperationType} from "./setOperationNode";
+import {BinaryNode, BinaryNodeClass} from "./binaryNode";
 import {IndexedString} from "../types/indexedString";
-import ThetaJoinNode, {ThetaJoinType} from "./thetaJoinNode";
+import {ThetaJoinNode, ThetaJoinType} from "./thetaJoinNode";
 
 /**
  * Factory for creating unary and binary nodes of given class.
+ * @category RATree
+ * @public
  */
-export default class RATreeFactory {
+export class RATreeFactory {
 
     /**
      * Creates new unary node of given class.
      *
-     * @param unaryClass wanted class
-     * @param subtree source subtree for a node
-     * @param nullValuesSupport whether null values are supported
-     * @param expr expression used to specify node's behavior
+     * @param unaryClass wanted class {@type UnaryNodeClass}
+     * @param subtree source subtree for a node {@type RATreeNode}
+     * @param nullValuesSupport whether null values are supported {@type boolean}
+     * @param expr expression used to specify node's behavior {@type IndexedString}
+     * @return created unary node {@type UnaryNode}
+     * @public
      */
     public static createUnary(unaryClass: UnaryNodeClass, subtree: RATreeNode,
                               nullValuesSupport: boolean, expr: IndexedString): UnaryNode {
@@ -41,11 +45,13 @@ export default class RATreeFactory {
     /**
      * Creates new binary node of given class.
      *
-     * @param binaryClass wanted class
-     * @param left left source subtree for a node
-     * @param right right source subtree for a node
-     * @param nullValuesSupport whether null values are supported
-     * @param expr expression used to specify node's behavior
+     * @param binaryClass wanted class {@type BinaryNodeClass}
+     * @param left left source subtree for a node {@type RATreeNode}
+     * @param right right source subtree for a node {@type RATreeNode}
+     * @param nullValuesSupport whether null values are supported {@type boolean}
+     * @param expr expression used to specify node's behavior {@type IndexedString}
+     * @return created binary node {@type BinaryNode}
+     * @public
      */
     public static createBinary(binaryClass: BinaryNodeClass, left: RATreeNode, right: RATreeNode,
                                nullValuesSupport: boolean, expr: IndexedString): BinaryNode {

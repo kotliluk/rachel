@@ -1,9 +1,9 @@
-import Relation from "../../relation/relation";
-import Row from "../../relation/row";
-import RelationNode from "../relationNode";
-import SetOperationNode, {SetOperationType} from "../setOperationNode";
+import {Relation} from "../../relation/relation";
+import {Row} from "../../relation/row";
+import {RelationNode} from "../relationNode";
+import {SetOperationNode, SetOperationType} from "../setOperationNode";
 import {IndexedString} from "../../types/indexedString";
-import SelectionNode from "../selectionNode";
+import {SelectionNode} from "../selectionNode";
 
 describe('eval' , () => {
     describe('union', () => {

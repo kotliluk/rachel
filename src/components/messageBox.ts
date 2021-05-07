@@ -4,6 +4,11 @@ import "./css/messageBox.css"
 const cssConstants: CSSStyleDeclaration = getComputedStyle(document.querySelector(':root'));
 const boxMargin: number = Number(cssConstants.getPropertyValue('--message-box-margin-num'));
 
+/**
+ * Class for displaying messages and errors to the user in a pop-up box.
+ * @category Components
+ * @public
+ */
 export class MessageBox {
 
     private static readonly hideTimeout: number = 5000;
@@ -73,6 +78,8 @@ export class MessageBox {
 
     /**
      * Displays given message in a message box fixed on the page bottom.
+     * @param msg message to display {@type string}
+     * @public
      */
     public static message(msg: string): void {
         MessageBox.display(msg, false);
@@ -80,6 +87,8 @@ export class MessageBox {
 
     /**
      * Displays given error in a message box fixed on the page bottom.
+     * @param msg error to display {@type string}
+     * @public
      */
     public static error(msg: string): void {
         MessageBox.display(msg, true);

@@ -1,24 +1,22 @@
-import Relation from "../relation/relation";
+import {Relation} from "../relation/relation";
 import {ErrorFactory} from "../error/errorFactory";
 import {
-    BinaryOperatorToken,
-    ClosingParenthesis,
-    ExprToken,
-    OpeningParenthesis,
-    ParenthesisToken,
-    RelationToken,
-    UnaryOperatorToken
+  BinaryOperatorToken,
+  ClosingParenthesis,
+  ExprToken,
+  OpeningParenthesis,
+  ParenthesisToken,
+  RelationToken,
+  UnaryOperatorToken
 } from "./exprTokens";
-import StringUtils from "../utils/stringUtils";
-import CodeError from "../error/codeError";
-import RATreeNode from "../ratree/raTreeNode";
-import RelationNode from "../ratree/relationNode";
-import {
-    IndexedString
-} from "../types/indexedString";
-import IndexedStringUtils from "../utils/indexedStringUtils";
-import ErrorWithTextRange from "../error/errorWithTextRange";
-import RATreeFactory from "../ratree/raTreeFactory";
+import {StringUtils} from "../utils/stringUtils";
+import {CodeError} from "../error/codeError";
+import {RATreeNode} from "../ratree/raTreeNode";
+import {RelationNode} from "../ratree/relationNode";
+import {IndexedString} from "../types/indexedString";
+import {IndexedStringUtils} from "../utils/indexedStringUtils";
+import {ErrorWithTextRange} from "../error/errorWithTextRange";
+import {RATreeFactory} from "../ratree/raTreeFactory";
 import {language} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";
 
@@ -32,16 +30,44 @@ enum AssertType {
 }
 
 /**
- * StringUtils of relational algebra expressions. Provides parsing function parse(String expr) and additional
- * helping functions and predicates. Uses IndexedString to describe error ranges in thrown errors.
+ * Fake parsing result in {@link ExprParser}.
+ * @category Expression
+ * @public
+ */
+export interface ExprFakeParseResult {
+    /**
+     * found words to whisper (relation or column names)
+     * @type string[]
+     * @public
+     */
+    whispers: string[],
+    /**
+     * detected errors
+     * @type ErrorWithTextRange[]
+     * @public
+     */
+    errors: ErrorWithTextRange[],
+    /**
+     * pairs of indexes with parentheses
+     * @type StartEndPair[]
+     * @public
+     */
+    parentheses: StartEndPair[]
+}
+
+/**
+ * Parser of relational algebra expressions from textual inputs.
+ * @category Expression
+ * @public
  */
 export class ExprParser {
 
     /**
      * Creates a parser with given source relations.
      *
-     * @param relations Map with relations' names as keys and relation themselves as values used as source for leave nodes
-     * @param nullValuesSupport whether to support null values
+     * @param relations map of relations used as source for leave nodes {@type Map<String, Relation>}
+     * @param nullValuesSupport whether to support null values {@type boolean}
+     * @public
      */
     public constructor(readonly relations: Map<string, Relation>, readonly nullValuesSupport: boolean) {}
 
@@ -50,27 +76,29 @@ export class ExprParser {
      * Expression is expected to respect following constraints:
      * - all relation's and column's names contain letters, numbers and underscores only
      * - all relation's and column's names start with a letter
-     * - used operations must be in a practical notation and be well-structured
-     * - comment begins with '//' and ends with newline
+     * - used operations must be in a simplified notation and be well-structured
+     * - line comments begin with '//' and ends with newline
+     * - block comments begins with '/*' and ends with '* /'
      *
      * Supported operations are:
      * - projection of columns: Relation[projectedColumn1, ...]
      * - selection of rows: Relation(condition)
      * - rename of columns: Relation<oldName -> newName, ...>
-     * - cartesian product: A \u2a2f B
+     * - cartesian product: A ⨯ B
      * - natural join: A * B
      * - theta join: A [condition] B
      * - left and right semijoin: A <* B and A *> B
-     * - left and right antijoin: A \u22b3 B and A \u22b2 B
+     * - left and right antijoin: A ⊳ B and A ⊲ B
      * - left and right theta semijoin: A <condition] B and A [condition> B
-     * - division: A \u00f7 B
+     * - division: A ÷ B
      * - left, right and full outer join: A *L* B, A *R* B and A *F* B
-     * - union, intersection and difference: A \u222a B, A \u2229 B and A \ B
+     * - union, intersection and difference: A ∪ B, A ∩ B and A \ B
      *
-     * See ValueParser for condition constraints.
+     * See {@link ValueParser} for condition-subexpressions constraints.
      *
-     * @param expr relational algebra expression in expected format
-     * @return tree structure of 'expr'
+     * @param expr relational algebra expression in expected format {@type string}
+     * @return tree structure of the given expression {@type RATreeNode}
+     * @public
      */
     public parse(expr: string): RATreeNode {
         const {str, err} = IndexedStringUtils.deleteAllComments(IndexedString.new(expr));
@@ -92,9 +120,14 @@ export class ExprParser {
      * If the cursor is located inside any RA operator, which uses relation columns, returns list of available column
      * names at given place.
      * If a parsing error occurs, it is faked to work or ignored and reported in returning errors array.
+     * For supported operations see {@link parse}.
+     *
+     * @param expr input expression to fake parse {@type string}
+     * @param cursorIndex current index of the cursor {@type number}
+     * @return parsed information {@type ExprFakeParseResult}
+     * @public
      */
-    public fakeParse(expr: string, cursorIndex: number):
-      {whispers: string[], errors: ErrorWithTextRange[], parentheses: StartEndPair[]} {
+    public fakeParse(expr: string, cursorIndex: number): ExprFakeParseResult {
         if (expr.trim() === "") {
             return {whispers: [...this.relations.keys()], errors: [], parentheses: []};
         }

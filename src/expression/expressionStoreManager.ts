@@ -3,21 +3,41 @@ import {saveAs} from "file-saver";
 import {Expression} from "./expression";
 
 /**
- * Promised relation in ExpressionStoreManager.load() function. Contains:
- * - expressions: Expression[] - successfully parsed expressions
- * - skippedExpressions: number - number of skipped expressions (from successfully loaded files)
- * - loadedFiles: number - number of successfully loaded files
- * - skippedFiles: number - number of skipped files (not .txt, null loaded...)
+ * Promised expression information in {@link ExpressionStoreManager}.load() function.
+ * @category Expression
+ * @public
  */
 export interface ExpressionLoadData {
+    /**
+     * successfully parsed expressions
+     * @type Expression[]
+     * @public
+     */
     expressions: Expression[],
+    /**
+     * number of skipped expressions (from successfully loaded files)
+     * @type number
+     * @public
+     */
     skippedExpressions: number,
+    /**
+     * number of successfully loaded files
+     * @type number
+     * @public
+     */
     loadedFiles: number,
+    /**
+     * number of skipped files (not .txt, null loaded...)
+     * @type number
+     * @public
+     */
     skippedFiles: number
 }
 
 /**
  * Class for loading and saving expressions.
+ * @category Expression
+ * @public
  */
 export class ExpressionStoreManager {
 
@@ -25,6 +45,9 @@ export class ExpressionStoreManager {
      * Loads expressions from multiple textual files selected by the user. Each file can contain multiple expressions,
      * split by '\n###\n'. When different line separator is used (\r, \r\n), it is replaced by \n before return.
      * All tabulators are replaces by 4 spaces.
+     *
+     * @return information about loaded expressions in a promise {@type Promise<ExpressionLoadData>}
+     * @public
      */
     public static load(): Promise<ExpressionLoadData> {
         return new Promise<ExpressionLoadData>(resolve => {
@@ -84,8 +107,9 @@ export class ExpressionStoreManager {
     /**
      * Saves given expressions to a textual file. Each expression starts with "### Expression name ###\n" line.
      *
-     * @param expressions array of expressions to be saved
-     * @param filename name of the downloaded file (without extension)
+     * @param expressions array of expressions to be saved {@type Expression[]}
+     * @param filename name of the downloaded file (without extension) {@type string}
+     * @public
      */
     public static save(expressions: Expression[], filename: string): void {
         const textContent: string = expressions.map(e => {

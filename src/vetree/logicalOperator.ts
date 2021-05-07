@@ -1,12 +1,13 @@
-import Row from "../relation/row";
-import {VETreeNode} from "./veTreeNode";
-import {ColumnContent, SupportedColumnType} from "../relation/columnType";
+import {Row} from "../relation/row";
+import {VEResult, VETreeNode} from "./veTreeNode";
 import {ErrorFactory} from "../error/errorFactory";
 import {IndexedString} from "../types/indexedString";
 import {language} from "../language/language";
 
 /**
- * Types of LogicalOperator class.
+ * Enum of types of LogicalOperator class.
+ * @category VETree
+ * @public
  */
 enum LogicalOperatorType {
     and,
@@ -16,15 +17,20 @@ enum LogicalOperatorType {
 
 /**
  * Logical operator chains boolean values and produces new ones.
+ * @extends VETreeNode
+ * @category VETree
+ * @public
  */
 export class LogicalOperator extends VETreeNode {
 
     /**
      * Creates an 'and' logical operator.
      *
-     * @param operator String representing an 'and' in input (used to printing)
-     * @param left Left subtree evaluating to a boolean value
-     * @param right Right subtree evaluating to a boolean value
+     * @param operator String representing an 'and' in input (used to printing) {@type IndexedString}
+     * @param left Left subtree evaluating to a boolean value {@type VETreeNode}
+     * @param right Right subtree evaluating to a boolean value {@type VETreeNode}
+     * @return new LogicalOperator instance of and type {@type LogicalOperator}
+     * @public
      */
     public static and(operator: IndexedString, left: VETreeNode, right: VETreeNode): LogicalOperator {
         return new LogicalOperator(LogicalOperatorType.and, operator, left, right);
@@ -33,9 +39,11 @@ export class LogicalOperator extends VETreeNode {
     /**
      * Creates an 'or' logical operator.
      *
-     * @param operator String representing an 'or' in input (used to printing)
-     * @param left Left subtree evaluating to a boolean value
-     * @param right Right subtree evaluating to a boolean value
+     * @param operator String representing an 'or' in input (used to printing) {@type IndexedString}
+     * @param left Left subtree evaluating to a boolean value {@type VETreeNode}
+     * @param right Right subtree evaluating to a boolean value {@type VETreeNode}
+     * @return new LogicalOperator instance of and type {@type LogicalOperator}
+     * @public
      */
     public static or(operator: IndexedString, left: VETreeNode, right: VETreeNode): LogicalOperator {
         return new LogicalOperator(LogicalOperatorType.or, operator, left, right);
@@ -44,8 +52,10 @@ export class LogicalOperator extends VETreeNode {
     /**
      * Creates a 'not' logical operator.
      *
-     * @param operator String representing a 'not' in input (used to printing)
-     * @param subtree Subtree evaluating to a boolean value
+     * @param operator String representing a 'not' in input (used to printing) {@type IndexedString}
+     * @param subtree Subtree evaluating to a boolean value {@type VETreeNode}
+     * @return new LogicalOperator instance of and type {@type LogicalOperator}
+     * @public
      */
     public static not(operator: IndexedString, subtree: VETreeNode): LogicalOperator {
         return new LogicalOperator(LogicalOperatorType.not, operator, subtree);
@@ -60,12 +70,12 @@ export class LogicalOperator extends VETreeNode {
      * Evaluates recursively subtrees and transforms their boolean results into a new boolean.
      * If any subtree evaluates to string or number, throws error.
      *
-     * @param source row with actual values of columns recursively passed to leaf reference nodes
-     * @return boolean comparing left and right subtrees' values
+     * @param source row with actual values of columns recursively passed to leaf reference nodes {@type Row}
+     * @return boolean comparing left and right subtree values {@type VEResult}
+     * @public
      */
     public eval(source: Row): { value: boolean, type: "boolean" } {
-
-        const leftResult: { value: ColumnContent, type: SupportedColumnType | "null" } = this.left.eval(source);
+        const leftResult: VEResult = this.left.eval(source);
         if (leftResult.type !== "boolean") {
             throw ErrorFactory.syntaxError(language().syntaxErrors.logicalOperator_leftInputNotBoolean,
                 this.operator.getRange(), this.operator.toString(), leftResult.type);
@@ -79,7 +89,7 @@ export class LogicalOperator extends VETreeNode {
         }
         else {
             // @ts-ignore (in and/or operations right subtree must exist)
-            const rightResult: { value: ColumnContent, type: SupportedColumnType | "null" } = this.right.eval(source);
+            const rightResult: VEResult = this.right.eval(source);
             if (rightResult.type !== "boolean") {
                 throw ErrorFactory.syntaxError(language().syntaxErrors.logicalOperator_rightInputNotBoolean,
                     this.operator.getRange(), this.operator.toString(), rightResult.type);
@@ -110,6 +120,12 @@ export class LogicalOperator extends VETreeNode {
         }
     }
 
+    /**
+     * Returns string representation of the node.
+     *
+     * @return string representation of the node {@type string}
+     * @public
+     */
     public toString(): string {
         if (this.type === LogicalOperatorType.not) {
             return this.operator.toString() + "(" + this.left.toString() + ")";

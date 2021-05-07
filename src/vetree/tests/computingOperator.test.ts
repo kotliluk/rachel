@@ -1,5 +1,5 @@
 import {LiteralValue} from "../literalValue";
-import Row from "../../relation/row";
+import {Row} from "../../relation/row";
 import {ColumnContent, SupportedColumnType} from "../../relation/columnType";
 import {ComputingOperator} from "../computingOperator";
 

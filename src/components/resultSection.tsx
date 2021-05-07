@@ -1,10 +1,10 @@
 import React from "react";
 // @ts-ignore - type declaration is not needed for its short usage
 import downloadSVG from "export-svg-with-styles";
-import Relation from "../relation/relation";
+import {Relation} from "../relation/relation";
 import {ResultRelationTable} from "./resultRelationTable";
 import {TooltipButton} from "./tooltipButton";
-import RATreeNode from "../ratree/raTreeNode";
+import {RATreeNode} from "../ratree/raTreeNode";
 import {CsvValueSeparator} from "../types/csvSupport";
 import {evalTreeSVGId, EvaluationTree} from "./evaluationTree";
 import {depthSearch} from "../ratree/raTreeTools";
@@ -14,23 +14,53 @@ import {StoredRelation} from "../relation/storedRelation";
 import "./css/resultSection.css"
 import {language, LanguageDef} from "../language/language";
 
+/**
+ * Props of ResultSection component.
+ * @category Components
+ * @public
+ */
 interface ResultSectionProps {
-    // the root of the current evaluation tree to display
+    /**
+     * the root of the current evaluation tree to display
+     * @type RATreeNode
+     * @public
+     */
     evaluationTreeRoot: RATreeNode,
-    // name of the evaluated expression
+    /**
+     * name of the evaluated expression
+     * @type string
+     * @public
+     */
     expressionName: string,
-
-    // handler of adding the given relation to defined relations
+    /**
+     * handler of adding the given relation to defined relations
+     * @type function
+     * @public
+     */
     onAddResult: (relation: Relation) => void,
-
-    // handler of unexpected errors
+    /**
+     * handler of unexpected errors
+     * @type function
+     * @public
+     */
     onUnexpectedError: (e: Error) => void,
-
-    // current selected value separator in csv files
-    csvValueSeparator: CsvValueSeparator
-    // true if dark theme should be applied
+    /**
+     * current selected value separator in csv files
+     * @type CsvValueSeparator
+     * @public
+     */
+    csvValueSeparator: CsvValueSeparator,
+    /**
+     * true if dark theme should be applied
+     * @type boolean
+     * @public
+     */
     darkTheme: boolean,
-    // current application language
+    /**
+     * current application language
+     * @type LanguageDef
+     * @public
+     */
     language: LanguageDef
 }
 
@@ -41,6 +71,9 @@ interface ResultSectionState {
 /**
  * Section to show the evaluation result. It contains a table with a result and text input and buttons to save it.
  * The component is hidden if given resultRelation is null.
+ * Accepts {@link ResultSectionProps} props.
+ * @category Components
+ * @public
  */
 export class ResultSection extends React.Component<ResultSectionProps, ResultSectionState> {
 

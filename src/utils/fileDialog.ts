@@ -1,17 +1,36 @@
+/**
+ * Textual file information.
+ * @category Utils
+ * @public
+ */
 export interface File {
+    /**
+     * name of the file
+     * @type string
+     * @public
+     */
     name: string,
+    /**
+     * textual content of the file
+     * @type string?
+     * @public
+     */
     text: string | null
 }
 
 /**
  * FileDialog for loading files to the application.
+ * @category Utils
+ * @public
  */
 export class FileDialog {
 
     /**
      * Loads asynchronously a textual content from one file selected by the user in the file browser.
      *
-     * @param accept comma-separated list of extensions for filter (default are all extensions)
+     * @param accept comma-separated list of extensions for filter (default are all extensions) {@type string}
+     * @return a file in a promise {@type Promise<File>}
+     * @public
      */
     public static openFile(accept: string = "*"): Promise<File> {
         return new Promise<File>(resolve => {
@@ -37,7 +56,9 @@ export class FileDialog {
     /**
      * Asynchronously loads textual content from multiple files selected by the user in the file browser.
      *
-     * @param accept comma-separated list of extensions for filter (default are all extensions)
+     * @param accept comma-separated list of extensions for filter (default are all extensions) {@type string}
+     * @return array of files in a promise {@type Promise<File[]>}
+     * @public
      */
     public static openFiles(accept: string = "*"): Promise<File[]> {
         return new Promise<File[]>(resolve => {
@@ -49,8 +70,7 @@ export class FileDialog {
      * Loads textual content from multiple files selected by the user in the file browser.
      * Multiple file input handling inspired by xaedes on https://stackoverflow.com/a/13975217.
      *
-     * @param resolve - function called when the loading is done, it should accept an array of file information
-     * {name: string, text: string | null}[] where name contains the filename and text contains the content of the file.
+     * @param resolve - resolving function accepting an array of file information
      * @param accept comma-separated list of extensions for filter
      */
     private static openFilesHelper(resolve: (files: File[]) => void, accept: string): void {

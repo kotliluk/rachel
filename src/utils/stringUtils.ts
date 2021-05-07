@@ -1,24 +1,34 @@
 import {ErrorFactory} from "../error/errorFactory";
-import RASyntaxError from "../error/raSyntaxError";
+import {RASyntaxError} from "../error/raSyntaxError";
 import {language} from "../language/language";
+import {Pair} from "../types/pair";
 
 /**
  * Class providing general helper functions for strings.
+ * @category Utils
+ * @public
  */
-export default class StringUtils {
+export class StringUtils {
 
     /**
-     * @param str Checked string
-     * @return true if the string contains letters only and has length at least 1
+     * Returns true if the string contains letters only and has length at least 1.
+     *
+     * @param str Checked string {@type string}
+     * @return true if the string contains letters only and has length at least 1 {@type boolean}
+     * @public
      */
     public static isWord(str: string): boolean {
         return str.length > 0 && str.split("").every(c => StringUtils.isLetter(c));
     }
 
     /**
-     * @param str Checked string
+     * Returns true if the string contains letters, numbers and underscores only, has length at least 1 and starts with
+     * a letter or an underscore.
+     *
+     * @param str Checked string {@type string}
      * @return true if the string contains letters, numbers and underscores only, has length at least 1 and starts with
-     * a letter or an underscore
+     * a letter or an underscore {@type boolean}
+     * @public
      */
     public static isName(str: string): boolean {
         if (str.length === 0) {
@@ -31,8 +41,11 @@ export default class StringUtils {
     }
 
     /**
-     * @param str Checked string
-     * @return true if the string contains whitespaces only
+     * Returns true if the string contains whitespaces only.
+     *
+     * @param str Checked string {@type string}
+     * @return true if the string contains whitespaces only {@type boolean}
+     * @public
      */
     public static isWhitespacesOnly(str: string): boolean {
         const regex = /\s*/;
@@ -41,32 +54,44 @@ export default class StringUtils {
     }
 
     /**
-     * @param c Checked character
-     * @return true if the given string has length one and the character is a letter
+     * Returns true if the given string has length one and the character is a letter.
+     *
+     * @param c Checked character {@type string}
+     * @return true if the given string has length one and the character is a letter {@type boolean}
+     * @public
      */
     public static isLetter(c: string): boolean {
         return c.length === 1 && c.toLowerCase() !== c.toUpperCase();
     }
 
     /**
-     * @param c Checked character
-     * @return true if the given string has length one and the character is a letter, a number or an underscore
+     * Returns true if the given string has length one and the character is a letter, a number or an underscore.
+     *
+     * @param c Checked character {@type string}
+     * @return true if the given string has length one and the character is a letter, a number or an underscore {@type boolean}
+     * @public
      */
     public static isNameChar(c: string): boolean {
         return StringUtils.isLetter(c) || StringUtils.isDigit(c) || c === '_';
     }
 
     /**
-     * @param c Checked character
-     * @return true if the given string has length one and the character is a digit
+     * Returns true if the given string has length one and the character is a digit.
+     *
+     * @param c Checked character {@type string}
+     * @return true if the given string has length one and the character is a digit {@type boolean}
+     * @public
      */
     public static isDigit(c: string): boolean {
         return c.length === 1 && c.match(/\d/) !== null;
     }
 
     /**
-     * @param str Checked string
-     * @return true if the string represents a decimal number
+     * Returns true if the string represents a decimal number.
+     *
+     * @param str Checked string {@type string}
+     * @return true if the string represents a decimal number {@type boolean}
+     * @public
      */
     public static isNumber(str: string): boolean {
         return /^[-]?[\d]+([.][\d]+)?$/.test(str);
@@ -76,10 +101,11 @@ export default class StringUtils {
      * Splits given string to a starting sequence of letters and its rest and returns these parts in a pair.
      * NOTE: if the string does not start with a letter, as a word is returned an empty string.
      *
-     * @param str string to be split
-     * @return split string in a pair { word, rest }
+     * @param str string to be split {@type string}
+     * @return split string in a pair (word, rest) {@type Pair<string>}
+     * @public
      */
-    public static nextWord(str: string): { first: string, second: string } {
+    public static nextWord(str: string): Pair<string> {
         if (str === "") {
             return { first: "", second: "" };
         }
@@ -98,10 +124,11 @@ export default class StringUtils {
      * an underscore and its rest and returns these parts in a pair.
      * NOTE: if the string does not start with a letter, or an underscore, as a name is returned an empty string.
      *
-     * @param str string to be split
-     * @return split string in a pair { name, rest }
+     * @param str string to be split {@type string}
+     * @return split string in a pair (name, rest) {@type Pair<string>}
+     * @public
      */
-    public static nextName(str: string): { first: string, second: string } {
+    public static nextName(str: string): Pair<string> {
         if (str === "") {
             return { first: "", second: "" };
         }
@@ -122,10 +149,11 @@ export default class StringUtils {
     /**
      * Splits given string to a starting sequence of non-whitespace characters and its rest and returns these parts in a pair.
      *
-     * @param str string to be split
-     * @return split string in a pair { word, rest }
+     * @param str string to be split {@type string}
+     * @return split string in a pair (start, rest) {@type Pair<string>}
+     * @public
      */
-    public static nextNonWhitespacePart(str: string): { first: string, second: string } {
+    public static nextNonWhitespacePart(str: string): Pair<string> {
         if (str === "") {
             return { first: "", second: "" };
         }
@@ -143,10 +171,11 @@ export default class StringUtils {
      * Splits given string to a starting number and its rest and returns these parts in a pair.
      * NOTE: if the string does not start with a digit, as a number is returned an empty string.
      *
-     * @param str string to be split
-     * @return split string in a pair (word, rest)
+     * @param str string to be split {@type string}
+     * @return split string in a pair (word, rest) {@type Pair<string>}
+     * @public
      */
-    static nextNumber(str: string): { first: string, second: string } {
+    static nextNumber(str: string): Pair<string> {
         if (str === "") {
             return { first: "", second: "" };
         }
@@ -195,8 +224,9 @@ export default class StringUtils {
      * => the error is not thrown, it is only added to the return object.
      * NOTE: First character of the string is expected to be '"'.
      *
-     * @param str string to be split
-     * @return pair of the starting bordered part and the rest
+     * @param str string to be split {@type string}
+     * @return the starting quoted part, the rest, and optimal error {@type Object}
+     * @public
      */
     static nextQuotedString(str: string): { first: string, second: string, error: RASyntaxError | undefined } {
         let i: number = 1;
@@ -243,13 +273,14 @@ export default class StringUtils {
      * NOTE: Should not be used for slicing quoted strings, use nextQuotedString instead.
      * NOTE: It is expected, that there are no comments in the given string.
      *
-     * @param str string to be split
-     * @param start starting character of the string and also starting character of the bordered part (one character)
-     * @param end ending characters of the bordered part (one or more characters)
-     * @param escape character which makes next character being ignored (default '\0')
-     * @return pair of the starting bordered part and the rest
+     * @param str string to be split {@type string}
+     * @param start starting character of the string and also starting character of the bordered part (one character) {@type string}
+     * @param end ending characters of the bordered part (one or more characters) {@type string}
+     * @param escape character which makes next character being ignored (default '\0') {@type string}
+     * @return pair of the starting bordered part and the rest {@type Pair<string>}
+     * @public
      */
-    static nextBorderedPart(str: string, start: string, end: string, escape: string = '\0'): { first: string, second: string } {
+    static nextBorderedPart(str: string, start: string, end: string, escape: string = '\0'): Pair<string> {
         let depth: number = 1;
         let i: number = 1;
         // to ignore special characters
@@ -302,9 +333,10 @@ export default class StringUtils {
      * Skips all whitespaces and exactly one given character and returns rest of the string.
      * If the string does not match this pattern, throws error.
      *
-     * @param str string to be skipped in
-     * @param char char to be skipped exactly one time (expected to be string of length 1)
-     * @return given string without starting sequence of whitespaces and exactly one char
+     * @param str string to be skipped in {@type string}
+     * @param char char to be skipped exactly one time (expected to be string of length 1) {@type string}
+     * @return given string without starting sequence of whitespaces and exactly one char {@type string}
+     * @public
      */
     public static skipWhitespacesAndChar(str: string, char: string): string {
         let charFound: boolean = false;

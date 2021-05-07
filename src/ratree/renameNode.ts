@@ -1,31 +1,35 @@
-import UnaryNode from "./unaryNode";
-import RATreeNode from "./raTreeNode";
-import StringUtils from "../utils/stringUtils";
-import Relation from "../relation/relation";
+import {UnaryNode} from "./unaryNode";
+import {RATreeNode} from "./raTreeNode";
+import {StringUtils} from "../utils/stringUtils";
+import {Relation} from "../relation/relation";
 import {SupportedColumnType} from "../relation/columnType";
-import Row from "../relation/row";
+import {Row} from "../relation/row";
 import {IndexedString} from "../types/indexedString";
 import {ErrorFactory} from "../error/errorFactory";
 import {isForbiddenColumnName} from "../utils/keywords";
-import ErrorWithTextRange from "../error/errorWithTextRange";
+import {ErrorWithTextRange} from "../error/errorWithTextRange";
 import {ISToISMap} from "../types/isToISMap";
 import {language} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Renaming node of the relational algebra syntactic tree.
+ * @extends UnaryNode
+ * @category RATree
+ * @public
  */
-export default class RenameNode extends UnaryNode {
+export class RenameNode extends UnaryNode {
 
     private readonly rename: IndexedString;
     private readonly stringRange: StartEndPair | undefined;
 
     /**
-     * Creates a new renaming node with given subtree.
+     * Creates a new RenameNode.
      * The rename string is expected to start with '<' and end with '>'.
      *
-     * @param rename string describing each renaming
-     * @param subtree source subtree for renaming
+     * @param rename string describing each renaming {@type IndexedString}
+     * @param subtree source subtree {@type RATreeNode}
+     * @public
      */
     public constructor(rename: IndexedString, subtree: RATreeNode) {
         super(subtree);
@@ -90,8 +94,11 @@ export default class RenameNode extends UnaryNode {
     }
 
     /**
+     * Evaluates the RA query in this node and its subtree.
+     * After successful call, this.resultRelation must be set to valid Relation.
      * Expectations: original names in projection pair (original -> new) are subset of the source schema,
      * new names with rest of the source schema contain no duplicity
+     * @public
      */
     public eval(): void {
         if (this.isEvaluated()) {
@@ -143,14 +150,21 @@ export default class RenameNode extends UnaryNode {
         });
         this.resultRelation = result;
     }
-
     /**
+     * Evaluates the RA query in this node and its subtree.
+     * It searches for given cursor index in parametrized nodes and if it finds it, returns the available columns.
+     * Otherwise returns the result relation schema (only column names, no rows).
+     * When an error occurs, it is faked to work, and adds it to the errors array.
+     *
      * Strict expectations: original names in projection pair (original -> new) are subset of the source schema,
      * new names with rest of the source schema contain no duplicity
      * Returned schema: if the cursor is not after the arrow '->' returns
      * (source schema minus originals) union (news whose originals were in source schema),
      * otherwise returns empty array (does not whisper to what the user should rename)
-     * Second possible approach would be to return (source schema minus originals) union (news) - less strict.
+     *
+     * @param cursorIndex index of the cursor in original text input {@type number}
+     * @return resulting relation schema gained by evaluating this node and its subtree or found columns to whisper {@type NodeFakeEvalResult}
+     * @public
      */
     public fakeEval(cursorIndex: number) {
         const source = this.subtree.fakeEval(cursorIndex);
@@ -195,14 +209,34 @@ export default class RenameNode extends UnaryNode {
         return {result, whispers, errors};
     }
 
+    /**
+     * Creates a string with a structure of the RA tree in one line.
+     *
+     * @return string with a structure of the RA tree in one line {@type string}
+     * @public
+     */
     public printInLine(): string {
         return this.subtree.printInLine() + this.getOperationSymbol();
     }
 
+    /**
+     * Return the word name of the RA operation of the node.
+     * Example: returns "Selection" for SelectionNode.
+     *
+     * @return name of the RA operation of the node {@type string}
+     * @public
+     */
     public getOperationName(): string {
         return language().operations.rename;
     }
 
+    /**
+     * Return the symbolic representation of the RA operation of the node.
+     * Example: returns "(some + expr = 15)" for SelectionNode.
+     *
+     * @return name of the RA operation of the node {@type string}
+     * @public
+     */
     public getOperationSymbol(): string {
         return this.rename.replace(/\s+/g, ' ');
     }

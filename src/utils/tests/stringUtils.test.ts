@@ -1,4 +1,4 @@
-import StringUtils from "../stringUtils";
+import {StringUtils} from "../stringUtils";
 
 describe('isWord', () => {
     test('true for only-letter-strings', () => {

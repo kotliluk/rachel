@@ -1,67 +1,131 @@
 import React from "react";
 import "./css/expressionSection.css"
-import Relation from "../relation/relation";
+import {Relation} from "../relation/relation";
 import {TooltipButton} from "./tooltipButton";
-import RASyntaxError from "../error/raSyntaxError";
-import RASemanticError from "../error/raSemanticError";
-import {XTextArea} from "./xTextArea";
+import {RASyntaxError} from "../error/raSyntaxError";
+import {RASemanticError} from "../error/raSemanticError";
+import {LocatedError, XTextArea} from "./xTextArea";
 import {ExprParser} from "../expression/exprParser";
 import {getStartOfWordBeforeIndex, sortWhispers} from "../utils/whisperUtils";
 import {Expression} from "../expression/expression";
 import {TextInput} from "./textInput";
-import ErrorWithTextRange from "../error/errorWithTextRange";
-import RATreeNode from "../ratree/raTreeNode";
+import {ErrorWithTextRange} from "../error/errorWithTextRange";
+import {RATreeNode} from "../ratree/raTreeNode";
 import {MessageBox} from "./messageBox";
 import {LanguageDef} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";
 
+/**
+ * Props of ExpressionSection component.
+ * @category Components
+ * @public
+ */
 interface ExpressionSectionProps {
-    // available expressions
+    /**
+     * available expressions
+     * @type Expression[]
+     * @public
+     */
     expressions: Expression[],
-    // index of the current selected expression in the expression list
+    /**
+     * index of the current selected expression in the expression list
+     * @type number
+     * @public
+     */
     currentExpressionIndex: number,
-
-    // loaded relations user as sources for expression evaluation
+    /**
+     * loaded relations user as sources for expression evaluation
+     * @type Map<String, Relation>
+     * @public
+     */
     relations: Map<string, Relation>,
-
-    // handler of selecting different expression as current
+    /**
+     * handler of selecting different expression as current
+     * @type function
+     * @public
+     */
     onSelectDifferentExpression: (newIndex: number) => void,
-    // handler of moving an expression on a new position using drag and drop
+    /**
+     * handler of moving an expression on a new position using drag and drop
+     * @type function
+     * @public
+     */
     onDragExpression: (from: number, to: number) => void,
-    // handler of creating the new expression
+    /**
+     * handler of creating the new expression
+     * @type function
+     * @public
+     */
     onNewExpression: () => void,
-    // handler of deleting the current expression
+    /**
+     * handler of deleting the current expression
+     * @type function
+     * @public
+     */
     onDeleteExpression: (onDone: () => void) => void,
-    // handler of saving the expressions
+    /**
+     * handler of saving the expressions
+     * @type function
+     * @public
+     */
     onExportExpressions: (onDone: (msg: string) => void) => void,
-    // handler of loading the expressions
+    /**
+     * handler of loading the expressions
+     * @type function
+     * @public
+     */
     onImportExpressions: (onDone: (msg: string) => void) => void,
-
-    // handler of change in the current selected expression
+    /**
+     * handler of change in the current selected expression
+     * @type function
+     * @public
+     */
     onChange: (name: string, text: string) => void,
-    // handler of evaluation, it accepts the parsed tree from the expression text
+    /**
+     * handler of evaluation, it accepts the parsed tree from the expression text
+     * @type function
+     * @public
+     */
     onEval: (tree: RATreeNode) => void,
-    // handler of unexpected errors
+    /**
+     * handler of unexpected errors
+     * @type function
+     * @public
+     */
     onUnexpectedError: (e: Error) => void,
-
-    // whether to support null values
+    /**
+     * whether to support null values
+     * @type boolean
+     * @public
+     */
     nullValuesSupport: boolean,
-    // true if dark theme should be applied
+    /**
+     * true if dark theme should be applied
+     * @type boolean
+     * @public
+     */
     darkTheme: boolean,
-    // current application language
+    /**
+     * current application language
+     * @type LanguageDef
+     * @public
+     */
     language: LanguageDef
 }
 
 interface ExpressionSectionState {
     sectionClicked: boolean,
     whispers: string[],
-    errors: {start: number, end: number, msg: string}[],
+    errors: LocatedError[],
     parentheses: StartEndPair[],
     cursorIndex: number
 }
 
 /**
  * Section to edit, manage, and eval relational algebra expressions.
+ * Accepts {@link ExpressionSectionProps} props.
+ * @category Components
+ * @public
  */
 export class ExpressionSection extends React.Component<ExpressionSectionProps, ExpressionSectionState> {
 
@@ -89,6 +153,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
 
     /**
      * Updates displayed errors and parentheses pairs in the text area input.
+     * @public
      */
     public updateErrorsAndParentheses = () => {
         const text = this.getCurExpr().text;
@@ -255,7 +320,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
         }
     }
 
-    public render() {
+    render() {
         const lang = this.props.language.expressionSection;
         const ops = this.props.language.operations;
 

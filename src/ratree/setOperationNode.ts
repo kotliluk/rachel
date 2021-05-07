@@ -1,14 +1,17 @@
-import BinaryNode from "./binaryNode";
-import RATreeNode from "./raTreeNode";
-import Relation from "../relation/relation";
-import Row from "../relation/row";
-import { isEqual } from "lodash";
+import {BinaryNode} from "./binaryNode";
+import {RATreeNode} from "./raTreeNode";
+import {Relation} from "../relation/relation";
+import {Row} from "../relation/row";
+import {isEqual} from "lodash";
 import {ErrorFactory} from "../error/errorFactory";
 import {language} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";
 
 /**
- * Types of set operation node.
+ * Enum of types of set operation node: union, intersection, difference.
+ * @enum {string}
+ * @category RATree
+ * @public
  */
 export enum SetOperationType {
     union = "\u222a",
@@ -18,11 +21,23 @@ export enum SetOperationType {
 
 /**
  * Set operation node of the relational algebra syntactic tree.
+ * @extends BinaryNode
+ * @category RATree
+ * @public
  */
-export default class SetOperationNode extends BinaryNode {
+export class SetOperationNode extends BinaryNode {
 
     private readonly type: SetOperationType;
 
+    /**
+     * Creates a new SetOperationNode.
+     *
+     * @param operator type of set operation {@type SetOperationType}
+     * @param leftSubtree left subtree {@type RATreeNode}
+     * @param rightSubtree right subtree {@type RATreeNode}
+     * @param stringRange position of the operator in the original text {@type StartEndPair?}
+     * @public
+     */
     public constructor(operator: SetOperationType, leftSubtree: RATreeNode, rightSubtree: RATreeNode,
                        private stringRange: StartEndPair | undefined) {
         super(leftSubtree, rightSubtree);
@@ -30,6 +45,7 @@ export default class SetOperationNode extends BinaryNode {
     }
 
     /**
+     * Evaluates the RA query in this node and its subtree.
      * Expectations on source schemas: equality
      */
     public eval(): void {
@@ -63,12 +79,19 @@ export default class SetOperationNode extends BinaryNode {
         resultRows.forEach(row => result.addRow(row));
         this.resultRelation = result;
     }
-
     /**
+     * Evaluates the RA query in this node and its subtree.
+     * It searches for given cursor index in parametrized nodes and if it finds it, returns the available columns.
+     * Otherwise returns the result relation schema (only column names, no rows).
+     * When an error occurs, it is faked to work, and adds it to the errors array.
+     *
      * Strict expectations: equality
      * Returned schema: intersection of source schemas
      * Returned schema may be empty (when there is no common column in sources).
-     * Second possible approach would be to return union of source schemas (less strict).
+     *
+     * @param cursorIndex index of the cursor in original text input {@type number}
+     * @return resulting relation schema gained by evaluating this node and its subtree or found columns to whisper {@type NodeFakeEvalResult}
+     * @public
      */
     public fakeEval(cursorIndex: number) {
         const left = this.leftSubtree.fakeEval(cursorIndex);
@@ -95,10 +118,23 @@ export default class SetOperationNode extends BinaryNode {
         };
     }
 
+    /**
+     * Creates a string with a structure of the RA tree in one line.
+     *
+     * @return string with a structure of the RA tree in one line {@type string}
+     * @public
+     */
     public printInLine(): string {
         return "(" + this.leftSubtree.printInLine() + this.getOperationSymbol() + this.rightSubtree.printInLine() + ")";
     }
 
+    /**
+     * Return the word name of the RA operation of the node.
+     * Example: returns "Selection" for SelectionNode.
+     *
+     * @return name of the RA operation of the node {@type string}
+     * @public
+     */
     public getOperationName(): string {
         const lang = language().operations;
         if (this.type === SetOperationType.union) {
@@ -112,6 +148,13 @@ export default class SetOperationNode extends BinaryNode {
         }
     }
 
+    /**
+     * Return the symbolic representation of the RA operation of the node.
+     * Example: returns "(some + expr = 15)" for SelectionNode.
+     *
+     * @return name of the RA operation of the node {@type string}
+     * @public
+     */
     public getOperationSymbol(): string {
         return this.type;
     }

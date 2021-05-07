@@ -1,4 +1,4 @@
-import Row from "../relation/row";
+import {Row} from "../relation/row";
 import {VETreeNode} from "./veTreeNode";
 import {ColumnContent, SupportedColumnType} from "../relation/columnType";
 import {ErrorFactory} from "../error/errorFactory";
@@ -7,13 +7,17 @@ import {language} from "../language/language";
 
 /**
  * Class storing reference to a column.
+ * @extends VETreeNode
+ * @category VETree
+ * @public
  */
 export class ReferenceValue extends VETreeNode {
 
     /**
      * Creates a reference to the given column.
      *
-     * @param columnName name of the column whose value is returned by eval(...) function
+     * @param columnName name of the referenced column {@type IndexedString}
+     * @public
      */
     public constructor(private readonly columnName: IndexedString) {
         super();
@@ -22,8 +26,9 @@ export class ReferenceValue extends VETreeNode {
     /**
      * Returns value (expected to be string, number, or boolean) of the referenced column from given source row.
      *
-     * @param source row with actual values of columns
-     * @return referenced value and its type
+     * @param source row with actual values of columns {@type Row}
+     * @return referenced value and its type {@type VEResult}
+     * @public
      */
     public eval(source: Row): { value: ColumnContent, type: SupportedColumnType } {
         const value: ColumnContent | undefined = source.getValue(this.columnName.toString());
@@ -35,6 +40,12 @@ export class ReferenceValue extends VETreeNode {
         return { value: value, type: type };
     }
 
+    /**
+     * Returns string representation of the node.
+     *
+     * @return string representation of the node {@type string}
+     * @public
+     */
     public toString(): string {
         return this.columnName.toString();
     }

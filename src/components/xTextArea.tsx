@@ -5,24 +5,91 @@ import {computeFontSizeInPx} from "../utils/fontUtils";
 import {getStartOfWordBeforeIndex} from "../utils/whisperUtils";
 import {StartEndPair} from "../types/startEndPair";
 
+/**
+ * Description of an error located in the input text.
+ * @category Components
+ * @public
+ */
+export interface LocatedError {
+    /**
+     * index of the first error character
+     * @type number
+     * @public
+     */
+    start: number,
+    /**
+     * index of the last error character
+     * @type number
+     * @public
+     */
+    end: number,
+    /**
+     * error message
+     * @type string
+     * @public
+     */
+    msg: string
+}
+
+/**
+ * Props of XTextArea component.
+ * @category Components
+ * @public
+ */
 interface XTextAreaProps {
-    // id of the component
+    /**
+     * id of the component
+     * @type string
+     * @public
+     */
     id: string;
-    // current text content of the textarea
+    /**
+     * current text content of the textarea
+     * @type string
+     * @public
+     */
     text: string;
-    // text to be shown as textarea placeholder
+    /**
+     * text to be shown as textarea placeholder
+     * @type string
+     * @public
+     */
     placeholder: string;
-    // error messages and ranges to be highlighted in text area
-    errors: {start: number, end: number, msg: string}[];
-    // pairs of parentheses
+    /**
+     * error messages and ranges to be highlighted in text area
+     * @type LocatedError[]
+     * @public
+     */
+    errors: LocatedError[];
+    /**
+     * pairs of parentheses
+     * @type StartEndPair[]
+     * @public
+     */
     parentheses: StartEndPair[];
-    // strings whispered to the user to be added at the current position
+    /**
+     * strings whispered to the user to be added at the current position
+     * @type string[]
+     * @public
+     */
     whispers: string[];
-    // handler of text change
+    /**
+     * handler of text change
+     * @type function
+     * @public
+     */
     onChange: (text: string, cursorIndex: number) => void;
-    // handler of input with Ctrl key
+    /**
+     * handler of input with Ctrl key
+     * @type function
+     * @public
+     */
     onCtrlInput: (ev: KeyboardEvent) => void;
-    // true if dark theme should be applied
+    /**
+     * true if dark theme should be applied
+     * @type boolean
+     * @public
+     */
     darkTheme: boolean;
 }
 
@@ -79,7 +146,7 @@ type ExtendedHTMLTextArea = HTMLTextAreaElement & {
     /**
      * Creates error div elements for given ranges.
      */
-    updateErrors: (ranges: {start: number, end: number, msg: string}[]) => void,
+    updateErrors: (ranges: LocatedError[]) => void,
     /**
      * Moves error div elements to current position.
      */
@@ -142,6 +209,9 @@ type WhisperDiv = HTMLDivElement & {
     getSelectedWhisper: () => string | undefined
 };
 
+/**
+ * HTMLDivElement extended by data for error highlighting.
+ */
 type ErrorDiv = HTMLDivElement & {
     startLine: number,
     startColumn: number,
@@ -149,6 +219,9 @@ type ErrorDiv = HTMLDivElement & {
     messageSpan: HTMLSpanElement
 }
 
+/**
+ * HTMLDivElement extended by data for parentheses highlighting.
+ */
 type ParenthesesDiv = HTMLDivElement & {
     startLine: number,
     startColumn: number
@@ -170,6 +243,9 @@ const canvasWidth: number = 24;
 /**
  * TextArea extended by line numbers and text highlighting. The component is maintained by JavaScript HTML functions,
  * not by React.
+ * Accepts {@link XTextAreaProps} props.
+ * @category Components
+ * @public
  */
 export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
     // @ts-ignore - always set before usage in componentDidMount
@@ -177,6 +253,8 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
 
     /**
      * Returns current text area selection start and end.
+     * @return current text area selection start and end {@type StartEndPair}
+     * @public
      */
     public getSelection(): StartEndPair {
         return {start: this.textarea.selectionStart, end: this.textarea.selectionEnd};
@@ -185,8 +263,9 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
     /**
      * Sets text area selection start and end. If end is not given, start value is used as end value as well.
      *
-     * @param start
-     * @param end
+     * @param start start index {@type number}
+     * @param end end index {@type number}
+     * @public
      */
     public setSelection(start: number, end?: number): void {
         this.textarea.setSelectionRange(start, end ? end : start);
@@ -194,6 +273,8 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
 
     /**
      * Returns true if the textarea has focus.
+     * @return true if the textarea has focus {@type boolean}
+     * @public
      */
     public isFocused(): boolean {
         return document.activeElement !== null && document.activeElement.id === this.props.id + '-ta';
@@ -201,6 +282,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
 
     /**
      * The text area gains focus in the window.
+     * @public
      */
     public focus(): void {
         this.textarea.focus();
@@ -443,7 +525,7 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
             });
         }
 
-        ta.updateErrors = function (ranges: {start: number, end: number, msg: string}[]) {
+        ta.updateErrors = function (ranges: LocatedError[]) {
             // removes old highlight divs
             this.errorDivs.forEach(highlight => {
                 highlight.remove();

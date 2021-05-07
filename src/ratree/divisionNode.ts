@@ -1,7 +1,7 @@
-import BinaryNode from "./binaryNode";
-import RATreeNode from "./raTreeNode";
-import Relation from "../relation/relation";
-import Row from "../relation/row";
+import {BinaryNode} from "./binaryNode";
+import {RATreeNode} from "./raTreeNode";
+import {Relation} from "../relation/relation";
+import {Row} from "../relation/row";
 import {SupportedColumnType} from "../relation/columnType";
 import {ErrorFactory} from "../error/errorFactory";
 import {language} from "../language/language";
@@ -9,14 +9,26 @@ import {StartEndPair} from "../types/startEndPair";
 
 /**
  * Division node of the relational algebra syntactic tree.
+ * @extends BinaryNode
+ * @category RATree
+ * @public
  */
-export default class DivisionNode extends BinaryNode {
+export class DivisionNode extends BinaryNode {
 
+    /**
+     * Creates a new DivisionNode.
+     *
+     * @param leftSubtree left subtree {@type RATreeNode}
+     * @param rightSubtree right subtree {@type RATreeNode}
+     * @param stringRange position of the operator in the original text {@type StartEndPair?}
+     * @public
+     */
     public constructor(leftSubtree: RATreeNode, rightSubtree: RATreeNode, private stringRange: StartEndPair | undefined) {
         super(leftSubtree, rightSubtree);
     }
 
     /**
+     * Evaluates the RA query in this node and its subtree.
      * Expectations on source schemas: right source schema is a proper subset of left source schema
      */
     public eval(): void {
@@ -74,9 +86,18 @@ export default class DivisionNode extends BinaryNode {
     }
 
     /**
+     * Evaluates the RA query in this node and its subtree.
+     * It searches for given cursor index in parametrized nodes and if it finds it, returns the available columns.
+     * Otherwise returns the result relation schema (only column names, no rows).
+     * When an error occurs, it is faked to work, and adds it to the errors array.
+     *
      * Strict expectations: right source schema is a proper subset of left source schema
      * Returned schema: left source schema minus right source schema
      * Returned fake schema may be empty (right source schema may contain all left source columns).
+     *
+     * @param cursorIndex index of the cursor in original text input {@type number}
+     * @return resulting relation schema gained by evaluating this node and its subtree or found columns to whisper {@type NodeFakeEvalResult}
+     * @public
      */
     public fakeEval(cursorIndex: number) {
         const left = this.leftSubtree.fakeEval(cursorIndex);
@@ -106,14 +127,34 @@ export default class DivisionNode extends BinaryNode {
         };
     }
 
+    /**
+     * Creates a string with a structure of the RA tree in one line.
+     *
+     * @return string with a structure of the RA tree in one line {@type string}
+     * @public
+     */
     public printInLine(): string {
         return "(" + this.leftSubtree.printInLine() + this.getOperationSymbol() + this.rightSubtree.printInLine() + ")";
     }
 
+    /**
+     * Return the word name of the RA operation of the node.
+     * Example: returns "Selection" for SelectionNode.
+     *
+     * @return name of the RA operation of the node {@type string}
+     * @public
+     */
     public getOperationName(): string {
         return language().operations.division;
     }
 
+    /**
+     * Return the symbolic representation of the RA operation of the node.
+     * Example: returns "(some + expr = 15)" for SelectionNode.
+     *
+     * @return name of the RA operation of the node {@type string}
+     * @public
+     */
     public getOperationSymbol(): string {
         return "÷";
     }

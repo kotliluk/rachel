@@ -1,7 +1,7 @@
-import Relation from "../../relation/relation";
-import Row from "../../relation/row";
-import RelationNode from "../relationNode";
-import RenameNode from "../renameNode";
+import {Relation} from "../../relation/relation";
+import {Row} from "../../relation/row";
+import {RelationNode} from "../relationNode";
+import {RenameNode} from "../renameNode";
 import {IndexedString} from "../../types/indexedString";
 
 const sourceRelationOne: Relation = new Relation("Auto");

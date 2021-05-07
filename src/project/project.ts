@@ -2,20 +2,41 @@ import {copyExpression, Expression, isExpression} from "../expression/expression
 import {copyStoredRelationData, isStoredRelationData, StoredRelationData} from "../relation/storedRelation";
 
 /**
- * Project interface to store information about project relations and expressions relation.
+ * Project interface to store information about project relations, expressions, and null values support.
  * Does not store custom settings about saving file types etc.
+ *
+ * @category Project
+ * @public
  */
 export interface Project {
+    /**
+     * stored relation data in compressed representation
+     * @type StoredRelationData[]
+     * @public
+     */
     relations: StoredRelationData[],
+    /**
+     * expressions
+     * @type Expression[]
+     * @public
+     */
     expressions: Expression[],
+    /**
+     * whether the project supports null values
+     * @type boolean
+     * @public
+     */
     nullValuesSupport: boolean
 }
 
 /**
- * Checks whether the given value is Project (i.e., has all required fields of required types).
+ * Checks whether the given object is {@link Project} (i.e., has all required fields of required types).
  *
- * @param obj value to be checked
- * @return "OK" string if the given obj is Project or string description of found error in the structure
+ * @param obj value to be checked {@type any}
+ * @return "OK" string if the given obj is Project or string description of found error in the structure {@type string}
+ *
+ * @category Project
+ * @public
  */
 export function isProjectObject(obj: any): string {
     if (typeof obj !== "object") {
@@ -37,6 +58,11 @@ export function isProjectObject(obj: any): string {
 
 /**
  * Creates a copy of the given project.
+ *
+ * @param proj project to copy {@type Project}
+ * @return deep copied project {@type Project}
+ * @category Project
+ * @public
  */
 export function copyProject(proj: Project): Project {
     return {

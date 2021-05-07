@@ -4,9 +4,12 @@ import {ErrorFactory} from "../error/errorFactory";
 import {language} from "../language/language";
 
 /**
- * Row stores a set of columns' values in a relation.
+ * Row stores a set of column values in a formal {@link Relation} representation.
+ *
+ * @category Relation
+ * @public
  */
-export default class Row {
+export class Row {
 
     private readonly types = new Map<string, SupportedColumnType>();
     private values = new Map<string, ColumnContent>();
@@ -14,10 +17,11 @@ export default class Row {
 
     /**
      * Creates a new row with given columns. Given column set is final, no more column can be added.
-     * Given columns' values are set to null. They can be set to a new value by addColumn function, as long as the row
+     * Given column values are set to null. They can be set to a new value by addColumn function, as long as the row
      * is not set finished.
      *
-     * @param columns set of columns in a row
+     * @param columns set of columns in a row {@type Map<String, SupportedColumnType>}
+     * @public
      */
     public constructor(columns: Map<string, SupportedColumnType>) {
         // adds empty columns
@@ -31,7 +35,8 @@ export default class Row {
     /**
      * Returns whether the row is finished and no more column change is possible.
      *
-     * @return true if the row is finished
+     * @return true if the row is finished {@type boolean}
+     * @public
      */
     public isFinished(): boolean {
         return this.finished;
@@ -39,15 +44,17 @@ export default class Row {
 
     /**
      * Sets the row as finished, no more changes in column values are possible.
+     * @public
      */
     public finish(): void {
         this.finished = true;
     }
 
     /**
-     * Gets name of all columns in a row.
+     * Gets names of all columns in a row.
      *
-     * @return set of all columns' names
+     * @return set of all column names {@type IterableIterator<String>}
+     * @public
      */
     public getColumnNames(): IterableIterator<string> {
         return this.types.keys();
@@ -57,9 +64,10 @@ export default class Row {
      * Adds a value to the row. If the addition succeeded, returns true. It can fail, if the row is finished,
      * if there is no column of the given name or if there is a column with the name, but different type.
      *
-     * @param name name of the column
-     * @param value new value of the column
-     * @return true if addition succeeded
+     * @param name name of the column {@type string}
+     * @param value new value of the column {@type ColumnContent}
+     * @return true if addition succeeded {@type boolean}
+     * @public
      */
     public addValue(name: string, value: ColumnContent): boolean {
         // finished row or not present column
@@ -78,8 +86,9 @@ export default class Row {
     /**
      * Gets the value (possibly null) of the column with the given name. If there is no column with this name, undefined is returned.
      *
-     * @param name name of the column
-     * @return value of the column or undefined if there is no such column
+     * @param name name of the column {@type string}
+     * @return value of the column or undefined if there is no such column {@type ColumnContent?}
+     * @public
      */
     public getValue(name: string): ColumnContent | undefined {
         return this.values.get(name);
@@ -88,8 +97,9 @@ export default class Row {
     /**
      * Returns the type of the given column or undefined if the column is absent.
      *
-     * @param name name of the column
-     * @return the type of the column
+     * @param name name of the column {@type string}
+     * @return the type of the column {@type SupportedColumnType?}
+     * @public
      */
     public getType(name: string): SupportedColumnType | undefined {
         return this.types.get(name);
@@ -98,7 +108,8 @@ export default class Row {
     /**
      * Gets types of all columns.
      *
-     * @return map of columns (name -> type)
+     * @return map of columns {@type Map<String, SupportedColumnType>}
+     * @public
      */
     public getTypes(): Map<string, SupportedColumnType> {
         return this.types;
@@ -107,7 +118,8 @@ export default class Row {
     /**
      * Gets values of all columns.
      *
-     * @return map of columns (name -> value)
+     * @return map of columns {@type Map<String, ColumnContent>}
+     * @public
      */
     public getValues(): Map<string, ColumnContent> {
         return this.values;
@@ -118,8 +130,9 @@ export default class Row {
      * relation that contains the row. The returned values are converted to string type. String column values are
      * changed to printing representation - escaped '\\' and '"' are returned without the escape '\\'.
      *
-     * @param orderedColumns order of columns to be returned
-     * @return ordered array of values
+     * @param orderedColumns order of columns to be returned {@type string[]}
+     * @return ordered array of values {@type string[]}
+     * @public
      */
     public getOrderedPrintValues(orderedColumns: string[]): string[] {
         let ret: string[] = [];
@@ -144,7 +157,9 @@ export default class Row {
     /**
      * Custom equals function.
      *
-     * @param other
+     * @param other object to compare to {@type any}
+     * @return whether this and given object has the same values and types
+     * @public
      */
     public equals(other: Object): boolean {
         if (other instanceof Row) {

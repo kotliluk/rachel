@@ -1,19 +1,22 @@
-import Relation from "../../relation/relation";
+import {Relation} from "../../relation/relation";
 import {
-    BinaryOperatorToken, ClosingParenthesis,
-    ExprToken,
-    RelationToken, UnaryOperatorToken, OpeningParenthesis
+  BinaryOperatorToken,
+  ClosingParenthesis,
+  ExprToken,
+  OpeningParenthesis,
+  RelationToken,
+  UnaryOperatorToken
 } from "../exprTokens";
 import {ExprParser} from "../exprParser";
-import RATreeNode from "../../ratree/raTreeNode";
-import RelationNode from "../../ratree/relationNode";
-import ProjectionNode from "../../ratree/projectionNode";
-import SelectionNode from "../../ratree/selectionNode";
-import RenameNode from "../../ratree/renameNode";
-import NaturalJoinNode, {NaturalJoinType} from "../../ratree/naturalJoinNode";
-import AntijoinNode, {AntijoinType} from "../../ratree/antijoinNode";
-import DivisionNode from "../../ratree/divisionNode";
-import OuterJoinNode, {OuterJoinType} from "../../ratree/outerJoinNode";
+import {RATreeNode} from "../../ratree/raTreeNode";
+import {RelationNode} from "../../ratree/relationNode";
+import {ProjectionNode} from "../../ratree/projectionNode";
+import {SelectionNode} from "../../ratree/selectionNode";
+import {RenameNode} from "../../ratree/renameNode";
+import {NaturalJoinNode, NaturalJoinType} from "../../ratree/naturalJoinNode";
+import {AntijoinNode, AntijoinType} from "../../ratree/antijoinNode";
+import {DivisionNode} from "../../ratree/divisionNode";
+import {OuterJoinNode, OuterJoinType} from "../../ratree/outerJoinNode";
 import {IndexedString} from "../../types/indexedString";
 
 enum AssertType {

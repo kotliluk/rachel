@@ -1,32 +1,62 @@
 import React from "react";
-import { Group } from '@visx/group';
-import { hierarchy, Tree } from '@visx/hierarchy';
-import { HierarchyPointNode, HierarchyPointLink } from '@visx/hierarchy/lib/types';
-import { LinkVertical } from '@visx/shape';
+import {Group} from '@visx/group';
+import {hierarchy, Tree} from '@visx/hierarchy';
+import {HierarchyPointLink, HierarchyPointNode} from '@visx/hierarchy/lib/types';
+import {LinkVertical} from '@visx/shape';
 import ParentSize from "@visx/responsive/lib/components/ParentSize";
 import {useTooltip} from '@visx/tooltip';
 import './css/evaluationTree.css';
-import RATreeNode from "../ratree/raTreeNode";
-import UnaryNode from "../ratree/unaryNode";
-import BinaryNode from "../ratree/binaryNode";
+import {RATreeNode} from "../ratree/raTreeNode";
+import {UnaryNode} from "../ratree/unaryNode";
+import {BinaryNode} from "../ratree/binaryNode";
 import {getTreeDepth} from "../ratree/raTreeTools";
 import {computeFontSizeInPx} from "../utils/fontUtils";
 
+/**
+ * Id of the SVG element for evaluation tree rendering.
+ * @type string
+ * @category Components
+ * @public
+ */
 export const evalTreeSVGId: string = "eval-tree-svg";
 
+/**
+ * Props of EvaluationTree component.
+ * @category Components
+ * @public
+ */
 interface EvaluationTreeProps {
-    // root of the evaluation tree to be displayed
+    /**
+     * root of the evaluation tree to be displayed
+     * @type RATreeNode
+     * @public
+     */
     tree: RATreeNode,
-    // index of the current selected node (with respect to depth first search)
+    /**
+     * index of the current selected node (with respect to depth first search)
+     * @type number
+     * @public
+     */
     selected: number,
-    // handler of click on nodes, it receives the index of the clicked node (with respect to depth first search)
+    /**
+     * handler of click on nodes, it receives the index of the clicked node (with respect to depth first search)
+     * @type function
+     * @public
+     */
     onClick: (index: number) => void,
-    // true if dark theme should be applied
+    /**
+     * true if dark theme should be applied
+     * @type boolean
+     * @public
+     */
     darkTheme: boolean
 }
 
 /**
  * Component displaying an evaluation tree. The tree is interactive and handles clicking on the nodes.
+ * Accepts {@link EvaluationTreeProps} props.
+ * @category Components
+ * @public
  */
 export class EvaluationTree extends React.Component<EvaluationTreeProps, {}> {
     render() {
@@ -63,6 +93,9 @@ const unselectedNodeColorLight = cssConstants.getPropertyValue('--light-color-b'
 const selectedNodeColorDark = cssConstants.getPropertyValue('--dark-color-d');
 const unselectedNodeColorDark = cssConstants.getPropertyValue('--dark-color-c');
 
+/**
+ * Data for evaluation tree nodes.
+ */
 interface DisplayTreeNode {
     title: string;
     symbol: string,
@@ -126,7 +159,7 @@ function parseTreeForDisplay(tree: RATreeNode): DisplayTreeNode {
  * respect to depth first search)
  */
 function TreeNodeComponent({ node, selected, onClick, darkTheme }:
-                               { node: HierarchyPointNode<DisplayTreeNode>, selected: boolean, onClick: (index: number) => void, darkTheme: boolean }): JSX.Element {
+            { node: HierarchyPointNode<DisplayTreeNode>, selected: boolean, onClick: (index: number) => void, darkTheme: boolean }): JSX.Element {
     const {
         tooltipOpen, // true when mouse is over
         showTooltip,
@@ -190,7 +223,7 @@ function TreeNodeComponent({ node, selected, onClick, darkTheme }:
  * respect to depth first search)
  */
 function TreeComponent({raTree, selected, width, onClick, darkTheme}:
-                           {raTree: RATreeNode, selected: number, width: number, onClick: (index: number) => void, darkTheme: boolean}): JSX.Element | null {
+            {raTree: RATreeNode, selected: number, width: number, onClick: (index: number) => void, darkTheme: boolean}): JSX.Element | null {
     const treeDepth: number = getTreeDepth(raTree);
     // height = "nodes height" + "gaps between nodes" + "margin up and under"
     const height = (treeDepth + 1) * nodeHeight + treeDepth * nodeHeight / 2 + nodeHeight;

@@ -1,15 +1,30 @@
 /**
- * Representation of named RA expression.
+ * Representation of named relational algebra expression.
+ * @category Expression
+ * @public
  */
 export interface Expression {
+    /**
+     * name of the expression
+     * @type string
+     * @public
+     */
     name: string,
+    /**
+     * text of the expression
+     * @type string
+     * @public
+     */
     text: string
 }
 
 /**
- * Checks whether the given obj is an Expression.
+ * Checks whether the given obj is an {@link Expression}.
  *
- * @param obj
+ * @param obj object to check {@type any}
+ * @return whether the given obj is an Expression {@type boolean}
+ * @category Expression
+ * @public
  */
 export function isExpression(obj: any): boolean {
     if (typeof obj !== "object") {
@@ -20,6 +35,11 @@ export function isExpression(obj: any): boolean {
 
 /**
  * Creates a copy of the given expression.
+ *
+ * @param exp Expression to copy {@type Expression}
+ * @return deep copied expression {@type Expression}
+ * @category Expression
+ * @public
  */
 export function copyExpression(exp: Expression): Expression {
     return {name: exp.name, text: exp.text};

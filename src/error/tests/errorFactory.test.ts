@@ -1,15 +1,13 @@
 import {assertParamsCount, joinStringArrays} from "../errorFactory";
 
-
 describe("assertParamsCount", () => {
     test("expected 0, given 0", () => {
         // arrange
         const expectedCount: number = 0;
         const params: string[] = [];
-        const code: number = 46;
         const expected: string[] = [];
         // act
-        assertParamsCount(expectedCount, params, code);
+        assertParamsCount(expectedCount, params);
         // assert
         expect(params).toStrictEqual(expected);
     });
@@ -18,10 +16,9 @@ describe("assertParamsCount", () => {
         // arrange
         const expectedCount: number = 0;
         const params: string[] = ['aaa'];
-        const code: number = 46;
         const expected: string[] = ['aaa'];
         // act
-        assertParamsCount(expectedCount, params, code);
+        assertParamsCount(expectedCount, params);
         // assert
         expect(params).toStrictEqual(expected);
     });
@@ -30,10 +27,9 @@ describe("assertParamsCount", () => {
         // arrange
         const expectedCount: number = 2;
         const params: string[] = ['aaa'];
-        const code: number = 46;
         const expected: string[] = ['aaa', ''];
         // act
-        assertParamsCount(expectedCount, params, code);
+        assertParamsCount(expectedCount, params);
         // assert
         expect(params).toStrictEqual(expected);
     });
@@ -42,10 +38,9 @@ describe("assertParamsCount", () => {
         // arrange
         const expectedCount: number = 5;
         const params: string[] = ['aaa', 'bbb', 'ccc'];
-        const code: number = 46;
         const expected: string[] = ['aaa', 'bbb', 'ccc', '', ''];
         // act
-        assertParamsCount(expectedCount, params, code);
+        assertParamsCount(expectedCount, params);
         // assert
         expect(params).toStrictEqual(expected);
     });

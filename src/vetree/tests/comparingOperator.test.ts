@@ -1,6 +1,6 @@
 import {LiteralValue} from "../literalValue";
 import {ComparingOperator} from "../comparingOperator";
-import Row from "../../relation/row";
+import {Row} from "../../relation/row";
 import {ColumnContent, SupportedColumnType} from "../../relation/columnType";
 import {IndexedString} from "../../types/indexedString";
 

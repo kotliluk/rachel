@@ -1,4 +1,4 @@
-import StringUtils from "../utils/stringUtils";
+import {StringUtils} from "../utils/stringUtils";
 import {ComparingOperator, ComparingOperatorType} from "../vetree/comparingOperator";
 import {LogicalOperator} from "../vetree/logicalOperator";
 import {LiteralValue} from "../vetree/literalValue";
@@ -23,16 +23,18 @@ import {
 } from "./valueTokens"
 import {VETreeNode} from "../vetree/veTreeNode";
 import {IndexedString} from "../types/indexedString";
-import IndexedStringUtils from "../utils/indexedStringUtils";
-import ErrorWithTextRange, {insertRangeIfUndefined} from "../error/errorWithTextRange";
+import {IndexedStringUtils} from "../utils/indexedStringUtils";
+import {ErrorWithTextRange, insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {ErrorFactory} from "../error/errorFactory";
-import RASyntaxError from "../error/raSyntaxError";
+import {RASyntaxError} from "../error/raSyntaxError";
 import {language} from "../language/language";
 
 /**
- * StringUtils of string infix boolean and algebraic expression to value-evaluating tree.
+ * Parser of the logic-algebraic subexpressions in relational algebra expressions.
+ * @category Expression
+ * @public
  */
-export default class ValueParser {
+export class ValueParser {
 
     /**
      * Parses given string infix boolean and algebraic expression into a value-evaluating tree and returns the tree.
@@ -45,9 +47,10 @@ export default class ValueParser {
      * booleans (true, false)
      * - column references (ColumnNameAsStringWithoutQuotes, Id, etc.)
      *
-     * @param str infix boolean and algebraic expression to be parsed
-     * @param nullValuesSupport whether null values are supported
-     * @return VETreeNode tree (its root)
+     * @param str infix boolean and algebraic expression to be parsed {@type IndexedString}
+     * @param nullValuesSupport whether null values are supported {@type boolean}
+     * @return VETreeNode root of the evaluation tree {@type VETreeNode}
+     * @public
      */
     public static parse(str: IndexedString, nullValuesSupport: boolean): VETreeNode {
         let tokens: ValueToken[] = ValueParser.parseTokens(str, nullValuesSupport, true);
@@ -64,11 +67,13 @@ export default class ValueParser {
 
     /**
      * Parses given string infix boolean and algebraic expression and returns errors in it.
-     * For supported operations see ValueParser.parse().
+     * For supported operations see {@link parse}.
      *
-     * @param str infix boolean and algebraic expression to be parsed
-     * @param nullValuesSupport whether null values are supported
-     * @param columns
+     * @param str infix boolean and algebraic expression to be parsed {@type IndexedString}
+     * @param nullValuesSupport whether null values are supported {@type boolean}
+     * @param columns available source column names {@type string[]}
+     * @return detected errors {@type ErrorWithTextRange[]}
+     * @public
      */
     public static fakeParse(str: IndexedString, nullValuesSupport: boolean, columns: string[]): ErrorWithTextRange[] {
         const errors: ErrorWithTextRange[] = [];

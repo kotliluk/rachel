@@ -5,35 +5,84 @@ import "./css/managementSection.css"
 import {getSamples} from "../project/samples";
 import {Project} from "../project/project";
 
+/**
+ * Props of ManagementSection component.
+ * @category Components
+ * @public
+ */
 interface ManagementSectionProps {
-    // handler of batch processing
+    /**
+     * handler of batch processing
+     * @type function
+     * @public
+     */
     onBatch: () => void,
-
-    // handler of project loading
+    /**
+     * handler of project loading
+     * @type function
+     * @public
+     */
     onLoadProject: () => void,
-    // handler of project saving
+    /**
+     * handler of project saving
+     * @type function
+     * @public
+     */
     onSaveProject: () => void,
-
-    // handler of loading the selected sample project
+    /**
+     * handler of loading the selected sample project
+     * @type function
+     * @public
+     */
     onLoadSample: (sample: Project) => void,
-
-    // current selected value separator in csv files
+    /**
+     * current selected value separator in csv files
+     * @type CsvValueSeparator
+     * @public
+     */
     csvValueSeparator: CsvValueSeparator,
-    // current selected language of the application
+    /**
+     * current selected language of the application
+     * @type LanguageDef
+     * @public
+     */
     language: LanguageDef,
-    // current selected null values support
+    /**
+     * current selected null values support
+     * @type boolean
+     * @public
+     */
     nullValuesSupport: boolean,
-    // true if dark theme should be applied
+    /**
+     * true if dark theme should be applied
+     * @type boolean
+     * @public
+     */
     darkTheme: boolean,
-
-    // handler of change of the current selected value separator in csv files
+    /**
+     * handler of change of the current selected value separator in csv files
+     * @type function
+     * @public
+     */
     onCsvValueSeparatorChange: (csvValueSeparator: CsvValueSeparator) => void,
-    // handler of change of the current selected language of the application
+    /**
+     * handler of change of the current selected language of the application
+     * @type function
+     * @public
+     */
     onLanguageChange: (language: SupportedLanguage) => void,
-    // handler of change of the current selected null values support
+    /**
+     * handler of change of the current selected null values support
+     * @type function
+     * @public
+     */
     onNullValuesSupportChange: (nullValuesSupport: boolean) => void,
-    // handler of change of the current selected theme
-    onDarkModeChange: (darkTheme: boolean) => void
+    /**
+     * handler of change of the current selected theme
+     * @type function
+     * @public
+     */
+    onDarkThemeChange: (darkTheme: boolean) => void
 }
 
 interface ManagementSectionState {
@@ -42,6 +91,9 @@ interface ManagementSectionState {
 
 /**
  * Section to manage batch processing, importing/exporting the project, and settings.
+ * Accepts {@link ManagementSectionProps} props.
+ * @category Components
+ * @public
  */
 export class ManagementSection extends React.Component<ManagementSectionProps, ManagementSectionState> {
 
@@ -113,7 +165,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                             value="on"
                             id="dark_mode_on"
                             checked={!this.props.darkTheme}
-                            onChange={() => this.props.onDarkModeChange(false)} />
+                            onChange={() => this.props.onDarkThemeChange(false)} />
                         <label htmlFor="dark_mode_on">{lang.settingsThemeLight}</label>
                         <input
                             type="radio"
@@ -121,7 +173,7 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
                             value="off"
                             id="dark_mode_off"
                             checked={this.props.darkTheme}
-                            onChange={() => this.props.onDarkModeChange(true)} />
+                            onChange={() => this.props.onDarkThemeChange(true)} />
                         <label htmlFor="dark_mode_off">{lang.settingsThemeDark}</label>
                     </li>
                     <li>

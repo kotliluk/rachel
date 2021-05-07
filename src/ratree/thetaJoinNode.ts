@@ -1,11 +1,11 @@
-import BinaryNode from "./binaryNode";
-import RATreeNode from "./raTreeNode";
-import Relation from "../relation/relation";
-import Row from "../relation/row";
-import {ColumnContent, SupportedColumnType} from "../relation/columnType";
-import {VETreeNode} from "../vetree/veTreeNode";
+import {BinaryNode} from "./binaryNode";
+import {RATreeNode} from "./raTreeNode";
+import {Relation} from "../relation/relation";
+import {Row} from "../relation/row";
+import {SupportedColumnType} from "../relation/columnType";
+import {VEResult, VETreeNode} from "../vetree/veTreeNode";
 import {IndexedString} from "../types/indexedString";
-import ValueParser from "../expression/valueParser";
+import {ValueParser} from "../expression/valueParser";
 import {ErrorFactory} from "../error/errorFactory";
 import {insertRangeIfUndefined} from "../error/errorWithTextRange";
 import {isInRangeAndNotInQuotes} from "./raTreeTools";
@@ -13,7 +13,10 @@ import {language} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";
 
 /**
- * Types of theta join node.
+ * Enum of types of theta join node: full (theta), left (theta semi), right (theta semi).
+ * @enum {string}
+ * @category RATree
+ * @public
  */
 export enum ThetaJoinType {
     full = "[]",
@@ -23,8 +26,11 @@ export enum ThetaJoinType {
 
 /**
  * Theta join or theta semijoin node of the relational algebra syntactic tree.
+ * @extends BinaryNode
+ * @category RATree
+ * @public
  */
-export default class ThetaJoinNode extends BinaryNode {
+export class ThetaJoinNode extends BinaryNode {
 
     private readonly type: ThetaJoinType;
     private readonly condition: IndexedString;
@@ -32,7 +38,15 @@ export default class ThetaJoinNode extends BinaryNode {
     private readonly nullValuesSupport: boolean;
 
     /**
+     * Creates a new NaturalJoinNode.
      * Expects the condition string to start with '<' and end with ']' or start with '[' and end with '>'.
+     *
+     * @param type type of natural join {@type ThetaJoinType}
+     * @param condition logic-algebraic condition {@type IndexedString}
+     * @param leftSubtree left subtree {@type RATreeNode}
+     * @param rightSubtree right subtree {@type RATreeNode}
+     * @param nullValuesSupport whether null values are supported
+     * @public
      */
     public constructor(type: ThetaJoinType, condition: IndexedString,
                        leftSubtree: RATreeNode, rightSubtree: RATreeNode, nullValuesSupport: boolean) {
@@ -44,8 +58,10 @@ export default class ThetaJoinNode extends BinaryNode {
     }
 
     /**
+     * Evaluates the RA query in this node and its subtree.
      * Expectations on source schemas: disjointness
      * Other expectations: condition is valid expression which evaluates to boolean
+     * @public
      */
     public eval(): void {
         if (this.isEvaluated()) {
@@ -86,8 +102,8 @@ export default class ThetaJoinNode extends BinaryNode {
                 const testRow: Row = new Row(bothSourceColumns);
                 leftRow.getValues().forEach((value, name) => testRow.addValue(name, value));
                 rightRow.getValues().forEach((value, name) => testRow.addValue(name, value));
-                // checks whether the combined row from both relations' columns satisfies the condition
-                let booleanResult: { value: ColumnContent, type: SupportedColumnType | "null" } = boolExpr.eval(testRow);
+                // checks whether the combined row from both relation columns satisfies the condition
+                let booleanResult: VEResult = boolExpr.eval(testRow);
                 if (booleanResult.type !== "boolean") {
                     throw ErrorFactory.syntaxError(language().syntaxErrors.thetaJoinNode_resultNotBoolean,
                         this.stringRange, this.condition.replace(/\s+/g, " "), booleanResult.type);
@@ -108,9 +124,18 @@ export default class ThetaJoinNode extends BinaryNode {
     }
 
     /**
+     * Evaluates the RA query in this node and its subtree.
+     * It searches for given cursor index in parametrized nodes and if it finds it, returns the available columns.
+     * Otherwise returns the result relation schema (only column names, no rows).
+     * When an error occurs, it is faked to work, and adds it to the errors array.
+     *
      * Strict expectations: disjointness
      * Returned schema: left/right/both source schema (for left/right/full semijoin)
      * Returned fake schema is not affected when disjointness is not held
+     *
+     * @param cursorIndex index of the cursor in original text input {@type number}
+     * @return resulting relation schema gained by evaluating this node and its subtree or found columns to whisper {@type NodeFakeEvalResult}
+     * @public
      */
     public fakeEval(cursorIndex: number) {
         const left = this.leftSubtree.fakeEval(cursorIndex);
@@ -155,10 +180,23 @@ export default class ThetaJoinNode extends BinaryNode {
         return {result, whispers, errors};
     }
 
+    /**
+     * Creates a string with a structure of the RA tree in one line.
+     *
+     * @return string with a structure of the RA tree in one line {@type string}
+     * @public
+     */
     public printInLine(): string {
         return "(" + this.leftSubtree.printInLine() + this.getOperationSymbol() + this.rightSubtree.printInLine() + ")";
     }
 
+    /**
+     * Return the word name of the RA operation of the node.
+     * Example: returns "Selection" for SelectionNode.
+     *
+     * @return name of the RA operation of the node {@type string}
+     * @public
+     */
     public getOperationName(): string {
         const lang = language().operations;
         if (this.type === ThetaJoinType.left) {
@@ -172,10 +210,23 @@ export default class ThetaJoinNode extends BinaryNode {
         }
     }
 
+    /**
+     * Return the symbolic representation of the RA operation of the node.
+     * Example: returns "(some + expr = 15)" for SelectionNode.
+     *
+     * @return name of the RA operation of the node {@type string}
+     * @public
+     */
     public getOperationSymbol(): string {
         return this.condition.replace(/\s+/g, ' ');
     }
 
+    /**
+     * Returns type of ThetaJoinNode.
+     *
+     * @return type of the node {@type ThetaJoinType}
+     * @public
+     */
     public getType(): ThetaJoinType {
         return this.type;
     }
