@@ -640,17 +640,17 @@ describe('fakeEval' , () => {
         r1a.addValue("Jmeno", "Lukas");
         right.addRow(r1a);
 
-        const expectedLeft: Relation = new Relation("");
+        const expectedLeft: Relation = new Relation("Binary");
         expectedLeft.addColumn("AutoId", "number");
         expectedLeft.addColumn("MajitelId", "number");
         expectedLeft.addColumn("Kola", "number");
         expectedLeft.addColumn("Motor", "string");
 
-        const expectedRight: Relation = new Relation("");
+        const expectedRight: Relation = new Relation("Binary");
         expectedRight.addColumn("MajitelId", "number");
         expectedRight.addColumn("Jmeno", "string");
 
-        const expectedFull: Relation = new Relation("");
+        const expectedFull: Relation = new Relation("Binary");
         expectedFull.addColumn("AutoId", "number");
         expectedFull.addColumn("Kola", "number");
         expectedFull.addColumn("Motor", "string");

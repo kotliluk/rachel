@@ -312,7 +312,7 @@ describe('fakeEval' , () => {
         describe('left' , () => {
             test('cursor not in subtree nor theta join - valid condition: < LKola > RKola]', () => {
                 const str: IndexedString = IndexedString.new('< LKola > RKola]', 10);
-                const expected: Relation = new Relation("");
+                const expected: Relation = new Relation("<]");
                 expected.addColumn("LId", "number");
                 expected.addColumn("LMajitel", "string");
                 expected.addColumn("LKola", "number");
@@ -325,7 +325,7 @@ describe('fakeEval' , () => {
 
             test('cursor not in subtree nor projection - empty condition: <]', () => {
                 const str: IndexedString = IndexedString.new('<]', 10);
-                const expected: Relation = new Relation("");
+                const expected: Relation = new Relation("<]");
                 expected.addColumn("LId", "number");
                 expected.addColumn("LMajitel", "string");
                 expected.addColumn("LKola", "number");
@@ -338,7 +338,7 @@ describe('fakeEval' , () => {
 
             test('cursor not in subtree nor projection - invalid condition: <1 +]', () => {
                 const str: IndexedString = IndexedString.new('<1 +]', 10);
-                const expected: Relation = new Relation("");
+                const expected: Relation = new Relation("<]");
                 expected.addColumn("LId", "number");
                 expected.addColumn("LMajitel", "string");
                 expected.addColumn("LKola", "number");
@@ -353,7 +353,7 @@ describe('fakeEval' , () => {
         describe('right' , () => {
             test('cursor not in subtree nor theta join - valid condition: [LKola > RKola>', () => {
                 const str: IndexedString = IndexedString.new('[LKola > RKola>', 10);
-                const expected: Relation = new Relation("");
+                const expected: Relation = new Relation("[>");
                 expected.addColumn("RId", "number");
                 expected.addColumn("RMajitel", "string");
                 expected.addColumn("RKola", "number");
@@ -366,7 +366,7 @@ describe('fakeEval' , () => {
 
             test('cursor not in subtree nor projection - empty condition: [>', () => {
                 const str: IndexedString = IndexedString.new('[>', 10);
-                const expected: Relation = new Relation("");
+                const expected: Relation = new Relation("[>");
                 expected.addColumn("RId", "number");
                 expected.addColumn("RMajitel", "string");
                 expected.addColumn("RKola", "number");
@@ -379,7 +379,7 @@ describe('fakeEval' , () => {
 
             test('cursor not in subtree nor projection - invalid condition: [1 +>', () => {
                 const str: IndexedString = IndexedString.new('[1 +>', 10);
-                const expected: Relation = new Relation("");
+                const expected: Relation = new Relation("[>");
                 expected.addColumn("RId", "number");
                 expected.addColumn("RMajitel", "string");
                 expected.addColumn("RKola", "number");
@@ -394,7 +394,7 @@ describe('fakeEval' , () => {
         describe('full' , () => {
             test('cursor not in subtree nor theta join - valid condition: [LKola > RKola]', () => {
                 const str: IndexedString = IndexedString.new('[LKola > RKola]', 10);
-                const expected: Relation = new Relation("");
+                const expected: Relation = new Relation("[]");
                 expected.addColumn("LId", "number");
                 expected.addColumn("LMajitel", "string");
                 expected.addColumn("LKola", "number");
@@ -410,7 +410,7 @@ describe('fakeEval' , () => {
 
             test('cursor not in subtree nor projection - empty condition: []', () => {
                 const str: IndexedString = IndexedString.new('[]', 10);
-                const expected: Relation = new Relation("");
+                const expected: Relation = new Relation("[]");
                 expected.addColumn("LId", "number");
                 expected.addColumn("LMajitel", "string");
                 expected.addColumn("LKola", "number");
@@ -426,7 +426,7 @@ describe('fakeEval' , () => {
 
             test('cursor not in subtree nor projection - invalid condition: [1 +]', () => {
                 const str: IndexedString = IndexedString.new('[1 +]', 10);
-                const expected: Relation = new Relation("");
+                const expected: Relation = new Relation("[]");
                 expected.addColumn("LId", "number");
                 expected.addColumn("LMajitel", "string");
                 expected.addColumn("LKola", "number");

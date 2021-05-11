@@ -964,7 +964,7 @@ describe('fakeEval' , () => {
         righta.addValue("Prijmeni", "Kotlik");
         right.addRow(righta);
 
-        const expected: Relation = new Relation("");
+        const expected: Relation = new Relation("Binary");
         expected.addColumn("AutoId", "number");
         expected.addColumn("Kola", "number");
         expected.addColumn("Motor", "string");

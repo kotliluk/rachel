@@ -69,7 +69,7 @@ export abstract class BinaryNode extends RATreeNode {
         const left = this.leftSubtree.fakeEval(cursorIndex);
         const right = this.rightSubtree.fakeEval(cursorIndex);
         // creates return relation
-        const result: Relation = new Relation("");
+        const result: Relation = new Relation("Binary");
         if (type === "left" || type === "union") {
             left.result.forEachColumn((type, name) => result.addColumn(name, type));
         }

@@ -144,7 +144,7 @@ export class ThetaJoinNode extends BinaryNode {
         sourceColumns.push(...left.result.getColumnNames());
         sourceColumns.push(...right.result.getColumnNames());
         // creates return relation
-        const result: Relation = new Relation("");
+        const result: Relation = new Relation(this.type);
         if (this.type === ThetaJoinType.left || this.type === ThetaJoinType.full) {
             left.result.forEachColumn((type, name) => result.addColumn(name, type));
         }

@@ -10,7 +10,7 @@ const semanticErrors: SemanticErrorMessages = {
     exprParser_relationNotDefined: ["Relace \"", "\" není definována. Zkontrolujte definice relací."],
 
     binaryNode_commonColumns: ["Vstupní relace pro ", " mají společné sloupce \"", "\"."],
-    setOperationNode_notEqualColumns: ["Vstupní relace \"", "\" a \"", "\" pro množinové ", " nemají stejné schéma."],
+    setOperationNode_notEqualColumns: ["Vstupní relace \"", "\" a \"", "\" pro ", " množin nemají stejné schéma."],
     divisionNode_rightColumnsNotSubset:
         ["Schéma pravé vstupní relace \"", "\" není podmnožinou schématu levé vstupní relace \"", "\"."],
     divisionNode_rightColumnsNotProperSubset:

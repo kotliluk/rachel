@@ -106,6 +106,7 @@ export class SetOperationNode extends BinaryNode {
         // checks errors in schema
         const errors = left.errors;
         errors.push(...right.errors);
+        console.log(left.result.getColumns(), right.result.getColumns(), left.result.getName(), right.result.getName())
         if (!isEqual(left.result.getColumns(), right.result.getColumns()) && left.result.getName() !== "" && right.result.getName() !== "") {
             let typeStr: string = this.getOperationName().toLowerCase();
             errors.push(ErrorFactory.semanticError(language().semanticErrors.setOperationNode_notEqualColumns,

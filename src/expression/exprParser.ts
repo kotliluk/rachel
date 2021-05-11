@@ -593,7 +593,11 @@ export class ExprParser {
                     rest = split.second;
                 }
                 // catches error from nextBorderedPart
-                catch (e) {
+                catch (err) {
+                    // saves error
+                    if (err instanceof ErrorWithTextRange) {
+                        errors.push(err);
+                    }
                     // it fakes the unclosed expression part as a rename operator
                     tokens.push(UnaryOperatorToken.rename(rest.concat(IndexedString.new('>', rest.getLastIndex() + 1))));
                     // breaks the while cycle as all was used
