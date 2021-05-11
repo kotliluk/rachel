@@ -6,16 +6,9 @@
     box-sizing: border-box;
     overflow: auto;
 
+    border: 6px solid var(--color-b);
     border-radius: 5px;
     padding: 2px;
-}
-
-.body-light .result-table-container {
-    border: 6px solid var(--light-color-b);
-}
-
-.body-dark .result-table-container {
-    border: 6px solid var(--dark-color-b);
 }
 
 /* TABLE */
@@ -26,12 +19,6 @@
     max-height: fit-content;
     text-align: center;
     border-spacing: 0;
-}
-
-.body-light .result-table {
-}
-
-.body-dark .result-table {
 }
 
 /* ROW NUMBER TD */
@@ -46,14 +33,9 @@
     border-color: transparent !important;
 }
 
-.body-light .result-table tbody .row-number-td {
-    border-color: var(--light-color-a);
-    background-color: var(--light-color-b);
-}
-
-.body-dark .result-table tbody .row-number-td {
-    border-color: var(--dark-color-a);
-    background-color: var(--dark-color-b);
+.result-table tbody .row-number-td {
+    border-color: var(--color-a);
+    background-color: var(--color-b);
 }
 
 /* TH */
@@ -64,31 +46,15 @@
     border-style: solid;
     border-radius: 8px;
     padding: 2px 5px;
+
+    font-weight: bold;
+    border-color: var(--color-a);
+    background-color: var(--color-b);
 }
 
 .result-table th:hover {
     cursor: pointer;
-}
-
-.body-light .result-table th {
-    font-weight: bold;
-    border-color: var(--light-color-a);
-    background-color: var(--light-color-b);
-}
-
-.body-dark .result-table th {
-    font-weight: bold;
-    border-color: var(--dark-color-a);
-    background-color: var(--dark-color-b);
-}
-
-.body-light .result-table th:hover {
-    background-color: var(--light-color-d);
-}
-
-.body-dark .result-table th:hover {
-    font-weight: bold;
-    background-color: var(--dark-color-d);
+    background-color: var(--color-d);
 }
 
 /* TD */
@@ -97,12 +63,5 @@
     border-radius: 6px;
     height: 21px;
     padding: 2px 4px 0 4px;
-}
-
-.body-dark .result-table td {
-    border: 1px solid var(--dark-color-b);
-}
-
-.body-light .result-table td {
-    border: 1px solid var(--light-color-b);
+    border: 1px solid var(--color-b);
 }

@@ -289,6 +289,15 @@ export class XTextArea extends React.Component<XTextAreaProps, XTextAreaState> {
     }
 
     /**
+     * Sets the given placeholder in the textarea.
+     * @param placeholder placeholder to be set
+     * @public
+     */
+    public setPlaceholder(placeholder: string): void {
+        this.textarea.placeholder = placeholder;
+    }
+
+    /**
      * The component is build by JavaScript HTML functions after mount of the empty div in render function.
      */
     componentDidMount() {

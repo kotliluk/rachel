@@ -151,6 +151,15 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
         setInterval(() => this.updateWhispersAndErrors(), this.whispersAndErrorsUpdateRate);
     }
 
+    componentDidUpdate(prevProps: Readonly<ExpressionSectionProps>) {
+        if (this.props.language !== prevProps.language) {
+            const textarea = this.textAreaRef.current;
+            if (textarea !== null) {
+                textarea.setPlaceholder(this.props.language.expressionSection.expressionTextareaPlaceholder);
+            }
+        }
+    }
+
     /**
      * Updates displayed errors and parentheses pairs in the text area input.
      * @public

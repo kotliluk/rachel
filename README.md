@@ -52,7 +52,8 @@ The **+** buttons in the last column and last row adds a new column or row, resp
 Other table inputs define the data itself. Numbers can be integers or decimals. Boolean values can be
 true or false. String values can be any character sequence. Note that margin whitespaces are trimmed
 before loading to application, so the string " a b c " is loaded as "a b c".
-If null values are supported, "null" and empty inputs are valid in all column types and are loaded as null values.
+If null values are supported, "null" inputs are valid in all column types and are loaded as null values.
+Also, empty inputs in number and boolean columns are loaded as nulls.
 
 When the mouse is over the first row or the first column, a button for deleting a column or a row, respectively, appears.
 

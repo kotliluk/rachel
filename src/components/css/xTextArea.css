@@ -7,7 +7,7 @@
     --whisper-dark-text-color: white;
     --whisper-light-text-color: black;
 
-    --parentheses-first-pair-color: var(--light-color-c);
+    --parentheses-first-pair-color: #94a4ea;
     --parentheses-second-pair-color: #ff6836;
 }
 
@@ -25,6 +25,9 @@
     border: 2px solid;
     border-radius: 5px;
     padding: 2px 4px 0 2px;
+
+    border-color: var(--color-b);
+    background-color: var(--color-b);
 }
 
 .x-textarea {
@@ -41,6 +44,10 @@
     overflow-wrap: normal;
     resize: none;
     overflow: visible;
+
+    border: 2px solid var(--color-b);
+    color: var(--text-color);
+    background-color: var(--color-a);
 }
 
 .x-textarea-table {
@@ -67,40 +74,27 @@
     font-family: var(--x-textarea-font-family);
     font-weight: lighter;
     border: 1px solid;
-    border-radius: 5px;
+    border-radius: 6px;
+    background-color: var(--color-a);
 }
 
 .whisper-div div {
     padding: 0 2px;
-    border-radius: 5px;
+    border-radius: 4px;
+    background-color: var(--color-a);
 }
 
 .body-dark .whisper-div {
     border-color: white;
-    background-color: var(--dark-color-a);
 }
 
 .body-light .whisper-div {
     border-color: #555;
-    background-color: var(--light-color-a);
 }
 
-.body-dark .whisper-div div {
-    background-color: var(--dark-color-a);
-}
-
-.body-light .whisper-div div {
-    background-color: var(--light-color-a);
-}
-
-.body-dark .whisper-div .selected-whisper {
-    background-color: var(--dark-color-d) !important; /* more important than dark/light mode background color */
-    color: var(--whisper-dark-text-color);
-}
-
-.body-light .whisper-div .selected-whisper {
-    background-color: var(--light-color-d) !important; /* more important than dark/light mode background color */
-    color: var(--whisper-light-text-color);
+.whisper-div .selected-whisper {
+    background-color: var(--color-d) !important; /* more important than dark/light mode background color */
+    color: var(--text-color);
 }
 
 .whisper-div .whisper-matched-word {
@@ -115,12 +109,8 @@
     color: #666666;
 }
 
-.body-dark .whisper-div .selected-whisper .whisper-rejected-word {
-    color: var(--whisper-dark-text-color);
-}
-
-.body-light .whisper-div .selected-whisper .whisper-rejected-word {
-    color: var(--whisper-light-text-color);
+.whisper-div .selected-whisper .whisper-rejected-word {
+    color: var(--text-color);
 }
 
 /* HIGHLIGHT */
@@ -177,57 +167,20 @@
 
 /* COLORS */
 
-.body-light .x-textarea-div {
-    border-color: var(--light-color-b);
-    background-color: var(--light-color-b);
-}
-
-.body-dark .x-textarea-div {
-    border-color: var(--dark-color-b);
-    background-color: var(--dark-color-b);
-}
-
 .x-textarea-table-td1 {
     vertical-align: top;
     width: 1px;
-}
-
-.body-light .x-textarea-table-td1 {
-    background-color: var(--light-color-b);
-}
-
-.body-dark .x-textarea-table-td1 {
-    background-color: var(--dark-color-b);
-}
-
-.body-light .x-textarea {
-    border: 2px solid var(--light-color-b);
-    color: var(--text-color-light);
-    background-color: var(--light-color-a);
-}
-
-.body-dark .x-textarea {
-    border: 2px solid var(--dark-color-b);
-    color: var(--text-color-dark);
-    background-color: var(--dark-color-a);
+    background-color: var(--color-b);
 }
 
 .body-dark .x-textarea::placeholder {
-    color: var(--text-color-dark);
+    color: #aaa;
 }
 
-.body-light .x-textarea:focus {
-    border: 2px solid var(--light-color-d);
+.x-textarea:focus {
+    border: 2px solid var(--color-d);
 }
 
-.body-dark .x-textarea:focus {
-    border: 2px solid var(--dark-color-d);
-}
-
-.body-light .x-textarea-canvas {
-    background-color: var(--light-color-b);
-}
-
-.body-dark .x-textarea-canvas {
-    background-color: var(--dark-color-b);
+.x-textarea-canvas {
+    background-color: var(--color-b);
 }
