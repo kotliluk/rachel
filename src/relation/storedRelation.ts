@@ -230,8 +230,8 @@ export class StoredRelation {
         const lang = language().relationErrors;
         this.errors.delete(rowIndex, columnIndex);
         const input: string = this.rows[rowIndex][columnIndex].trim();
-        // empty input = null
-        if (input === "" || input === "null") {
+        // empty input = null in non-string columns
+        if (input === "null" || (input === "" && this.columnTypes[columnIndex] !== "string")) {
             if (!this.nullValuesSupport) {
                 this.errors.set(rowIndex, columnIndex, lang.unsupportedNull);
             }
@@ -273,7 +273,7 @@ export class StoredRelation {
             const row: Row = new Row(relation.getColumns());
             rowInput.forEach((input, c) => {
                 input = input.trim();
-                if (input === "" || input === "null") {
+                if (input === "null") {
                     row.addValue(this.columnNames[c], null);
                 }
                 else if (this.columnTypes[c] === "string") {
@@ -281,6 +281,9 @@ export class StoredRelation {
                     // replaces all used '\' by two '\\' and all used '"' by '\"'
                     input = input.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
                     row.addValue(this.columnNames[c], input);
+                }
+                else if (input === "") {
+                    row.addValue(this.columnNames[c], null);
                 }
                 else if (this.columnTypes[c] === "number") {
                     row.addValue(this.columnNames[c], Number(input.replace(/\s/g, "")));
@@ -385,7 +388,7 @@ export class StoredRelation {
                 else if (this.columnTypes[i] === "boolean") {
                     return "false";
                 }
-                return '""';
+                return "";
             }));
         }
         ++this.rowCount;

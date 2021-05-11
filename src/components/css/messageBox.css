@@ -17,6 +17,7 @@
 
     font-size: var(--font-size);
     text-overflow: clip;
+    z-index: 10;
 }
 
 .message-box-message {
