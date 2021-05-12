@@ -1,5 +1,5 @@
 import {FileDialog} from "../utils/fileDialog";
-import {CsvValueSeparator, findValueSeparator} from "../types/csvSupport";
+import {CsvValueSeparator, findValueSeparator, splitCSVLine} from "../types/csvSupport";
 import {StoredRelation} from "./storedRelation";
 import {SupportedColumnType} from "./columnType";
 import {saveAs} from "file-saver";
@@ -95,7 +95,7 @@ export class RelationStoreManager {
 
         if (lines.length < 2) {
             console.log("file " + name + " has only one line");
-            throw Error();  // at least two lines are expected (names and types)
+            throw new Error();  // at least two lines are expected (names and types)
         }
 
         lines[0] = lines[0].replace(/\s/g, '');
@@ -108,8 +108,8 @@ export class RelationStoreManager {
             separator = ';';
         }
 
-        const columnNames: string[] = lines[0].split(separator);
-        const columnTypes: SupportedColumnType[] = lines[1].split(separator).map(str => {
+        const columnNames: string[] = splitCSVLine(lines[0], separator);
+        const columnTypes: SupportedColumnType[] = splitCSVLine(lines[1], separator).map(str => {
             const lower = str.toLowerCase();
             if (lower === "string" || lower === "str" || lower === "s") {
                 return "string";
@@ -119,20 +119,8 @@ export class RelationStoreManager {
             }
             return "boolean";
         });
-        const rows: string[][] = lines.slice(2).map(line => {
-            const row: string[] = []
-            line = line.trim();
-            while (true) {
-                // @ts-ignore - separator cannot be undefined now
-                const split = RelationStoreManager.nextRowInput(line, separator);
-                row.push(split.input);
-                if (split.rest === undefined) {
-                    break;
-                }
-                line = split.rest;
-            }
-            return row;
-        });
+        // @ts-ignore - separator cannot be undefined
+        const rows: string[][] = lines.slice(2).map(line => splitCSVLine(line, separator));
 
         // all rows must have equal column count
         const columnCount = columnNames.length;
@@ -156,42 +144,16 @@ export class RelationStoreManager {
     }
 
     /**
-     * Returns next part of the line before separator. Separators in string literals are ignored.
-     */
-    private static nextRowInput(line: string, separator: string): {input: string, rest: string | undefined} {
-        let inString = false;
-        let backslashes = 0;
-        let i = 0;
-        while (i < line.length) {
-            const char = line.charAt(i);
-            // separator found not in the string literal
-            if (!inString && char === separator) {
-                return {input: line.slice(0, i), rest: line.slice(i + 1)};
-            }
-            // next backslash found in a row
-            if (char === '\\') {
-                ++backslashes;
-            }
-            // resets backslashes in a row
-            else {
-                backslashes = 0;
-            }
-            // not escaped quotes found
-            if (char === '"' && (backslashes % 2) === 0) {
-                inString = !inString;
-            }
-            ++i;
-        }
-        return {input: line, rest: undefined}
-    }
-
-    /**
      * Creates a csv representation for the given relation.
      */
     private static relationToCsv(relation: StoredRelation, valueSeparator: CsvValueSeparator): string {
-        const names: string = relation.getColumnNames().join(valueSeparator);
+        const names: string = relation.getColumnNames().map(
+            n => '"' + n.replace(/"/g, '""') + '"'
+        ).join(valueSeparator);
         const types: string = relation.getColumnTypes().join(valueSeparator);
-        const rows: string[] = relation.getRows().map(row => row.join(valueSeparator));
+        const rows: string[] = relation.getRows().map(row => row.map(
+            data => '"' + data.replace(/"/g, '""') + '"'
+        ).join(valueSeparator));
         return [names, types, ...rows].join('\n');
     }
 }
