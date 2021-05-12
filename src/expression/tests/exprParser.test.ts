@@ -19,12 +19,6 @@ import {DivisionNode} from "../../ratree/divisionNode";
 import {OuterJoinNode, OuterJoinType} from "../../ratree/outerJoinNode";
 import {IndexedString} from "../../types/indexedString";
 
-enum AssertType {
-    NOT_THROW,
-    THROW_STRICT,
-    THROW_NOT_STRICT
-}
-
 /* TESTING BINARY */
 
 function relationToken(str: string) {
@@ -92,7 +86,7 @@ function union(str: string) {
 }
 
 function intersection(str: string) {
-    return BinaryOperatorToken.union(IndexedString.new(str));
+    return BinaryOperatorToken.intersection(IndexedString.new(str));
 }
 
 /* TESTING UNARY */
@@ -125,6 +119,7 @@ function closingParenthesis(str: string) {
 function assertTokenArray(actual: ExprToken[], expected: ExprToken[]) {
     expect(actual.length).toBe(expected.length);
     actual.forEach((a, i) => {
+        expect(a.type).toStrictEqual(expected[i].type);
         expect(a.str.toString()).toStrictEqual(expected[i].str.toString());
     });
 }
@@ -152,9 +147,9 @@ describe("parseTokens", () => {
         const str: string = "Auto";
         const expected: ExprToken[] = [relationToken("Auto")];
         // act
-        const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
+        const {tokens} = exprParser.parseTokens(IndexedString.new(str));
         // assert
-        assertTokenArray(actual, expected);
+        assertTokenArray(tokens, expected);
     });
 
     test("Auto * Majitel", () => {
@@ -166,9 +161,9 @@ describe("parseTokens", () => {
             relationToken("Majitel")
         ];
         // act
-        const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
+        const {tokens} = exprParser.parseTokens(IndexedString.new(str));
         // assert
-        assertTokenArray(actual, expected);
+        assertTokenArray(tokens, expected);
     });
 
     test("Auto(Id = 1)", () => {
@@ -179,9 +174,9 @@ describe("parseTokens", () => {
             selection("(Id = 1)")
         ];
         // act
-        const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
+        const {tokens} = exprParser.parseTokens(IndexedString.new(str));
         // assert
-        assertTokenArray(actual, expected);
+        assertTokenArray(tokens, expected);
     });
 
     test("Auto(Id = 1)<Id -> AutoId>", () => {
@@ -193,9 +188,9 @@ describe("parseTokens", () => {
             rename("<Id -> AutoId>")
         ];
         // act
-        const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
+        const {tokens} = exprParser.parseTokens(IndexedString.new(str));
         // assert
-        assertTokenArray(actual, expected);
+        assertTokenArray(tokens, expected);
     });
 
     test("Auto *F* (Auto \u2a2f Majitel)", () => {
@@ -211,9 +206,9 @@ describe("parseTokens", () => {
             closingParenthesis(')')
         ];
         // act
-        const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
+        const {tokens} = exprParser.parseTokens(IndexedString.new(str));
         // assert
-        assertTokenArray(actual, expected);
+        assertTokenArray(tokens, expected);
     });
 
     test('(Auto \u00f7 Majitel)(Jmeno = "Honza")', () => {
@@ -228,9 +223,9 @@ describe("parseTokens", () => {
             selection("(Jmeno = \"Honza\")")
         ];
         // act
-        const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
+        const {tokens} = exprParser.parseTokens(IndexedString.new(str));
         // assert
-        assertTokenArray(actual, expected);
+        assertTokenArray(tokens, expected);
     });
 
     test('A<]A[>A*F*A*L*A*R*A<*A*>A*A\u2a2fA\u222aA\u2229A\\A\u22b2A\u22b3A\u00f7A', () => {
@@ -270,9 +265,9 @@ describe("parseTokens", () => {
             relationToken("A")
         ];
         // act
-        const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
+        const {tokens} = exprParser.parseTokens(IndexedString.new(str));
         // assert
-        assertTokenArray(actual, expected);
+        assertTokenArray(tokens, expected);
     });
 
     describe("distinguishes projection and theta join", () => {
@@ -284,61 +279,61 @@ describe("parseTokens", () => {
                 projection("[Id]")
             ];
             // act
-            const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
+            const {tokens} = exprParser.parseTokens(IndexedString.new(str));
             // assert
-            assertTokenArray(actual, expected);
+            assertTokenArray(tokens, expected);
         });
 
-        test("Auto[Id]Majitel", () => {
+        test("Auto[Id = 1]Majitel", () => {
             // arrange
-            const str: string = 'Auto[Id]Majitel';
+            const str: string = 'Auto[Id = 1]Majitel';
             const expected: ExprToken[] = [
                 relationToken("Auto"),
-                thetaJoin("[Id]"),
+                thetaJoin("[Id = 1]"),
                 relationToken("Majitel")
             ];
             // act
-            const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
+            const {tokens} = exprParser.parseTokens(IndexedString.new(str));
             // assert
-            assertTokenArray(actual, expected);
+            assertTokenArray(tokens, expected);
         });
 
-        test("Auto[Id][Id]Majitel[Id][Id]", () => {
+        test("Auto[Id][Id = 1]Majitel[Id][Id]", () => {
             // arrange
-            const str: string = 'Auto[Id][Id]Majitel[Id][Id]';
+            const str: string = 'Auto[Id][Id = 1]Majitel[Id][Id]';
             const expected: ExprToken[] = [
                 relationToken("Auto"),
                 projection("[Id]"),
-                thetaJoin("[Id]"),
+                thetaJoin("[Id = 1]"),
                 relationToken("Majitel"),
                 projection("[Id]"),
                 projection("[Id]")
             ];
             // act
-            const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
+            const {tokens} = exprParser.parseTokens(IndexedString.new(str));
             // assert
-            assertTokenArray(actual, expected);
+            assertTokenArray(tokens, expected);
         });
 
-        test("(Auto[Id]Auto)[Id][Id]Majitel[Id][Id]", () => {
+        test("(Auto[Id = 1]Auto)[Id][Id = 1]Majitel[Id][Id]", () => {
             // arrange
-            const str: string = '(Auto[Id]Auto)[Id][Id]Majitel[Id][Id]';
+            const str: string = '(Auto[Id = 1]Auto)[Id][Id = 1]Majitel[Id][Id]';
             const expected: ExprToken[] = [
                 openingParenthesis('('),
                 relationToken("Auto"),
-                thetaJoin("[Id]"),
+                thetaJoin("[Id = 1]"),
                 relationToken("Auto"),
                 closingParenthesis(')'),
                 projection("[Id]"),
-                thetaJoin("[Id]"),
+                thetaJoin("[Id = 1]"),
                 relationToken("Majitel"),
                 projection("[Id]"),
                 projection("[Id]")
             ];
             // act
-            const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
+            const {tokens} = exprParser.parseTokens(IndexedString.new(str));
             // assert
-            assertTokenArray(actual, expected);
+            assertTokenArray(tokens, expected);
         });
     });
 
@@ -352,29 +347,29 @@ describe("parseTokens", () => {
                 selection("(Id = 1)")
             ];
             // act
-            const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
+            const {tokens} = exprParser.parseTokens(IndexedString.new(str));
             // assert
-            assertTokenArray(actual, expected);
+            assertTokenArray(tokens, expected);
         });
 
-        test("Auto[Id, Majitel][theta join](Auto [theta join] Majitel(selection))", () => {
+        test("Auto[Id, Majitel][theta = join](Auto [theta = join] Majitel(selection))", () => {
             // arrange
-            const str: string = 'Auto[Id, Majitel][theta join](Auto [theta join] Majitel(selection))';
+            const str: string = 'Auto[Id, Majitel][theta = join](Auto [theta = join] Majitel(selection))';
             const expected: ExprToken[] = [
                 relationToken("Auto"),
                 projection("[Id, Majitel]"),
-                thetaJoin("[theta join]"),
+                thetaJoin("[theta = join]"),
                 openingParenthesis('('),
                 relationToken("Auto"),
-                thetaJoin("[theta join]"),
+                thetaJoin("[theta = join]"),
                 relationToken("Majitel"),
                 selection("(selection)"),
                 closingParenthesis(')')
             ];
             // act
-            const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
+            const {tokens} = exprParser.parseTokens(IndexedString.new(str));
             // assert
-            assertTokenArray(actual, expected);
+            assertTokenArray(tokens, expected);
         });
 
         test("((Auto))(selection)", () => {
@@ -389,9 +384,9 @@ describe("parseTokens", () => {
                 selection("(selection)")
             ];
             // act
-            const actual: ExprToken[] = exprParser.parseTokens(IndexedString.new(str));
+            const {tokens} = exprParser.parseTokens(IndexedString.new(str));
             // assert
-            assertTokenArray(actual, expected);
+            assertTokenArray(tokens, expected);
         });
     });
 
@@ -427,8 +422,7 @@ describe("assertValidInfixTokens", () => {
                 closingParenthesis(')')
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
 
         test(")*Auto", () => {
@@ -439,8 +433,7 @@ describe("assertValidInfixTokens", () => {
                 relationToken("Auto")
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
 
         test("(Id = 1)", () => {
@@ -449,8 +442,7 @@ describe("assertValidInfixTokens", () => {
                 selection("(Id = 1)")
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
 
         test("(Id = 1)*Auto", () => {
@@ -461,8 +453,7 @@ describe("assertValidInfixTokens", () => {
                 relationToken("Auto")
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
     });
 
@@ -474,8 +465,7 @@ describe("assertValidInfixTokens", () => {
                 projection("[projection]")
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).not.toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).not.toThrow();
         });
 
         test("(Auto)", () => {
@@ -486,8 +476,7 @@ describe("assertValidInfixTokens", () => {
                 closingParenthesis(')')
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).not.toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).not.toThrow();
         });
 
         test("Auto*Auto", () => {
@@ -498,8 +487,7 @@ describe("assertValidInfixTokens", () => {
                 relationToken("Auto")
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).not.toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).not.toThrow();
         });
 
         test("(Auto)*(Auto)", () => {
@@ -514,8 +502,7 @@ describe("assertValidInfixTokens", () => {
                 closingParenthesis(')')
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).not.toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).not.toThrow();
         });
 
         test("Auto(selection)[projection]", () => {
@@ -526,8 +513,7 @@ describe("assertValidInfixTokens", () => {
                 projection("[projection]")
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).not.toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).not.toThrow();
         });
 
         test("(Auto*Auto)[projection]", () => {
@@ -541,8 +527,7 @@ describe("assertValidInfixTokens", () => {
                 projection("[projection]")
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).not.toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).not.toThrow();
         });
 
         test("(Auto[projection])", () => {
@@ -554,8 +539,7 @@ describe("assertValidInfixTokens", () => {
                 closingParenthesis(')'),
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).not.toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).not.toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).not.toThrow();
         });
     });
 
@@ -567,8 +551,7 @@ describe("assertValidInfixTokens", () => {
                 relationToken("Auto")
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
 
         test("(Auto) Auto", () => {
@@ -580,8 +563,7 @@ describe("assertValidInfixTokens", () => {
                 relationToken("Auto")
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
 
         test("Auto(selection)Auto", () => {
@@ -592,8 +574,7 @@ describe("assertValidInfixTokens", () => {
                 relationToken("Auto")
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
 
         test("Auto (Auto)", () => {
@@ -605,8 +586,7 @@ describe("assertValidInfixTokens", () => {
                 closingParenthesis(')')
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
 
         test("(Auto) (Auto)", () => {
@@ -620,8 +600,7 @@ describe("assertValidInfixTokens", () => {
                 closingParenthesis(')')
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
 
         test("Auto(selection)(Auto)", () => {
@@ -634,8 +613,7 @@ describe("assertValidInfixTokens", () => {
                 closingParenthesis(')')
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
 
         test("Auto*)", () => {
@@ -646,8 +624,7 @@ describe("assertValidInfixTokens", () => {
                 closingParenthesis(')')
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
 
         test("Auto*)", () => {
@@ -658,8 +635,7 @@ describe("assertValidInfixTokens", () => {
                 closingParenthesis(')')
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
 
         test("(*Auto", () => {
@@ -670,8 +646,7 @@ describe("assertValidInfixTokens", () => {
                 relationToken("Auto")
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
 
         test("Auto**Auto", () => {
@@ -683,8 +658,7 @@ describe("assertValidInfixTokens", () => {
                 relationToken("Auto")
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
 
         test("([projection])", () => {
@@ -695,8 +669,7 @@ describe("assertValidInfixTokens", () => {
                 closingParenthesis(')')
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
 
         test("Auto*[projection]", () => {
@@ -707,8 +680,7 @@ describe("assertValidInfixTokens", () => {
                 projection("[projection]")
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
     });
 
@@ -721,8 +693,7 @@ describe("assertValidInfixTokens", () => {
                 openingParenthesis('(')
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
 
         test("Auto*", () => {
@@ -732,8 +703,7 @@ describe("assertValidInfixTokens", () => {
                 naturalJoin('*')
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
 
         test("(())", () => {
@@ -745,8 +715,7 @@ describe("assertValidInfixTokens", () => {
                 closingParenthesis(')')
             ];
             // assert
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_NOT_STRICT, [])).toThrow();
-            expect(() => exprParser.assertValidInfixTokens(input, AssertType.THROW_STRICT, [])).toThrow();
+            expect(() => exprParser.assertValidInfixTokens(input)).toThrow();
         });
     });
 });
@@ -763,7 +732,7 @@ describe("fakeValidInfixTokensForWhisper", () => {
             relationToken("")
         ];
         // act - input is changed inside the function
-        exprParser.assertValidInfixTokens(input, AssertType.NOT_THROW, []);
+        exprParser.assertValidInfixTokens(input, false, []);
         // assert
         assertTokenArray(input, expected);
     });
@@ -782,7 +751,7 @@ describe("fakeValidInfixTokensForWhisper", () => {
             relationToken("")
         ];
         // act - input is changed inside the function
-        exprParser.assertValidInfixTokens(input, AssertType.NOT_THROW, []);
+        exprParser.assertValidInfixTokens(input, false, []);
         // assert
         assertTokenArray(input, expected);
     });
@@ -799,7 +768,7 @@ describe("fakeValidInfixTokensForWhisper", () => {
             relationToken("Car")
         ];
         // act - input is changed inside the function
-        exprParser.assertValidInfixTokens(input, AssertType.NOT_THROW, []);
+        exprParser.assertValidInfixTokens(input, false, []);
         // assert
         assertTokenArray(input, expected);
     });
@@ -817,7 +786,7 @@ describe("fakeValidInfixTokensForWhisper", () => {
             relationToken("Car")
         ];
         // act - input is changed inside the function
-        exprParser.assertValidInfixTokens(input, AssertType.NOT_THROW, []);
+        exprParser.assertValidInfixTokens(input, false, []);
         // assert
         assertTokenArray(input, expected);
     });
@@ -834,7 +803,7 @@ describe("fakeValidInfixTokensForWhisper", () => {
             closingParenthesis(")")
         ];
         // act - input is changed inside the function
-        exprParser.assertValidInfixTokens(input, AssertType.NOT_THROW, []);
+        exprParser.assertValidInfixTokens(input, false, []);
         // assert
         assertTokenArray(input, expected);
     });
@@ -857,7 +826,7 @@ describe("fakeValidInfixTokensForWhisper", () => {
             closingParenthesis(")")
         ];
         // act - input is changed inside the function
-        exprParser.assertValidInfixTokens(input, AssertType.NOT_THROW, []);
+        exprParser.assertValidInfixTokens(input, false, []);
         // assert
         assertTokenArray(input, expected);
     });

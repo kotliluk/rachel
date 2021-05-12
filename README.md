@@ -181,6 +181,9 @@ Set operations:
 
 ### Algebraic and logical operators
 
+We use algebraic and logical operators in selection, theta join, and theta
+semijoin conditions.
+
 **Algebraic operators** in the conditions:
 
 These operators expect number literal or number column inputs. If the
@@ -199,6 +202,10 @@ of booleans uses false < true. Inequality checking of strings uses alphabetic
 comparison ("abc" < "def", "a" < "aa"). If a column is evaluated to null, the only
 possible condition to return true is "column == null". When the inputs have
 different types, an error is triggered.
+
+We can use boolean values in selection and theta semijoins
+with no testing operator (e.g., Relation(BooleanColumn)). In theta joins, we
+need to always use any testing operator (e.g., RelA\[BooleanColumn = true\]RelB).
 
 - equal (= or ==): 1 = 5.2, StringColumn = "abcd", ...
 - non-equal (!= or <>): 1 != 5.2, StringColumn != "abcd", ...
@@ -240,9 +247,11 @@ The application uses many great libraries (available on [npm](https://www.npmjs.
 - [visx](https://github.com/airbnb/visx) - Visualization components
 - [export-svg-with-styles](https://www.npmjs.com/package/export-svg-with-styles) - Turn your SVGs to PNGs
 - [FileSaver.js](https://github.com/eligrey/FileSaver.js) - An HTML5 saveAs() FileSaver implementation
-- [Lodash](https://github.com/lodash/lodash) - A modern JavaScript utility library delivering modularity, performance, & extras
+- [Lodash](https://github.com/lodash/lodash) - A modern JavaScript utility library delivering modularity, performance & extras
 - [Jest](https://github.com/facebook/jest) - Delightful JavaScript Testing
 - [PostMail](https://postmail.invotes.com/) - Send email from JavaScript or static HTML without backend code
+- [JSDoc](https://github.com/jsdoc/jsdoc) - An API documentation generator for JavaScript
+- [better-docs](https://github.com/SoftwareBrothers/better-docs) - Beautiful toolbox for jsdoc generated documentation
 
 ## License
 

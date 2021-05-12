@@ -7,8 +7,7 @@ import {StartEndPair} from "../types/startEndPair";
  * Abstract parent class for all RATokens.
  */
 export abstract class ExprToken {
-    protected constructor(public readonly str: IndexedString) {
-    }
+    protected constructor(public readonly str: IndexedString, public readonly type: string) {}
 
     /**
      * Gets token start and end index in the text (if the token has IndexedString representation) or undefined.
@@ -25,13 +24,13 @@ export abstract class ParenthesisToken extends ExprToken {}
 
 export class OpeningParenthesis extends ParenthesisToken {
     public constructor(str: IndexedString) {
-        super(str);
+        super(str, "OpeningParenthesis");
     }
 }
 
 export class ClosingParenthesis extends ParenthesisToken {
     public constructor(str: IndexedString) {
-        super(str);
+        super(str, "ClosingParenthesis");
     }
 }
 
@@ -40,7 +39,7 @@ export class ClosingParenthesis extends ParenthesisToken {
  */
 export class RelationToken extends ExprToken {
     public constructor(name: IndexedString) {
-        super(name);
+        super(name, "RelationToken");
     }
 }
 
@@ -61,8 +60,8 @@ export class UnaryOperatorToken extends ExprToken {
         return new UnaryOperatorToken(rename, "rename");
     }
 
-    private constructor(str: IndexedString, public readonly type: UnaryNodeClass) {
-        super(str);
+    private constructor(str: IndexedString, type: UnaryNodeClass) {
+        super(str, type);
     }
 }
 
@@ -155,7 +154,7 @@ export class BinaryOperatorToken extends ExprToken {
         return new BinaryOperatorToken(str, divisionPrecedence, "division");
     }
 
-    private constructor(str: IndexedString, public readonly precedence: number, public readonly type: BinaryNodeClass) {
-        super(str);
+    private constructor(str: IndexedString, public readonly precedence: number, type: BinaryNodeClass) {
+        super(str, type);
     }
 }

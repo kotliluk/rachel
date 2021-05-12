@@ -10,7 +10,6 @@ import {
   UnaryOperatorToken
 } from "./exprTokens";
 import {StringUtils} from "../utils/stringUtils";
-import {CodeError} from "../error/codeError";
 import {RATreeNode} from "../ratree/raTreeNode";
 import {RelationNode} from "../ratree/relationNode";
 import {IndexedString} from "../types/indexedString";
@@ -19,15 +18,6 @@ import {ErrorWithTextRange} from "../error/errorWithTextRange";
 import {RATreeFactory} from "../ratree/raTreeFactory";
 import {language} from "../language/language";
 import {StartEndPair} from "../types/startEndPair";
-
-/**
- * Assertion types for assertValidInfixTokens function.
- */
-enum AssertType {
-    NOT_THROW,
-    THROW_STRICT,
-    THROW_NOT_STRICT
-}
 
 /**
  * Fake parsing result in {@link ExprParser}.
@@ -105,13 +95,13 @@ export class ExprParser {
         if (err !== undefined) {
             throw err;
         }
-        const tokens: ExprToken[] = this.parseTokens(str);
+        const {tokens} = this.parseTokens(str);
         if (tokens.length === 0) {
             throw ErrorFactory.syntaxError(language().syntaxErrors.exprParser_emptyStringGiven, undefined);
         }
-        this.assertValidInfixTokens(tokens, AssertType.THROW_STRICT);
+        this.assertValidInfixTokens(tokens);
         const rpn: ExprToken[] = this.toRPN(tokens);
-        return this.rpnToRATree(rpn, true);
+        return this.rpnToRATree(rpn);
     }
 
     /**
@@ -132,7 +122,7 @@ export class ExprParser {
             return {whispers: [...this.relations.keys()], errors: [], parentheses: []};
         }
         const {str, err} = IndexedStringUtils.deleteAllComments(IndexedString.new(expr));
-        const {whispers, tokens, errors, parentheses} = this.fakeParseTokens(str, cursorIndex);
+        const {whispers, tokens, errors, parentheses} = this.parseTokens(str, false, cursorIndex);
         if (err !== undefined) {
             errors.push(err);
         }
@@ -141,7 +131,7 @@ export class ExprParser {
             return {whispers: whispers, errors: errors, parentheses: parentheses};
         }
         // fakes found errors to valid parse
-        this.assertValidInfixTokens(tokens, AssertType.NOT_THROW, errors);
+        this.assertValidInfixTokens(tokens, false, errors);
         const rpn: ExprToken[] = this.toRPN(tokens);
         const raTree: RATreeNode = this.rpnToRATree(rpn, false, errors);
         // tries to find whispers inside RA operations with parameters
@@ -156,237 +146,35 @@ export class ExprParser {
     }
 
     /**
-     * Given expression string is expected to be without comment lines and not empty.
-     *
-     * @param expr IndexedString to parse the expression from
-     * @param selectionExpected true if next part "(...)" should be treated as a selection = last part
-     * was a relation or an unary operator (default false)
-     */
-    public parseTokens(expr: IndexedString, selectionExpected: boolean = false): ExprToken[] {
-        let tokens: ExprToken[] = [];
-        // alternative solution in case of finding "[...]"
-        let alternativeTokens: ExprToken[] = [];
-        let rest: IndexedString = expr.trim();
-
-        while (!rest.isEmpty()) {
-            // '(' can be a selection or a parentheses
-            if (rest.startsWith("(")) {
-                const split = IndexedStringUtils.nextBorderedPart(rest, '(', ')');
-                // whole "(...)" part pushed as selection
-                if (selectionExpected) {
-                    tokens.push(UnaryOperatorToken.selection(split.first));
-                }
-                // inner of "(...)" part parsed as parentheses structure
-                else {
-                    tokens.push(new OpeningParenthesis(split.first.slice(0, 1)));
-                    tokens.push(...this.parseTokens(split.first.slice(1, -1)));
-                    tokens.push(new ClosingParenthesis(split.first.slice(-1)));
-                    selectionExpected = true;
-                }
-                rest = split.second;
-            }
-            // '[' can be a projection, theta join, or right theta semi join
-            else if (rest.startsWith("[")) {
-                const split = IndexedStringUtils.nextBorderedPart(rest, '[', ']>');
-                // right theta semijoin found
-                if (split.first.endsWith('>')) {
-                    tokens.push(BinaryOperatorToken.rightThetaSemijoin(split.first));
-                    selectionExpected = false;
-                    rest = split.second;
-                }
-                // the expression cannot end with a theta join (right source expected)
-                else if (split.second.isEmpty()) {
-                    tokens.push(UnaryOperatorToken.projection(split.first));
-                    break;
-                }
-                // it is no known yet whether it is a projection or a theta join, recursively tries both possibilities
-                else {
-                    let errorAlternative: Error | undefined;
-                    let error: Error | undefined;
-
-                    // 1: treat as Theta join (it must copy tokens first)
-                    try {
-                        alternativeTokens.push(...tokens);
-                        alternativeTokens.push(BinaryOperatorToken.thetaJoin(split.first));
-                        alternativeTokens.push(...this.parseTokens(split.second, false));
-                    }
-                    catch (err) {
-                        if (err instanceof CodeError) {
-                            throw err;
-                        }
-                        errorAlternative = err;
-                    }
-
-                    // 2: treat as Projection
-                    try {
-                        tokens.push(UnaryOperatorToken.projection(split.first));
-                        tokens.push(...this.parseTokens(split.second, true));
-                    }
-                    catch (err) {
-                        if (err instanceof CodeError) {
-                            throw err;
-                        }
-                        error = err;
-                    }
-
-                    // both branches have error - reports it to user
-                    if (errorAlternative !== undefined && error !== undefined) {
-                        // when errors were the same, throws one of them
-                        if (errorAlternative.message === error.message) {
-                            throw error;
-                        }
-                        // when errors were different, joins them
-                        throw ErrorFactory.syntaxError(language().syntaxErrors.exprParser_bothBranchesError,
-                            undefined, split.first.toString(), error.message, errorAlternative.message);
-                    }
-                    // does not use alternative tokens after error
-                    if (errorAlternative !== undefined) {
-                        alternativeTokens = [];
-                    }
-                    // uses alternative tokens after error in second branch
-                    if (error !== undefined) {
-                        tokens = alternativeTokens;
-                        alternativeTokens = [];
-                    }
-                    // breaks the while - the rest was parsed recursively
-                    break;
-                }
-            }
-            // BINARY OPERATORS
-            else if (rest.startsWith("*F*") || rest.startsWith("*L*") || rest.startsWith("*R*")) {
-                if (!this.nullValuesSupport) {
-                    let errorRange: StartEndPair | undefined = undefined;
-                    if (!isNaN(rest.getFirstIndex())) {
-                        errorRange = {start: rest.getFirstIndex(), end: rest.getFirstIndex() + 2};
-                    }
-                    throw ErrorFactory.syntaxError(language().syntaxErrors.exprParser_outerJoinWhenNullNotSupported,
-                        errorRange, "*F*");
-                }
-                if (rest.startsWith("*F")) {
-                    tokens.push(BinaryOperatorToken.fullOuterJoin(rest.slice(0, 3)));
-                }
-                else if (rest.startsWith("*L")) {
-                    tokens.push(BinaryOperatorToken.leftOuterJoin(rest.slice(0, 3)));
-                }
-                else {
-                    tokens.push(BinaryOperatorToken.rightOuterJoin(rest.slice(0, 3)));
-                }
-                rest = rest.slice(3);
-                selectionExpected = false;
-            }
-            else if (rest.startsWith("<*")) {
-                tokens.push(BinaryOperatorToken.leftSemijoin(rest.slice(0, 2)));
-                rest = rest.slice(2);
-                selectionExpected = false;
-            }
-            else if (rest.startsWith("*>")) {
-                tokens.push(BinaryOperatorToken.rightSemijoin(rest.slice(0, 2)));
-                rest = rest.slice(2);
-                selectionExpected = false;
-            }
-            else if (rest.startsWith("*")) {
-                tokens.push(BinaryOperatorToken.naturalJoin(rest.slice(0, 1)));
-                rest = rest.slice(1);
-                selectionExpected = false;
-            }
-            else if (rest.startsWith("\u2a2f")) {
-                tokens.push(BinaryOperatorToken.cartesianProduct(rest.slice(0, 1)));
-                rest = rest.slice(1);
-                selectionExpected = false;
-            }
-            else if (rest.startsWith("\u222a")) {
-                tokens.push(BinaryOperatorToken.union(rest.slice(0, 1)));
-                rest = rest.slice(1);
-                selectionExpected = false;
-            }
-            else if (rest.startsWith("\u2229")) {
-                tokens.push(BinaryOperatorToken.intersection(rest.slice(0, 1)));
-                rest = rest.slice(1);
-                selectionExpected = false;
-            }
-            else if (rest.startsWith("\\")) {
-                tokens.push(BinaryOperatorToken.difference(rest.slice(0, 1)));
-                rest = rest.slice(1);
-                selectionExpected = false;
-            }
-            else if (rest.startsWith("\u22b3")) {
-                tokens.push(BinaryOperatorToken.leftAntijoin(rest.slice(0, 1)));
-                rest = rest.slice(1);
-                selectionExpected = false;
-            }
-            else if (rest.startsWith("\u22b2")) {
-                tokens.push(BinaryOperatorToken.rightAntijoin(rest.slice(0, 1)));
-                rest = rest.slice(1);
-                selectionExpected = false;
-            }
-            else if (rest.startsWith("\u00f7")) {
-                tokens.push(BinaryOperatorToken.division(rest.slice(0, 1)));
-                rest = rest.slice(1);
-                selectionExpected = false;
-            }
-            // '<' can be a rename or left theta semi join - this "if" must be after <* and *>
-            else if (rest.startsWith('<')) {
-                const split = IndexedStringUtils.nextBorderedPart(rest, '<', '>]', '-');
-                if (split.first.endsWith('>')) {
-                    tokens.push(UnaryOperatorToken.rename(split.first));
-                    selectionExpected = true;
-                }
-                else {
-                    tokens.push(BinaryOperatorToken.leftThetaSemijoin(split.first));
-                    selectionExpected = false;
-                }
-                rest = split.second;
-            }
-            // RELATION REFERENCE
-            else if (StringUtils.isLetter(rest.charAt(0)) || rest.charAt(0) === '_') {
-                const split = IndexedStringUtils.nextName(rest);
-                tokens.push(new RelationToken(split.first));
-                rest = split.second;
-                selectionExpected = true;
-            }
-            // UNEXPECTED PART
-            else {
-                const split = IndexedStringUtils.nextNonWhitespacePart(rest);
-                throw ErrorFactory.syntaxError(language().syntaxErrors.exprParser_unexpectedPart,
-                    split.first.getRange(), split.first.toString());
-            }
-            rest = rest.trim();
-        }
-        // checks whether alternative tokens are valid when used
-        if (alternativeTokens.length > 0) {
-            try {
-                // assert not strict validity (because this can be in nested recursion call where some rules are not held)
-                this.assertValidInfixTokens(alternativeTokens, AssertType.THROW_NOT_STRICT, []);
-                // if error not thrown, returns alternative tokens
-                return alternativeTokens;
-            }
-            catch (ignored) {}
-        }
-        // when alternative tokens are not set or valid, returns tokens
-        return tokens;
-    }
-
-    /**
      * Parses given expression to ExprToken array. While parsing, it tries to find cursor index and returns whispers.
-     * Parsing errors are not thrown but stored in errors array.
+     * When doThrow is false, parsing errors are not thrown but stored in errors array. Returns found pair characters
+     * (e.g., parentheses).
      *
      * @param expr IndexedString to parse the expression from
-     * @param cursorIndex
-     * @param selectionExpected true if next part "(...)" should be treated as a selection = last part
-     * was a relation or an unary operator (default false)
+     * @param cursorIndex current cursor index
+     * @param doThrow whether to throw encountered errors was a relation or an unary operator (default false)
      */
-    public fakeParseTokens(expr: IndexedString, cursorIndex: number, selectionExpected: boolean = false):
+    public parseTokens(expr: IndexedString, doThrow: boolean = true, cursorIndex: number = NaN):
         { tokens: ExprToken[], whispers: string[], errors: ErrorWithTextRange[], parentheses: StartEndPair[] } {
-        let whispers: string[] = [];
         let tokens: ExprToken[] = [];
+        let whispers: string[] = [];
         let errors: ErrorWithTextRange[] = [];
         let parentheses: StartEndPair[] = [];
+
+        // throws the error if doThrow is true, otherwise adds it to the errors array
+        const handleError = (err: ErrorWithTextRange) => {
+            if (doThrow) {
+                throw err;
+            }
+            errors.push(err);
+        }
 
         // adds new pair of parentheses from margins of the given string
         const pushParentheses = (str: IndexedString) => {
             parentheses.push({start: str.getFirstIndex(), end: str.getLastIndex()});
         }
 
+        let selectionExpected: boolean = false;
         let rest: IndexedString = expr;
         while (!rest.isEmpty()) {
             // checks whether the cursor was reached
@@ -405,7 +193,7 @@ export class ExprParser {
                 catch (err) {
                     // saves error
                     if (err instanceof ErrorWithTextRange) {
-                        errors.push(err);
+                        handleError(err);
                     }
 
                     if (selectionExpected) {
@@ -421,7 +209,7 @@ export class ExprParser {
                         // it fakes the unclosed expression as nested expression in parentheses
                         tokens.push(new OpeningParenthesis(rest.slice(0, 1)));
                         // parses inner part between parentheses
-                        const recursiveReturn = this.fakeParseTokens(rest.slice(1), cursorIndex);
+                        const recursiveReturn = this.parseTokens(rest.slice(1), doThrow, cursorIndex);
                         errors.push(...recursiveReturn.errors);
                         whispers.push(...recursiveReturn.whispers);
                         tokens.push(...recursiveReturn.tokens);
@@ -443,7 +231,7 @@ export class ExprParser {
                 // inner of "(...)" part parsed as parentheses structure
                 else {
                     tokens.push(new OpeningParenthesis(split.first.slice(0, 1)));
-                    const recursiveReturn = this.fakeParseTokens(split.first.slice(1, -1), cursorIndex);
+                    const recursiveReturn = this.parseTokens(split.first.slice(1, -1), doThrow, cursorIndex);
                     errors.push(...recursiveReturn.errors);
                     whispers.push(...recursiveReturn.whispers);
                     tokens.push(...recursiveReturn.tokens);
@@ -465,7 +253,7 @@ export class ExprParser {
                     error = true;
                     // saves error
                     if (err instanceof ErrorWithTextRange) {
-                        errors.push(err);
+                        handleError(err);
                     }
                     // it fakes the unclosed expression part as a projection operator
                     split = {first: rest.concat(IndexedString.new(']', rest.getLastIndex() + 1)), second: IndexedString.empty()};
@@ -596,7 +384,7 @@ export class ExprParser {
                 catch (err) {
                     // saves error
                     if (err instanceof ErrorWithTextRange) {
-                        errors.push(err);
+                        handleError(err);
                     }
                     // it fakes the unclosed expression part as a rename operator
                     tokens.push(UnaryOperatorToken.rename(rest.concat(IndexedString.new('>', rest.getLastIndex() + 1))));
@@ -631,7 +419,7 @@ export class ExprParser {
             // UNEXPECTED PART
             else {
                 const split = IndexedStringUtils.nextNonWhitespacePart(rest);
-                errors.push(ErrorFactory.syntaxError(language().syntaxErrors.exprParser_unexpectedPart,
+                handleError(ErrorFactory.syntaxError(language().syntaxErrors.exprParser_unexpectedPart,
                     split.first.getRange(), split.first.toString()));
                 // tries to skip first unexpected character
                 rest = rest.slice(split.first.length());
@@ -641,19 +429,16 @@ export class ExprParser {
     }
 
     /**
-     * Checks the validity of the given infix token array.
-     * If the type is THROW_STRICT or THROW_NOT_STRICT, it throws found errors. Strict version checks the first
-     * token in the array, not strict version does not. In both throw version is the errors parameter ignored.
-     * If the type is NOT_THROW, it adds fake tokens if the array is not valid.
-     * Fake tokens are relations with empty name "", or natural joins "*", their error ranges are undefined.
-     * All faked errors are reported pushed in given errors array.
+     * Checks the validity of the given infix token array. If doThrow is false, pushes found errors to the given errors
+     * array. Fake tokens are relations with empty name "", or natural joins "*", their error ranges are undefined.
+     * All faked errors are pushed in given errors array.
      * Expects validly nested parentheses: yes "(()())", no ")()", ")(". Expects not empty array.
      *
      * @param tokens token array to check
-     * @param type type of the assertion
+     * @param doThrow whether to throw found errors
      * @param errors array for pushing faked errors for NOT_THROW type
      */
-    public assertValidInfixTokens(tokens: ExprToken[], type: AssertType, errors: ErrorWithTextRange[] = []): void {
+    public assertValidInfixTokens(tokens: ExprToken[], doThrow: boolean = true, errors: ErrorWithTextRange[] = []): void {
         /**
          * Handles the error described by given error code, params and range. If doThrow is true, throws the described
          * error. Otherwise, fakes it by inserting a new token at given index. The token is binary (natural join) if
@@ -662,7 +447,7 @@ export class ExprParser {
         const handleError = (index: number, missing: "binary" | "relation",
                              msg: string[], range: StartEndPair | undefined, ...params: string[]) => {
             const error = ErrorFactory.syntaxError(msg, range, ...params);
-            if (type !== AssertType.NOT_THROW) {
+            if (doThrow) {
                 throw error;
             }
             else if (missing === "binary") {
@@ -675,12 +460,10 @@ export class ExprParser {
             }
         }
 
-        if (type !== AssertType.THROW_NOT_STRICT) {
-            // checks start of an array: it must start with '(' or relation
-            if (tokens[0] instanceof UnaryOperatorToken || tokens[0] instanceof BinaryOperatorToken || tokens[0] instanceof ClosingParenthesis) {
-                handleError(0, "relation", language().syntaxErrors.exprParser_invalidStart,
-                    tokens[0].getRange(), tokens[0].str.toString());
-            }
+        // checks start of an array: it must start with '(' or relation
+        if (tokens[0] instanceof UnaryOperatorToken || tokens[0] instanceof BinaryOperatorToken || tokens[0] instanceof ClosingParenthesis) {
+            handleError(0, "relation", language().syntaxErrors.exprParser_invalidStart,
+                tokens[0].getRange(), tokens[0].str.toString());
         }
 
         // checks end of an array: it must end with ')', relation or an unary operator
@@ -837,10 +620,10 @@ export class ExprParser {
      * @param tokens value-evaluating expression in reverse polish form
      * @param doThrow if true and an error occurs, throws an error, if false and an error occurs, fakes it and does
      * not throw
-     * @param errors
+     * @param errors array to store found errors when doThrow = false
      * @return RATreeNode tree (its root)
      */
-    public rpnToRATree(tokens: ExprToken[], doThrow: boolean, errors: ErrorWithTextRange[] = []): RATreeNode {
+    public rpnToRATree(tokens: ExprToken[], doThrow: boolean = true, errors: ErrorWithTextRange[] = []): RATreeNode {
         const ret: RATreeNode = this.rpnToRATreeRecursive(tokens, doThrow, errors);
         // not all tokens were used
         if (tokens.length > 0) {
@@ -854,6 +637,9 @@ export class ExprParser {
         return ret;
     }
 
+    /**
+     * Helper function for rpnToRATree.
+     */
     public rpnToRATreeRecursive(tokens: ExprToken[], doThrow: boolean, errors: ErrorWithTextRange[]): RATreeNode {
         if (tokens.length === 0) {
             throw ErrorFactory.syntaxError(language().syntaxErrors.exprParser_invalidExpression, undefined);
@@ -880,12 +666,14 @@ export class ExprParser {
         // UNARY OPERATORS
         if (token instanceof UnaryOperatorToken) {
             const subtree: RATreeNode = this.rpnToRATreeRecursive(tokens, doThrow, errors);
+            // @ts-ignore
             return RATreeFactory.createUnary(token.type, subtree, this.nullValuesSupport, token.str);
         }
         // BINARY OPERATORS
         if (token instanceof BinaryOperatorToken) {
             const right: RATreeNode = this.rpnToRATreeRecursive(tokens, doThrow, errors);
             const left: RATreeNode = this.rpnToRATreeRecursive(tokens, doThrow, errors);
+            // @ts-ignore
             return RATreeFactory.createBinary(token.type, left, right, this.nullValuesSupport, token.str);
         }
         // should never happen
