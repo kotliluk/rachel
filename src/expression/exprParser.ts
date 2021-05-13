@@ -156,8 +156,13 @@ export class ExprParser {
      */
     public parseTokens(expr: IndexedString, doThrow: boolean = true, cursorIndex: number = NaN):
         { tokens: ExprToken[], whispers: string[], errors: ErrorWithTextRange[], parentheses: StartEndPair[] } {
+        // handles empty string
+        if (expr.isEmpty()) {
+            return {tokens: [], whispers: [...this.relations.keys()], errors: [], parentheses: []};
+        }
+
         let tokens: ExprToken[] = [];
-        let whispers: string[] = [];
+        let whispers: string[] = cursorIndex === 0 ? [...this.relations.keys()] : [];
         let errors: ErrorWithTextRange[] = [];
         let parentheses: StartEndPair[] = [];
 
@@ -201,17 +206,14 @@ export class ExprParser {
                         tokens.push(UnaryOperatorToken.selection(rest.concat(IndexedString.new(')', rest.getLastIndex() + 1))));
                     }
                     else {
-                        // checks whether the cursor was reached after the opening parentheses
-                        if (restStartIndex === cursorIndex - 1) {
-                            whispers = [...this.relations.keys()];
-                        }
-
                         // it fakes the unclosed expression as nested expression in parentheses
                         tokens.push(new OpeningParenthesis(rest.slice(0, 1)));
                         // parses inner part between parentheses
                         const recursiveReturn = this.parseTokens(rest.slice(1), doThrow, cursorIndex);
                         errors.push(...recursiveReturn.errors);
-                        whispers.push(...recursiveReturn.whispers);
+                        if (whispers.length === 0) {
+                            whispers.push(...recursiveReturn.whispers);
+                        }
                         tokens.push(...recursiveReturn.tokens);
                         parentheses.push(...recursiveReturn.parentheses);
                         // gives invalid index (NaN for not reporting errors with this imaginary parentheses
@@ -233,7 +235,9 @@ export class ExprParser {
                     tokens.push(new OpeningParenthesis(split.first.slice(0, 1)));
                     const recursiveReturn = this.parseTokens(split.first.slice(1, -1), doThrow, cursorIndex);
                     errors.push(...recursiveReturn.errors);
-                    whispers.push(...recursiveReturn.whispers);
+                    if (whispers.length === 0) {
+                        whispers.push(...recursiveReturn.whispers);
+                    }
                     tokens.push(...recursiveReturn.tokens);
                     parentheses.push(...recursiveReturn.parentheses);
                     tokens.push(new ClosingParenthesis(split.first.slice(-1)));
