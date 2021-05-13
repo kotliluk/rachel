@@ -19,6 +19,7 @@ const semanticErrors: SemanticErrorMessages = {
     renameNode_absentOriginalColumn: ["Nepovolené přejmenování, sloupec \"", "\" neexistuje ve vstupní relaci."],
     renameNode_changeToDuplicit: ["Nepovolené přejmenování, nový název sloupce \"", "\" je duplicitní ve změněné relaci."],
     projectionNode_absentColumn: ["Nepovolená projekce sloupce \"", "\". Tento sloupec neexistuje ve vstupní relaci."],
+    projectionNode_emptyProjection: ["Nepovolená projekce, vždy musí být zachován alespoň jeden sloupec."],
 
     referenceValue_absentColumn: ["Sloupec \"", "\" neexistuje ve schématu se sloupci ", "."]
 };

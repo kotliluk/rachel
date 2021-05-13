@@ -47,6 +47,7 @@ const semanticErrors: SemanticErrorMessages = {
     renameNode_absentOriginalColumn: ["Invalid renaming attempt, column \"", /* column */ "\" does not exist in the source relation."],
     renameNode_changeToDuplicit: ["Invalid renaming attempt, new column name \"", /* column */ "\" is ambiguous in the changed relation."],
     projectionNode_absentColumn: ["Invalid projection of the column \"", /* column */ "\". It does not exist in the source relation."],
+    projectionNode_emptyProjection: ["Invalid projection attempt, no column to project."],
 
     referenceValue_absentColumn: ["Column \"", /* column */ "\" is missing in a schema with columns: ", /* columns */ "."]
 };

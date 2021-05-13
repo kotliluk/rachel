@@ -27,6 +27,8 @@ export interface SemanticErrorMessages {
     renameNode_changeToDuplicit: string[],
     // expects 2 parts
     projectionNode_absentColumn: string[],
+    // expects part
+    projectionNode_emptyProjection: string[],
 
     // expects 3 parts
     referenceValue_absentColumn: string[]
