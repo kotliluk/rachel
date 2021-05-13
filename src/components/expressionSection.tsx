@@ -349,12 +349,7 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                     className={className}
                     draggable={true}
                     onDragStart={e => e.dataTransfer.setData("text/plain", dndId + String(i))}
-                    onDragOver={e => {
-                        const data = e.dataTransfer.getData("text/plain");
-                        if (data.charAt(0) === dndId) {
-                            e.preventDefault();
-                        }
-                    }}
+                    onDragOver={e => e.preventDefault()}
                     onDrop={e => this.handleDragDrop(e, i)}
                 >{expr.name}</button>);
             });
