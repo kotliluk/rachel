@@ -122,6 +122,11 @@ interface ExpressionSectionState {
 }
 
 /**
+ * Identifier of elements drag-and-dropped from the ExpressionSection.
+ */
+const dndId: string = "E";
+
+/**
  * Section to edit, manage, and eval relational algebra expressions.
  * Accepts {@link ExpressionSectionProps} props.
  * @category Components
@@ -323,9 +328,11 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
      */
     // @ts-ignore
     private handleDragDrop = (e: DragEvent<HTMLDivElement>, i: number) => {
-        const from = Number(e.dataTransfer.getData("text/plain"));
-        if (!isNaN(from)) {
-            this.props.onDragExpression(from, i);
+        e.preventDefault();
+        const data = e.dataTransfer.getData("text/plain");
+        const fromIndex = Number(data.slice(1));
+        if (data.charAt(0) === dndId && !isNaN(fromIndex)) {
+            this.props.onDragExpression(fromIndex, i);
         }
     }
 
@@ -341,8 +348,13 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                     onClick={() => this.handleSelectDifferentExpression(i)}
                     className={className}
                     draggable={true}
-                    onDragStart={e => e.dataTransfer.setData("text/plain", String(i))}
-                    onDragOver={e => e.preventDefault()}
+                    onDragStart={e => e.dataTransfer.setData("text/plain", dndId + String(i))}
+                    onDragOver={e => {
+                        const data = e.dataTransfer.getData("text/plain");
+                        if (data.charAt(0) === dndId) {
+                            e.preventDefault();
+                        }
+                    }}
                     onDrop={e => this.handleDragDrop(e, i)}
                 >{expr.name}</button>);
             });

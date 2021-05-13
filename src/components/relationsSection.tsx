@@ -161,6 +161,11 @@ interface RelationsSectionState {
 }
 
 /**
+ * Identifier of elements drag-and-dropped from the RelationSection.
+ */
+const dndId: string = "R";
+
+/**
  * Section to type the RA expression. It contains textarea for relations definition and control buttons.
  * Accepts {@link RelationsSectionProps} props.
  * @category Components
@@ -278,8 +283,13 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
                     className={className}
                     style={style}
                     draggable={true}
-                    onDragStart={e => e.dataTransfer.setData("text/plain", String(i))}
-                    onDragOver={e => e.preventDefault()}
+                    onDragStart={e => e.dataTransfer.setData("text/plain", dndId + String(i))}
+                    onDragOver={e => {
+                        const data = e.dataTransfer.getData("text/plain");
+                        if (data.charAt(0) === dndId) {
+                            e.preventDefault();
+                        }
+                    }}
                     onDrop={e => this.handleDragDrop(e, i)}
                 >{actuality + rel.getName()}</button>
             );
@@ -291,9 +301,11 @@ export class RelationsSection extends React.Component<RelationsSectionProps, Rel
      */
     // @ts-ignore
     private handleDragDrop = (e: DragEvent<HTMLDivElement>, i: number) => {
-        const from = Number(e.dataTransfer.getData("text/plain"));
-        if (!isNaN(from)) {
-            this.props.onDragRelation(from, i);
+        e.preventDefault();
+        const data = e.dataTransfer.getData("text/plain");
+        const fromIndex = Number(data.slice(1));
+        if (data.charAt(0) === dndId && !isNaN(fromIndex)) {
+            this.props.onDragRelation(fromIndex, i);
         }
     }
 
