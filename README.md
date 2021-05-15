@@ -120,32 +120,15 @@ null values in relations and expressions
 
 The **About** button navigates to the application GitHub repository.
 
-### Tips
-
-You can use C-style line (rest of the line after '//') or block (all between '/\*' and '\*/') comments in expressions.
-
-You can use Ctrl+Enter in the relation table to load the current relation.
-In the expression textarea, you can use Ctrl+Enter to evaluate the current expression.
-
-All tabulators loaded into the application in files are replaced by four spaces. In case you are editing
-the files outside Rachel, we recommend using spaces to ensure expected indenting. Also, do not
-insert text with tabulators by Ctrl+V.
-
-In formal Relational algebra, all conditions must contain comparison (==, >, <, ...). In Rachel, we can use boolean
-values can directly (e.g., "BooleanColumn" not "BooleanColumn == true"). Anyway, we recommend
-using the full comparison in theta joins to receive expected suggestions behavior.
-
-You can use drag-and-drop to move relations and expressions in their menus.
-
 ## Relational algebra
 
 ### Notation
 
-Rachel uses simplified RA notation (not scientific). It is easier to write and more readable.
+Rachel uses simplified RA notation. It is easier to write and more readable.
 
 Example - projection of columns Name and Address of a relation Human:
 - simplified notation: Human\[Name, Address\]
-- scientific notation: π<sub>Name, Address</sub>(Human)
+- basic notation (for comparison): π<sub>Name, Address</sub>(Human)
 
 ### Null values
 
@@ -153,7 +136,7 @@ In strict original relational algebra, null values are not allowed. Newer versio
 for compatibility with SQL. To provide both possibilities in Rachel, the user can set
 null values support in the settings.
 
-### RA operators
+### Relational algebra operators
 
 Rachel provides a wide set of relational algebra operators. In the following list,
 we show their syntax and precedence (lower numbers mean higher precedence).
@@ -170,7 +153,7 @@ Binary:
 - **theta join** (precedence 2): A\[condition\]B
 - **left/right semijoin** (precedence 2): A<\*B, A\*>B
 - **left/right antijoin** (precedence 2): A⊳B, A⊲B
-- **left/right theta join** (precedence 2): A<condition\]B, A\[condition>B
+- **left/right theta join** (precedence 2): A⟨condition\]B, A\[condition⟩B
 - **full/left/right outer join** (precedence 2): A\*F\*B, A\*L\*B, A\*R\*B
 - **division** (precedence 2): A÷B
 
@@ -195,7 +178,7 @@ null constant is given, an error is triggered.
 - multiplication: 1 \* 5.2, 3.2 \* NumberColumn, ...
 - division: 1 / 5.2, 3.2 / NumberColumn, ...
 
-**Testing operators** in the conditions:
+**Comparison operators** in the conditions:
 
 These operators accept any input pair of the same type. Inequality checking
 of booleans uses false < true. Inequality checking of strings uses alphabetic
@@ -204,8 +187,8 @@ possible condition to return true is "column == null". When the inputs have
 different types, an error is triggered.
 
 We can use boolean values in selection and theta semijoins
-with no testing operator (e.g., Relation(BooleanColumn)). In theta joins, we
-need to always use any testing operator (e.g., RelA\[BooleanColumn = true\]RelB).
+with no comparison operator (e.g., Relation(BooleanColumn)). In theta joins, we
+need to always use any comparison operator (e.g., RelA\[BooleanColumn = true\]RelB).
 
 - equal (= or ==): 1 = 5.2, StringColumn = "abcd", ...
 - non-equal (!= or <>): 1 != 5.2, StringColumn != "abcd", ...
@@ -224,6 +207,19 @@ null constant is given, an error is triggered.
 - negation (! or ~ or ¬): !boolean, ...
 - and (&& or & or ∧): boolean && boolean, ...
 - or (|| or | or ∨): boolean || boolean, ...
+
+### Tips
+
+You can use C-style line (rest of the line after '//') or block (everything between '/\*' and '\*/') comments in expressions.
+
+You can use Ctrl+Enter in the relation table to load the current relation.
+In the expression textarea, you can use Ctrl+Enter to evaluate the current expression.
+
+All tabulators loaded into the application in files are replaced by four spaces. In case you are editing
+the files outside Rachel, we recommend using spaces to ensure expected indenting. Also, do not
+insert text with tabulators by Ctrl+V.
+
+You can use drag-and-drop to move relations and expressions in their menus.
 
 ## Known issues
 

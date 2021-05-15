@@ -50,9 +50,9 @@ const rightSource: RelationNode = new RelationNode(rightRelation);
 describe('eval', () => {
     describe('selects rows correctly', () => {
         describe('left', () => {
-            test('LAuto< LKola > RKola]RAuto', () => {
-                const str: IndexedString = IndexedString.new('< LKola > RKola]');
-                const expected: Relation = new Relation("(LAuto<...]RAuto)");
+            test('LAuto⟨ LKola > RKola]RAuto', () => {
+                const str: IndexedString = IndexedString.new('\u27e8 LKola > RKola]');
+                const expected: Relation = new Relation("(LAuto\u27e8...]RAuto)");
                 expected.addColumn("LId", "number");
                 expected.addColumn("LMajitel", "string");
                 expected.addColumn("LKola", "number");
@@ -77,9 +77,9 @@ describe('eval', () => {
                 expect(actual.equals(expected)).toBeTruthy();
             });
 
-            test('LAuto< LKola > RKola && LMajitel == "Pepa Left"]RAuto', () => {
-                const str: IndexedString = IndexedString.new('< LKola > RKola && LMajitel == "Pepa Left"]');
-                const expected: Relation = new Relation("(LAuto<...]RAuto)");
+            test('LAuto⟨ LKola > RKola && LMajitel == "Pepa Left"]RAuto', () => {
+                const str: IndexedString = IndexedString.new('\u27e8 LKola > RKola && LMajitel == "Pepa Left"]');
+                const expected: Relation = new Relation("(LAuto\u27e8...]RAuto)");
                 expected.addColumn("LId", "number");
                 expected.addColumn("LMajitel", "string");
                 expected.addColumn("LKola", "number");
@@ -96,9 +96,9 @@ describe('eval', () => {
         });
 
         describe('right', () => {
-            test('LAuto[LKola > RKola>RAuto', () => {
-                const str: IndexedString = IndexedString.new('[LKola > RKola>');
-                const expected: Relation = new Relation("(LAuto[...>RAuto)");
+            test('LAuto[LKola > RKola⟩RAuto', () => {
+                const str: IndexedString = IndexedString.new('[LKola > RKola\u27e9');
+                const expected: Relation = new Relation("(LAuto[...\u27e9RAuto)");
                 expected.addColumn("RId", "number");
                 expected.addColumn("RMajitel", "string");
                 expected.addColumn("RKola", "number");
@@ -123,9 +123,9 @@ describe('eval', () => {
                 expect(actual.equals(expected)).toBeTruthy();
             });
 
-            test('LAuto[LKola > RKola && LMajitel == "Pepa Left">RAuto', () => {
-                const str: IndexedString = IndexedString.new('[LKola > RKola && LMajitel == "Pepa Left">');
-                const expected: Relation = new Relation("(LAuto[...>RAuto)");
+            test('LAuto[LKola > RKola && LMajitel == "Pepa Left"⟩RAuto', () => {
+                const str: IndexedString = IndexedString.new('[LKola > RKola && LMajitel == "Pepa Left"\u27e9');
+                const expected: Relation = new Relation("(LAuto[...\u27e9RAuto)");
                 expected.addColumn("RId", "number");
                 expected.addColumn("RMajitel", "string");
                 expected.addColumn("RKola", "number");
@@ -221,8 +221,8 @@ describe('eval', () => {
 
     describe('throws when absent column', () => {
         describe('left', () => {
-            test('LAuto<LeftId == 1]RAuto', () => {
-                const str: IndexedString = IndexedString.new("<LeftId == 1]");
+            test('LAuto⟨LeftId == 1]RAuto', () => {
+                const str: IndexedString = IndexedString.new("\u27e8LeftId == 1]");
 
                 const thetaSemijoinNode: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, str, leftSource, rightSource, true);
                 expect(() => thetaSemijoinNode.getResult()).toThrow();
@@ -230,8 +230,8 @@ describe('eval', () => {
         });
 
         describe('right', () => {
-            test('LAuto[LeftId == 1>RAuto', () => {
-                const str: IndexedString = IndexedString.new("[LeftId == 1>");
+            test('LAuto[LeftId == 1⟩RAuto', () => {
+                const str: IndexedString = IndexedString.new("[LeftId == 1\u27e9");
 
                 const thetaSemijoinNode: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, str, leftSource, rightSource, true);
                 expect(() => thetaSemijoinNode.getResult()).toThrow();
@@ -250,8 +250,8 @@ describe('eval', () => {
 
     describe('throws when invalid condition', () => {
         describe('left', () => {
-            test('LAuto<LId == 1 +]RAuto', () => {
-                const str: IndexedString = IndexedString.new("<LId == 1 +]");
+            test('LAuto⟨LId == 1 +]RAuto', () => {
+                const str: IndexedString = IndexedString.new("\u27e8LId == 1 +]");
 
                 const thetaSemijoinNode: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, str, leftSource, rightSource, true);
                 expect(() => thetaSemijoinNode.getResult()).toThrow();
@@ -259,8 +259,8 @@ describe('eval', () => {
         });
 
         describe('right', () => {
-            test('LAuto[LId == 1 +>RAuto', () => {
-                const str: IndexedString = IndexedString.new("[LId == 1 +>");
+            test('LAuto[LId == 1 +⟩RAuto', () => {
+                const str: IndexedString = IndexedString.new("[LId == 1 +\u27e9");
 
                 const thetaSemijoinNode: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, str, leftSource, rightSource, true);
                 expect(() => thetaSemijoinNode.getResult()).toThrow();
@@ -279,8 +279,8 @@ describe('eval', () => {
 
     describe('throws when result not boolean', () => {
         describe('left', () => {
-            test('LAuto<1 + 2]RAuto', () => {
-                const str: IndexedString = IndexedString.new("<1 + 2]");
+            test('LAuto⟨1 + 2]RAuto', () => {
+                const str: IndexedString = IndexedString.new("\u27e81 + 2]");
 
                 const thetaSemijoinNode: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, str, leftSource, rightSource, true);
                 expect(() => thetaSemijoinNode.getResult()).toThrow();
@@ -288,8 +288,8 @@ describe('eval', () => {
         });
 
         describe('right', () => {
-            test('LAuto[1 + 2>RAuto', () => {
-                const str: IndexedString = IndexedString.new("[1 + 2>");
+            test('LAuto[1 + 2⟩RAuto', () => {
+                const str: IndexedString = IndexedString.new("[1 + 2\u27e9");
 
                 const thetaSemijoinNode: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, str, leftSource, rightSource, true);
                 expect(() => thetaSemijoinNode.getResult()).toThrow();
@@ -310,9 +310,9 @@ describe('eval', () => {
 describe('fakeEval' , () => {
     describe('creates correct schema' , () => {
         describe('left' , () => {
-            test('cursor not in subtree nor theta join - valid condition: < LKola > RKola]', () => {
-                const str: IndexedString = IndexedString.new('< LKola > RKola]', 10);
-                const expected: Relation = new Relation("<]");
+            test('cursor not in subtree nor theta join - valid condition: ⟨ LKola > RKola]', () => {
+                const str: IndexedString = IndexedString.new('\u27e8 LKola > RKola]', 10);
+                const expected: Relation = new Relation("\u27e8]");
                 expected.addColumn("LId", "number");
                 expected.addColumn("LMajitel", "string");
                 expected.addColumn("LKola", "number");
@@ -323,9 +323,9 @@ describe('fakeEval' , () => {
                 expect(expected.equals(actual.result)).toBeTruthy();
             });
 
-            test('cursor not in subtree nor projection - empty condition: <]', () => {
-                const str: IndexedString = IndexedString.new('<]', 10);
-                const expected: Relation = new Relation("<]");
+            test('cursor not in subtree nor projection - empty condition: ⟨]', () => {
+                const str: IndexedString = IndexedString.new('\u27e8]', 10);
+                const expected: Relation = new Relation("\u27e8]");
                 expected.addColumn("LId", "number");
                 expected.addColumn("LMajitel", "string");
                 expected.addColumn("LKola", "number");
@@ -336,9 +336,9 @@ describe('fakeEval' , () => {
                 expect(expected.equals(actual.result)).toBeTruthy();
             });
 
-            test('cursor not in subtree nor projection - invalid condition: <1 +]', () => {
-                const str: IndexedString = IndexedString.new('<1 +]', 10);
-                const expected: Relation = new Relation("<]");
+            test('cursor not in subtree nor projection - invalid condition: ⟨1 +]', () => {
+                const str: IndexedString = IndexedString.new('\u27e81 +]', 10);
+                const expected: Relation = new Relation("\u27e8]");
                 expected.addColumn("LId", "number");
                 expected.addColumn("LMajitel", "string");
                 expected.addColumn("LKola", "number");
@@ -351,9 +351,9 @@ describe('fakeEval' , () => {
         });
 
         describe('right' , () => {
-            test('cursor not in subtree nor theta join - valid condition: [LKola > RKola>', () => {
-                const str: IndexedString = IndexedString.new('[LKola > RKola>', 10);
-                const expected: Relation = new Relation("[>");
+            test('cursor not in subtree nor theta join - valid condition: [LKola > RKola⟩', () => {
+                const str: IndexedString = IndexedString.new('[LKola > RKola\u27e9', 10);
+                const expected: Relation = new Relation("[\u27e9");
                 expected.addColumn("RId", "number");
                 expected.addColumn("RMajitel", "string");
                 expected.addColumn("RKola", "number");
@@ -364,9 +364,9 @@ describe('fakeEval' , () => {
                 expect(expected.equals(actual.result)).toBeTruthy();
             });
 
-            test('cursor not in subtree nor projection - empty condition: [>', () => {
-                const str: IndexedString = IndexedString.new('[>', 10);
-                const expected: Relation = new Relation("[>");
+            test('cursor not in subtree nor projection - empty condition: [⟩', () => {
+                const str: IndexedString = IndexedString.new('[\u27e9', 10);
+                const expected: Relation = new Relation("[\u27e9");
                 expected.addColumn("RId", "number");
                 expected.addColumn("RMajitel", "string");
                 expected.addColumn("RKola", "number");
@@ -377,9 +377,9 @@ describe('fakeEval' , () => {
                 expect(expected.equals(actual.result)).toBeTruthy();
             });
 
-            test('cursor not in subtree nor projection - invalid condition: [1 +>', () => {
-                const str: IndexedString = IndexedString.new('[1 +>', 10);
-                const expected: Relation = new Relation("[>");
+            test('cursor not in subtree nor projection - invalid condition: [1 +⟩', () => {
+                const str: IndexedString = IndexedString.new('[1 +\u27e9', 10);
+                const expected: Relation = new Relation("[\u27e9");
                 expected.addColumn("RId", "number");
                 expected.addColumn("RMajitel", "string");
                 expected.addColumn("RKola", "number");
@@ -445,7 +445,7 @@ describe('fakeEval' , () => {
     describe('finds cursor correctly' , () => {
         describe('left' , () => {
             test('cursor inside - left margin', () => {
-                const str: IndexedString = IndexedString.new('<LKola = RKola]', 10);
+                const str: IndexedString = IndexedString.new('\u27e8LKola = RKola]', 10);
                 const expected: Set<string> = new Set(["LId", "LMajitel", "LKola", "RId", "RMajitel", "RKola"]);
 
                 // act
@@ -455,7 +455,7 @@ describe('fakeEval' , () => {
             });
 
             test('cursor outside - left margin', () => {
-                const str: IndexedString = IndexedString.new('<LKola = RKola]', 10);
+                const str: IndexedString = IndexedString.new('\u27e8LKola = RKola]', 10);
 
                 // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, str, leftSource, rightSource, true);
@@ -464,7 +464,7 @@ describe('fakeEval' , () => {
             });
 
             test('cursor inside - right margin', () => {
-                const str: IndexedString = IndexedString.new('<LKola = RKola]', 10);
+                const str: IndexedString = IndexedString.new('\u27e8LKola = RKola]', 10);
                 const expected: Set<string> = new Set(["LId", "LMajitel", "LKola", "RId", "RMajitel", "RKola"]);
 
                 // act
@@ -474,7 +474,7 @@ describe('fakeEval' , () => {
             });
 
             test('cursor outside - right margin', () => {
-                const str: IndexedString = IndexedString.new('<LKola = RKola]', 10);
+                const str: IndexedString = IndexedString.new('\u27e8LKola = RKola]', 10);
 
                 // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.left, str, leftSource, rightSource, true);
@@ -485,7 +485,7 @@ describe('fakeEval' , () => {
 
         describe('right' , () => {
             test('cursor inside - left margin', () => {
-                const str: IndexedString = IndexedString.new('[LKola > RKola>', 10);
+                const str: IndexedString = IndexedString.new('[LKola > RKola\u27e9', 10);
                 const expected: Set<string> = new Set(["LId", "LMajitel", "LKola", "RId", "RMajitel", "RKola"]);
 
                 // act
@@ -495,7 +495,7 @@ describe('fakeEval' , () => {
             });
 
             test('cursor outside - left margin', () => {
-                const str: IndexedString = IndexedString.new('[LKola > RKola>', 10);
+                const str: IndexedString = IndexedString.new('[LKola > RKola\u27e9', 10);
 
                 // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, str, leftSource, rightSource, true);
@@ -504,7 +504,7 @@ describe('fakeEval' , () => {
             });
 
             test('cursor inside - right margin', () => {
-                const str: IndexedString = IndexedString.new('[LKola > RKola>', 10);
+                const str: IndexedString = IndexedString.new('[LKola > RKola\u27e9', 10);
                 const expected: Set<string> = new Set(["LId", "LMajitel", "LKola", "RId", "RMajitel", "RKola"]);
 
                 // act
@@ -514,7 +514,7 @@ describe('fakeEval' , () => {
             });
 
             test('cursor outside - right margin', () => {
-                const str: IndexedString = IndexedString.new('[LKola > RKola>', 10);
+                const str: IndexedString = IndexedString.new('[LKola > RKola\u27e9', 10);
 
                 // act
                 const node: ThetaJoinNode = new ThetaJoinNode(ThetaJoinType.right, str, leftSource, rightSource, true);
@@ -566,9 +566,9 @@ describe('fakeEval' , () => {
 
     describe('passes found whispers' , () => {
         describe('left' , () => {
-            test('from left: LAuto(LId == 1)<LKola = RKola]RAuto', () => {
+            test('from left: LAuto(LId == 1)⟨LKola = RKola]RAuto', () => {
                 const exprPrev: IndexedString = IndexedString.new("(LId == 1)", 10);
-                const expr: IndexedString = IndexedString.new("<LKola = RKola]", 20);
+                const expr: IndexedString = IndexedString.new("\u27e8LKola = RKola]", 20);
                 const expected: Set<string> = new Set(["LId", "LMajitel", "LKola"]);
 
                 const nodePrev: SelectionNode = new SelectionNode(exprPrev, leftSource, true);
@@ -578,9 +578,9 @@ describe('fakeEval' , () => {
                 expect(new Set(actual.whispers)).toStrictEqual(expected);
             });
 
-            test('from right: LAuto<LKola = RKola]RAuto(RId == 1)', () => {
+            test('from right: LAuto⟨LKola = RKola]RAuto(RId == 1)', () => {
                 const exprPrev: IndexedString = IndexedString.new("(RId == 1)", 30);
-                const expr: IndexedString = IndexedString.new("<LKola = RKola]", 10);
+                const expr: IndexedString = IndexedString.new("\u27e8LKola = RKola]", 10);
                 const expected: Set<string> = new Set(["RId", "RMajitel", "RKola"]);
 
                 const nodePrev: SelectionNode = new SelectionNode(exprPrev, rightSource, true);
@@ -592,9 +592,9 @@ describe('fakeEval' , () => {
         });
 
         describe('right' , () => {
-            test('from left: LAuto(LId == 1)[LKola = RKola>RAuto', () => {
+            test('from left: LAuto(LId == 1)[LKola = RKola⟩RAuto', () => {
                 const exprPrev: IndexedString = IndexedString.new("(LId == 1)", 10);
-                const expr: IndexedString = IndexedString.new("[LKola = RKola>", 20);
+                const expr: IndexedString = IndexedString.new("[LKola = RKola\u27e9", 20);
                 const expected: Set<string> = new Set(["LId", "LMajitel", "LKola"]);
 
                 const nodePrev: SelectionNode = new SelectionNode(exprPrev, leftSource, true);
@@ -604,9 +604,9 @@ describe('fakeEval' , () => {
                 expect(new Set(actual.whispers)).toStrictEqual(expected);
             });
 
-            test('from right: LAuto[LKola = RKola>RAuto(RId == 1)', () => {
+            test('from right: LAuto[LKola = RKola⟩RAuto(RId == 1)', () => {
                 const exprPrev: IndexedString = IndexedString.new("(RId == 1)", 30);
-                const expr: IndexedString = IndexedString.new("[LKola = RKola>", 10);
+                const expr: IndexedString = IndexedString.new("[LKola = RKola\u27e9", 10);
                 const expected: Set<string> = new Set(["RId", "RMajitel", "RKola"]);
 
                 const nodePrev: SelectionNode = new SelectionNode(exprPrev, rightSource, true);

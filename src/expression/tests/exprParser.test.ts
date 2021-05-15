@@ -228,14 +228,14 @@ describe("parseTokens", () => {
         assertTokenArray(tokens, expected);
     });
 
-    test('A<]A[>A*F*A*L*A*R*A<*A*>A*A\u2a2fA\u222aA\u2229A\\A\u22b2A\u22b3A\u00f7A', () => {
+    test('A\u27e8]A[\u27e9A*F*A*L*A*R*A<*A*>A*A\u2a2fA\u222aA\u2229A\\A\u22b2A\u22b3A\u00f7A', () => {
         // arrange
-        const str: string = 'A<]A[>A*F*A*L*A*R*A<*A*>A*A\u2a2fA\u222aA\u2229A\\A\u22b2A\u22b3A\u00f7A';
+        const str: string = 'A\u27e8]A[\u27e9A*F*A*L*A*R*A<*A*>A*A\u2a2fA\u222aA\u2229A\\A\u22b2A\u22b3A\u00f7A';
         const expected: ExprToken[] = [
             relationToken("A"),
-            leftThetaSemijoin('<]'),
+            leftThetaSemijoin('\u27e8]'),
             relationToken("A"),
-            rightThetaSemijoin('[>'),
+            rightThetaSemijoin('[\u27e9'),
             relationToken("A"),
             fullOuterJoin('*F*'),
             relationToken("A"),

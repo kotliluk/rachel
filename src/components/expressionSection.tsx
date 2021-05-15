@@ -423,8 +423,8 @@ export class ExpressionSection extends React.Component<ExpressionSectionProps, E
                     {createOpButton("inner_e", "\u22b3", "\u22b3", ops.leftAntijoin, 0)}
                     {createOpButton("inner_f", "\u22b2", "\u22b2", ops.rightAntijoin, 0)}
                     {createOpButton("inner_g", "[]", "[]", ops.thetaJoin, 1)}
-                    {createOpButton("inner_h", "<]", "<]", ops.leftThetaSemiJoin, 1)}
-                    {createOpButton("inner_i", "[>", "[>", ops.rightThetaSemiJoin, 1, buttonGroupMargin)}
+                    {createOpButton("inner_h", "\u27e8]", "\u27e8]", ops.leftThetaSemiJoin, 1)}
+                    {createOpButton("inner_i", "[\u27e9", "[\u27e9", ops.rightThetaSemiJoin, 1, buttonGroupMargin)}
 
                     {this.props.nullValuesSupport && createOpButton("outer_a", "*F*", "*F*", ops.fullOuterJoin, 0)}
                     {this.props.nullValuesSupport && createOpButton("outer_b", "*L*", "*L*", ops.leftOuterJoin, 0)}

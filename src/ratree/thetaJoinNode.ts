@@ -20,8 +20,8 @@ import {StartEndPair} from "../types/startEndPair";
  */
 export enum ThetaJoinType {
     full = "[]",
-    left = "<]",
-    right = "[>"
+    left = "\u27e8]",
+    right = "[\u27e9"
 }
 
 /**
@@ -38,8 +38,9 @@ export class ThetaJoinNode extends BinaryNode {
     private readonly nullValuesSupport: boolean;
 
     /**
-     * Creates a new NaturalJoinNode.
-     * Expects the condition string to start with '<' and end with ']' or start with '[' and end with '>'.
+     * Creates a new ThetaJoinNode.
+     * Expects the condition string to start with '[' and end with ']' or start with'⟨' and end with ']' or start
+     * with '[' and end with '⟩'.
      *
      * @param type type of natural join {@type ThetaJoinType}
      * @param condition logic-algebraic condition {@type IndexedString}

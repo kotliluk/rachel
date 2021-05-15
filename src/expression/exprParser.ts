@@ -250,7 +250,7 @@ export class ExprParser {
                 let split: {first: IndexedString, second: IndexedString};
                 let error: boolean = false;
                 try {
-                    split = IndexedStringUtils.nextBorderedPart(rest, '[', ']>');
+                    split = IndexedStringUtils.nextBorderedPart(rest, '[', ']\u27e9');
                 }
                 // catches error from nextBorderedPart
                 catch (err) {
@@ -271,8 +271,8 @@ export class ExprParser {
                     whispers = [...this.relations.keys()];
                 }
 
-                // right theta semijoin found "[...>"
-                if (split.first.endsWith('>')) {
+                // right theta semijoin found "[...⟩"
+                if (split.first.endsWith('\u27e9')) {
                     tokens.push(BinaryOperatorToken.rightThetaSemijoin(split.first));
                     selectionExpected = false;
                     rest = split.second;
@@ -365,23 +365,15 @@ export class ExprParser {
             // '<' can be a rename or left theta semi join - this "if" must be after <*
             else if (rest.startsWith('<')) {
                 try {
-                    const split = IndexedStringUtils.nextBorderedPart(rest, '<', '>]', '-');
+                    const split = IndexedStringUtils.nextBorderedPart(rest, '<', '>', '-');
                     // saves parentheses
                     pushParentheses(split.first);
                     // checks whether the cursor was reached
                     if (split.first.getLastIndex() === cursorIndex - 1) {
                         whispers = [...this.relations.keys()];
                     }
-                    // found rename
-                    if (split.first.endsWith('>')) {
-                        tokens.push(UnaryOperatorToken.rename(split.first));
-                        selectionExpected = true;
-                    }
-                    // found left theta semi join
-                    else {
-                        tokens.push(BinaryOperatorToken.leftThetaSemijoin(split.first));
-                        selectionExpected = false;
-                    }
+                    tokens.push(UnaryOperatorToken.rename(split.first));
+                    selectionExpected = true;
                     rest = split.second;
                 }
                 // catches error from nextBorderedPart
@@ -392,6 +384,32 @@ export class ExprParser {
                     }
                     // it fakes the unclosed expression part as a rename operator
                     tokens.push(UnaryOperatorToken.rename(rest.concat(IndexedString.new('>', rest.getLastIndex() + 1))));
+                    // breaks the while cycle as all was used
+                    break;
+                }
+            }
+            // '⟨' can be a rename or left theta semi join - this "if" must be after <*
+            else if (rest.startsWith('\u27e8')) {
+                try {
+                    const split = IndexedStringUtils.nextBorderedPart(rest, '\u27e8', ']');
+                    // saves parentheses
+                    pushParentheses(split.first);
+                    // checks whether the cursor was reached
+                    if (split.first.getLastIndex() === cursorIndex - 1) {
+                        whispers = [...this.relations.keys()];
+                    }
+                    tokens.push(BinaryOperatorToken.leftThetaSemijoin(split.first));
+                    selectionExpected = false;
+                    rest = split.second;
+                }
+                // catches error from nextBorderedPart
+                catch (err) {
+                    // saves error
+                    if (err instanceof ErrorWithTextRange) {
+                        handleError(err);
+                    }
+                    // it fakes the unclosed expression part as a theta join operator
+                    tokens.push(BinaryOperatorToken.leftThetaSemijoin(rest.concat(IndexedString.new(']', rest.getLastIndex() + 1))));
                     // breaks the while cycle as all was used
                     break;
                 }
