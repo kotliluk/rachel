@@ -172,7 +172,7 @@ unexpected precedence behavior.
   - **Left/right antijoin**: A ⊳ B, A ⊲ B
   - **Theta join**: A [condition] B
   - **Left/right theta join**: A ⟨condition] B, A [condition⟩ B
-  - **Full/left/right outer join**: A *F* B, A *L* B, A *R* B
+  - **Full/left/right outer join**: A \*F\* B, A \*L\* B, A \*R\* B
   - **Division**: A ÷ B
 * Precedence level 3 - intersection:
   - **Intersection**: A ∩ B
