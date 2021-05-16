@@ -12,243 +12,208 @@ Electrical Engineering, Czech Technical University](https://fel.cvut.cz/en/).
 
 ## Usage
 
-The application has two main parts: the relation definition section and the expression evaluation
-section. When we evaluate the expression, the result section is displayed as well.
-On top of the page, we can manage settings or project import/export.
+We start with a description of the words we will use in the following text:
 
-The usual workflow is:
-- (data import)
-- definition of relations
-- evaluation of expressions
-- update of relations and expressions
-- (data export)
+* **Editable relations** - They are the relations we can edit. They are not available for usage in queries directly
+(see **Loaded relations** below).
+* **Selected relation** - It is the editable relation that is edited at a time. The application displays it in the sheet
+in the upper part of the screen.
+* **Loaded relations** - They are available for usage in queries. We create them from valid editable relations by
+loading.
+* **Expressions** - There may be multiple relational algebra expressions in the application.
+* **Selected expression** - It is the expression that is edited at a time. The application displays it in the text area
+in the second part of the screen.
+* **Project** - We use the project to save/load our work using **.rachel** (JSON) file. It stores editable relations,
+expressions, and an indicator of whether we support null values.
+* **Application** - The application always contains one project, which can be saved or overwritten by loading a new one.
+Furthermore, the application provides additional settings or batch processing of multiple project files.
 
-### Relation section
 
-We define relations for the application in a table in the upper part of the screen.
-To use a relation in the expressions, we need to load it to the application
-when in a valid state. After loading, we can continue editing the relation while 
-the last loaded (valid) state is still available for the expressions.
+
+### Usual Workflow
+
+Now, we will describe the high-level workflow in the application. We will describe particular parts in depth in the
+following paragraphs.
+
+When using the application for the first time, we must prepare our relations first. To do so, we use the relation
+section of the page. In the relation section, we can create new editable relations, delete them, or import/export them
+using CSV files. At each time, we can edit the selected relation in the sheet. Once we prepare (valid) relations, we
+load them into the application.
+
+After loading the relations, we can use them in query expressions. In the expression section, we can create new
+expressions, delete them, or import/export them using a text file. At each time, we can edit the selected expression
+in the text area. Once we are done with editing, we can evaluate the selected expression.
+
+After evaluation of the selected expression, the application displays its evaluation tree and result in the bottom
+part of the page. We can use the evaluation tree to browse intermediate relations created during the evaluation.
+
+Anytime in the described process, we can save the project to a file and continue in the future.
+
+
+
+### Relation Section
+
+We define relations in a sheet in the upper part of the screen. To be able to use a relation in the expressions,
+we need to load it to the application when all its values are valid. After loading, we can continue editing
+the relation while the last loaded (valid) state is still available in the expressions.
 
 There are four buttons in the header menu, which affect all relations:
-- The **Load all** button loads all valid relations into the application memory.
-If any loaded relation with the same name exists, it is overwritten. Invalid relations are skipped.
-- The **Remove loaded** button removes all loaded relations (editable relations are not changed).
-- The **Import** button enables us to import new editable relations from CSV files.
-- The **Export** button saves all editable relations in CSV files. The saved relations can be
-in an invalid state.
 
-In the menu above the table, we can select from editable relations the currently edited one.
-A star (\*) before the relation name shows changed relations since the last loading.
-We can add a new relation by the **+** button.
+* The **Load all** button loads all valid editable relations into the application memory. If any loaded relation with
+the same name exists, it is overwritten. Invalid relations are skipped.
+* The **Remove loaded** button removes all loaded relations (editable relations are not changed).
+* The **Import** button enables us to import new editable relations from CSV files.
+* The **Export** button saves all editable relations in CSV files. The saved relations may be in an invalid state.
 
-In the first row of the table, we define the column names and types. Column names cannot be
-duplicated inside one relation and must contain letters, numbers, and underscores only and not
-start with a number. Also, column names "null", "true" and "false" are forbidden.
-There are three supported column types in Rachel: number, string, and boolean.
+
+In the menu above the sheet, we can select one relation to be edited. A star before the relation name marks changed
+relations since the last loading. We can add a new editable relation by the **+** button.
+
+In the first row of the sheet, we define column names and types. Column names cannot be duplicated inside one relation
+and must contain letters, numbers, and underscores only and not start with a number. Also, column names "null", "true"
+and "false" are forbidden. There are three supported column types in the application: **number**, **string**,
+and **boolean**.
 
 The **+** buttons in the last column and last row adds a new column or row, respectively.
 
-Other table inputs define the data itself. Numbers can be integers or decimals. Boolean values can be
-true or false. String values can be any character sequence. Note that margin whitespaces are trimmed
-before loading to application, so the string " a b c " is loaded as "a b c".
-If null values are supported, "null" inputs are valid in all column types and are loaded as null values.
-Also, empty inputs in number and boolean columns are loaded as nulls.
+Other sheet cells define the data itself. We can use integers or decimals in number columns and character sequences
+in string columns. Note that the application trims trailing whitespaces before loading, so the string **"~a~b~c~"**
+is loaded as **"a~b~c"**. If **null** values are supported, "null" inputs are valid in all column types and
+are loaded as **null** values. Also, empty inputs in number and boolean columns are loaded as **null** values.
 
-When the mouse is over the first row or the first column, a button for deleting a column or a row, respectively, appears.
+When the cursor hovers over the first row, a button for deleting a given column appears. Similarly, when over the
+first column, a button for deleting a given row appears.
 
-There are four buttons in the menu under the table, which affect the selected relation:
-- The **Load** button loads the relation into the application memory. If any loaded
-relation with the same name exists, it is overwritten. 
-- The **Rename** text field renames the relation. We cannot change the name to any
-existing editable relation name. Allowed characters are the same as
-in the column names, but the forbidden words are "F", "L", and "R".
-- The **Delete** button deletes the relation.
-- The **Revert** button reverts the relation to the last saved state - the state is saved after
-creation (adding or importing a new one) or after loading it.
+There are four buttons in the menu under the sheet, which affect the selected relation:
 
-### Expression section
+* The **Load** button loads the relation into the application memory. If any loaded relation with the same name exists,
+it is overwritten.
+* The **Rename** text field renames the relation. We cannot change the name to any existing relation name. Allowed
+characters are the same as in column names, but forbidden words are "F", "L", and "R".
+* The **Delete** button deletes the relation from the editable list.
+* The **Revert** button reverts the relation to the last loaded state (if the relation was not loaded yet, it is
+reverted to its initial state).
 
-The **Import** button enables us to load new expressions from textual files. The **Export** button saves all expressions in a textual file.
 
-We can have multiple named expressions loaded in the application at the time. Again, we use the upper
-menu for choosing the currently edited expression, and the **+** button for adding a new one.
 
-In the text area, we define the expression itself. We can use buttons to insert RA operators. While
-typing, Rachel suggests available relation or column names on the cursor position. You can use
-arrows + Enter/Tab or mouse to insert the suggestion. Ctrl+Space hides or displays the suggestions menu.
+### Expression Section
 
-There is a list of buttons under the table, which insert relational algebra operators.
+The second section of the application provides the input for expressions.
 
-To use quote '"' characters inside string literals in expressions, you must escape their default behavior
-(i.e., starting or ending a string) by a backslash as '\\"'. Similarly, to use a backslash character,
-you must type it twice '\\\\'.
+There are two buttons in the header menu, which effects all expressions:
+
+* The **Import** button enables us to load new expressions from text files.
+* The **Export** button saves all expressions in a text file.
+
+We can have multiple named expressions loaded in the application at a time. Again, we use the upper menu for selecting
+an expression to edit and the **+** button for adding a new one.
+
+In the text area, we define the expression itself. We can use buttons under the text area to insert RA operators.
+While typing, the application suggests relation or column names available at the cursor position. We can use
+**arrows/Enter** keys or **mouse** to insert the suggestion. Pressing **Ctrl+Space** hides or displays
+the suggestions list.
+
+To use quote characters inside string literals in expressions, we must escape their default behavior (i.e.,
+starting or ending a string) by a backslash. Similarly, to use a backslash character, we must type it twice.
 
 There are three buttons on the bottom of the section, which affect the selected expression:
-- The **Evaluate** button evaluates the edited expression and updates the result section.
-- The **Rename** text field renames the edited expression. There are no restrictions on expression
-names.
-- The **Delete** button deletes the edited expression.
 
-### Result section
+* The **Evaluate** button evaluates the selected expression and updates the result section.
+* The **Rename** text field renames the selected expression. There are no restrictions on expression names.
+* The **Delete** button deletes the selected expression.
 
-The result section appears after an evaluation of an expression. It displays the evaluation tree
-and the result relation. We can choose to display a relation from different tree nodes. We can sort the rows
-in a relation using the specific column values. The **Export** button above the
-evaluation tree downloads the tree as a png picture.
 
-We can use the **Add** and **Export** buttons above the table to add the displayed relation
-to edited ones or to save it in a CSV file.
 
-### Management section
+### Result Section
 
-The last-mentioned section is the upper one.
+The result section appears after the evaluation of an expression. It displays the evaluation tree and the result
+relation. Moreover, for every individual operation node within the tree, we can display a relation with data
+corresponding to a given intermediate result. We can also sort the rows in a relation using the specific column
+values.
 
-We can **Load** or **Save** the whole project using .rachel files. The saved file contains all
-editable relations, all expressions, and selected null values support.
+The **Export** button above the evaluation tree downloads the tree as a PNG image. We can use the **Add** and
+**Export** buttons above the table to add the displayed relation to the editable ones or save it in a CSV file.
 
-We can load prepared sample projects by the **Samples** button. It can be a great start before
-you define your relations and expressions.
 
-In the **Settings**, we can set:
 
-- Null values support - allowed/forbidden - it determinates whether the application supports
-null values in relations and expressions
-- CSV separator - semicolon/comma - used value separator in downloaded CSV files
-- Theme - light/dark - the theme of the application
-- Language - the language of the application
+### Management Section
 
-The **About** button navigates to the application GitHub repository.
+The last-mentioned section is the upper one. It provides general management of the application.
 
-## Relational algebra
+* The **Load** button loads the whole project from **.rachel** files. Rachel files contain all editable relations, all
+expressions, and a configuration value indicating whether usage of null meta values is enabled.
+* The **Save** button saves the current project to a new **.rachel** file.
+* The **Batch** button lets us select multiple project files to be all processed and their reports generated.
+* The **Samples** button shows prepared sample projects. It is a convenient starting point for users who are just
+getting acquainted with Rachel.
+* In the **Settings**, we can set:
+  - **Null values support** whether the project supports null values in relations and expressions
+  - **CSV separator** used value separator in downloaded CSV files
+  - **Theme** the theme of the application (light/dark)
+  - **Language** the language of the application (English/Czech)
+* The **About** button navigates to the project repository.
 
-### Notation
 
-Rachel uses simplified RA notation. It is easier to write and more readable.
 
-Example - projection of columns Name and Address of a relation Human:
-- simplified notation: Human\[Name, Address\]
-- basic notation (for comparison): π<sub>Name, Address</sub>(Human)
+### Operators
 
-### Null values
+Rachel provides a wide set of relational algebra operations. In the following list, we show their syntax and
+precedence (lower numbers mean higher precedence). Anyway, we recommend using parentheses to avoid
+unexpected precedence behavior.
 
-In strict original relational algebra, null values are not allowed. Newer versions support null values
-for compatibility with SQL. To provide both possibilities in Rachel, the user can set
-null values support in the settings.
+* Precedence level 1 - unary operations:
+  - **Projection** Relation[column, ...]
+  - **Selection**: Relation(condition)
+  - **Rename**: Relation\<Old -> New, ...>
+* Precedence level 2 - joins and division:
+  - **Natural join**: A * B
+  - **Cartesian product**: A ⨯ B
+  - **Left/right semijoin**: A <* B, A *> B
+  - **Left/right antijoin**: A ⊳ B, A ⊲ B
+  - **Theta join**: A [condition] B
+  - **Left/right theta join**: A ⟨condition] B, A [condition⟩ B
+  - **Full/left/right outer join**: A *F* B, A *L* B, A *R* B
+  - **Division**: A ÷ B
+* Precedence level 3 - intersection:
+  - **Intersection**: A ∩ B
+* Precedence level 4 - union and difference:
+  - **Union**: A ∪ B
+  - **Difference**: A \\ B
 
-### Relational algebra operators
+We use algebraic operators (+, -, *, /) in the conditions to calculate new number values. If a number column evaluates
+to null, null is returned. Other input types trigger an error.
 
-Rachel provides a wide set of relational algebra operators. In the following list,
-we show their syntax and precedence (lower numbers mean higher precedence).
-Anyway, we recommend using parentheses to avoid unexpected precedence behavior.
+Comparison operators (==, !=, <, >, <=, >=) accept any pair of input operands of the same type and produce a boolean
+value, i.e., true or false. Inequality checking of booleans uses false < true. Inequality checking of strings uses
+alphabetic comparison (e.g., "abc" < "def", "a" < "aa"). If a column evaluates to null, the only condition which
+returns true is column == null. Different input types trigger an error. There are two ways to write equality (==, =)
+and inequality (!=, <>) operators.
 
-Unary:
-- **projection** of columns (precedence 1): Relation\[column, ...\]
-- **selection** of rows (precedence 1): Relation(condition)
-- **rename** of columns (precedence 1): Relation<OldName -> NewName, ...>
+We can use boolean values in selection and theta semijoins with no testing operator (e.g., Relation(BooleanColumn)).
+Theta joins always require some testing operator (e.g., RelA[BooleanColumn = true]RelB).
 
-Binary:
-- **natural join** (precedence 2): A*B
-- **cartesian product** (precedence 2): A⨯B
-- **theta join** (precedence 2): A\[condition\]B
-- **left/right semijoin** (precedence 2): A<\*B, A\*>B
-- **left/right antijoin** (precedence 2): A⊳B, A⊲B
-- **left/right theta join** (precedence 2): A⟨condition\]B, A\[condition⟩B
-- **full/left/right outer join** (precedence 2): A\*F\*B, A\*L\*B, A\*R\*B
-- **division** (precedence 2): A÷B
+Logical operators (not, and, or) accept boolean values and computes a new boolean value. When a column of boolean type
+evaluates to null, it holds: !column == false, column && boolean == false for any boolean value, and
+column || boolean == boolean for any boolean value. Other input types trigger an error. There are three ways to write
+logical operators: negation (!, ~, ¬), and (&&, &, ∧), or (||, |, ∨).
 
-Set operations:
-- **intersection** (precedence 3): A∩B
-- **union** (precedence 4): A∪B
-- **difference** (precedence 4): A\B
 
-### Algebraic and logical operators
-
-We use algebraic and logical operators in selection, theta join, and theta
-semijoin conditions.
-
-**Algebraic operators** in the conditions:
-
-These operators expect number literal or number column inputs. If the
-number column evaluates to null, null is returned. When string, boolean, or
-null constant is given, an error is triggered.
-
-- addition: 1 + 5.2, 3.2 + NumberColumn, ...
-- subtraction: 1 - 5.2, 3.2 - NumberColumn, ...
-- multiplication: 1 \* 5.2, 3.2 \* NumberColumn, ...
-- division: 1 / 5.2, 3.2 / NumberColumn, ...
-
-**Comparison operators** in the conditions:
-
-These operators accept any input pair of the same type. Inequality checking
-of booleans uses false < true. Inequality checking of strings uses alphabetic
-comparison ("abc" < "def", "a" < "aa"). If a column is evaluated to null, the only
-possible condition to return true is "column == null". When the inputs have
-different types, an error is triggered.
-
-We can use boolean values in selection and theta semijoins
-with no comparison operator (e.g., Relation(BooleanColumn)). In theta joins, we
-need to always use any comparison operator (e.g., RelA\[BooleanColumn = true\]RelB).
-
-- equal (= or ==): 1 = 5.2, StringColumn = "abcd", ...
-- non-equal (!= or <>): 1 != 5.2, StringColumn != "abcd", ...
-- greater than (>): 1 > 5.2, StringColumn > "abcd", ...
-- smaller than (<): 1 < 5.2, StringColumn < "abcd", ...
-- greater or equal (>=): 1 >= 5.2, StringColumn >= "abcd", ...
-- smaller or equal (<=): 1 <= 5.2, StringColumn <= "abcd", ...
-
-**Logical operators** in the conditions:
-
-These operators accept boolean values. When a boolean column evaluates to null,
-it holds "!column == false", "column && boolean == false",
-"column || boolean == boolean". When number, string, or
-null constant is given, an error is triggered.
-
-- negation (! or ~ or ¬): !boolean, ...
-- and (&& or & or ∧): boolean && boolean, ...
-- or (|| or | or ∨): boolean || boolean, ...
 
 ### Tips
 
-You can use C-style line (rest of the line after '//') or block (everything between '/\*' and '\*/') comments in expressions.
+In expressions, we can use C-style line and block comments.
 
-You can use Ctrl+Enter in the relation table to load the current relation.
-In the expression textarea, you can use Ctrl+Enter to evaluate the current expression.
+We can use **Ctrl+Enter** in the relation table to load the current relation. In the expression textarea, we can use
+it to evaluate the current expression.
 
-All tabulators loaded into the application in files are replaced by four spaces. In case you are editing
-the files outside Rachel, we recommend using spaces to ensure expected indenting. Also, do not
-insert text with tabulators by Ctrl+V.
+All tabulators loaded into the application in files are replaced by four spaces. In case of editing the files outside
+Rachel, we recommend using spaces to ensure expected indenting.
 
-You can use drag-and-drop to move relations and expressions in their menus.
+We can use a mouse to move relations and expressions in their menus.
 
-## Known issues
 
-The application does not support the Internet Explorer browser. We decided not to support it as
-Microsoft recommends using the newer browsers and announced the end of its support as well.
 
-## Language contribution
+### Known Issues
 
-If you want to extend Rachel by a new language, feel free to define it by the steps
-described in the /src/language/language.ts file.
-
-## Implementation details
-
-Rachel is implemented in [TypeScript](https://www.typescriptlang.org/)
-(a [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) typed superset) using
-[React](https://github.com/facebook/react) framework and
-[create-react-app](https://github.com/facebook/create-react-app) for set up configuration.
-
-The application uses many great libraries (available on [npm](https://www.npmjs.com/)):
-- [JSZIP](https://github.com/Stuk/jszip) - Create, read and edit .zip files with Javascript
-- [visx](https://github.com/airbnb/visx) - Visualization components
-- [export-svg-with-styles](https://www.npmjs.com/package/export-svg-with-styles) - Turn your SVGs to PNGs
-- [FileSaver.js](https://github.com/eligrey/FileSaver.js) - An HTML5 saveAs() FileSaver implementation
-- [Lodash](https://github.com/lodash/lodash) - A modern JavaScript utility library delivering modularity, performance & extras
-- [Jest](https://github.com/facebook/jest) - Delightful JavaScript Testing
-- [PostMail](https://postmail.invotes.com/) - Send email from JavaScript or static HTML without backend code
-- [JSDoc](https://github.com/jsdoc/jsdoc) - An API documentation generator for JavaScript
-- [better-docs](https://github.com/SoftwareBrothers/better-docs) - Beautiful toolbox for jsdoc generated documentation
-
-## License
-
-Rachel is licensed under [MIT License](./LICENSE)
+The application does not support the **Internet Explorer** browser. We decided not to support it as Microsoft
+recommends using newer browsers and announced the end of its support as well.
