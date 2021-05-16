@@ -50,6 +50,16 @@ describe('splitCSVLine', () => {
         // assert
         expect(actual).toStrictEqual(expected);
     });
+
+    test('many quotes', () => {
+        // arrange
+        const line: string = '"one","""""""""",""""""""""'
+        const expected: string[] = ['one', '""""', '""""'];
+        // act
+        const actual = splitCSVLine(line, ',');
+        // assert
+        expect(actual).toStrictEqual(expected);
+    });
 });
 
 describe('findValueSeparator', () => {

@@ -87,7 +87,7 @@ export function splitCSVLine(line: string, separator: CsvValueSeparator): string
             }
         }
         else if (c === separator && !inQuotes) {
-            ret.push(line.slice(partStart, i).replace('""', '"'));
+            ret.push(line.slice(partStart, i).replace(/""/g, '"'));
             partStart = i + 1;
         }
         ++i;
