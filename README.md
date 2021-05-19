@@ -12,42 +12,42 @@ Electrical Engineering, Czech Technical University](https://fel.cvut.cz/en/).
 
 ## Usage
 
-We start with a description of the words we will use in the following text:
+We start with a description of basic terms we will use in the following text:
 
 * **Editable relations** - They are the relations we can edit. They are not available for usage in queries directly
 (see **Loaded relations** below).
-* **Selected relation** - It is the editable relation that is edited at a time. The application displays it in the sheet
+* **Selected relation** - It is the editable relation that is edited in a given time. The application displays it in the container
 in the upper part of the screen.
 * **Loaded relations** - They are available for usage in queries. We create them from valid editable relations by
 loading.
 * **Expressions** - There may be multiple relational algebra expressions in the application.
-* **Selected expression** - It is the expression that is edited at a time. The application displays it in the text area
+* **Selected expression** - It is the expression that is edited in a given time. The application displays it in the text area
 in the second part of the screen.
 * **Project** - We use the project to save/load our work using **.rachel** (JSON) file. It stores editable relations,
-expressions, and an indicator of whether we support null values.
+expressions, and an indicator of whether we assume null values.
 * **Application** - The application always contains one project, which can be saved or overwritten by loading a new one.
 Furthermore, the application provides additional settings or batch processing of multiple project files.
 
 
 
-### Usual Workflow
+### Typical Workflow
 
 Now, we will describe the high-level workflow in the application. We will describe particular parts in depth in the
 following paragraphs.
 
 When using the application for the first time, we must prepare our relations first. To do so, we use the relation
 section of the page. In the relation section, we can create new editable relations, delete them, or import/export them
-using CSV files. At each time, we can edit the selected relation in the sheet. Once we prepare (valid) relations, we
+using CSV files. At each time, we can edit the selected relation in the container. Once we prepare (valid) relations, we
 load them into the application.
 
 After loading the relations, we can use them in query expressions. In the expression section, we can create new
-expressions, delete them, or import/export them using a text file. At each time, we can edit the selected expression
+expressions, delete them, or import/export them using a text file. Each time, we can edit the selected expression
 in the text area. Once we are done with editing, we can evaluate the selected expression.
 
-After evaluation of the selected expression, the application displays its evaluation tree and result in the bottom
+After the evaluation of the selected expression, the application displays its evaluation tree and result in the bottom
 part of the page. We can use the evaluation tree to browse intermediate relations created during the evaluation.
 
-Anytime in the described process, we can save the project to a file and continue in the future.
+Anytime in the described process, we can save the project to a file and continue later on.
 
 
 
