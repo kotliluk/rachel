@@ -183,7 +183,10 @@ export const EN: LanguageDef = {
     },
 
     managementSection: {
-        batchButton: "Batch",
+        batchTitle: "Batch",
+        batchLoad: "Load projects",
+        batchConfig: "Configuration",
+
         loadButton: "Load",
         saveButton: "Save",
         samplesButton: "Samples",

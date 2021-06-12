@@ -12,11 +12,17 @@ import {Project} from "../project/project";
  */
 interface ManagementSectionProps {
     /**
-     * handler of batch processing
+     * handler of loading a config file for batch processing
      * @type function
      * @public
      */
-    onBatch: () => void,
+    onBatchConfig: () => void,
+    /**
+     * handler of loading project files for batch processing
+     * @type function
+     * @public
+     */
+    onBatchLoad: () => void,
     /**
      * handler of project loading
      * @type function
@@ -108,7 +114,14 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
         const lang = this.props.language.managementSection;
 
         const createBatchButton = () => {
-            return (<button onClick={this.props.onBatch}>{lang.batchButton}</button>);
+            // TODO - pri najeti na button zobrazit aktualni config
+            const batchMenu = (
+              <ul className="list-menu">
+                  <button onClick={this.props.onBatchConfig}>{lang.batchConfig}</button>
+                  <button onClick={this.props.onBatchLoad}>{lang.batchLoad}</button>
+              </ul>
+            )
+            return (<div className={"button-like"}>{lang.batchTitle}{batchMenu}</div>);
         }
         const createLoadProjectButton = () => {
             return (<button onClick={this.props.onLoadProject} >{lang.loadButton}</button>);

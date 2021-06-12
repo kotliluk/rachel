@@ -171,10 +171,17 @@ export class MainScreen extends Component<MainScreenProps, MainScreenState> {
     /****************************************** MANAGEMENT SECTION HANDLERS ******************************************/
 
     /**
+     * Loads a JSON file with batch processing configuration.
+     */
+    private handleBatchConfig = () => {
+        BatchProcessor.config();
+    }
+
+    /**
      * Processes multiple selected files with expressions by the user and saves the reports of the evaluation in textual
      * files.
      */
-    private handleBatch = () => {
+    private handleBatchLoad = () => {
         BatchProcessor.process('rachel-eval-results');
     }
 
@@ -628,7 +635,8 @@ export class MainScreen extends Component<MainScreenProps, MainScreenState> {
         return (
             <main>
                 <ManagementSection
-                    onBatch={this.handleBatch}
+                    onBatchConfig={this.handleBatchConfig}
+                    onBatchLoad={this.handleBatchLoad}
                     onLoadProject={this.handleLoadProject}
                     onSaveProject={this.handleSaveProject}
                     onLoadSample={this.handleLoadSampleProject}

@@ -2,25 +2,21 @@ import {FileDialog} from "../utils/fileDialog";
 import JSZip from "jszip";
 import {saveAs} from "file-saver";
 import {Relation} from "../relation/relation";
-import {RATreeNode} from "../ratree/raTreeNode";
-import {UnaryNode} from "../ratree/unaryNode";
-import {ProjectionNode} from "../ratree/projectionNode";
-import {RenameNode} from "../ratree/renameNode";
-import {SelectionNode} from "../ratree/selectionNode";
-import {BinaryNode} from "../ratree/binaryNode";
-import {AntijoinNode} from "../ratree/antijoinNode";
-import {CartesianProductNode} from "../ratree/cartesianProductNode";
-import {DivisionNode} from "../ratree/divisionNode";
-import {OuterJoinNode} from "../ratree/outerJoinNode";
-import {NaturalJoinNode, NaturalJoinType} from "../ratree/naturalJoinNode";
-import {SetOperationNode} from "../ratree/setOperationNode";
 import {formatDate} from "../utils/dateUtils";
-import {ThetaJoinNode, ThetaJoinType} from "../ratree/thetaJoinNode";
 import {isProjectObject, Project} from "../project/project";
 import {ExprParser} from "../expression/exprParser";
 import {StoredRelation, StoredRelationData} from "../relation/storedRelation";
 import {Expression} from "../expression/expression";
 import {MessageBox} from "../components/messageBox";
+import {
+    addOperations,
+    binaryOperations,
+    OperationsCount,
+    operationsOfTree,
+    totalOperations,
+    unaryOperations, zeroOperations
+} from "./operationsCount";
+import {createCountComparator, createOperationsCounter, OperationRule} from "./configUtils";
 
 /**
  * Class for processing multiple input .rachel project files and generating their reports.
@@ -28,6 +24,92 @@ import {MessageBox} from "../components/messageBox";
  * @public
  */
 export class BatchProcessor {
+
+    private static operationRules: OperationRule[] = [];
+
+    /**
+     * Opens file dialog and loads configuration from a JSON file.
+     *
+     * @public
+     */
+    public static config(): void {
+        FileDialog.openFile(".json").then(file => {
+            if (file.text === null) {
+                MessageBox.error('No content read from the configuration file ' + file.name);
+                console.warn('No content read from the configuration file ' + file.name);
+            }
+            else if (file.name.match(/\.json$/)) {
+                BatchProcessor.operationRules = [];
+                try {
+                    const config = JSON.parse(file.text);
+                    let loaded = 0;
+                    let skipped = 0;
+                    for (const ruleName in config) {
+                        const rule = config[ruleName]
+                        console.log(`${ruleName}: ${rule}`);
+                        if (BatchProcessor.createRule(ruleName, rule)) {
+                            ++loaded;
+                        }
+                        else {
+                            ++skipped;
+                        }
+                    }
+                    MessageBox.message(loaded + ' rules loaded from the configuration file, ' + skipped + ' skipped');
+                    console.log(loaded + ' rules loaded from the configuration file, ' + skipped + ' skipped');
+                }
+                catch (e) {
+                    MessageBox.error('Invalid configuration file ' + file.name + ': ' + e);
+                    console.warn('Invalid configuration file ' + file.name + ': ' + e);
+                }
+            }
+            else {
+                MessageBox.error('Unsupported type of the configuration file ' + file.name);
+                console.warn('Unsupported type of the configuration file ' + file.name);
+            }
+        });
+    }
+
+    /**
+     * Creates individual rule object.
+     *
+     * @param ruleName name of the rule
+     * @param ruleDef rule definition from the configuration JSON file
+     * @return true if the rule was created successfully
+     */
+    private static createRule(ruleName: string, ruleDef: object): boolean {
+        const fields: string[] = [];
+        for (const field in ruleDef) {
+            fields.push(field);
+        }
+        // every rule must have a count field
+        if (fields.indexOf("count") === -1) {
+            console.log("Rule " + ruleName + " does not have a specified count.")
+            return false;
+        }
+        // case of an operation rule
+        if (fields.indexOf("operations") > -1) {
+            // @ts-ignore - TODO pristup pres [count]?
+            const comparator = createCountComparator(ruleDef.count);
+            if (comparator === undefined) {
+                return false;
+            }
+            // @ts-ignore
+            const counter = createOperationsCounter(ruleDef.operations);
+            if (counter === undefined) {
+                return false;
+            }
+            const rule = (x: OperationsCount) => {
+                if (comparator(counter(x))) {
+                    return "OK";
+                }
+                else {
+                    return "ERROR " + ruleName;
+                }
+            };
+            BatchProcessor.operationRules.push(rule);
+        }
+        return true;
+    }
 
     /**
      * Opens file dialog and processes project files selected by the user. For each .rachel file creates a textual evaluation
@@ -184,7 +266,7 @@ export class BatchProcessor {
         const binary: number = binaryOperations(operations);
         const unary: number = unaryOperations(operations);
         return sectionLine + '\n\nRachel project report from ' + formatDate(new Date()) + '\n\n' + sectionLine + '\n\n' +
-            'Expressions: ' + expressions + '    Errors: ' + errors + '\n\n' +
+            'Expressions: ' + expressions + '    Invalid expressions: ' + errors + '\n\n' +
             'Used operations (' + total + ' in total: ' + binary + ' binary, ' + unary + ' unary):\n' +
             '    Selection: ' + operations.selection + '\n' +
             '    Projection: ' + operations.projection + '\n' +
@@ -215,149 +297,3 @@ export class BatchProcessor {
 
 const sectionLine: string = "################################################################################";
 const contentLine: string = "--------------------------------------------------------------------------------";
-
-/**
- * Counts of all supported relational algebra operations.
- */
-interface OperationsCount {
-    antijoin: number,
-    cartesian: number,
-    division: number,
-    natural: number,
-    outerJoin: number,
-    projection: number,
-    rename: number,
-    selection: number,
-    semijoin: number,
-    setOperation: number,
-    thetaJoin: number,
-    thetaSemijoin: number,
-}
-
-/**
- * Creates zero counts for all operations.
- */
-function zeroOperations(): OperationsCount {
-    return addOperations();
-}
-
-/**
- * Adds given OperationsCounts together.
- */
-function addOperations(...counts: OperationsCount[]): OperationsCount {
-    return {
-        antijoin: counts.reduce((agg, count) => agg + count.antijoin, 0),
-        cartesian: counts.reduce((agg, count) => agg + count.cartesian, 0),
-        division: counts.reduce((agg, count) => agg + count.division, 0),
-        natural: counts.reduce((agg, count) => agg + count.natural, 0),
-        outerJoin: counts.reduce((agg, count) => agg + count.outerJoin, 0),
-        projection: counts.reduce((agg, count) => agg + count.projection, 0),
-        rename: counts.reduce((agg, count) => agg + count.rename, 0),
-        selection: counts.reduce((agg, count) => agg + count.selection, 0),
-        semijoin: counts.reduce((agg, count) => agg + count.semijoin, 0),
-        setOperation: counts.reduce((agg, count) => agg + count.setOperation, 0),
-        thetaJoin: counts.reduce((agg, count) => agg + count.thetaJoin, 0),
-        thetaSemijoin: counts.reduce((agg, count) => agg + count.thetaSemijoin, 0),
-    }
-}
-
-/**
- * Sums all operation counts.
- */
-function totalOperations(o: OperationsCount): number {
-    return binaryOperations(o) + unaryOperations(o);
-}
-
-/**
- * Sums all binary operation counts.
- */
-function binaryOperations(o: OperationsCount): number {
-    return o.antijoin + o.cartesian + o.division + o.natural + o.outerJoin + o.semijoin + o.setOperation + o.thetaJoin + o.thetaSemijoin;
-}
-
-/**
- * Sums all unary operation counts.
- */
-function unaryOperations(o: OperationsCount): number {
-    return o.projection + o.rename + o.selection;
-}
-
-/**
- * Counts all operations used in the given tree.
- */
-function operationsOfTree(tree: RATreeNode): OperationsCount {
-    if (tree instanceof UnaryNode) {
-        return addOperations(operationOfUnaryNode(tree), operationsOfTree(tree.getSubtree()));
-    }
-    if (tree instanceof BinaryNode) {
-        return addOperations(operationOfBinaryNode(tree), operationsOfTree(tree.getLeftSubtree()), operationsOfTree(tree.getRightSubtree()));
-    }
-    // no subtree - relation node
-    return zeroOperations();
-}
-
-/**
- * Returns OperationsCount with one given unary operation count set to 1, other operators to 0.
- */
-function operationOfUnaryNode(node: UnaryNode): OperationsCount {
-    let ret: OperationsCount = zeroOperations();
-    if (node instanceof ProjectionNode) {
-        ret.projection = 1;
-        return ret;
-    }
-    if (node instanceof RenameNode) {
-        ret.rename = 1;
-        return ret;
-    }
-    if (node instanceof SelectionNode) {
-        ret.selection = 1;
-        return ret;
-    }
-    return ret;
-}
-
-/**
- * Returns OperationsCount with one given binary operation count set to 1, other operators to 0.
- */
-function operationOfBinaryNode(node: BinaryNode): OperationsCount {
-    let ret: OperationsCount = zeroOperations();
-    if (node instanceof AntijoinNode) {
-        ret.antijoin = 1;
-        return ret;
-    }
-    if (node instanceof CartesianProductNode) {
-        ret.cartesian = 1;
-        return ret;
-    }
-    if (node instanceof DivisionNode) {
-        ret.division = 1;
-        return ret;
-    }
-    if (node instanceof OuterJoinNode) {
-        ret.outerJoin = 1;
-        return ret;
-    }
-    if (node instanceof NaturalJoinNode) {
-        if (node.getType() === NaturalJoinType.natural) {
-            ret.natural = 1;
-        }
-        else {
-            ret.semijoin = 1;
-        }
-        return ret;
-    }
-    if (node instanceof SetOperationNode) {
-        ret.setOperation = 1;
-        return ret;
-    }
-    if (node instanceof ThetaJoinNode) {
-        if (node.getType() === ThetaJoinType.full) {
-            ret.thetaJoin = 1;
-        }
-        else {
-            ret.thetaSemijoin = 1;
-        }
-        return ret;
-    }
-    return ret;
-}

@@ -140,7 +140,10 @@ export interface LanguageDef {
      * @public
      */
     managementSection: {
-        batchButton: string,
+        batchTitle: string,
+        batchLoad: string,
+        batchConfig: string,
+
         loadButton: string,
         saveButton: string,
 

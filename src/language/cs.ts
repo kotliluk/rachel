@@ -155,9 +155,13 @@ export const CS: LanguageDef = {
     },
 
     managementSection: {
-        batchButton: "Batch",
+        batchTitle: "Batch",
+        batchLoad: "Nahrát projekty",
+        batchConfig: "Konfigurovat",
+
         loadButton: "Nahrát",
         saveButton: "Uložit",
+
         samplesButton: "Ukázky",
         samplesMenuTitle: "Připravené vzorové projekty",
         settingsButton: "Nastavení",
