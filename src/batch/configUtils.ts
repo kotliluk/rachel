@@ -1,7 +1,7 @@
 import {OperationsCount, OperationsTypes} from "./operationsCount";
 
 /**
- * Rule for operations count.
+ * Rule for operations count. Should return "OK" when it is held, "ERROR ruleName: ruleDescription" if not.
  */
 export type OperationRule = (ops: OperationsCount) => string;
 

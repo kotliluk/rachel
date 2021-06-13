@@ -14,7 +14,8 @@ import {
     OperationsCount,
     operationsOfTree,
     totalOperations,
-    unaryOperations, zeroOperations
+    unaryOperations,
+    zeroOperations
 } from "./operationsCount";
 import {createCountComparator, createOperationsCounter, OperationRule} from "./configUtils";
 
@@ -70,7 +71,7 @@ export class BatchProcessor {
     }
 
     /**
-     * Creates individual rule object.
+     * Creates individual rule object and adds it in BatchProcessor rules array.
      *
      * @param ruleName name of the rule
      * @param ruleDef rule definition from the configuration JSON file
@@ -86,9 +87,11 @@ export class BatchProcessor {
             console.log("Rule " + ruleName + " does not have a specified count.")
             return false;
         }
+        // @ts-ignore
+        const description = ruleDef.description ? ": " + ruleDef.description : "";
         // case of an operation rule
         if (fields.indexOf("operations") > -1) {
-            // @ts-ignore - TODO pristup pres [count]?
+            // @ts-ignore
             const comparator = createCountComparator(ruleDef.count);
             if (comparator === undefined) {
                 return false;
@@ -98,17 +101,11 @@ export class BatchProcessor {
             if (counter === undefined) {
                 return false;
             }
-            const rule = (x: OperationsCount) => {
-                if (comparator(counter(x))) {
-                    return "OK";
-                }
-                else {
-                    return "ERROR " + ruleName;
-                }
-            };
+            const rule = (x: OperationsCount) => comparator(counter(x)) ? "OK" : "ERROR " + ruleName + description;
             BatchProcessor.operationRules.push(rule);
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -258,28 +255,30 @@ export class BatchProcessor {
      *
      * @param expressions count of expressions
      * @param errors count of errors
-     * @param operations count of operations
+     * @param ops count of operations
      * @param nullValuesSupport whether null values are supported
      */
-    private static reportHeader = (expressions: number, errors: number, operations: OperationsCount, nullValuesSupport: boolean): string => {
-        const total: number = totalOperations(operations);
-        const binary: number = binaryOperations(operations);
-        const unary: number = unaryOperations(operations);
+    private static reportHeader = (expressions: number, errors: number, ops: OperationsCount, nullValuesSupport: boolean): string => {
+        const total: number = totalOperations(ops);
+        const binary: number = binaryOperations(ops);
+        const unary: number = unaryOperations(ops);
+        const ruleErrors: string[] = BatchProcessor.operationRules.map(rule => rule(ops)).filter(msg => msg !== "OK");
         return sectionLine + '\n\nRachel project report from ' + formatDate(new Date()) + '\n\n' + sectionLine + '\n\n' +
             'Expressions: ' + expressions + '    Invalid expressions: ' + errors + '\n\n' +
+            (ruleErrors.length === 0 ? 'All rules OK' : 'Rule errors:\n' + ruleErrors.join('\n')) + '\n\n' +
             'Used operations (' + total + ' in total: ' + binary + ' binary, ' + unary + ' unary):\n' +
-            '    Selection: ' + operations.selection + '\n' +
-            '    Projection: ' + operations.projection + '\n' +
-            '    Rename: ' + operations.rename + '\n\n' +
-            '    Set Operations: ' + operations.setOperation + '\n\n' +
-            '    Natural join: ' + operations.natural + '\n' +
-            '    Cartesian product: ' + operations.cartesian + '\n' +
-            '    Semijoin: ' + operations.semijoin + '\n' +
-            '    Antijoin: ' + operations.antijoin + '\n' +
-            '    Theta Join: ' + operations.thetaJoin + '\n' +
-            '    Theta Semijoin: ' + operations.thetaSemijoin + '\n\n' +
-            '    Outer Join: ' + operations.outerJoin + '\n\n' +
-            '    Division: ' + operations.division + '\n\n' +
+            '    Selection: ' + ops.selection + '\n' +
+            '    Projection: ' + ops.projection + '\n' +
+            '    Rename: ' + ops.rename + '\n\n' +
+            '    Set Operations: ' + ops.setOperation + '\n\n' +
+            '    Natural join: ' + ops.natural + '\n' +
+            '    Cartesian product: ' + ops.cartesian + '\n' +
+            '    Semijoin: ' + ops.semijoin + '\n' +
+            '    Antijoin: ' + ops.antijoin + '\n' +
+            '    Theta Join: ' + ops.thetaJoin + '\n' +
+            '    Theta Semijoin: ' + ops.thetaSemijoin + '\n\n' +
+            '    Outer Join: ' + ops.outerJoin + '\n\n' +
+            '    Division: ' + ops.division + '\n\n' +
             'Null values ' + (nullValuesSupport ? 'ALLOWED.\n\n' : 'FORBIDDEN.\n\n');
     }
 
