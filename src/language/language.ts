@@ -143,6 +143,8 @@ export interface LanguageDef {
         batchTitle: string,
         batchLoad: string,
         batchConfig: string,
+        batchConfigInfo: string[],
+        batchNoConfig: string,
 
         loadButton: string,
         saveButton: string,

@@ -4,6 +4,7 @@ import {allSupportedLanguages, LanguageDef, SupportedLanguage} from "../language
 import "./css/managementSection.css"
 import {getSamples} from "../project/samples";
 import {Project} from "../project/project";
+import {TooltipButton} from "./tooltipButton";
 
 /**
  * Props of ManagementSection component.
@@ -23,6 +24,12 @@ interface ManagementSectionProps {
      * @public
      */
     onBatchLoad: () => void,
+    /**
+     * information about current batch configuration
+     * @type string
+     * @public
+     */
+    batchConfigurationInfo: string,
     /**
      * handler of project loading
      * @type function
@@ -114,10 +121,10 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
         const lang = this.props.language.managementSection;
 
         const createBatchButton = () => {
-            // TODO - pri najeti na button zobrazit aktualni config
             const batchMenu = (
               <ul className="list-menu">
-                  <button onClick={this.props.onBatchConfig}>{lang.batchConfig}</button>
+                  <TooltipButton text={lang.batchConfig} onClick={this.props.onBatchConfig}
+                                 tooltip={this.props.batchConfigurationInfo}/>
                   <button onClick={this.props.onBatchLoad}>{lang.batchLoad}</button>
               </ul>
             )
@@ -236,11 +243,11 @@ export class ManagementSection extends React.Component<ManagementSectionProps, M
         return (
             <header className="management-section">
                 <h1>RACHEL</h1>
-                {createBatchButton()}
                 {createLoadProjectButton()}
                 {createSaveProjectButton()}
                 {createSamplesButton()}
                 {createSettingsButton()}
+                {createBatchButton()}
                 {createAboutButton()}
             </header>
         );

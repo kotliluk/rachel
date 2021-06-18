@@ -17,7 +17,8 @@ import {
     unaryOperations,
     zeroOperations
 } from "./operationsCount";
-import {createCountComparator, createOperationsCounter, OperationRule} from "./configUtils";
+import {createCountComparator, createOperationsCounter, OperationRule, QueryRule, TableRule} from "./configUtils";
+import {language} from "../language/language";
 
 /**
  * Class for processing multiple input .rachel project files and generating their reports.
@@ -26,48 +27,66 @@ import {createCountComparator, createOperationsCounter, OperationRule} from "./c
  */
 export class BatchProcessor {
 
+    private static configurationFileName: string | null = null;
     private static operationRules: OperationRule[] = [];
+    private static tableRules: TableRule[] = [];
+    private static queryRules: QueryRule[] = [];
 
     /**
      * Opens file dialog and loads configuration from a JSON file.
      *
+     * @return promise with string description of the loaded configuration
      * @public
      */
-    public static config(): void {
-        FileDialog.openFile(".json").then(file => {
-            if (file.text === null) {
-                MessageBox.error('No content read from the configuration file ' + file.name);
-                console.warn('No content read from the configuration file ' + file.name);
-            }
-            else if (file.name.match(/\.json$/)) {
-                BatchProcessor.operationRules = [];
-                try {
-                    const config = JSON.parse(file.text);
-                    let loaded = 0;
-                    let skipped = 0;
-                    for (const ruleName in config) {
-                        const rule = config[ruleName]
-                        console.log(`${ruleName}: ${rule}`);
-                        if (BatchProcessor.createRule(ruleName, rule)) {
-                            ++loaded;
+    public static config(): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            FileDialog.openFile(".json").then(file => {
+                if (file.text === null) {
+                    return reject('No content read from the configuration file ' + file.name);
+                }
+                else if (file.name.match(/\.json$/)) {
+                    BatchProcessor.configurationFileName = file.name;
+                    BatchProcessor.operationRules = [];
+                    BatchProcessor.tableRules = [];
+                    BatchProcessor.queryRules = [];
+                    try {
+                        const config = JSON.parse(file.text);
+                        let loaded = 0;
+                        let skipped = 0;
+                        for (const ruleName in config) {
+                            const rule = config[ruleName];
+                            if (BatchProcessor.createRule(ruleName, rule)) {
+                                ++loaded;
+                            }
+                            else {
+                                ++skipped;
+                            }
                         }
-                        else {
-                            ++skipped;
-                        }
+                        return resolve(loaded + ' rules loaded from the configuration file, ' + skipped + ' skipped');
                     }
-                    MessageBox.message(loaded + ' rules loaded from the configuration file, ' + skipped + ' skipped');
-                    console.log(loaded + ' rules loaded from the configuration file, ' + skipped + ' skipped');
+                    catch (e) {
+                        return reject('Invalid configuration file ' + file.name + ': ' + e);
+                    }
                 }
-                catch (e) {
-                    MessageBox.error('Invalid configuration file ' + file.name + ': ' + e);
-                    console.warn('Invalid configuration file ' + file.name + ': ' + e);
+                else {
+                    return reject('Unsupported type of the configuration file ' + file.name);
                 }
-            }
-            else {
-                MessageBox.error('Unsupported type of the configuration file ' + file.name);
-                console.warn('Unsupported type of the configuration file ' + file.name);
-            }
+            });
         });
+    }
+
+    /**
+     * Returns formatted information about current loaded config file and its rules.
+     *
+     * @return string information
+     */
+    public static getConfigInfo(): string {
+        if (BatchProcessor.configurationFileName !== null) {
+            const msg = language().managementSection.batchConfigInfo;
+            return msg[0] + BatchProcessor.configurationFileName + msg[1] +
+              (BatchProcessor.operationRules.length + BatchProcessor.tableRules.length + BatchProcessor.queryRules.length) + msg[2];
+        }
+        return language().managementSection.batchNoConfig;
     }
 
     /**
@@ -82,28 +101,66 @@ export class BatchProcessor {
         for (const field in ruleDef) {
             fields.push(field);
         }
-        // every rule must have a count field
-        if (fields.indexOf("count") === -1) {
-            console.log("Rule " + ruleName + " does not have a specified count.")
-            return false;
-        }
         // @ts-ignore
         const description = ruleDef.description ? ": " + ruleDef.description : "";
         // case of an operation rule
         if (fields.indexOf("operations") > -1) {
-            // @ts-ignore
-            const comparator = createCountComparator(ruleDef.count);
-            if (comparator === undefined) {
+            if (fields.indexOf("count") === -1 && fields.indexOf("each") === -1) {
+                console.log("Operations rule " + ruleName + " does not have a specified count nor each.");
                 return false;
             }
+            let created = false;
             // @ts-ignore
-            const counter = createOperationsCounter(ruleDef.operations);
-            if (counter === undefined) {
-                return false;
+            const ops: string[] = Array.isArray(ruleDef.operations) ? ruleDef.operations : [ruleDef.operations];
+            // creates one rule for all operations together
+            if (fields.indexOf("count") > -1) {
+                // @ts-ignore
+                const comparator = createCountComparator(ruleDef.count);
+                // @ts-ignore
+                const counter = createOperationsCounter(ops);
+                if (comparator !== undefined && counter !== undefined) {
+                    const rule = (x: OperationsCount) => comparator(counter(x)) ? "OK" : "ERROR " + ruleName + description;
+                    BatchProcessor.operationRules.push(rule);
+                    created = true;
+                }
             }
-            const rule = (x: OperationsCount) => comparator(counter(x)) ? "OK" : "ERROR " + ruleName + description;
-            BatchProcessor.operationRules.push(rule);
-            return true;
+            // creates a rule for each operation in operations field
+            if (fields.indexOf("each") > -1) {
+                // @ts-ignore
+                ops.forEach((op: string) => {
+                    // @ts-ignore
+                    const comparator = createCountComparator(ruleDef.each);
+                    // @ts-ignore
+                    const counter = createOperationsCounter(op);
+                    if (comparator !== undefined && counter !== undefined) {
+                        const rule = (x: OperationsCount) =>
+                          comparator(counter(x)) ? "OK" : "ERROR " + ruleName + description + " (" + op + ")";
+                        BatchProcessor.operationRules.push(rule);
+                        created = true;
+                    }
+                });
+            }
+            return created;
+        }
+        // case of a table rule
+        else if (fields.indexOf("tables") > -1) {
+            // @ts-ignore
+            const comparator = createCountComparator(ruleDef.tables);
+            if (comparator !== undefined) {
+                const rule = (x: number) => comparator(x) ? "OK" : "ERROR " + ruleName + description;
+                BatchProcessor.tableRules.push(rule);
+                return true;
+            }
+        }
+        // case of a query rule
+        else if (fields.indexOf("queries") > -1) {
+            // @ts-ignore
+            const comparator = createCountComparator(ruleDef.queries);
+            if (comparator !== undefined) {
+                const rule = (x: number) => comparator(x) ? "OK" : "ERROR " + ruleName + description;
+                BatchProcessor.queryRules.push(rule);
+                return true;
+            }
         }
         return false;
     }
@@ -201,7 +258,7 @@ export class BatchProcessor {
 
         return {
             name: file.name.slice(0, -7) + '-eval-report.txt',
-            text: BatchProcessor.reportHeader(exprCount, errors, ops, project.nullValuesSupport) +
+            text: BatchProcessor.reportHeader(project.relations.length, exprCount, errors, ops, project.nullValuesSupport) +
                   BatchProcessor.formatRelations(project.relations) +
                   sectionLine + "\n\nQUERIES (" + exprCount + ")\n\n" +
                   reports.map(r => r.text).join('')
@@ -253,24 +310,29 @@ export class BatchProcessor {
      * Creates the header of the report. The header contains the time of the report, count of expressions and errors,
      * count of used operations and null values support info.
      *
-     * @param expressions count of expressions
-     * @param errors count of errors
+     * @param rels count of relations
+     * @param exprs count of expressions
+     * @param errs count of errors
      * @param ops count of operations
-     * @param nullValuesSupport whether null values are supported
+     * @param nvs whether null values are supported
      */
-    private static reportHeader = (expressions: number, errors: number, ops: OperationsCount, nullValuesSupport: boolean): string => {
+    private static reportHeader = (rels: number, exprs: number, errs: number, ops: OperationsCount, nvs: boolean): string => {
         const total: number = totalOperations(ops);
         const binary: number = binaryOperations(ops);
         const unary: number = unaryOperations(ops);
         const ruleErrors: string[] = BatchProcessor.operationRules.map(rule => rule(ops)).filter(msg => msg !== "OK");
+        ruleErrors.push(...BatchProcessor.tableRules.map(rule => rule(rels)).filter(msg => msg !== "OK"));
+        ruleErrors.push(...BatchProcessor.queryRules.map(rule => rule(exprs)).filter(msg => msg !== "OK"));
         return sectionLine + '\n\nRachel project report from ' + formatDate(new Date()) + '\n\n' + sectionLine + '\n\n' +
-            'Expressions: ' + expressions + '    Invalid expressions: ' + errors + '\n\n' +
+            'Queries: ' + exprs + '    Invalid queries: ' + errs + '\n\n' +
             (ruleErrors.length === 0 ? 'All rules OK' : 'Rule errors:\n' + ruleErrors.join('\n')) + '\n\n' +
             'Used operations (' + total + ' in total: ' + binary + ' binary, ' + unary + ' unary):\n' +
             '    Selection: ' + ops.selection + '\n' +
             '    Projection: ' + ops.projection + '\n' +
             '    Rename: ' + ops.rename + '\n\n' +
-            '    Set Operations: ' + ops.setOperation + '\n\n' +
+            '    Union: ' + ops.union + '\n' +
+            '    Intersection: ' + ops.intersection + '\n' +
+            '    Difference: ' + ops.difference + '\n\n' +
             '    Natural join: ' + ops.natural + '\n' +
             '    Cartesian product: ' + ops.cartesian + '\n' +
             '    Semijoin: ' + ops.semijoin + '\n' +
@@ -279,7 +341,7 @@ export class BatchProcessor {
             '    Theta Semijoin: ' + ops.thetaSemijoin + '\n\n' +
             '    Outer Join: ' + ops.outerJoin + '\n\n' +
             '    Division: ' + ops.division + '\n\n' +
-            'Null values ' + (nullValuesSupport ? 'ALLOWED.\n\n' : 'FORBIDDEN.\n\n');
+            'Null values ' + (nvs ? 'ALLOWED.\n\n' : 'FORBIDDEN.\n\n');
     }
 
     /**

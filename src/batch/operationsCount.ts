@@ -9,7 +9,7 @@ import {CartesianProductNode} from "../ratree/cartesianProductNode";
 import {DivisionNode} from "../ratree/divisionNode";
 import {OuterJoinNode} from "../ratree/outerJoinNode";
 import {NaturalJoinNode, NaturalJoinType} from "../ratree/naturalJoinNode";
-import {SetOperationNode} from "../ratree/setOperationNode";
+import {SetOperationNode, SetOperationType} from "../ratree/setOperationNode";
 import {ThetaJoinNode, ThetaJoinType} from "../ratree/thetaJoinNode";
 
 export const OperationsTypes: string[] = ["antijoin", "cartesian", "division", "natural", "outerJoin", "projection",
@@ -18,7 +18,6 @@ export const OperationsTypes: string[] = ["antijoin", "cartesian", "division", "
 /**
  * Counts of all supported relational algebra operations.
  */
-// TODO presnejsi deleni
 export interface OperationsCount {
   antijoin: number,
   cartesian: number,
@@ -29,7 +28,9 @@ export interface OperationsCount {
   rename: number,
   selection: number,
   semijoin: number,
-  setOperation: number,
+  union: number,
+  intersection: number,
+  difference: number,
   thetaJoin: number,
   thetaSemijoin: number,
 }
@@ -55,7 +56,9 @@ export function addOperations(...counts: OperationsCount[]): OperationsCount {
     rename: counts.reduce((agg, count) => agg + count.rename, 0),
     selection: counts.reduce((agg, count) => agg + count.selection, 0),
     semijoin: counts.reduce((agg, count) => agg + count.semijoin, 0),
-    setOperation: counts.reduce((agg, count) => agg + count.setOperation, 0),
+    union: counts.reduce((agg, count) => agg + count.union, 0),
+    intersection: counts.reduce((agg, count) => agg + count.intersection, 0),
+    difference: counts.reduce((agg, count) => agg + count.difference, 0),
     thetaJoin: counts.reduce((agg, count) => agg + count.thetaJoin, 0),
     thetaSemijoin: counts.reduce((agg, count) => agg + count.thetaSemijoin, 0),
   }
@@ -72,7 +75,8 @@ export function totalOperations(o: OperationsCount): number {
  * Sums all binary operation counts.
  */
 export function binaryOperations(o: OperationsCount): number {
-  return o.antijoin + o.cartesian + o.division + o.natural + o.outerJoin + o.semijoin + o.setOperation + o.thetaJoin + o.thetaSemijoin;
+  return o.antijoin + o.cartesian + o.division + o.natural + o.outerJoin + o.semijoin + o.union + o.intersection +
+    o.difference + o.thetaJoin + o.thetaSemijoin;
 }
 
 /**
@@ -147,7 +151,16 @@ export function operationOfBinaryNode(node: BinaryNode): OperationsCount {
     return ret;
   }
   if (node instanceof SetOperationNode) {
-    ret.setOperation = 1;
+    const type = node.getOperationSymbol();
+    if (type === SetOperationType.union) {
+      ret.union = 1;
+    }
+    else if (type === SetOperationType.intersection) {
+      ret.intersection = 1;
+    }
+    else {
+      ret.difference = 1;
+    }
     return ret;
   }
   if (node instanceof ThetaJoinNode) {

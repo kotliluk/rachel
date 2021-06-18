@@ -158,6 +158,8 @@ export const CS: LanguageDef = {
         batchTitle: "Batch",
         batchLoad: "Nahrát projekty",
         batchConfig: "Konfigurovat",
+        batchConfigInfo: ["Konfigurace ", /* filename */ " s ", /* rules count */ " pravidly"],
+        batchNoConfig: "Není nahrána žádná konfigurace",
 
         loadButton: "Nahrát",
         saveButton: "Uložit",

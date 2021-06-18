@@ -155,7 +155,7 @@ export class SetOperationNode extends BinaryNode {
      * @return name of the RA operation of the node {@type string}
      * @public
      */
-    public getOperationSymbol(): string {
+    public getOperationSymbol(): SetOperationType {
         return this.type;
     }
 }

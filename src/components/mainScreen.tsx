@@ -19,6 +19,7 @@ import {Mail} from "../utils/mail";
 import {POSTMAIL_ACCESS_TOKEN} from "../postMailAccessToken";
 import {copyProject, Project} from "../project/project";
 import {getSamples} from "../project/samples";
+import {MessageBox} from "./messageBox";
 
 /**
  * Props of MainScreen component.
@@ -40,6 +41,7 @@ interface MainScreenState {
     evaluationTreeRoot: RATreeNode | null,
     evaluatedExpressionName: string,
 
+    batchConfigurationInfo: string,
     nullValuesSupport: boolean,
     csvValueSeparator: CsvValueSeparator,
     language: LanguageDef,
@@ -87,6 +89,7 @@ export class MainScreen extends Component<MainScreenProps, MainScreenState> {
             evaluationTreeRoot: null,
             evaluatedExpressionName: "",
 
+            batchConfigurationInfo: BatchProcessor.getConfigInfo(),
             nullValuesSupport: true,
             csvValueSeparator: LocalStorage.getCsvValueSeparator(),
             language: language(),
@@ -174,7 +177,15 @@ export class MainScreen extends Component<MainScreenProps, MainScreenState> {
      * Loads a JSON file with batch processing configuration.
      */
     private handleBatchConfig = () => {
-        BatchProcessor.config();
+        BatchProcessor.config().then(msg => {
+            console.log(msg);
+            MessageBox.message(msg);
+            const configInfo = BatchProcessor.getConfigInfo();
+            this.setState({ batchConfigurationInfo: configInfo });
+        }).catch(err => {
+            console.warn(err);
+            MessageBox.error(err);
+        });
     }
 
     /**
@@ -637,6 +648,7 @@ export class MainScreen extends Component<MainScreenProps, MainScreenState> {
                 <ManagementSection
                     onBatchConfig={this.handleBatchConfig}
                     onBatchLoad={this.handleBatchLoad}
+                    batchConfigurationInfo={this.state.batchConfigurationInfo}
                     onLoadProject={this.handleLoadProject}
                     onSaveProject={this.handleSaveProject}
                     onLoadSample={this.handleLoadSampleProject}

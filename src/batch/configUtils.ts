@@ -6,6 +6,16 @@ import {OperationsCount, OperationsTypes} from "./operationsCount";
 export type OperationRule = (ops: OperationsCount) => string;
 
 /**
+ * Rule for tables count. Should return "OK" when it is held, "ERROR ruleName: ruleDescription" if not.
+ */
+export type TableRule = (tables: number) => string;
+
+/**
+ * Rule for queries count. Should return "OK" when it is held, "ERROR ruleName: ruleDescription" if not.
+ */
+export type QueryRule = (tables: number) => string;
+
+/**
  * Compares the given number to the predefined value.
  */
 export type CountComparator = (x: number) => boolean;
@@ -86,6 +96,6 @@ export const createOperationsCounter = (ops: any): OperationsCounter | undefined
     // @ts-ignore
     return (x: OperationsCount) => _ops.reduce<number>((prev, cur) => prev + x[cur], 0);
   }
-  console.warn("Operations field is not a string nor object");
+  console.warn("Invalid operations field");
   return undefined;
 }

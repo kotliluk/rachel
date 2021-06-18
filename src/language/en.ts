@@ -185,7 +185,9 @@ export const EN: LanguageDef = {
     managementSection: {
         batchTitle: "Batch",
         batchLoad: "Load projects",
-        batchConfig: "Configuration",
+        batchConfig: "Load config",
+        batchConfigInfo: ["Configuration ", /* filename */ " with ", /* rules count */ " rules"],
+        batchNoConfig: "No configuration loaded",
 
         loadButton: "Load",
         saveButton: "Save",

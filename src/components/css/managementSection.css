@@ -68,7 +68,7 @@
     border-color: var(--color-d);
 }
 
-.list-menu span {
+.list-menu > span {
     width: 110px;
     display: inline-block;
 }

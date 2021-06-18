@@ -143,7 +143,6 @@ The last-mentioned section is the upper one. It provides general management of t
 * The **Load** button loads the whole project from **.rachel** files. Rachel files contain all editable relations, all
 expressions, and a configuration value indicating whether usage of null meta values is enabled.
 * The **Save** button saves the current project to a new **.rachel** file.
-* The **Batch** button lets us select multiple project files to be all processed and their reports generated.
 * The **Samples** button shows prepared sample projects. It is a convenient starting point for users who are just
 getting acquainted with Rachel.
 * In the **Settings**, we can set:
@@ -151,6 +150,8 @@ getting acquainted with Rachel.
   - **CSV separator** used value separator in downloaded CSV files
   - **Theme** the theme of the application (light/dark)
   - **Language** the language of the application (English/Czech)
+* The **Batch** button lets us select multiple project files to be all processed, and their reports generated.
+See [Batch processing](#batch-processing)
 * The **About** button navigates to the project repository.
 
 
@@ -217,3 +218,82 @@ We can use a mouse to move relations and expressions in their menus.
 
 The application does not support the **Internet Explorer** browser. We decided not to support it as Microsoft
 recommends using newer browsers and announced the end of its support as well.
+
+
+
+### Batch processing
+
+The application provides batch processing of Rachel projects. You can use it to efficiently evaluate many projects
+at once. Moreover, the application creates a report for each loaded project. In the report, there is a list of counts
+of used operations, pretty-printed each defined table, and displayed each defined expression with its pretty-printed
+result relation or error.
+
+For example, this feature is suitable for homework evaluation - the homework can be assigned
+as a predefined Rachel project, students create required tables and queries and submit it back, and teachers
+use Rachel to generate the reports for submitted projects.
+
+Additional checking of projects can be configured by the **Load config** button. You can load a configuration JSON file
+with the following structure:
+
+```json
+{
+  "Some_custom_name_of_rule_A" : {
+    "operations" : "antijoin",
+    "description" : "There must be 5 antijoins.",
+    "count" : 5
+  },
+  "Rule_B" : {
+    "operations" : [ "antijoin", "cartesian", "division" ],
+    "description" : "There must be 5 operations from antijoins, cartesian products, and divisions.",
+    "count" : { "$eq" : 5 }
+  },
+  "Rule_C" : {
+    "operations" : [ "antijoin", "cartesian", "division" ],
+    "description" : "There must be 3-4 tables of each from antijoins, cartesian products, and divisions.",
+    "each" : { "$gte" : 3, "$lte" : 7 }
+  },
+  "Rule_D" : {
+    "tables" : 2,
+    "description" : "There must be 2 tables defined."
+  },
+  "Rule_E" : {
+    "tables" : { "$gte" : 3, "$lte" : 4 },
+    "description" : "There must be 3-4 tables defined."
+  },
+  "Rule_F" : {
+    "queries" : 3,
+    "description" : "There must be 3 queries."
+  },
+  "Rule_H" : {
+    "queries" : { "$gt" : 3, "$lt" : 6 },
+    "description" : "There must be 4-5 queries."
+  }
+}
+```
+
+The JSON file contains arbitrary number of rules with custom but unique names. There are 3 types of rules, the type
+is specified by its operations/tables/queries field:
+* **operations count:** restricts the count of operations used in the project
+* **tables count:** restricts the count of tables defined in the project
+* **queries count:** restricts the count of queries defined in the project
+
+The count is specified as a single number (for exact count), or as a count object. The count object supports 5 fields,
+there may be multiple fields specified:
+* **$eq: N** - count must be equal to N
+* **$gte: N** - count must be grater than or equal to N
+* **$lte: N** - count must be less than or equal to N
+* **$gt: N** - count must be grater than N
+* **$lt: N** - count must be less than N
+
+The **operations** field specifies operation types used in the rule - it is a single type, or an array of types. Supported
+operation types are: antijoin (for left/right antijoins), cartesian (for cartesian product), division,
+natural (for natural join), outerJoin (for left/right/full outer join), projection, rename, selection,
+semijoin (for left/right semijoins), union, intersection, difference, thetaJoin,
+thetaSemijoin (for left/right theta semijoins). If the **count** field is defined, the provided count is checked for the sum
+of the listed operation types. If the **each** field is defined, the provided count is checked for each from the listed
+operation types - it creates automatically multiple independent rules.
+
+The **tables**/**queries** fields contain the count of tables/queries right away. Each rule can contain a description.
+
+If the project violates any defined rule, the name and the description of the rule is displayed in the generated report.
+
