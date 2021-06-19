@@ -26,6 +26,27 @@ export interface File {
 export class FileDialog {
 
     /**
+     * Loads asynchronously a Blob content of one ZIP file selected by the user in the file browser.
+     *
+     * @return a Zip file as a Blob in a promise {@type Promise<Blob>}
+     * @public
+     */
+    public static openZip(): Promise<Blob> {
+        return new Promise<Blob>(resolve => {
+            let element = document.createElement('div');
+            element.innerHTML = `<input type="file" accept=".zip">`;
+            let fileInput = element.firstChild;
+            // @ts-ignore
+            fileInput.addEventListener('change', function() {
+                // @ts-ignore
+                resolve(fileInput.files[0]);
+            });
+            // @ts-ignore
+            fileInput.click();
+        });
+    }
+
+    /**
      * Loads asynchronously a textual content from one file selected by the user in the file browser.
      *
      * @param accept comma-separated list of extensions for filter (default are all extensions) {@type string}

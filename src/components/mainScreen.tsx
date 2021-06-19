@@ -193,7 +193,7 @@ export class MainScreen extends Component<MainScreenProps, MainScreenState> {
      * files.
      */
     private handleBatchLoad = () => {
-        BatchProcessor.process('rachel-eval-results');
+        BatchProcessor.process();
     }
 
     /**
