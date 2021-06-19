@@ -139,7 +139,9 @@ const operations: OperationsCount = {
   rename: 1,
   selection: 1,
   semijoin: 1,
-  setOperation: 1,
+  union: 1,
+  intersection: 1,
+  difference: 1,
   thetaJoin: 1,
   thetaSemijoin: 1
 }

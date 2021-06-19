@@ -45,6 +45,7 @@ export class BatchProcessor {
         if (file.text === null) {
           return reject('No content read from the configuration file ' + file.name);
         } else if (file.name.match(/\.json$/)) {
+          BatchProcessor.loadType = "zip";
           BatchProcessor.configurationFileName = file.name;
           BatchProcessor.operationRules = [];
           BatchProcessor.tableRules = [];
@@ -55,6 +56,16 @@ export class BatchProcessor {
             let skipped = 0;
             for (const ruleName in config) {
               const rule = config[ruleName];
+              // sets loading type
+              if (ruleName === "loadType" && typeof rule === "string" && (rule === "zip" || rule === "files")) {
+                BatchProcessor.loadType = rule;
+                continue;
+              }
+              // sets result zip file name
+              if (ruleName === "resultFilename" && typeof rule === "string") {
+                BatchProcessor.resultFilename = rule;
+                continue;
+              }
               if (BatchProcessor.createRule(ruleName, rule)) {
                 ++loaded;
               } else {

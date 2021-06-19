@@ -237,6 +237,8 @@ with the following structure:
 
 ```json
 {
+  "loadType": "files",
+  "resultFilename": "my-custom-zip-name",
   "Some_custom_name_of_rule_A" : {
     "operations" : "antijoin",
     "description" : "There must be 5 antijoins.",
@@ -271,8 +273,15 @@ with the following structure:
 }
 ```
 
-The JSON file contains arbitrary number of rules with custom but unique names. There are 3 types of rules, the type
-is specified by its operations/tables/queries field:
+In the config, you can set the **loadType**. If the loading type is set to *"zip"*, the application expects a user to
+select a ZIP file for processing. The application finds .rachel files in the zip (even in subfolders) and processes them.
+If the loading type is set to *"files"*, the application expects a user to select multiple .rachel files. The default
+setting is *"zip"*. The **resultFilename** field sets the name of the downloaded ZIP file with generated reports. The
+default name is *"rachel-eval-results"*. Words *loadType* and *resultFilename* are reserved and cannot be used to name
+your count rules.
+
+Further, the JSON file contains arbitrary number of rules with custom (non-reserved) but unique names.
+There are 3 types of rules, the type is specified by its operations/tables/queries field:
 * **operations count:** restricts the count of operations used in the project
 * **tables count:** restricts the count of tables defined in the project
 * **queries count:** restricts the count of queries defined in the project
