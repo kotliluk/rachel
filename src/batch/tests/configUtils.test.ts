@@ -1,4 +1,4 @@
-import {createCountComparator, createOperationsCounter} from "../configUtils";
+import {createCountComparator, createOperationsCounter, createReportNameModifier} from "../configUtils";
 import {OperationsCount} from "../operationsCount";
 
 describe('createCountComparator', () => {
@@ -10,9 +10,9 @@ describe('createCountComparator', () => {
     // assert
     expect(comparator).toBeDefined();
     if (comparator) {
-      expect(comparator(4)).toBeFalsy();
-      expect(comparator(5)).toBeTruthy();
-      expect(comparator(6)).toBeFalsy();
+      expect(comparator(4)).toEqual("Expected 5, received 4");
+      expect(comparator(5)).toEqual("");
+      expect(comparator(6)).toEqual("Expected 5, received 6");
     }
   });
 
@@ -24,9 +24,9 @@ describe('createCountComparator', () => {
     // assert
     expect(comparator).toBeDefined();
     if (comparator) {
-      expect(comparator(4)).toBeFalsy();
-      expect(comparator(5)).toBeTruthy();
-      expect(comparator(6)).toBeFalsy();
+      expect(comparator(4)).toEqual("Expected 5, received 4");
+      expect(comparator(5)).toEqual("");
+      expect(comparator(6)).toEqual("Expected 5, received 6");
     }
   });
 
@@ -38,9 +38,9 @@ describe('createCountComparator', () => {
     // assert
     expect(comparator).toBeDefined();
     if (comparator) {
-      expect(comparator(4)).toBeFalsy();
-      expect(comparator(5)).toBeTruthy();
-      expect(comparator(6)).toBeTruthy();
+      expect(comparator(4)).toEqual("Expected greater or equal to 5, received 4");
+      expect(comparator(5)).toEqual("");
+      expect(comparator(6)).toEqual("");
     }
   });
 
@@ -52,9 +52,9 @@ describe('createCountComparator', () => {
     // assert
     expect(comparator).toBeDefined();
     if (comparator) {
-      expect(comparator(4)).toBeFalsy();
-      expect(comparator(5)).toBeFalsy();
-      expect(comparator(6)).toBeTruthy();
+      expect(comparator(4)).toEqual("Expected greater than 5, received 4");
+      expect(comparator(5)).toEqual("Expected greater than 5, received 5");
+      expect(comparator(6)).toEqual("");
     }
   });
 
@@ -66,9 +66,9 @@ describe('createCountComparator', () => {
     // assert
     expect(comparator).toBeDefined();
     if (comparator) {
-      expect(comparator(4)).toBeTruthy();
-      expect(comparator(5)).toBeTruthy();
-      expect(comparator(6)).toBeFalsy();
+      expect(comparator(4)).toEqual("");
+      expect(comparator(5)).toEqual("");
+      expect(comparator(6)).toEqual("Expected less or equal to 5, received 6");
     }
   });
 
@@ -80,9 +80,9 @@ describe('createCountComparator', () => {
     // assert
     expect(comparator).toBeDefined();
     if (comparator) {
-      expect(comparator(4)).toBeTruthy();
-      expect(comparator(5)).toBeFalsy();
-      expect(comparator(6)).toBeFalsy();
+      expect(comparator(4)).toEqual("");
+      expect(comparator(5)).toEqual("Expected less than 5, received 5");
+      expect(comparator(6)).toEqual("Expected less than 5, received 6");
     }
   });
 
@@ -94,9 +94,9 @@ describe('createCountComparator', () => {
     // assert
     expect(comparator).toBeDefined();
     if (comparator) {
-      expect(comparator(4)).toBeFalsy();
-      expect(comparator(5)).toBeTruthy();
-      expect(comparator(6)).toBeTruthy();
+      expect(comparator(4)).toEqual("Expected greater or equal to 5, received 4");
+      expect(comparator(5)).toEqual("");
+      expect(comparator(6)).toEqual("");
     }
   });
 
@@ -108,9 +108,9 @@ describe('createCountComparator', () => {
     // assert
     expect(comparator).toBeDefined();
     if (comparator) {
-      expect(comparator(4)).toBeFalsy();
-      expect(comparator(5)).toBeFalsy();
-      expect(comparator(6)).toBeFalsy();
+      expect(comparator(4)).toEqual("Expected greater than 5, received 4");
+      expect(comparator(5)).toEqual("Expected greater than 5, received 5");
+      expect(comparator(6)).toEqual("Expected less than 6, received 6");
     }
   });
 
@@ -122,9 +122,9 @@ describe('createCountComparator', () => {
     // assert
     expect(comparator).toBeDefined();
     if (comparator) {
-      expect(comparator(4)).toBeFalsy();
-      expect(comparator(5)).toBeTruthy();
-      expect(comparator(6)).toBeFalsy();
+      expect(comparator(4)).toEqual("Expected 5, received 4 + Expected greater than 4, received 4");
+      expect(comparator(5)).toEqual("");
+      expect(comparator(6)).toEqual("Expected 5, received 6 + Expected less than 6, received 6");
     }
   });
 });
@@ -169,5 +169,160 @@ describe('createOperationsCounter', () => {
     if (counter) {
       expect(counter(operations)).toBe(9);
     }
+  });
+});
+
+describe('createReportNameModifier', () => {
+  test("no config", () => {
+    // arrange
+    const config = {};
+    const originalName = "some/path/to/my-file.extension";
+    const expectedName = "some/path/to/my-file.txt";
+    // act
+    const modifier = createReportNameModifier(config);
+    const actualName = modifier(originalName);
+    // assert
+    expect(actualName).toEqual(expectedName);
+  });
+
+  test("invalid config - not object", () => {
+    // arrange
+    const config = "blah blah";
+    const originalName = "some/path/to/my-file.extension";
+    const expectedName = "some/path/to/my-file.txt";
+    // act
+    const modifier = createReportNameModifier(config);
+    const actualName = modifier(originalName);
+    // assert
+    expect(actualName).toEqual(expectedName);
+  });
+
+  test("invalid config - invalid field", () => {
+    // arrange
+    const config = {
+      invalidField: 'abc_'
+    };
+    const originalName = "some/path/to/my-file.extension";
+    const expectedName = "some/path/to/my-file.txt";
+    // act
+    const modifier = createReportNameModifier(config);
+    const actualName = modifier(originalName);
+    // assert
+    expect(actualName).toEqual(expectedName);
+  });
+  
+  test("prefix 'abc_'", () => {
+    // arrange
+    const config = {
+      prefix: 'abc_'
+    };
+    const originalName = "some/path/to/my-file.extension";
+    const expectedName = "abc_some/path/to/my-file.txt";
+    // act
+    const modifier = createReportNameModifier(config);
+    const actualName = modifier(originalName);
+    // assert
+    expect(actualName).toEqual(expectedName);
+  });
+
+  test("suffix '_xyz'", () => {
+    // arrange
+    const config = {
+      suffix: '_xyz'
+    };
+    const originalName = "some/path/to/my-file.extension";
+    const expectedName = "some/path/to/my-file_xyz.txt";
+    // act
+    const modifier = createReportNameModifier(config);
+    const actualName = modifier(originalName);
+    // assert
+    expect(actualName).toEqual(expectedName);
+  });
+  
+  test("join path with '-'", () => {
+    // arrange
+    const config = {
+      joinPathParts: '-'
+    };
+    const originalName = "some/path/to/my-file.extension";
+    const expectedName = "some-path-to-my-file.txt";
+    // act
+    const modifier = createReportNameModifier(config);
+    const actualName = modifier(originalName);
+    // assert
+    expect(actualName).toEqual(expectedName);
+  });
+  
+  test("join path with '-abc-'", () => {
+    // arrange
+    const config = {
+      joinPathParts: '-abc-'
+    };
+    const originalName = "some/path/to/my-file.extension";
+    const expectedName = "some-abc-path-abc-to-abc-my-file.txt";
+    // act
+    const modifier = createReportNameModifier(config);
+    const actualName = modifier(originalName);
+    // assert
+    expect(actualName).toEqual(expectedName);
+  });
+
+  test("use path part '1'", () => {
+    // arrange
+    const config = {
+      usePathParts: [1]
+    };
+    const originalName = "some/path/to/my-file.extension";
+    const expectedName = "my-file.txt";
+    // act
+    const modifier = createReportNameModifier(config);
+    const actualName = modifier(originalName);
+    // assert
+    expect(actualName).toEqual(expectedName);
+  });
+
+  test("use path part '1,3'", () => {
+    // arrange
+    const config = {
+      usePathParts: [1, 3]
+    };
+    const originalName = "some/path/to/my-file.extension";
+    const expectedName = "path/my-file.txt";
+    // act
+    const modifier = createReportNameModifier(config);
+    const actualName = modifier(originalName);
+    // assert
+    expect(actualName).toEqual(expectedName);
+  });
+
+  test("use path part '1,3,666' - 666 is ignored", () => {
+    // arrange
+    const config = {
+      usePathParts: [1, 3, 666]
+    };
+    const originalName = "some/path/to/my-file.extension";
+    const expectedName = "path/my-file.txt";
+    // act
+    const modifier = createReportNameModifier(config);
+    const actualName = modifier(originalName);
+    // assert
+    expect(actualName).toEqual(expectedName);
+  });
+
+  test("prefix 'aaa_', suffix '_xxx', use path part '1,3' join path with '-'", () => {
+    // arrange
+    const config = {
+      prefix: 'aaa_',
+      suffix: '_xxx',
+      usePathParts: [1, 3],
+      joinPathParts: '-'
+    };
+    const originalName = "some/path/to/my-file.extension";
+    const expectedName = "aaa_path-my-file_xxx.txt";
+    // act
+    const modifier = createReportNameModifier(config);
+    const actualName = modifier(originalName);
+    // assert
+    expect(actualName).toEqual(expectedName);
   });
 });

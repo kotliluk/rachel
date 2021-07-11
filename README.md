@@ -239,6 +239,12 @@ with the following structure:
 {
   "loadType": "files",
   "resultFilename": "my-custom-zip-name",
+  "reportName": {
+    "prefix": "aaa_",
+    "suffix": "_xxx",
+    "usePathParts": [ 1, 2 ],
+    "joinPathParts": "-"
+  },
   "Some_custom_name_of_rule_A" : {
     "operations" : "antijoin",
     "description" : "There must be 5 antijoins.",
@@ -277,8 +283,20 @@ In the config, you can set the **loadType**. If the loading type is set to *"zip
 select a ZIP file for processing. The application finds .rachel files in the zip (even in subfolders) and processes them.
 If the loading type is set to *"files"*, the application expects a user to select multiple .rachel files. The default
 setting is *"zip"*. The **resultFilename** field sets the name of the downloaded ZIP file with generated reports. The
-default name is *"rachel-eval-results"*. Words *loadType* and *resultFilename* are reserved and cannot be used to name
-your count rules.
+default name is *"rachel-eval-results"*.
+
+The **reportName** modifies names of generated reports. It can specify 4 modifications:
+* **usePathParts** sets which parts of the path to the project files
+should be included in the report name. The parts are numbered backwards - last part (i.e., filename) is number 1.
+Example: if we have a source project some/path/to/my-project.rachel and set usePathParts to \[ 1, 3 \], the report name
+will be path/my-project.rachel.
+* **joinPathParts** sets how slashes in the source project path are replaced.
+Example: if we have a source project some/path/to/my-project.rachel and set joinPathParts to "-", the report name
+will be some-path-to-my-project.rachel.
+* **prefix**/**suffix** are prepended/appended respectively to the filename after usePathParts and joinPathParts
+modifications
+         
+Words *loadType*, *resultFilename*, and *reportName* are reserved and cannot be used to name your count rules.
 
 Further, the JSON file contains arbitrary number of rules with custom (non-reserved) but unique names.
 There are 3 types of rules, the type is specified by its operations/tables/queries field:
