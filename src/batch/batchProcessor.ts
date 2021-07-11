@@ -17,9 +17,15 @@ import {
   zeroOperations
 } from "./operationsCount";
 import {
-  createCountComparator, createOperationsCounter, createReportNameModifier, identityReportNameModifier,
+  createCountOperationRule,
+  createEachOperationRule,
+  createQueryRule,
+  createReportNameModifier,
+  createTableRule,
+  identityReportNameModifier,
   OperationRule,
-  QueryRule, ReportNameModifier,
+  QueryRule,
+  ReportNameModifier,
   TableRule
 } from "./configUtils";
 import {language} from "../language/language";
@@ -116,7 +122,7 @@ export class BatchProcessor {
    * @param ruleDef rule definition from the configuration JSON file
    * @return true if the rule was created successfully
    */
-  private static createRule(ruleName: string, ruleDef: object): boolean {
+  private static createRule(ruleName: string, ruleDef: any): boolean {
     const fields: string[] = [];
     for (const field in ruleDef) {
       fields.push(field);
@@ -125,97 +131,39 @@ export class BatchProcessor {
       console.log("Rule " + ruleName + " has no fields specified.");
       return false;
     }
-    // @ts-ignore
-    const description = ruleDef.description ? ` (${ruleDef.description})` : "";
     // case of an operation rule
     if (fields.indexOf("operations") > -1) {
-      if (fields.indexOf("count") === -1 && fields.indexOf("each") === -1) {
-        console.log("Operations rule " + ruleName + " does not have a specified count nor each.");
-        return false;
-      }
-      let created = false;
-      // @ts-ignore
       const ops: string[] = Array.isArray(ruleDef.operations) ? ruleDef.operations : [ruleDef.operations];
       // creates a rule for a total count of all listed operations together
       if (fields.indexOf("count") > -1) {
-        // @ts-ignore
-        const comparator = createCountComparator(ruleDef.count);
-        // @ts-ignore
-        const counter = createOperationsCounter(ops);
-        if (comparator !== undefined && counter !== undefined) {
-          const rule = (x: OperationsCount) => {
-            const result = comparator(counter(x));
-            if (result === "") {
-              return "OK";
-            }
-            return `Count of operations "${ops.join(', ')}" in total: ${result}${description}`;
-          };
+        const rule = createCountOperationRule(ruleDef, ops);
+        if (rule !== undefined) {
           BatchProcessor.operationRules.push(rule);
-          created = true;
+          return true;
         }
       }
       // creates a rule for a count of each listed operation
-      if (fields.indexOf("each") > -1) {
-        const subRules: OperationRule[] = [];
-        // @ts-ignore
-        ops.forEach((op: string) => {
-          // @ts-ignore
-          const comparator = createCountComparator(ruleDef.each);
-          // @ts-ignore
-          const counter = createOperationsCounter(op);
-          if (comparator !== undefined && counter !== undefined) {
-            const subRule = (x: OperationsCount) => {
-              const result = comparator(counter(x));
-              if (result === "") {
-                return "OK";
-              }
-              return `${op}: ${result}`;
-            };
-            subRules.push(subRule);
-          }
-        });
-        if (subRules.length > 0) {
-          const rule = (x: OperationsCount) => {
-            const errors = subRules.map(sr => sr(x)).filter(msg => msg !== "OK").join(', ');
-            if (errors === "") {
-              return "OK";
-            }
-            return `Count of each operation "${ops.join(', ')}": ${errors}${description}`;
-          };
+      else if (fields.indexOf("each") > -1) {
+        const rule = createEachOperationRule(ruleDef, ops);
+        if (rule !== undefined) {
           BatchProcessor.operationRules.push(rule);
-          created = true;
+          return true;
         }
       }
-      return created;
+      return false;
     }
     // case of a table rule
     else if (fields.indexOf("tables") > -1) {
-      // @ts-ignore
-      const comparator = createCountComparator(ruleDef.tables);
-      if (comparator !== undefined) {
-        const rule = (x: number) => {
-          const result = comparator(x);
-          if (result === "") {
-            return "OK";
-          }
-          return `Count of tables: ${result}${description}`;
-        };
+      const rule = createTableRule(ruleDef);
+      if (rule !== undefined) {
         BatchProcessor.tableRules.push(rule);
         return true;
       }
     }
     // case of a query rule
     else if (fields.indexOf("queries") > -1) {
-      // @ts-ignore
-      const comparator = createCountComparator(ruleDef.queries);
-      if (comparator !== undefined) {
-        const rule = (x: number) => {
-          const result = comparator(x);
-          if (result === "") {
-            return "OK";
-          }
-          return `Count of queries: ${result}${description}`;
-        };
+      const rule = createQueryRule(ruleDef);
+      if (rule !== undefined) {
         BatchProcessor.queryRules.push(rule);
         return true;
       }
@@ -421,7 +369,7 @@ export class BatchProcessor {
     const errorsCount = ruleErrors.length;
     return sectionLine + '\n\nRachel project report from ' + new Date().toLocaleString('cs-CZ') + '\nSource: ' +
       name + '\n\n' + sectionLine + '\n\nQueries: ' + exprs + '    Invalid queries: ' + errs + '\n\n' +
-      (errorsCount === 0 ? 'All rules OK' : 'Rule errors (' + errorsCount + '/' + rulesCount + '):\n' +
+      (errorsCount === 0 ? 'No errors' : 'Errors (' + errorsCount + ' errors/' + rulesCount + ' rules):\n' +
         ruleErrors.map((err, i) => `${i + 1}) ${err}`).join('\n')) + '\n\n' +
       'Used operations (' + total + ' in total: ' + binary + ' binary, ' + unary + ' unary):\n' +
       '    Selection: ' + ops.selection + '\n' +

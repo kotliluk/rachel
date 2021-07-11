@@ -1,4 +1,9 @@
-import {createCountComparator, createOperationsCounter, createReportNameModifier} from "../configUtils";
+import {
+  createCountComparator,
+  createOperationsCounter,
+  createOperationsIndicator,
+  createReportNameModifier
+} from "../configUtils";
 import {OperationsCount} from "../operationsCount";
 
 describe('createCountComparator', () => {
@@ -132,7 +137,7 @@ describe('createCountComparator', () => {
 const operations: OperationsCount = {
   antijoin: 2,
   cartesian: 3,
-  division: 4,
+  division: 0,
   natural: 1,
   outerJoin: 1,
   projection: 1,
@@ -167,7 +172,33 @@ describe('createOperationsCounter', () => {
     // assert
     expect(counter).toBeDefined();
     if (counter) {
-      expect(counter(operations)).toBe(9);
+      expect(counter(operations)).toBe(5);
+    }
+  });
+});
+
+describe('createOperationsIndicator', () => {
+  test('string ops', () => {
+    // arrange
+    const ops = "antijoin";
+    // act
+    const counter = createOperationsIndicator(ops);
+    // assert
+    expect(counter).toBeDefined();
+    if (counter) {
+      expect(counter(operations)).toBe(1);
+    }
+  });
+
+  test('array ops', () => {
+    // arrange
+    const ops = ["antijoin", "cartesian", "division"];
+    // act
+    const counter = createOperationsIndicator(ops);
+    // assert
+    expect(counter).toBeDefined();
+    if (counter) {
+      expect(counter(operations)).toBe(2);
     }
   });
 });

@@ -237,13 +237,13 @@ with the following structure:
 
 ```json
 {
-  "loadType": "files",
-  "resultFilename": "my-custom-zip-name",
-  "reportName": {
-    "prefix": "aaa_",
-    "suffix": "_xxx",
-    "usePathParts": [ 1, 2 ],
-    "joinPathParts": "-"
+  "loadType" : "files",
+  "resultFilename" : "my-custom-zip-name",
+  "reportName" : {
+    "prefix" : "aaa_",
+    "suffix" : "_xxx",
+    "usePathParts" : [ 1, 2 ],
+    "joinPathParts" : "-"
   },
   "Some_custom_name_of_rule_A" : {
     "operations" : "antijoin",
@@ -252,8 +252,9 @@ with the following structure:
   },
   "Rule_B" : {
     "operations" : [ "antijoin", "cartesian", "division" ],
-    "description" : "There must be 5 operations from antijoins, cartesian products, and divisions.",
-    "count" : { "$eq" : 5 }
+    "description" : "There must be used exactly 2 types from the following ones: antijoins, cartesian products, and divisions.",
+    "count" : { "$eq" : 2 },
+    "unique" : true
   },
   "Rule_C" : {
     "operations" : [ "antijoin", "cartesian", "division" ],
@@ -288,15 +289,16 @@ default name is *"rachel-eval-results"*.
 The **reportName** modifies names of generated reports. It can specify 4 modifications:
 * **usePathParts** sets which parts of the path to the project files
 should be included in the report name. The parts are numbered backwards - last part (i.e., filename) is number 1.
-Example: if we have a source project some/path/to/my-project.rachel and set usePathParts to \[ 1, 3 \], the report name
-will be path/my-project.rachel.
+Example: if we have a source project some/path/to/my-project.rachel and set usePathParts to \[ 1, 2 \], the report name
+will be to/my-project.rachel. I.e., after setting to \[ 1 \], the report file name will be source file name only -
+be careful about duplicit names.
 * **joinPathParts** sets how slashes in the source project path are replaced.
 Example: if we have a source project some/path/to/my-project.rachel and set joinPathParts to "-", the report name
 will be some-path-to-my-project.rachel.
-* **prefix**/**suffix** are prepended/appended respectively to the filename after usePathParts and joinPathParts
+* **prefix**/**suffix** are prepended/appended to the filename after usePathParts and joinPathParts
 modifications
          
-Words *loadType*, *resultFilename*, and *reportName* are reserved and cannot be used to name your count rules.
+Words *loadType*, *resultFilename*, and *reportName* are reserved and cannot be used to name your rules.
 
 Further, the JSON file contains arbitrary number of rules with custom (non-reserved) but unique names.
 There are 3 types of rules, the type is specified by its operations/tables/queries field:
@@ -317,10 +319,11 @@ operation types are: antijoin (for left/right antijoins), cartesian (for cartesi
 natural (for natural join), outerJoin (for left/right/full outer join), projection, rename, selection,
 semijoin (for left/right semijoins), union, intersection, difference, thetaJoin,
 thetaSemijoin (for left/right theta semijoins). If the **count** field is defined, the provided count is checked for the sum
-of the listed operation types. If the **each** field is defined, the provided count is checked for each from the listed
-operation types - it creates automatically multiple independent rules.
+of the listed operation types. Further, if the **unique** field is set to true (and **count** is defined) the given
+operations are counted as 0/1 (+0 if absent, +1 if present in any count). If the **each** field is defined, the provided
+count is checked for each from the listed operation types - it creates automatically multiple independent rules.
 
 The **tables**/**queries** fields contain the count of tables/queries right away. Each rule can contain a description.
 
-If the project violates any defined rule, the name and the description of the rule is displayed in the generated report.
+If the project violates any defined rule, it is displayed in the generated report.
 

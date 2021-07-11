@@ -132,13 +132,147 @@ export const createOperationsCounter = (ops: any): OperationsCounter | undefined
 }
 
 /**
+ * Creates a OperationsCounter function with the given operations to indicate (returns +1 for present operations, 0 for
+ * absent ones).
+ *
+ * @param ops operations to be searched for, expected to be a string or an array of string, each string must be supported
+ * operation type
+ * @return created indicator or undefined if ops is invalid
+ */
+export const createOperationsIndicator = (ops: any): OperationsCounter | undefined => {
+  if (typeof ops === "string") {
+    if (OperationsTypes.indexOf(ops) === -1) {
+      console.warn("Invalid value of operations field: " + ops);
+      return undefined;
+    }
+    // @ts-ignore
+    return (x: OperationsCount) => Math.sign(x[ops]);
+  }
+  else if (Array.isArray(ops)) {
+    if (ops.some(op => OperationsTypes.indexOf(op) === -1)) {
+      console.warn("Invalid value of operation in operations field: " + ops);
+      return undefined;
+    }
+    const _ops = [...ops];
+    // @ts-ignore
+    return (x: OperationsCount) => _ops.reduce<number>((prev, cur) => prev + Math.sign(x[cur]), 0);
+  }
+  console.warn("Invalid operations field");
+  return undefined;
+}
+
+export const getDescription = (ruleDef: any): string => {
+  return ruleDef.description ? ` (${ruleDef.description})` : "";
+}
+
+/**
+ * Creates an OperationRule for total count of given operations.
+ *
+ * @param ruleDef definition of the rule. Expected to contain "count" (number/count object) field. If the optional "unique" (boolean)
+ * field is true, the created rule counts occurrences of operations as 0/1. If the "description" (string) is set, it is
+ * appended to the returning error description.
+ * @param ops operations to count
+ */
+export const createCountOperationRule = (ruleDef: any, ops: string[]): OperationRule | undefined => {
+  const unique = ruleDef.unique === true;
+  const comparator = createCountComparator(ruleDef.count);
+  const counter = unique ? createOperationsIndicator(ops) : createOperationsCounter(ops);
+  if (comparator !== undefined && counter !== undefined) {
+    return (x: OperationsCount) => {
+      const result = comparator(counter(x));
+      if (result === "") {
+        return "OK";
+      }
+      return `${unique ? 'Unique count' : 'Count'} of operations "${ops.join(', ')}": ${result}${getDescription(ruleDef)}`;
+    };
+  }
+}
+
+/**
+ * Creates an OperationRule for counts of each from given operations.
+ *
+ * @param ruleDef definition of the rule. Expected to contain "each" (number/count object) field. If the "description" (string) is set, it is
+ * appended to the returning error description.
+ * @param ops operations to count
+ */
+export const createEachOperationRule = (ruleDef: any, ops: string[]): OperationRule | undefined => {
+  const subRules: OperationRule[] = [];
+  // @ts-ignore
+  ops.forEach((op: string) => {
+    const comparator = createCountComparator(ruleDef.each);
+    const counter = createOperationsCounter(op);
+    if (comparator !== undefined && counter !== undefined) {
+      const subRule = (x: OperationsCount) => {
+        const result = comparator(counter(x));
+        if (result === "") {
+          return "OK";
+        }
+        return `${op}: ${result}`;
+      };
+      subRules.push(subRule);
+    }
+  });
+  if (subRules.length > 0) {
+    return (x: OperationsCount) => {
+      const errors = subRules.map(sr => sr(x)).filter(msg => msg !== "OK").join(',\n - ');
+      if (errors === "") {
+        return "OK";
+      }
+      return `Count of each operation "${ops.join(', ')}"${getDescription(ruleDef)}:\n - ${errors}`;
+    };
+  }
+}
+
+/**
+ * Creates a TableRule.
+ *
+ * @param ruleDef definition of the rule. Expected to contain "tables" (number/count object) field. If the "description" (string) is set, it is
+ * appended to the returning error description.
+ */
+export const createTableRule = (ruleDef: any): TableRule | undefined => {
+  const comparator = createCountComparator(ruleDef.tables);
+  if (comparator !== undefined) {
+    return (x: number) => {
+      const result = comparator(x);
+      if (result === "") {
+        return "OK";
+      }
+      return `Count of tables: ${result}${getDescription(ruleDef)}`;
+    };
+  }
+}
+
+/**
+ * Creates a QueryRule.
+ *
+ * @param ruleDef definition of the rule. Expected to contain "queries" (number/count object) field. If the "description" (string) is set, it is
+ * appended to the returning error description.
+ */
+export const createQueryRule = (ruleDef: any): QueryRule | undefined => {
+  const comparator = createCountComparator(ruleDef.queries);
+  if (comparator !== undefined) {
+    return (x: number) => {
+      const result = comparator(x);
+      if (result === "") {
+        return "OK";
+      }
+      return `Count of queries: ${result}${getDescription(ruleDef)}`;
+    };
+  }
+}
+
+/**
  * Modifies given name of source project to report name.
  */
 export type ReportNameModifier = (name: string) => string;
 
-export const identityReportNameModifier = (name: string) => {
+const removeExtension = (name: string) => {
   const lastDotIndex = name.lastIndexOf('.');
-  return lastDotIndex > -1 ? name.slice(0, lastDotIndex) : name;
+  return (lastDotIndex > -1 ? name.slice(0, lastDotIndex) : name);
+};
+
+export const identityReportNameModifier = (name: string) => {
+  return removeExtension(name) + '.txt';
 };
 
 /**
@@ -150,7 +284,7 @@ export const identityReportNameModifier = (name: string) => {
  * * suffix string to append to the name
  */
 export const createReportNameModifier = (config: any): ReportNameModifier => {
-  let modifier = identityReportNameModifier;
+  let modifier = removeExtension;
   
   let usePathParts: number[] = [];
   let joinPathParts: string | undefined = undefined;
