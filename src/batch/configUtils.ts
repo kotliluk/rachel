@@ -34,7 +34,7 @@ export const createCountComparator = (count: any): CountComparator | undefined =
       if (x === count) {
         return "";
       }
-      return `Expected ${count}, received ${x}`;
+      return `Expected ${count}, found ${x}`;
     };
   }
   // case of "count": { "$eq": 5 }, etc.
@@ -51,7 +51,7 @@ export const createCountComparator = (count: any): CountComparator | undefined =
           if (x === countValue) {
             return "";
           }
-          return `Expected ${countValue}, received ${x}`;
+          return `Expected ${countValue}, found ${x}`;
         });
       }
       else if (field === "$gte") {
@@ -59,7 +59,7 @@ export const createCountComparator = (count: any): CountComparator | undefined =
           if (x >= countValue) {
             return "";
           }
-          return `Expected greater or equal to ${countValue}, received ${x}`;
+          return `Expected greater or equal to ${countValue}, found ${x}`;
         });
       }
       else if (field === "$gt") {
@@ -67,7 +67,7 @@ export const createCountComparator = (count: any): CountComparator | undefined =
           if (x > countValue) {
             return "";
           }
-          return `Expected greater than ${countValue}, received ${x}`;
+          return `Expected greater than ${countValue}, found ${x}`;
         });
       }
       else if (field === "$lte") {
@@ -75,7 +75,7 @@ export const createCountComparator = (count: any): CountComparator | undefined =
           if (x <= countValue) {
             return "";
           }
-          return `Expected less or equal to ${countValue}, received ${x}`;
+          return `Expected less or equal to ${countValue}, found ${x}`;
         });
       }
       else if (field === "$lt") {
@@ -83,7 +83,7 @@ export const createCountComparator = (count: any): CountComparator | undefined =
           if (x < countValue) {
             return "";
           }
-          return `Expected less than ${countValue}, received ${x}`;
+          return `Expected less than ${countValue}, found ${x}`;
         });
       }
     }
@@ -285,12 +285,12 @@ export const identityReportNameModifier = (name: string) => {
  */
 export const createReportNameModifier = (config: any): ReportNameModifier => {
   let modifier = removeExtension;
-  
+
   let usePathParts: number[] = [];
   let joinPathParts: string | undefined = undefined;
   let prefix: string = "";
   let suffix: string = "";
-  
+
   for (const fieldName in config) {
     const field = config[fieldName];
     if (fieldName === "usePathParts" && Array.isArray(field) && field.every(n => typeof n === "number")) {

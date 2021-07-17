@@ -232,21 +232,14 @@ export class BatchProcessor {
       const file = files[i];
       const name = BatchProcessor.reportNameModifier(file.name);
       if (file.text === null) {
-        reports.push({
-          name,
-          text: "ERROR: Source file cannot be loaded."
-        });
         skipped += 1;
         console.warn('Null read from ' + file.name);
       } else if (file.name.match(/\.rachel$/)) {
         // @ts-ignore - file.text cannot be null now
-        reports.push(BatchProcessor.processFile(file, name));
+        const report = BatchProcessor.processFile(file, name);
+        reports.push(report);
         processed += 1;
       } else {
-        reports.push({
-          name,
-          text: "ERROR: Source file is not a .rachel file, but: " + file.name
-        });
         skipped += 1;
         console.warn('Unsupported filetype: ' + file.name);
       }
@@ -282,13 +275,22 @@ export class BatchProcessor {
    *
    * @param file JSON file to process (its name and text)
    * @param name name of the generated report
+   * @throws SyntaxError when the given file content is not a valid JSON
    */
   private static processFile = (file: { name: string, text: string }, name: string): { name: string, text: string } => {
-    const project: Project = JSON.parse(file.text);
-    const status = isProjectObject(project);
-    if (status !== "OK") {
-      return {name, text: "Invalid JSON file: " + status};
+    let project: Project;
+    try {
+      project = JSON.parse(file.text);
+      const status = isProjectObject(project);
+      if (status !== "OK") {
+        return {name, text: "Invalid JSON file: " + status};
+      }
     }
+    catch (e) {
+      console.warn('Batch processing error in file ' + file.name + ': ' + e);
+      return {name, text: "Invalid JSON file: " + e};
+    }
+
     const relations: Map<string, Relation> = BatchProcessor.parseRelations(project.relations, project.nullValuesSupport);
     const exprParser: ExprParser = new ExprParser(relations, project.nullValuesSupport);
 
