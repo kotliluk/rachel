@@ -15,9 +15,9 @@ describe('createCountComparator', () => {
     // assert
     expect(comparator).toBeDefined();
     if (comparator) {
-      expect(comparator(4)).toEqual("Expected 5, received 4");
+      expect(comparator(4)).toEqual("Expected 5, found 4");
       expect(comparator(5)).toEqual("");
-      expect(comparator(6)).toEqual("Expected 5, received 6");
+      expect(comparator(6)).toEqual("Expected 5, found 6");
     }
   });
 
@@ -29,9 +29,9 @@ describe('createCountComparator', () => {
     // assert
     expect(comparator).toBeDefined();
     if (comparator) {
-      expect(comparator(4)).toEqual("Expected 5, received 4");
+      expect(comparator(4)).toEqual("Expected 5, found 4");
       expect(comparator(5)).toEqual("");
-      expect(comparator(6)).toEqual("Expected 5, received 6");
+      expect(comparator(6)).toEqual("Expected 5, found 6");
     }
   });
 
@@ -43,7 +43,7 @@ describe('createCountComparator', () => {
     // assert
     expect(comparator).toBeDefined();
     if (comparator) {
-      expect(comparator(4)).toEqual("Expected greater or equal to 5, received 4");
+      expect(comparator(4)).toEqual("Expected greater or equal to 5, found 4");
       expect(comparator(5)).toEqual("");
       expect(comparator(6)).toEqual("");
     }
@@ -57,8 +57,8 @@ describe('createCountComparator', () => {
     // assert
     expect(comparator).toBeDefined();
     if (comparator) {
-      expect(comparator(4)).toEqual("Expected greater than 5, received 4");
-      expect(comparator(5)).toEqual("Expected greater than 5, received 5");
+      expect(comparator(4)).toEqual("Expected greater than 5, found 4");
+      expect(comparator(5)).toEqual("Expected greater than 5, found 5");
       expect(comparator(6)).toEqual("");
     }
   });
@@ -73,7 +73,7 @@ describe('createCountComparator', () => {
     if (comparator) {
       expect(comparator(4)).toEqual("");
       expect(comparator(5)).toEqual("");
-      expect(comparator(6)).toEqual("Expected less or equal to 5, received 6");
+      expect(comparator(6)).toEqual("Expected less or equal to 5, found 6");
     }
   });
 
@@ -86,8 +86,8 @@ describe('createCountComparator', () => {
     expect(comparator).toBeDefined();
     if (comparator) {
       expect(comparator(4)).toEqual("");
-      expect(comparator(5)).toEqual("Expected less than 5, received 5");
-      expect(comparator(6)).toEqual("Expected less than 5, received 6");
+      expect(comparator(5)).toEqual("Expected less than 5, found 5");
+      expect(comparator(6)).toEqual("Expected less than 5, found 6");
     }
   });
 
@@ -99,7 +99,7 @@ describe('createCountComparator', () => {
     // assert
     expect(comparator).toBeDefined();
     if (comparator) {
-      expect(comparator(4)).toEqual("Expected greater or equal to 5, received 4");
+      expect(comparator(4)).toEqual("Expected greater or equal to 5, found 4");
       expect(comparator(5)).toEqual("");
       expect(comparator(6)).toEqual("");
     }
@@ -113,9 +113,9 @@ describe('createCountComparator', () => {
     // assert
     expect(comparator).toBeDefined();
     if (comparator) {
-      expect(comparator(4)).toEqual("Expected greater than 5, received 4");
-      expect(comparator(5)).toEqual("Expected greater than 5, received 5");
-      expect(comparator(6)).toEqual("Expected less than 6, received 6");
+      expect(comparator(4)).toEqual("Expected greater than 5, found 4");
+      expect(comparator(5)).toEqual("Expected greater than 5, found 5");
+      expect(comparator(6)).toEqual("Expected less than 6, found 6");
     }
   });
 
@@ -127,9 +127,9 @@ describe('createCountComparator', () => {
     // assert
     expect(comparator).toBeDefined();
     if (comparator) {
-      expect(comparator(4)).toEqual("Expected 5, received 4 + Expected greater than 4, received 4");
+      expect(comparator(4)).toEqual("Expected 5, found 4 + Expected greater than 4, found 4");
       expect(comparator(5)).toEqual("");
-      expect(comparator(6)).toEqual("Expected 5, received 6 + Expected less than 6, received 6");
+      expect(comparator(6)).toEqual("Expected 5, found 6 + Expected less than 6, found 6");
     }
   });
 });
@@ -241,7 +241,7 @@ describe('createReportNameModifier', () => {
     // assert
     expect(actualName).toEqual(expectedName);
   });
-  
+
   test("prefix 'abc_'", () => {
     // arrange
     const config = {
@@ -269,7 +269,7 @@ describe('createReportNameModifier', () => {
     // assert
     expect(actualName).toEqual(expectedName);
   });
-  
+
   test("join path with '-'", () => {
     // arrange
     const config = {
@@ -283,7 +283,7 @@ describe('createReportNameModifier', () => {
     // assert
     expect(actualName).toEqual(expectedName);
   });
-  
+
   test("join path with '-abc-'", () => {
     // arrange
     const config = {
