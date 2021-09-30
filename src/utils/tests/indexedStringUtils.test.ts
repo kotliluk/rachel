@@ -2,700 +2,388 @@ import {IndexedStringUtils} from "../indexedStringUtils";
 import {IndexedString} from "../../types/indexedString";
 
 describe('isWord', () => {
-    test('true for only-letter-strings', () => {
-        const w1: string = "Word";
-        const w2: string = "WordWord";
-        const w3: string = "aaaaWord";
-        const w4: string = "čřžšá";
-        const w5: string = "ŠČíáopL";
-
-        expect(IndexedStringUtils.isWord(IndexedString.new(w1))).toBeTruthy();
-        expect(IndexedStringUtils.isWord(IndexedString.new(w2))).toBeTruthy();
-        expect(IndexedStringUtils.isWord(IndexedString.new(w3))).toBeTruthy();
-        expect(IndexedStringUtils.isWord(IndexedString.new(w4))).toBeTruthy();
-        expect(IndexedStringUtils.isWord(IndexedString.new(w5))).toBeTruthy();
+  describe('true for only-letter-string', () => {
+    test.each(["Word", "WordWord", "aaaaWord", "čřžšá", "ŠČíáopL"]
+    )('%s', (str) => {
+      // arrange
+      const indexedStr = IndexedString.new(str);
+      // act
+      const actual = IndexedStringUtils.isWord(indexedStr);
+      // assert
+      expect(actual).toBe(true);
     });
+  });
 
-    test('false for string with a non-letter character', () => {
-        const w1: string = "Word ";
-        const w2: string = "Word Word";
-        const w3: string = " aaaaWord";
-        const w4: string = "WORD2";
-        const w5: string = "woČŘ.";
-
-        expect(IndexedStringUtils.isWord(IndexedString.new(w1))).toBeFalsy();
-        expect(IndexedStringUtils.isWord(IndexedString.new(w2))).toBeFalsy();
-        expect(IndexedStringUtils.isWord(IndexedString.new(w3))).toBeFalsy();
-        expect(IndexedStringUtils.isWord(IndexedString.new(w4))).toBeFalsy();
-        expect(IndexedStringUtils.isWord(IndexedString.new(w5))).toBeFalsy();
+  describe('false for string with a non-letter character', () => {
+    test.each(["Word ", "Word Word", " aaaaWord", "WORD2", "woČŘ."]
+    )('%s', (str) => {
+      // arrange
+      const indexedStr = IndexedString.new(str);
+      // act
+      const actual = IndexedStringUtils.isWord(indexedStr);
+      // assert
+      expect(actual).toBe(false);
     });
+  });
 });
 
 describe('isName', () => {
-    test('true for valid names', () => {
-        const w1: string = "Word";
-        const w2: string = "_Word";
-        const w3: string = "aaaaWord123";
-        const w4: string = "ŠČř_123__žšá";
-
-        expect(IndexedStringUtils.isName(IndexedString.new(w1))).toBeTruthy();
-        expect(IndexedStringUtils.isName(IndexedString.new(w2))).toBeTruthy();
-        expect(IndexedStringUtils.isName(IndexedString.new(w3))).toBeTruthy();
-        expect(IndexedStringUtils.isName(IndexedString.new(w4))).toBeTruthy();
+  describe('true for valid name', () => {
+    test.each(["Word", "_Word", "aaaaWord123", "ŠČř_123__žšá"]
+    )('%s', (str) => {
+      // arrange
+      const indexedStr = IndexedString.new(str);
+      // act
+      const actual = IndexedStringUtils.isName(indexedStr);
+      // assert
+      expect(actual).toBe(true);
     });
+  });
 
-    test('false for invalid names', () => {
-        const w1: string = "Word ";
-        const w2: string = "Word Word";
-        const w3: string = " aaaaWord";
-        const w4: string = "123WORD";
-
-        expect(IndexedStringUtils.isName(IndexedString.new(w1))).toBeFalsy();
-        expect(IndexedStringUtils.isName(IndexedString.new(w2))).toBeFalsy();
-        expect(IndexedStringUtils.isName(IndexedString.new(w3))).toBeFalsy();
-        expect(IndexedStringUtils.isName(IndexedString.new(w4))).toBeFalsy();
+  describe('true for valid name', () => {
+    test.each(["Word ", "Word Word", " aaaaWord", "123WORD"]
+    )('%s', (str) => {
+      // arrange
+      const indexedStr = IndexedString.new(str);
+      // act
+      const actual = IndexedStringUtils.isName(indexedStr);
+      // assert
+      expect(actual).toBe(false);
     });
+  });
 });
 
 describe('isWhitespacesOnly', () => {
-    test('true for only-whitespaces-strings', () => {
-        const w1: string = " ";
-        const w2: string = "   ";
-        const w3: string = " \n\t ";
-        const w4: string = "";
-
-        expect(IndexedStringUtils.isWhitespacesOnly(IndexedString.new(w1))).toBeTruthy();
-        expect(IndexedStringUtils.isWhitespacesOnly(IndexedString.new(w2))).toBeTruthy();
-        expect(IndexedStringUtils.isWhitespacesOnly(IndexedString.new(w3))).toBeTruthy();
-        expect(IndexedStringUtils.isWhitespacesOnly(IndexedString.new(w4))).toBeTruthy();
+  describe('true for only-whitespaces-string', () => {
+    test.each([" ", "   ", " \n\t ", ""]
+    )('%s', (str) => {
+      // arrange
+      const indexedStr = IndexedString.new(str);
+      // act
+      const actual = IndexedStringUtils.isWhitespacesOnly(indexedStr);
+      // assert
+      expect(actual).toBe(true);
     });
+  });
 
-    test('false for string with a non-whitespace character', () => {
-        const w1: string = "Word ";
-        const w2: string = "    a   ";
-        const w3: string = "\na\n";
-        const w4: string = "\t\t \t.\n";
-
-        expect(IndexedStringUtils.isWhitespacesOnly(IndexedString.new(w1))).toBeFalsy();
-        expect(IndexedStringUtils.isWhitespacesOnly(IndexedString.new(w2))).toBeFalsy();
-        expect(IndexedStringUtils.isWhitespacesOnly(IndexedString.new(w3))).toBeFalsy();
-        expect(IndexedStringUtils.isWhitespacesOnly(IndexedString.new(w4))).toBeFalsy();
+  describe('false for string with a non-whitespace character', () => {
+    test.each(["Word ", "    a   ", "\na\n", "\t\t \t.\n"]
+    )('%s', (str) => {
+      // arrange
+      const indexedStr = IndexedString.new(str);
+      // act
+      const actual = IndexedStringUtils.isWhitespacesOnly(indexedStr);
+      // assert
+      expect(actual).toBe(false);
     });
+  });
 });
 
 describe('isLetter', () => {
-    test('true for letters', () => {
-        const w1: string = "a";
-        const w2: string = "A";
-        const w3: string = "č";
-        const w4: string = "í";
-
-        expect(IndexedStringUtils.isLetter(IndexedString.new(w1))).toBeTruthy();
-        expect(IndexedStringUtils.isLetter(IndexedString.new(w2))).toBeTruthy();
-        expect(IndexedStringUtils.isLetter(IndexedString.new(w3))).toBeTruthy();
-        expect(IndexedStringUtils.isLetter(IndexedString.new(w4))).toBeTruthy();
+  describe('true for one letter only', () => {
+    test.each(["a", "A", "č", "í"]
+    )('%s', (str) => {
+      // arrange
+      const indexedStr = IndexedString.new(str);
+      // act
+      const actual = IndexedStringUtils.isLetter(indexedStr);
+      // assert
+      expect(actual).toBe(true);
     });
+  });
 
-    test('false for non-letters and longer strings', () => {
-        const w1: string = " ";
-        const w2: string = ".";
-        const w3: string = "abcd";
-
-        expect(IndexedStringUtils.isLetter(IndexedString.new(w1))).toBeFalsy();
-        expect(IndexedStringUtils.isLetter(IndexedString.new(w2))).toBeFalsy();
-        expect(IndexedStringUtils.isLetter(IndexedString.new(w3))).toBeFalsy();
+  describe('false for non-letters or longer string', () => {
+    test.each([" ", ".", "1", "abcd"]
+    )('%s', (str) => {
+      // arrange
+      const indexedStr = IndexedString.new(str);
+      // act
+      const actual = IndexedStringUtils.isLetter(indexedStr);
+      // assert
+      expect(actual).toBe(false);
     });
+  });
 });
 
 describe('isNameChar', () => {
-    test('true for letters, numbers and underscores', () => {
-        const w1: string = "a";
-        const w2: string = "A";
-        const w3: string = "č";
-        const w4: string = "1";
-        const w5: string = "2";
-        const w6: string = "_";
-
-        expect(IndexedStringUtils.isNameChar(IndexedString.new(w1))).toBeTruthy();
-        expect(IndexedStringUtils.isNameChar(IndexedString.new(w2))).toBeTruthy();
-        expect(IndexedStringUtils.isNameChar(IndexedString.new(w3))).toBeTruthy();
-        expect(IndexedStringUtils.isNameChar(IndexedString.new(w4))).toBeTruthy();
-        expect(IndexedStringUtils.isNameChar(IndexedString.new(w5))).toBeTruthy();
-        expect(IndexedStringUtils.isNameChar(IndexedString.new(w6))).toBeTruthy();
+  describe('true for one letter only', () => {
+    test.each(["a", "A", "č", "í", "1", "_"]
+    )('%s', (str) => {
+      // arrange
+      const indexedStr = IndexedString.new(str);
+      // act
+      const actual = IndexedStringUtils.isNameChar(indexedStr);
+      // assert
+      expect(actual).toBe(true);
     });
+  });
 
-    test('false for non-letters, non-number and non-underscores and longer strings', () => {
-        const w1: string = " ";
-        const w2: string = ".";
-        const w3: string = "abcd";
-
-        expect(IndexedStringUtils.isNameChar(IndexedString.new(w1))).toBeFalsy();
-        expect(IndexedStringUtils.isNameChar(IndexedString.new(w2))).toBeFalsy();
-        expect(IndexedStringUtils.isNameChar(IndexedString.new(w3))).toBeFalsy();
+  describe('false for non-letter, non-number and non-underscore or longer string', () => {
+    test.each([" ", ".", "abcd"]
+    )('%s', (str) => {
+      // arrange
+      const indexedStr = IndexedString.new(str);
+      // act
+      const actual = IndexedStringUtils.isNameChar(indexedStr);
+      // assert
+      expect(actual).toBe(false);
     });
+  });
 });
 
 describe('isDigit', () => {
-    test('true for digits', () => {
-        const w1: string = "0";
-        const w2: string = "1";
-        const w3: string = "5";
-
-        expect(IndexedStringUtils.isDigit(IndexedString.new(w1))).toBeTruthy();
-        expect(IndexedStringUtils.isDigit(IndexedString.new(w2))).toBeTruthy();
-        expect(IndexedStringUtils.isDigit(IndexedString.new(w3))).toBeTruthy();
+  describe('true for digit', () => {
+    test.each(["0", "1", "5"]
+    )('%s', (str) => {
+      // arrange
+      const indexedStr = IndexedString.new(str);
+      // act
+      const actual = IndexedStringUtils.isDigit(indexedStr);
+      // assert
+      expect(actual).toBe(true);
     });
+  });
 
-    test('false for non-digit and longer strings', () => {
-        const w1: string = " ";
-        const w2: string = ".";
-        const w3: string = "a";
-        const w4: string = "12";
-
-        expect(IndexedStringUtils.isDigit(IndexedString.new(w1))).toBeFalsy();
-        expect(IndexedStringUtils.isDigit(IndexedString.new(w2))).toBeFalsy();
-        expect(IndexedStringUtils.isDigit(IndexedString.new(w3))).toBeFalsy();
-        expect(IndexedStringUtils.isDigit(IndexedString.new(w4))).toBeFalsy();
+  describe('false for non-digit or longer string', () => {
+    test.each([" ", ".", "a", "12"]
+    )('%s', (str) => {
+      // arrange
+      const indexedStr = IndexedString.new(str);
+      // act
+      const actual = IndexedStringUtils.isDigit(indexedStr);
+      // assert
+      expect(actual).toBe(false);
     });
+  });
 });
 
 describe('isNumber', () => {
-    test('true for numbers', () => {
-        const w1: string = "0";
-        const w2: string = "1";
-        const w3: string = "05";
-        const w4: string = "45";
-        const w5: string = "-1";
-        const w6: string = "-45";
-        const w7: string = "1.1";
-        const w8: string = "-453.12489";
-
-        expect(IndexedStringUtils.isNumber(IndexedString.new(w1))).toBeTruthy();
-        expect(IndexedStringUtils.isNumber(IndexedString.new(w2))).toBeTruthy();
-        expect(IndexedStringUtils.isNumber(IndexedString.new(w3))).toBeTruthy();
-        expect(IndexedStringUtils.isNumber(IndexedString.new(w4))).toBeTruthy();
-        expect(IndexedStringUtils.isNumber(IndexedString.new(w5))).toBeTruthy();
-        expect(IndexedStringUtils.isNumber(IndexedString.new(w6))).toBeTruthy();
-        expect(IndexedStringUtils.isNumber(IndexedString.new(w7))).toBeTruthy();
-        expect(IndexedStringUtils.isNumber(IndexedString.new(w8))).toBeTruthy();
+  describe('true for number', () => {
+    test.each(["0", "1", "05", "-1", "-45", "1.1", "-435.12489"]
+    )('%s', (str) => {
+      // arrange
+      const indexedStr = IndexedString.new(str);
+      // act
+      const actual = IndexedStringUtils.isNumber(indexedStr);
+      // assert
+      expect(actual).toBe(true);
     });
+  });
 
-    test('false for non-numbers', () => {
-        const w1: string = " ";
-        const w2: string = ".";
-        const w3: string = "a";
-        const w4: string = ".12";
-        const w5: string = "1.2.";
-
-        expect(IndexedStringUtils.isNumber(IndexedString.new(w1))).toBeFalsy();
-        expect(IndexedStringUtils.isNumber(IndexedString.new(w2))).toBeFalsy();
-        expect(IndexedStringUtils.isNumber(IndexedString.new(w3))).toBeFalsy();
-        expect(IndexedStringUtils.isNumber(IndexedString.new(w4))).toBeFalsy();
-        expect(IndexedStringUtils.isNumber(IndexedString.new(w5))).toBeFalsy();
+  describe('false for non-number', () => {
+    test.each([" ", ".", "a", ".12", "1.2."]
+    )('%s', (str) => {
+      // arrange
+      const indexedStr = IndexedString.new(str);
+      // act
+      const actual = IndexedStringUtils.isNumber(indexedStr);
+      // assert
+      expect(actual).toBe(false);
     });
+  });
 });
 
 describe('nextWord', () => {
-    test('word', () => {
-        const input: string = "word";
-        const expectedWord: string = "word";
-        const expectedRest: string = "";
-
-        const result = IndexedStringUtils.nextWord(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedWord);
-        expect(result.second.toString()).toBe(expectedRest);
+  describe('splits string correctly', () => {
+    test.each([
+        {input: "word", expectedWord: "word", expectedRest: ""},
+        {input: " word  \n\t", expectedWord: "", expectedRest: " word  \n\t"},
+        {input: "wor d", expectedWord: "wor", expectedRest: " d"},
+        {input: "< >", expectedWord: "", expectedRest: "< >"},
+        {input: "  \n \t ", expectedWord: "", expectedRest: "  \n \t "},
+        {input: "", expectedWord: "", expectedRest: ""},
+      ]
+    )('%s', ({input, expectedWord, expectedRest}) => {
+      // arrange
+      const indexedInput = IndexedString.new(input);
+      // act
+      const actual = IndexedStringUtils.nextWord(indexedInput);
+      // assert
+      expect(actual.first.toString()).toBe(expectedWord);
+      expect(actual.second.toString()).toBe(expectedRest);
     });
-
-    test(' word  \n\t', () => {
-        const input: string = " word  \n\t";
-        const expectedWord: string = "";
-        const expectedRest: string = " word  \n\t";
-
-        const result = IndexedStringUtils.nextWord(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedWord);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('wor d', () => {
-        const input: string = "wor d";
-        const expectedWord: string = "wor";
-        const expectedRest: string = " d";
-
-        const result = IndexedStringUtils.nextWord(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedWord);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('< >', () => {
-        const input: string = "< >";
-        const expectedWord: string = "";
-        const expectedRest: string = "< >";
-
-        const result = IndexedStringUtils.nextWord(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedWord);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('"  \n \t "', () => {
-        const input: string = "  \n \t ";
-        const expectedWord: string = "";
-        const expectedRest: string = "  \n \t ";
-
-        const result = IndexedStringUtils.nextWord(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedWord);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('""', () => {
-        const input: string = "";
-        const expectedWord: string = "";
-        const expectedRest: string = "";
-
-        const result = IndexedStringUtils.nextWord(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedWord);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
+  });
 });
 
 describe('nextName', () => {
-    test('word', () => {
-        const input: string = "word";
-        const expectedWord: string = "word";
-        const expectedRest: string = "";
-
-        const result = IndexedStringUtils.nextName(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedWord);
-        expect(result.second.toString()).toBe(expectedRest);
+  describe('splits valid string', () => {
+    test.each([
+        {input: "word", expectedWord: "word", expectedRest: ""},
+        {input: "word_123", expectedWord: "word_123", expectedRest: ""},
+        {input: " word  \n\t", expectedWord: "", expectedRest: " word  \n\t"},
+        {input: "word_123 other_Word", expectedWord: "word_123", expectedRest: " other_Word"},
+        {input: "_123 other_Word", expectedWord: "_123", expectedRest: " other_Word"},
+        {input: "123_word other_Word", expectedWord: "", expectedRest: "123_word other_Word"},
+        {input: "< >", expectedWord: "", expectedRest: "< >"},
+        {input: "  \n \t ", expectedWord: "", expectedRest: "  \n \t "},
+        {input: "", expectedWord: "", expectedRest: ""},
+      ]
+    )('%s', ({input, expectedWord, expectedRest}) => {
+      // arrange
+      const indexedInput = IndexedString.new(input);
+      // act
+      const actual = IndexedStringUtils.nextName(indexedInput);
+      // assert
+      expect(actual.first.toString()).toBe(expectedWord);
+      expect(actual.second.toString()).toBe(expectedRest);
     });
-
-    test('word_123', () => {
-        const input: string = "word_123";
-        const expectedWord: string = "word_123";
-        const expectedRest: string = "";
-
-        const result = IndexedStringUtils.nextName(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedWord);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test(' word  \n\t', () => {
-        const input: string = " word  \n\t";
-        const expectedWord: string = "";
-        const expectedRest: string = " word  \n\t";
-
-        const result = IndexedStringUtils.nextName(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedWord);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('word_123 other_Word', () => {
-        const input: string = "word_123 other_Word";
-        const expectedWord: string = "word_123";
-        const expectedRest: string = " other_Word";
-
-        const result = IndexedStringUtils.nextName(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedWord);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('_123 other_Word', () => {
-        const input: string = "_123 other_Word";
-        const expectedWord: string = "_123";
-        const expectedRest: string = " other_Word";
-
-        const result = IndexedStringUtils.nextName(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedWord);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('123_word other_Word', () => {
-        const input: string = "123_word other_Word";
-        const expectedWord: string = "";
-        const expectedRest: string = "123_word other_Word";
-
-        const result = IndexedStringUtils.nextName(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedWord);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('wor d', () => {
-        const input: string = "wor d";
-        const expectedWord: string = "wor";
-        const expectedRest: string = " d";
-
-        const result = IndexedStringUtils.nextName(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedWord);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('< >', () => {
-        const input: string = "< >";
-        const expectedWord: string = "";
-        const expectedRest: string = "< >";
-
-        const result = IndexedStringUtils.nextName(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedWord);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('"  \n \t "', () => {
-        const input: string = "  \n \t ";
-        const expectedWord: string = "";
-        const expectedRest: string = "  \n \t ";
-
-        const result = IndexedStringUtils.nextName(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedWord);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('""', () => {
-        const input: string = "";
-        const expectedWord: string = "";
-        const expectedRest: string = "";
-
-        const result = IndexedStringUtils.nextName(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedWord);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
+  });
 });
 
 describe('nextNumber', () => {
-    test('12', () => {
-        const input: string = "12";
-        const expectedNumber: string = "12";
-        const expectedRest: string = "";
-
-        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedNumber);
-        expect(result.second.toString()).toBe(expectedRest);
+  describe('splits valid string', () => {
+    test.each([
+        {input: "12", expectedWord: "12", expectedRest: ""},
+        {input: " 12  \n\t", expectedWord: "", expectedRest: " 12  \n\t"},
+        {input: "12 d", expectedWord: "12", expectedRest: " d"},
+        {input: ".12 d", expectedWord: "", expectedRest: ".12 d"},
+        {input: "< >", expectedWord: "", expectedRest: "< >"},
+        {input: "  \n \t ", expectedWord: "", expectedRest: "  \n \t "},
+        {input: "12.456", expectedWord: "12.456", expectedRest: ""},
+        {input: " 12.456", expectedWord: "", expectedRest: " 12.456"},
+        {input: "12.456 d", expectedWord: "12.456", expectedRest: " d"},
+        {input: "12.456.5 d", expectedWord: "12.456", expectedRest: ".5 d"},
+        {input: "", expectedWord: "", expectedRest: ""},
+      ]
+    )('%s', ({input, expectedWord, expectedRest}) => {
+      // arrange
+      const indexedInput = IndexedString.new(input);
+      // act
+      const actual = IndexedStringUtils.nextNumber(indexedInput);
+      // assert
+      expect(actual.first.toString()).toBe(expectedWord);
+      expect(actual.second.toString()).toBe(expectedRest);
     });
-
-    test(' 12  \n\t', () => {
-        const input: string = " 12  \n\t";
-        const expectedNumber: string = "";
-        const expectedRest: string = " 12  \n\t";
-
-        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedNumber);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('12 d', () => {
-        const input: string = "12 d";
-        const expectedNumber: string = "12";
-        const expectedRest: string = " d";
-
-        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedNumber);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('.12 d', () => {
-        const input: string = ".12 d";
-        const expectedNumber: string = "";
-        const expectedRest: string = ".12 d";
-
-        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedNumber);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('< >', () => {
-        const input: string = "< >";
-        const expectedNumber: string = "";
-        const expectedRest: string = "< >";
-
-        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedNumber);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('  \n \t ', () => {
-        const input: string = "  \n \t ";
-        const expectedNumber: string = "";
-        const expectedRest: string = "  \n \t ";
-
-        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedNumber);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('12.456', () => {
-        const input: string = "12.456";
-        const expectedNumber: string = "12.456";
-        const expectedRest: string = "";
-
-        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedNumber);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test(' 12.456  \n\t', () => {
-        const input: string = " 12.456  \n\t";
-        const expectedNumber: string = "";
-        const expectedRest: string = " 12.456  \n\t";
-
-        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedNumber);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('12.456 d', () => {
-        const input: string = "12.456 d";
-        const expectedNumber: string = "12.456";
-        const expectedRest: string = " d";
-
-        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedNumber);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('12.456.5 d', () => {
-        const input: string = "12.456.5 d";
-        const expectedNumber: string = "12.456";
-        const expectedRest: string = ".5 d";
-
-        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedNumber);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
-
-    test('""', () => {
-        const input: string = "";
-        const expectedNumber: string = "";
-        const expectedRest: string = "";
-
-        const result = IndexedStringUtils.nextNumber(IndexedString.new(input));
-        expect(result.first.toString()).toBe(expectedNumber);
-        expect(result.second.toString()).toBe(expectedRest);
-    });
+  });
 });
 
 describe('nextQuotedString', () => {
-    describe('valid strings', () => {
-        test('"Quoted"String', () => {
-            const input: IndexedString = IndexedString.new('"Quoted"String');
-            const expectedBordered: string = '"Quoted"';
-            const expectedRest: string = "String";
-
-            const result = IndexedStringUtils.nextQuotedString(input);
-            expect(result.first.toString()).toBe(expectedBordered);
-            expect(result.second.toString()).toBe(expectedRest);
-            expect(result.error).toBeUndefined();
-        });
-
-        test('"Quoted with \\" character"String', () => {
-            const input: IndexedString = IndexedString.new('"Quoted with \\" character"String');
-            const expectedBordered: string = '"Quoted with \\" character"';
-            const expectedRest: string = "String";
-
-            const result = IndexedStringUtils.nextQuotedString(input);
-            expect(result.first.toString()).toBe(expectedBordered);
-            expect(result.second.toString()).toBe(expectedRest);
-            expect(result.error).toBeUndefined();
-        });
-
-        test('"Quoted with more \\\\ \\" character\\\\"String', () => {
-            const input: IndexedString = IndexedString.new('"Quoted with more \\\\ \\" character\\\\"String');
-            const expectedBordered: string = '"Quoted with more \\\\ \\" character\\\\"';
-            const expectedRest: string = "String";
-
-            const result = IndexedStringUtils.nextQuotedString(input);
-            expect(result.first.toString()).toBe(expectedBordered);
-            expect(result.second.toString()).toBe(expectedRest);
-            expect(result.error).toBeUndefined();
-        });
+  describe('splits valid string without error', () => {
+    test.each([
+        {input: '"Quoted"String', expectedBordered: '"Quoted"', expectedRest: 'String'},
+        {input: '"Quoted with \\" character"String', expectedBordered: '"Quoted with \\" character"', expectedRest: 'String'},
+        {
+          input: '"Quoted with more \\\\ \\" character\\\\"String',
+          expectedBordered: '"Quoted with more \\\\ \\" character\\\\"',
+          expectedRest: 'String'
+        },
+      ]
+    )('%s', ({input, expectedBordered, expectedRest}) => {
+      // arrange
+      const indexedInput = IndexedString.new(input);
+      // act
+      const actual = IndexedStringUtils.nextQuotedString(indexedInput);
+      // assert
+      expect(actual.first.toString()).toBe(expectedBordered);
+      expect(actual.second.toString()).toBe(expectedRest);
+      expect(actual.error).toBeUndefined();
     });
+  });
 
-    describe('invalid strings', () => {
-        test('"Left quoted String', () => {
-            const input: IndexedString = IndexedString.new('"Left quoted String');
-            const expectedBordered: string = '"Left quoted String';
-            const expectedRest: string = "";
-
-            const result = IndexedStringUtils.nextQuotedString(input);
-            expect(result.first.toString()).toBe(expectedBordered);
-            expect(result.second.toString()).toBe(expectedRest);
-            expect(result.error).not.toBeUndefined();
-        });
-
-        test('"End on the next\nline"', () => {
-            const input: IndexedString = IndexedString.new('"End on the next\nline"');
-            const expectedBordered: string = '"End on the next\n';
-            const expectedRest: string = 'line"';
-
-            const result = IndexedStringUtils.nextQuotedString(input);
-            expect(result.first.toString()).toBe(expectedBordered);
-            expect(result.second.toString()).toBe(expectedRest);
-            expect(result.error).not.toBeUndefined();
-        });
+  describe('splits invalid string with error', () => {
+    test.each([
+        {input: '"Left quoted String', expectedBordered: '"Left quoted String', expectedRest: ''},
+        {input: '"End on the next\nline"', expectedBordered: '"End on the next\n', expectedRest: 'line"'},
+      ]
+    )('%s', ({input, expectedBordered, expectedRest}) => {
+      // arrange
+      const indexedInput = IndexedString.new(input);
+      // act
+      const actual = IndexedStringUtils.nextQuotedString(indexedInput);
+      // assert
+      expect(actual.first.toString()).toBe(expectedBordered);
+      expect(actual.second.toString()).toBe(expectedRest);
+      expect(actual.error).not.toBeUndefined();
     });
+  });
 });
 
 describe('nextBorderedPart', () => {
-    describe('valid strings with one ending character split correctly', () => {
-        test('()String', () => {
-            const input: IndexedString = IndexedString.new("()String");
-            const start: string = '(';
-            const end: string = ')';
-            const expectedBordered: string = "()";
-            const expectedRest: string = "String";
-
-            const result = IndexedStringUtils.nextBorderedPart(input, start, end);
-            expect(result.first.toString()).toBe(expectedBordered);
-            expect(result.second.toString()).toBe(expectedRest);
-            expect(result.second.getLastIndex()).toBe(input.getLastIndex());
-        });
-
-        test('((()))String', () => {
-            const input: IndexedString = IndexedString.new("((()))String");
-            const start: string = '(';
-            const end: string = ')';
-            const expectedBordered: string = "((()))";
-            const expectedRest: string = "String";
-
-            const result = IndexedStringUtils.nextBorderedPart(input, start, end);
-            expect(result.first.toString()).toBe(expectedBordered);
-            expect(result.second.toString()).toBe(expectedRest);
-            expect(result.second.getLastIndex()).toBe(input.getLastIndex());
-        });
+  describe('splits valid string without error', () => {
+    test.each([
+        {input: '()String', start: '(', end: ')', expectedBordered: '()', expectedRest: 'String'},
+        {input: '((()))String', start: '(', end: ')', expectedBordered: '((()))', expectedRest: 'String'},
+        {input: '[((InnerString))]String', start: '[', end: ']>', expectedBordered: '[((InnerString))]', expectedRest: 'String'},
+        {input: '[((InnerString))>String', start: '[', end: ']>', expectedBordered: '[((InnerString))>', expectedRest: 'String'},
+        {input: '< some -> rename >AndSoOn', start: '<', end: '>', escape: '-', expectedBordered: '< some -> rename >', expectedRest: 'AndSoOn'},
+      ]
+    )('%s', ({input, start, end, escape, expectedBordered, expectedRest}) => {
+      // arrange
+      const indexedInput = IndexedString.new(input);
+      // act
+      const actual = IndexedStringUtils.nextBorderedPart(indexedInput, start, end, escape);
+      // assert
+      expect(actual.first.toString()).toBe(expectedBordered);
+      expect(actual.second.toString()).toBe(expectedRest);
+      expect(actual.second.getLastIndex()).toBe(indexedInput.getLastIndex());
     });
+  });
 
-    describe('valid strings with more ending characters split correctly', () => {
-        test('[((InnerString))]String', () => {
-            const input: IndexedString = IndexedString.new("[((InnerString))]String");
-            const start: string = '[';
-            const end: string = ']>';
-            const expectedBordered: string = "[((InnerString))]";
-            const expectedRest: string = "String";
-
-            const result = IndexedStringUtils.nextBorderedPart(input, start, end);
-            expect(result.first.toString()).toBe(expectedBordered);
-            expect(result.second.toString()).toBe(expectedRest);
-            expect(result.second.getLastIndex()).toBe(input.getLastIndex());
-        });
-
-        test('[((InnerString))>String', () => {
-            const input: IndexedString = IndexedString.new("[((InnerString))>String");
-            const start: string = '[';
-            const end: string = ']>';
-            const expectedBordered: string = "[((InnerString))>";
-            const expectedRest: string = "String";
-
-            const result = IndexedStringUtils.nextBorderedPart(input, start, end);
-            expect(result.first.toString()).toBe(expectedBordered);
-            expect(result.second.toString()).toBe(expectedRest);
-            expect(result.second.getLastIndex()).toBe(input.getLastIndex());
-        });
-
-        test('< some -> rename >AndSoOn', () => {
-            const input: IndexedString = IndexedString.new("< some -> rename >AndSoOn");
-            const start: string = '<';
-            const end: string = ']>';
-            const escape: string = '-';
-            const expectedBordered: string = "< some -> rename >";
-            const expectedRest: string = "AndSoOn";
-
-            const result = IndexedStringUtils.nextBorderedPart(input, start, end, escape);
-            expect(result.first.toString()).toBe(expectedBordered);
-            expect(result.second.toString()).toBe(expectedRest);
-            expect(result.second.getLastIndex()).toBe(input.getLastIndex());
-        });
+  describe('invalid string throws an error', () => {
+    test.each([
+        {input: '((())String', start: '(', end: ')'},
+        {input: '(String', start: '(', end: ')'},
+      ]
+    )('%s', ({input, start, end}) => {
+      // arrange
+      const indexedInput = IndexedString.new(input);
+      // act + assert
+      expect(() => IndexedStringUtils.nextBorderedPart(indexedInput, start, end)).toThrow();
     });
+  });
 
-    describe('invalid strings throw an error', () => {
-        test('((())String', () => {
-            const input: IndexedString = IndexedString.new("((())String");
-            const start: string = '(';
-            const end: string = ')';
-
-            expect(() => IndexedStringUtils.nextBorderedPart(input, start, end)).toThrow();
-        });
-
-        test('(String', () => {
-            const input: IndexedString = IndexedString.new("(String");
-            const start: string = '(';
-            const end: string = ')';
-
-            expect(() => IndexedStringUtils.nextBorderedPart(input, start, end)).toThrow();
-        });
+  describe('ignores special chars in quoted part', () => {
+    test.each([
+        {input: '(")")String', start: '(', end: ')', expectedBordered: '(")")', expectedRest: 'String'},
+        {
+          input: '(some long expression with "inner quoted part with ) and \\", yeah")String',
+          start: '(', end: ')',
+          expectedBordered: '(some long expression with "inner quoted part with ) and \\", yeah")',
+          expectedRest: 'String'
+        },
+      ]
+    )('%s', ({input, start, end, expectedBordered, expectedRest}) => {
+      // arrange
+      const indexedInput = IndexedString.new(input);
+      // act
+      const actual = IndexedStringUtils.nextBorderedPart(indexedInput, start, end);
+      // assert
+      expect(actual.first.toString()).toBe(expectedBordered);
+      expect(actual.second.toString()).toBe(expectedRest);
     });
-
-    describe('ignores special chars in quoted part', () => {
-        test('(")")String', () => {
-            const input: IndexedString = IndexedString.new("(\")\")String");
-            const start: string = '(';
-            const end: string = ')';
-            const expectedBordered: string = "(\")\")";
-            const expectedRest: string = "String";
-
-            const result = IndexedStringUtils.nextBorderedPart(input, start, end);
-            expect(result.first.toString()).toBe(expectedBordered);
-            expect(result.second.toString()).toBe(expectedRest);
-        });
-
-        test('(some long expression with "inner quoted part with ) and \\", yeah")String', () => {
-            const input: IndexedString = IndexedString.new('(some long expression with "inner quoted part with ) and \\", yeah")String');
-            const start: string = '(';
-            const end: string = ')';
-            const expectedBordered: string = '(some long expression with "inner quoted part with ) and \\", yeah")';
-            const expectedRest: string = "String";
-
-            const result = IndexedStringUtils.nextBorderedPart(input, start, end);
-            expect(result.first.toString()).toBe(expectedBordered);
-            expect(result.second.toString()).toBe(expectedRest);
-        });
-    });
+  });
 });
 
 describe('skipWhitespacesAndChar', () => {
-    test(",", () => {
-        const str: string = ",";
-        const expected: string = "";
-
-        const actual: IndexedString = IndexedStringUtils.skipWhitespacesAndChar(IndexedString.new(str), ',');
-        expect(actual.toString()).toBe(expected);
-    });
-
-    test("abcd", () => {
-        const str: string = "abcd";
-        const expected: string = "bcd";
-
-        const actual: IndexedString = IndexedStringUtils.skipWhitespacesAndChar(IndexedString.new(str), 'a');
-        expect(actual.toString()).toBe(expected);
-    });
-
-    test(": \"Value\", Next: 123544, Next: \"asasasd\"", () => {
-        const str: string = ": \"Value\", Next: 123544, Next: \"asasasd\"";
-        const expected: string = "\"Value\", Next: 123544, Next: \"asasasd\"";
-
-        const actual: IndexedString = IndexedStringUtils.skipWhitespacesAndChar(IndexedString.new(str), ':');
-        expect(actual.toString()).toBe(expected);
-    });
-
-    test("  \t  :\t \"Value\", Next: 123544, Next: \"asasasd\"", () => {
-        const str: string = "  \t  :\t \"Value\", Next: 123544, Next: \"asasasd\"";
-        const expected: string = "\"Value\", Next: 123544, Next: \"asasasd\"";
-
-        const actual: IndexedString = IndexedStringUtils.skipWhitespacesAndChar(IndexedString.new(str), ':');
-        expect(actual.toString()).toBe(expected);
-    });
+  test.each([
+        {input: ',', char: ',', expected: ''},
+        {input: 'abcd', char: 'a', expected: 'bcd'},
+        {input: '      : "Value", Next: 123544', char: ':', expected: '"Value", Next: 123544'},
+    ]
+  )('%s', ({input, char, expected}) => {
+      // arrange
+      const indexedInput = IndexedString.new(input);
+      // act
+      const actual: IndexedString = IndexedStringUtils.skipWhitespacesAndChar(indexedInput, char);
+      // assert
+      expect(actual.toString()).toBe(expected);
+  });
 });
 
 test("deleteAllComments", () => {
-    const str: string =
-      '(abc //line comment\n' +
-      'abc "ignored line comment // in string"\n' +
-      'abc /* block comment */ abc\n' + // there will be a space instead of /* ... */
-      'abc " ignore /* block comment */ in string"\n' +
-      ')';
-    const expected: string =
-      '(abc \n' +
-      'abc "ignored line comment // in string"\n' +
-      'abc   abc\n' +
-      'abc " ignore /* block comment */ in string"\n' +
-      ')';
+  const str: string =
+    '(abc //line comment\n' +
+    'abc "ignored line comment // in string"\n' +
+    'abc /* block comment */ abc\n' +
+    'abc " ignore /* block comment */ in string"\n' +
+    ')';
+  const expected: string =
+    '(abc \n' +
+    'abc "ignored line comment // in string"\n' +
+    'abc   abc\n' +
+    'abc " ignore /* block comment */ in string"\n' +
+    ')';
 
-    const actual = IndexedStringUtils.deleteAllComments(IndexedString.new(str)).str;
-    expect(actual.toString()).toBe(expected);
+  const actual = IndexedStringUtils.deleteAllComments(IndexedString.new(str)).str;
+  expect(actual.toString()).toBe(expected);
 });

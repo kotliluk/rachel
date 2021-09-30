@@ -1,6 +1,6 @@
 import {IndexedString} from "./indexedString";
 
-interface KeyValue {
+export interface KeyValue {
     key: IndexedString,
     value: IndexedString
 }
@@ -11,7 +11,7 @@ interface KeyValue {
  * @public
  */
 export class ISToISMap {
-    private map: Map<string, KeyValue> = new Map<string, KeyValue>();
+    protected map: Map<string, KeyValue> = new Map<string, KeyValue>();
 
     /**
      * Gets the value for the given key.
@@ -82,7 +82,7 @@ export class ISToISMap {
      * @param f function to perform {@type function}
      * @public
      */
-    public forEach(f: (value: IndexedString, row: IndexedString, index?: number) => void): void {
+    public forEach(f: (value: IndexedString, key: IndexedString, index?: number) => void): void {
         [...this.map.values()].forEach((keyValue, index) => f(keyValue.value, keyValue.key, index));
     }
 }

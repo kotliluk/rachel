@@ -1,3 +1,5 @@
+import {IndexedString} from "./indexedString";
+
 /**
  * Wrapper of JavaScript Map object to provide usage of object (row: number | "name", column: number) as a key for
  * string values.
@@ -5,7 +7,7 @@
  * @public
  */
 export class NNToSMap {
-    private map: Map<string, string> = new Map<string, string>();
+    protected map: Map<string, string> = new Map<string, string>();
 
     /**
      * Gets the value for the given key (row, column).
@@ -44,6 +46,18 @@ export class NNToSMap {
     }
 
     /**
+     * Returns true, if the given row and column is in the map.
+     *
+     * @param row row part of the key {@type (number | "name")}
+     * @param column row column of the key {@type number}
+     * @return true, if the given key is in the map {@type boolean}
+     * @public
+     */
+    public has(row: number | "name", column: number): boolean {
+        return this.map.has(row + ":" + column);
+    }
+
+    /**
      * Removes all values from the map.
      * @public
      */
@@ -75,6 +89,7 @@ export class NNToSMap {
 
     private static parseKey(key: string): {row: number | "name", column: number} {
         const split = key.split(':');
-        return {row: Number(split[0]), column: Number(split[1])};
+        const rowNumber = Number(split[0]);
+        return {row: isNaN(rowNumber) ? "name" : rowNumber, column: Number(split[1])};
     }
 }
