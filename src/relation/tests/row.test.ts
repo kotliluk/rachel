@@ -1,33 +1,58 @@
 import {Row} from "../row";
 import {SupportedColumnType} from "../columnType";
 
-let columns = new Map<string, SupportedColumnType>();
+
+const columns = new Map<string, SupportedColumnType>();
 columns.set("First", "string");
-columns.set("Second", "string");
-columns.set("Third", "number");
+columns.set("Second", "number");
 let row = new Row(columns);
 
-test('is created correctly', () => {
-    expect(row.isFinished()).toBeFalsy(); // should not be finished after creation
-
-    let added = [...row.getColumnNames()];
-    expect(added.length).toBe(3);
-    expect(added.indexOf("First") > -1).toBeTruthy();
-    expect(added.indexOf("Second") > -1).toBeTruthy();
-    expect(added.indexOf("Third") > -1).toBeTruthy();
-
-    expect(row.getValue("First")).toBeNull();
-    expect(row.getValue("Second")).toBeNull();
-    expect(row.getValue("Third")).toBeNull();
+beforeEach(() => {
+    row = new Row(columns);
 });
 
-test('adds values correctly', () => {
-    expect(row.addValue("First", "Some string")).toBeTruthy();
-    expect(row.addValue("First", "New string")).toBeTruthy();
-    expect(row.addValue("First", 5)).toBeFalsy(); // should not add a different type
-    expect(row.getValue("First")).toBe("New string");
+describe('is created correctly', () => {
+    test('should not be finished after creation', () => {
+        // assert
+        const finished = row.isFinished();
+        expect(finished).toBeFalsy();
+    });
+
+    test('should contain initial columns', () => {
+        const added = [...row.getColumnNames()];
+        expect(added.length).toBe(2);
+
+        expect(added.indexOf("First")).toBeGreaterThan(-1);
+        expect(added.indexOf("Second")).toBeGreaterThan(-1);
+    });
+
+    test('should contain initial columns with null values', () => {
+        const added = [...row.getColumnNames()];
+        expect(added.length).toBe(2);
+
+        expect(row.getValue("First")).toBeNull();
+        expect(row.getValue("Second")).toBeNull();
+    });
+
+    test('should contain initial columns with correct types', () => {
+        const added = [...row.getColumnNames()];
+        expect(added.length).toBe(2);
+
+        expect(row.getType("First")).toBe("string");
+        expect(row.getType("Second")).toBe("number");
+    });
 });
 
-test('returns undefined for absent columns', () => {
-    expect(row.getValue("Absent")).toBeUndefined();
+test.each([
+    { name: "First", value: "Some string", expectedAdded: true, expectedGotValue: "Some string" },
+    { name: "Second", value: 10.01, expectedAdded: true, expectedGotValue: 10.01 },
+    { name: "First", value: 10.01, expectedAdded: false, expectedGotValue: null },
+    { name: "Third", value: "abc", expectedAdded: false, expectedGotValue: undefined },
+])('adds values correctly: %s', ({ name, value, expectedAdded, expectedGotValue }) => {
+    // act
+    const actualAdded = row.addValue(name, value);
+    const actualGotValue = row.getValue(name);
+    // assert
+    expect(actualAdded).toBe(expectedAdded);
+    expect(actualGotValue).toBe(expectedGotValue);
 });
