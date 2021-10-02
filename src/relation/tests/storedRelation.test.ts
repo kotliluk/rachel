@@ -15,7 +15,7 @@ test('constructor creates one default column', () => {
     expect(actual.getName()).toStrictEqual(expectedName);
 });
 
-test('addNewColumn', () => {
+test('addNewColumn adds a column with expected name and type', () => {
     // arrange
     const expectedName = "ABC"
     const expectedColumnNames = ["Column1", "Column2"];
@@ -28,10 +28,9 @@ test('addNewColumn', () => {
     expect(actual.getColumnNames()).toStrictEqual(expectedColumnNames);
     expect(actual.getColumnTypes()).toStrictEqual(expectedColumnTypes);
     expect(actual.getRows()).toStrictEqual(expectedRows);
-    expect(actual.getName()).toStrictEqual(expectedName);
 });
 
-test('addNewRow', () => {
+test('addNewRow adds a row with empty values', () => {
     // arrange
     const expectedName = "ABC"
     const expectedColumnNames = ["Column1"];
@@ -44,29 +43,22 @@ test('addNewRow', () => {
     expect(actual.getColumnNames()).toStrictEqual(expectedColumnNames);
     expect(actual.getColumnTypes()).toStrictEqual(expectedColumnTypes);
     expect(actual.getRows()).toStrictEqual(expectedRows);
-    expect(actual.getName()).toStrictEqual(expectedName);
 });
 
-test('addNewColumn + addNewRow', () => {
+test('addNewColumn and addNewRow adds correct columns and rows', () => {
     // arrange
     const expectedName = "ABC"
-    const expectedColumnNames = ["Column1", "Column2", "Column3"];
-    const expectedColumnTypes = ["number", "number", "number"];
-    const expectedRows: string[][] = [
-        ["", "", ""],
-        ["", "", ""]
-    ];
+    const expectedColumnNames = ["Column1", "Column2"];
+    const expectedColumnTypes = ["number", "number"];
+    const expectedRows: string[][] = [["", ""]];
     const actual: StoredRelation = StoredRelation.new(expectedName, true);
     // act
-    actual.addNewColumn();
-    actual.addNewRow();
     actual.addNewColumn();
     actual.addNewRow();
     // assert
     expect(actual.getColumnNames()).toStrictEqual(expectedColumnNames);
     expect(actual.getColumnTypes()).toStrictEqual(expectedColumnTypes);
     expect(actual.getRows()).toStrictEqual(expectedRows);
-    expect(actual.getName()).toStrictEqual(expectedName);
 });
 
 test('deleteColumn', () => {
@@ -74,38 +66,28 @@ test('deleteColumn', () => {
     const expectedName = "ABC"
     const expectedColumnNames = ["Column1", "Column3"];
     const expectedColumnTypes = ["number", "number"];
-    const expectedRows: string[][] = [
-        ["", ""],
-        ["", ""]
-    ];
+    const expectedRows: string[][] = [["", ""]];
     const actual: StoredRelation = StoredRelation.new(expectedName, true);
     actual.addNewColumn();
     actual.addNewRow();
     actual.addNewColumn();
-    actual.addNewRow();
     // act
     actual.deleteColumn(1);
     // assert
     expect(actual.getColumnNames()).toStrictEqual(expectedColumnNames);
     expect(actual.getColumnTypes()).toStrictEqual(expectedColumnTypes);
     expect(actual.getRows()).toStrictEqual(expectedRows);
-    expect(actual.getName()).toStrictEqual(expectedName);
 });
 
 test('deleteRow', () => {
     // arrange
     const expectedName = "ABC"
-    const expectedColumnNames = ["Column1", "Column2", "Column3"];
-    const expectedColumnTypes = ["number", "number", "number"];
-    const expectedRows: string[][] = [
-        ["", "", ""],
-        ["", "", ""]
-    ];
+    const expectedColumnNames = ["Column1", "Column2"];
+    const expectedColumnTypes = ["number", "number"];
+    const expectedRows: string[][] = [["", ""]];
     const actual: StoredRelation = StoredRelation.new(expectedName, true);
-    actual.addNewColumn();
     actual.addNewRow();
     actual.addNewColumn();
-    actual.addNewRow();
     actual.addNewRow();
     // act
     actual.deleteRow(1);
@@ -113,5 +95,4 @@ test('deleteRow', () => {
     expect(actual.getColumnNames()).toStrictEqual(expectedColumnNames);
     expect(actual.getColumnTypes()).toStrictEqual(expectedColumnTypes);
     expect(actual.getRows()).toStrictEqual(expectedRows);
-    expect(actual.getName()).toStrictEqual(expectedName);
 });
