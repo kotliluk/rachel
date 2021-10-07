@@ -29,10 +29,7 @@ describe('isProjectObject', () => {
     { obj: {}, expected: errMsg2 },
     { obj: { relations: project.relations }, expected: errMsg3 },
     { obj: { relations: project.relations, expressions: project.expressions }, expected: errMsg4 },
-    {
-      obj: { relations: project.relations, expressions: project.expressions, nullValuesSupport: project.nullValuesSupport },
-      expected: okMsg,
-    },
+    { obj: project, expected: okMsg },
   ])('%s', ({ obj, expected }) => {
     // act
     const actual = isProjectObject(obj);
@@ -64,8 +61,8 @@ describe('copyProject', () => {
     copy.expressions = [];
     // assert
     expect(original.nullValuesSupport).toBe(originalNVS);
-    expect(original.relations.length).toBe(originalRelationsCount);
-    expect(original.expressions.length).toBe(originalExpressionsCount);
+    expect(original.relations).toHaveLength(originalRelationsCount);
+    expect(original.expressions).toHaveLength(originalExpressionsCount);
   });
 
   test('changes of original does not affect the copy', () => {
@@ -81,7 +78,7 @@ describe('copyProject', () => {
     original.expressions = [];
     // assert
     expect(copy.nullValuesSupport).toBe(copyNVS);
-    expect(copy.relations.length).toBe(copyRelationsCount);
-    expect(copy.expressions.length).toBe(copyExpressionsCount);
+    expect(copy.relations).toHaveLength(copyRelationsCount);
+    expect(copy.expressions).toHaveLength(copyExpressionsCount);
   });
 });

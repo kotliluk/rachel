@@ -199,8 +199,7 @@ describe('nextWord', () => {
       // act
       const actual = IndexedStringUtils.nextWord(indexedInput);
       // assert
-      expect(actual.first.toString()).toBe(expectedWord);
-      expect(actual.second.toString()).toBe(expectedRest);
+      expect(actual).toHaveParts(expectedWord, expectedRest);
     });
   });
 });
@@ -224,8 +223,7 @@ describe('nextName', () => {
       // act
       const actual = IndexedStringUtils.nextName(indexedInput);
       // assert
-      expect(actual.first.toString()).toBe(expectedWord);
-      expect(actual.second.toString()).toBe(expectedRest);
+      expect(actual).toHaveParts(expectedWord, expectedRest);
     });
   });
 });
@@ -251,8 +249,7 @@ describe('nextNumber', () => {
       // act
       const actual = IndexedStringUtils.nextNumber(indexedInput);
       // assert
-      expect(actual.first.toString()).toBe(expectedWord);
-      expect(actual.second.toString()).toBe(expectedRest);
+      expect(actual).toHaveParts(expectedWord, expectedRest);
     });
   });
 });
@@ -274,8 +271,7 @@ describe('nextQuotedString', () => {
       // act
       const actual = IndexedStringUtils.nextQuotedString(indexedInput);
       // assert
-      expect(actual.first.toString()).toBe(expectedBordered);
-      expect(actual.second.toString()).toBe(expectedRest);
+      expect(actual).toHaveParts(expectedBordered, expectedRest);
       expect(actual.error).toBeUndefined();
     });
   });
@@ -291,8 +287,7 @@ describe('nextQuotedString', () => {
       // act
       const actual = IndexedStringUtils.nextQuotedString(indexedInput);
       // assert
-      expect(actual.first.toString()).toBe(expectedBordered);
-      expect(actual.second.toString()).toBe(expectedRest);
+      expect(actual).toHaveParts(expectedBordered, expectedRest);
       expect(actual.error).not.toBeUndefined();
     });
   });
@@ -313,8 +308,7 @@ describe('nextBorderedPart', () => {
       // act
       const actual = IndexedStringUtils.nextBorderedPart(indexedInput, start, end, escape);
       // assert
-      expect(actual.first.toString()).toBe(expectedBordered);
-      expect(actual.second.toString()).toBe(expectedRest);
+      expect(actual).toHaveParts(expectedBordered, expectedRest);
       expect(actual.second.getLastIndex()).toBe(indexedInput.getLastIndex());
     });
   });
@@ -348,8 +342,7 @@ describe('nextBorderedPart', () => {
       // act
       const actual = IndexedStringUtils.nextBorderedPart(indexedInput, start, end);
       // assert
-      expect(actual.first.toString()).toBe(expectedBordered);
-      expect(actual.second.toString()).toBe(expectedRest);
+      expect(actual).toHaveParts(expectedBordered, expectedRest);
     });
   });
 });
@@ -371,6 +364,7 @@ describe('skipWhitespacesAndChar', () => {
 });
 
 test("deleteAllComments", () => {
+  // arrange
   const str: string =
     '(abc //line comment\n' +
     'abc "ignored line comment // in string"\n' +
@@ -383,7 +377,8 @@ test("deleteAllComments", () => {
     'abc   abc\n' +
     'abc " ignore /* block comment */ in string"\n' +
     ')';
-
+  // act
   const actual = IndexedStringUtils.deleteAllComments(IndexedString.new(str)).str;
+  // assert
   expect(actual.toString()).toBe(expected);
 });

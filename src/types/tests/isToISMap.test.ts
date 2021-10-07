@@ -36,13 +36,7 @@ describe('get', () => {
     // act
     const actual = mockedMap.get(key);
     // assert
-    if (expected) {
-      expect(actual).toBeDefined();
-      expect(actual?.toString()).toStrictEqual(expected.toString());
-    }
-    else {
-      expect(actual).toBeUndefined();
-    }
+    expect(actual?.toString()).toStrictEqual(expected?.toString());
   });
 });
 
@@ -101,34 +95,24 @@ describe('clear', () => {
 });
 
 describe('delete', () => {
-  test('behaves correctly', () => {
+  test('deletes key', () => {
     // arrange
     const mockedMap = new IsToISMapTest(testInitData);
-    const key0IS = IndexedString.new(testInitData[0].key);
-    const key1IS = IndexedString.new(testInitData[1].key);
-    const absentKeyIS = IndexedString.new('absent');
+    const key = IndexedString.new(testInitData[0].key);
     // act
-    const hasKey0Before = mockedMap.has(key0IS);
-    const deleteKey0Result = mockedMap.delete(key0IS);
-    const hasKey0After = mockedMap.has(key0IS);
-    const hasKey1Before = mockedMap.has(key1IS);
-    const deleteKey1Result = mockedMap.delete(key1IS);
-    const hasKey1After = mockedMap.has(key1IS);
-    const hasAbsentKeyBefore = mockedMap.has(absentKeyIS);
-    const deleteAbsentKeyResult = mockedMap.delete(absentKeyIS);
-    const hasAbsentKeyAfter = mockedMap.has(absentKeyIS);
+    mockedMap.delete(key);
     // assert
-    const size = mockedMap.size();
-    expect(size).toBe(0);
-    expect(hasKey0Before).toBe(true);
-    expect(deleteKey0Result).toBe(true);
-    expect(hasKey0After).toBe(false);
-    expect(hasKey1Before).toBe(true);
-    expect(deleteKey1Result).toBe(true);
-    expect(hasKey1After).toBe(false);
-    expect(hasAbsentKeyBefore).toBe(false);
-    expect(deleteAbsentKeyResult).toBe(false);
-    expect(hasAbsentKeyAfter).toBe(false);
+    expect(mockedMap.size()).toBe(1);
+  });
+
+  test('does not delete absent key', () => {
+    // arrange
+    const mockedMap = new IsToISMapTest(testInitData);
+    const absentKey = IndexedString.new('absent');
+    // act
+    mockedMap.delete(absentKey);
+    // assert
+    expect(mockedMap.size()).toBe(2);
   });
 });
 
@@ -136,38 +120,28 @@ describe('set', () => {
   test('changes values', () => {
     // arrange
     const mockedMap = new IsToISMapTest(testInitData);
-
-    const key0IS = IndexedString.new(testInitData[0].key);
-    const changedValue0IS = IndexedString.new('changed value');
+    const keyIS = IndexedString.new(testInitData[0].key);
+    const changedValueIS = IndexedString.new('changed value');
     // act
-    mockedMap.set(key0IS, changedValue0IS);
+    mockedMap.set(keyIS, changedValueIS);
     // assert
     const size = mockedMap.size();
+    const gotChangedValue = mockedMap.get(keyIS);
     expect(size).toBe(2);
-
-    const hasKey0 = mockedMap.has(key0IS);
-    const gotChangedValue = mockedMap.get(key0IS);
-    expect(hasKey0).toBe(true);
-    expect(gotChangedValue).toBeDefined();
-    expect(gotChangedValue?.toString()).toStrictEqual(changedValue0IS.toString());
+    expect(gotChangedValue?.toString()).toStrictEqual(changedValueIS.toString());
   });
 
   test('adds values', () => {
     // arrange
     const mockedMap = new IsToISMapTest(testInitData);
-
     const newKeyIS = IndexedString.new('new key');
     const newValueIS = IndexedString.new('new value');
     // act
     mockedMap.set(newKeyIS, newValueIS);
     // assert
     const size = mockedMap.size();
-    expect(size).toBe(3);
-
-    const hasNewKey = mockedMap.has(newKeyIS);
     const gotNewValue = mockedMap.get(newKeyIS);
-    expect(hasNewKey).toBe(true);
-    expect(gotNewValue).toBeDefined();
+    expect(size).toBe(3);
     expect(gotNewValue?.toString()).toStrictEqual(newValueIS.toString());
   });
 });
@@ -185,8 +159,6 @@ describe('forEach', () => {
       arr.push(index);
     });
     // assert
-    const size = mockedMap.size();
-    expect(size).toBe(2);
     expect(arr).toStrictEqual(expected);
   });
 });

@@ -86,45 +86,28 @@ describe('clear', () => {
 });
 
 describe('delete', () => {
-  test('behaves correctly', () => {
+  test('deletes key', () => {
     // arrange
     const mockedMap = new NNToSMapTest(testInitData);
+    const rowIS = testInitData[0].row;
+    const columnIS = testInitData[0].column;
+    // act
+    mockedMap.delete(rowIS, columnIS);
+    // assert
+    const size = mockedMap.size();
+    expect(size).toBe(1);
+  });
 
-    const row0IS = testInitData[0].row;
-    const column0IS = testInitData[0].column;
-
-    const row1IS = testInitData[1].row;
-    const column1IS = testInitData[1].column;
-
+  test('does not delete absent key', () => {
+    // arrange
+    const mockedMap = new NNToSMapTest(testInitData);
     const absentRowIS = 8;
     const absentColumnIS = 8;
     // act
-    const hasKey0Before = mockedMap.has(row0IS, column0IS);
-    const deleteKey0Result = mockedMap.delete(row0IS, column0IS);
-    const hasKey0After = mockedMap.has(row0IS, column0IS);
-
-    const hasKey1Before = mockedMap.has(row1IS, column1IS);
-    const deleteKey1Result = mockedMap.delete(row1IS, column1IS);
-    const hasKey1After = mockedMap.has(row1IS, column1IS);
-
-    const hasAbsentKeyBefore = mockedMap.has(absentRowIS, absentColumnIS);
-    const deleteAbsentKeyResult = mockedMap.delete(absentRowIS, absentColumnIS);
-    const hasAbsentKeyAfter = mockedMap.has(absentRowIS, absentColumnIS);
+    mockedMap.delete(absentRowIS, absentColumnIS);
     // assert
     const size = mockedMap.size();
-    expect(size).toBe(0);
-
-    expect(hasKey0Before).toBe(true);
-    expect(deleteKey0Result).toBe(true);
-    expect(hasKey0After).toBe(false);
-
-    expect(hasKey1Before).toBe(true);
-    expect(deleteKey1Result).toBe(true);
-    expect(hasKey1After).toBe(false);
-
-    expect(hasAbsentKeyBefore).toBe(false);
-    expect(deleteAbsentKeyResult).toBe(false);
-    expect(hasAbsentKeyAfter).toBe(false);
+    expect(size).toBe(2);
   });
 });
 
@@ -132,27 +115,21 @@ describe('set', () => {
   test('changes values', () => {
     // arrange
     const mockedMap = new NNToSMapTest(testInitData);
-
-    const row0 = testInitData[0].row;
-    const column0 = testInitData[0].column;
+    const row = testInitData[0].row;
+    const column = testInitData[0].column;
     const changedValue = 'changed value';
     // act
-    mockedMap.set(row0, column0, changedValue);
+    mockedMap.set(row, column, changedValue);
     // assert
     const size = mockedMap.size();
+    const gotChangedValue = mockedMap.get(row, column);
     expect(size).toBe(2);
-
-    const hasKey0 = mockedMap.has(row0, column0);
-    const gotChangedValue = mockedMap.get(row0, column0);
-    expect(hasKey0).toBe(true);
-    expect(gotChangedValue).toBeDefined();
     expect(gotChangedValue).toStrictEqual(changedValue);
   });
 
   test('adds values', () => {
     // arrange
     const mockedMap = new NNToSMapTest(testInitData);
-
     const newRow = 'name';
     const newColumn = 5;
     const newValue = 'changed value';
@@ -160,12 +137,8 @@ describe('set', () => {
     mockedMap.set(newRow, newColumn, newValue);
     // assert
     const size = mockedMap.size();
-    expect(size).toBe(3);
-
-    const hasNewKey = mockedMap.has(newRow, newColumn);
     const gotNewValue = mockedMap.get(newRow, newColumn);
-    expect(hasNewKey).toBe(true);
-    expect(gotNewValue).toBeDefined();
+    expect(size).toBe(3);
     expect(gotNewValue).toStrictEqual(newValue);
   });
 });
@@ -188,7 +161,6 @@ describe('forEach', () => {
     });
     // assert
     const size = mockedMap.size();
-    expect(size).toBe(2);
     expect(arr).toStrictEqual(expected);
   });
 });

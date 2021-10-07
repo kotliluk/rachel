@@ -1,98 +1,79 @@
 import {StoredRelation} from "../storedRelation";
 
+
+const name = "ABC"
+
+const getStoredRelation = (): StoredRelation => {
+    return StoredRelation.new(name, true)
+}
+
 test('constructor creates one default column', () => {
     // arrange
-    const expectedName = "ABC"
     const expectedColumnNames = ["Column1"];
     const expectedColumnTypes = ["number"];
     const expectedRows: string[][] = [];
     // act
-    const actual: StoredRelation = StoredRelation.new(expectedName, true);
+    const actual: StoredRelation = getStoredRelation();
     // assert
-    expect(actual.getColumnNames()).toStrictEqual(expectedColumnNames);
-    expect(actual.getColumnTypes()).toStrictEqual(expectedColumnTypes);
-    expect(actual.getRows()).toStrictEqual(expectedRows);
-    expect(actual.getName()).toStrictEqual(expectedName);
+    expect(actual)
+      .toHaveName(name)
+      .toHaveColumnNames(expectedColumnNames)
+      .toHaveColumnTypes(expectedColumnTypes)
+      .toHaveRows(expectedRows);
 });
 
 test('addNewColumn adds a column with expected name and type', () => {
     // arrange
-    const expectedName = "ABC"
     const expectedColumnNames = ["Column1", "Column2"];
     const expectedColumnTypes = ["number", "number"];
     const expectedRows: string[][] = [];
-    const actual: StoredRelation = StoredRelation.new(expectedName, true);
+    const actual: StoredRelation = getStoredRelation();
     // act
     actual.addNewColumn();
     // assert
-    expect(actual.getColumnNames()).toStrictEqual(expectedColumnNames);
-    expect(actual.getColumnTypes()).toStrictEqual(expectedColumnTypes);
-    expect(actual.getRows()).toStrictEqual(expectedRows);
+    expect(actual)
+      .toHaveColumnNames(expectedColumnNames)
+      .toHaveColumnTypes(expectedColumnTypes)
+      .toHaveRows(expectedRows);
 });
 
 test('addNewRow adds a row with empty values', () => {
     // arrange
-    const expectedName = "ABC"
-    const expectedColumnNames = ["Column1"];
-    const expectedColumnTypes = ["number"];
     const expectedRows: string[][] = [[""]];
-    const actual: StoredRelation = StoredRelation.new(expectedName, true);
+    const actual: StoredRelation = getStoredRelation();
     // act
     actual.addNewRow();
     // assert
-    expect(actual.getColumnNames()).toStrictEqual(expectedColumnNames);
-    expect(actual.getColumnTypes()).toStrictEqual(expectedColumnTypes);
-    expect(actual.getRows()).toStrictEqual(expectedRows);
-});
-
-test('addNewColumn and addNewRow adds correct columns and rows', () => {
-    // arrange
-    const expectedName = "ABC"
-    const expectedColumnNames = ["Column1", "Column2"];
-    const expectedColumnTypes = ["number", "number"];
-    const expectedRows: string[][] = [["", ""]];
-    const actual: StoredRelation = StoredRelation.new(expectedName, true);
-    // act
-    actual.addNewColumn();
-    actual.addNewRow();
-    // assert
-    expect(actual.getColumnNames()).toStrictEqual(expectedColumnNames);
-    expect(actual.getColumnTypes()).toStrictEqual(expectedColumnTypes);
-    expect(actual.getRows()).toStrictEqual(expectedRows);
+    expect(actual).toHaveRows(expectedRows);
 });
 
 test('deleteColumn', () => {
     // arrange
-    const expectedName = "ABC"
     const expectedColumnNames = ["Column1", "Column3"];
     const expectedColumnTypes = ["number", "number"];
     const expectedRows: string[][] = [["", ""]];
-    const actual: StoredRelation = StoredRelation.new(expectedName, true);
+    const actual: StoredRelation = getStoredRelation();
     actual.addNewColumn();
     actual.addNewRow();
     actual.addNewColumn();
     // act
     actual.deleteColumn(1);
     // assert
-    expect(actual.getColumnNames()).toStrictEqual(expectedColumnNames);
-    expect(actual.getColumnTypes()).toStrictEqual(expectedColumnTypes);
-    expect(actual.getRows()).toStrictEqual(expectedRows);
+    expect(actual)
+      .toHaveColumnNames(expectedColumnNames)
+      .toHaveColumnTypes(expectedColumnTypes)
+      .toHaveRows(expectedRows);
 });
 
 test('deleteRow', () => {
     // arrange
-    const expectedName = "ABC"
-    const expectedColumnNames = ["Column1", "Column2"];
-    const expectedColumnTypes = ["number", "number"];
     const expectedRows: string[][] = [["", ""]];
-    const actual: StoredRelation = StoredRelation.new(expectedName, true);
+    const actual: StoredRelation = getStoredRelation();
     actual.addNewRow();
     actual.addNewColumn();
     actual.addNewRow();
     // act
     actual.deleteRow(1);
     // assert
-    expect(actual.getColumnNames()).toStrictEqual(expectedColumnNames);
-    expect(actual.getColumnTypes()).toStrictEqual(expectedColumnTypes);
-    expect(actual.getRows()).toStrictEqual(expectedRows);
+    expect(actual).toHaveRows(expectedRows);
 });

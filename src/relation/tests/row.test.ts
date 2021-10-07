@@ -20,24 +20,18 @@ describe('is created correctly', () => {
 
     test('should contain initial columns', () => {
         const added = [...row.getColumnNames()];
-        expect(added.length).toBe(2);
-
-        expect(added.indexOf("First")).toBeGreaterThan(-1);
-        expect(added.indexOf("Second")).toBeGreaterThan(-1);
+        expect(added)
+          .toHaveLength(2)
+          .toContain("First")
+          .toContain("Second");
     });
 
     test('should contain initial columns with null values', () => {
-        const added = [...row.getColumnNames()];
-        expect(added.length).toBe(2);
-
         expect(row.getValue("First")).toBeNull();
         expect(row.getValue("Second")).toBeNull();
     });
 
     test('should contain initial columns with correct types', () => {
-        const added = [...row.getColumnNames()];
-        expect(added.length).toBe(2);
-
         expect(row.getType("First")).toBe("string");
         expect(row.getType("Second")).toBe("number");
     });
