@@ -11,30 +11,30 @@ import {IndexedString} from "./types/indexedString";
 
 declare global {
   namespace jest {
-    /**
-     * For general testing.
-     */
     interface Matchers<R> {
+      // For general testing
       toContainStrict(item: any): R;
     }
-    /**
-     * For StoredRelation testing.
-     */
     interface Matchers<R> {
+      // For StoredRelation testing
       toHaveName(name: string): R;
+      // For StoredRelation testing
       toHaveColumnNames(columnNames: string[]): R;
+      // For StoredRelation testing
       toHaveColumnTypes(columnTypes: string[]): R;
+      // For StoredRelation testing
       toHaveRows(rows: string[][]): R;
     }
-    /**
-     * For Pair<IndexedString> testing.
-     */
     interface Matchers<R> {
+      // For Pair<IndexedString> testing
       toHaveParts(first: string, second: string): R;
     }
   }
 }
 
+/**
+ * For general testing.
+ */
 expect.extend({
   toContainStrict(array: any[], item: any) {
     const pass = array.reduce((contains, curr) => contains || isDeepStrictEqual(curr, item), false);
@@ -45,6 +45,9 @@ expect.extend({
   },
 });
 
+/**
+ * For StoredRelation testing.
+ */
 expect.extend({
   toHaveName(relation: StoredRelation, name: string) {
     const actual = relation.getName();
@@ -83,6 +86,9 @@ expect.extend({
   }
 });
 
+/**
+ * For Pair<IndexedString> testing.
+ */
 expect.extend({
   toHaveParts(pair: Pair<IndexedString>, first: string, second: string) {
     const passFirst = pair.first.toString() === first;

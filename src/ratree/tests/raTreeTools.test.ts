@@ -151,7 +151,6 @@ describe("depthSearch", () => {
             // act
             const result: RATreeNode | null = depthSearch(treeA, index);
             // assert
-            expect(result).not.toBeNull();
             expect(result?.getOperationName()).toStrictEqual("Node " + index);
         });
     });
@@ -166,25 +165,22 @@ describe("depthSearch", () => {
     });
 });
 
+interface GetTreeDepthTestInput {
+    tree: RATreeNode,
+    expectedDepth: number,
+}
+
 describe("getTreeDepth", () => {
-    test("symmetric tree (depth 3)", () => {
-        // act
-        const result: number = getTreeDepth(treeA);
-        // assert
-        expect(result).toBe(3);
-    });
+    const inputs: GetTreeDepthTestInput[] = [
+        { tree: treeA, expectedDepth: 3 },
+        { tree: treeB, expectedDepth: 0 },
+        { tree: treeC, expectedDepth: 4 },
+    ]
 
-    test("one node tree (depth 0)", () => {
+    test.each(inputs)("%s", ({ tree, expectedDepth }) => {
         // act
-        const result: number = getTreeDepth(treeB);
+        const result: number = getTreeDepth(tree);
         // assert
-        expect(result).toBe(0);
-    });
-
-    test("asymmetric tree (depth 4)", () => {
-        // act
-        const result: number = getTreeDepth(treeC);
-        // assert
-        expect(result).toBe(4);
+        expect(result).toBe(expectedDepth);
     });
 });
