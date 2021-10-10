@@ -4,6 +4,7 @@ import {BinaryNode} from "./binaryNode";
 import {IndexedString} from "../types/indexedString";
 import {StartEndPair} from "../types/startEndPair";
 
+
 /**
  * Finds the root in the given tree with the given index with respect to depth first search. Root has index 0.
  *
