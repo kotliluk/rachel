@@ -25,8 +25,8 @@ describe('addColumn', () => {
         const columns = [...relation.getColumns()];
         expect(columns)
           .toHaveLength(2)
-          .toContainStrict(["First", "string"])
-          .toContainStrict(["Second", "number"]);
+          .toContainEqual(["First", "string"])
+          .toContainEqual(["Second", "number"]);
     });
 
     test('does not add columns with a duplicit name', () => {
@@ -36,7 +36,7 @@ describe('addColumn', () => {
         const columns = [...relation.getColumns()]
         expect(columns)
           .toHaveLength(2)
-          .toContainStrict(["First", "string"]);
+          .toContainEqual(["First", "string"]);
     });
 
     test('does not add more columns after row addition', () => {
@@ -48,9 +48,9 @@ describe('addColumn', () => {
         const columns = [...relation.getColumns()]
         expect(columns)
           .toHaveLength(2)
-          .toContainStrict(["First", "string"])
-          .toContainStrict(["Second", "number"])
-          .not.toContainStrict(["Third", "number"]);
+          .toContainEqual(["First", "string"])
+          .toContainEqual(["Second", "number"])
+          .not.toContainEqual(["Third", "number"]);
     });
 });
 
