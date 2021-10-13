@@ -4,14 +4,12 @@ import {StoredRelation} from "./relation/storedRelation";
 import {isDeepStrictEqual} from "util";
 import {Pair} from "./types/pair";
 import {IndexedString} from "./types/indexedString";
+import {ColumnContent, SupportedColumnType} from "./relation/columnType";
+import {VEResult} from "./vetree/veTreeNode";
 
 
 declare global {
   namespace jest {
-    interface Matchers<R> {
-      // For general testing
-      toContainStrict(item: any): R;
-    }
     interface Matchers<R> {
       // For StoredRelation testing
       toHaveName(name: string): R;
@@ -26,21 +24,12 @@ declare global {
       // For Pair<IndexedString> testing
       toHaveParts(first: string, second: string): R;
     }
+    interface Matchers<R> {
+      // For VEResult testing
+      toHaveValueAndType(value: ColumnContent, type: SupportedColumnType | "null"): R;
+    }
   }
 }
-
-/**
- * For general testing.
- */
-expect.extend({
-  toContainStrict(array: any[], item: any) {
-    const pass = array.reduce((contains, curr) => contains || isDeepStrictEqual(curr, item), false);
-    return {
-      pass,
-      message: () => pass ? "" : "Array does not contain expected item: " + JSON.stringify(item),
-    };
-  },
-});
 
 /**
  * For StoredRelation testing.
@@ -97,6 +86,26 @@ expect.extend({
         !passFirst && (ret += "Pair has unexpected first member, expected: " + first + ", actual: " + pair.first.toString());
         !passFirst && !passSecond && (ret += "\n");
         !passSecond && (ret += "Pair has unexpected second member, expected: " + second + ", actual: " + pair.second.toString());
+        return ret;
+      },
+    };
+  },
+});
+
+/**
+ * For general testing.
+ */
+expect.extend({
+  toHaveValueAndType(result: VEResult, value: ColumnContent, type: SupportedColumnType | "null") {
+    const passValue = result.value === value;
+    const passType = result.type === type;
+    return {
+      pass: passValue && passType,
+      message: () => {
+        let ret =   "  ";
+        !passValue && (ret +=   "VEResult has unexpected value, expected:   " + value +   ", actual:   " + result.value);
+        !passValue && !passType && (ret += "\n");
+        !passType && (ret +=   "VEResult has unexpected type, expected:   " + value +   ", actual:   " + result.value);
         return ret;
       },
     };
