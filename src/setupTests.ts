@@ -3,7 +3,7 @@ import 'jest-chain';
 import {StoredRelation} from "./relation/storedRelation";
 import {isDeepStrictEqual} from "util";
 import {Pair} from "./types/pair";
-import {IndexedString} from "./types/indexedString";
+import {IndexedChar, IndexedString} from "./types/indexedString";
 import {ColumnContent, SupportedColumnType} from "./relation/columnType";
 import {VEResult} from "./vetree/veTreeNode";
 
@@ -19,6 +19,18 @@ declare global {
       toHaveColumnTypes(columnTypes: string[]): R;
       // For StoredRelation testing
       toHaveRows(rows: string[][]): R;
+    }
+    interface Matchers<R> {
+      // For IndexedString testing
+      toRepresentString(str: string): R;
+      // For IndexedString testing
+      toHaveChars(chars: IndexedChar[]): R;
+      // For IndexedString testing
+      toHaveFirstIndex(firstIndex: number): R;
+      // For IndexedString testing
+      toHaveLastIndex(lastIndex: number): R;
+      // For IndexedString[] testing
+      toEqualToStrings(strs: string[]): R;
     }
     interface Matchers<R> {
       // For Pair<IndexedString> testing
@@ -107,6 +119,65 @@ expect.extend({
         !passValue && !passType && (ret += "\n");
         !passType && (ret +=   "VEResult has unexpected type, expected:   " + value +   ", actual:   " + result.value);
         return ret;
+      },
+    };
+  },
+});
+
+/**
+ * For StoredRelation testing.
+ */
+expect.extend({
+  toRepresentString(indexedStr: IndexedString, str: string) {
+    const pass = indexedStr.toString() === str;
+    return {
+      pass,
+      message: () => pass ? "" : "IndexedString does not represent expected string, expected: " + str + ", actual: "
+        + indexedStr.toString(),
+    };
+  },
+
+  toHaveChars(indexedStr: IndexedString, chars: IndexedChar[]) {
+    const pass = isDeepStrictEqual(indexedStr.getChars(), chars);
+    return {
+      pass,
+      message: () => pass ? "" : "IndexedString does not have expected chars, expected: " + JSON.stringify(chars)
+        + ", actual: " + JSON.stringify(indexedStr.getChars()),
+    };
+  },
+
+  toHaveFirstIndex(indexedStr: IndexedString, firstIndex: number) {
+    const pass = indexedStr.getFirstIndex() === firstIndex || isNaN(indexedStr.getFirstIndex()) === isNaN(firstIndex);
+    return {
+      pass,
+      message: () => pass ? "" : "IndexedString does not have expected first index, expected: " + firstIndex
+        + ", actual: " + indexedStr.getFirstIndex(),
+    };
+  },
+
+  toHaveLastIndex(indexedStr: IndexedString, lastIndex: number) {
+    const pass = indexedStr.getLastIndex() === lastIndex || isNaN(indexedStr.getLastIndex()) === isNaN(lastIndex);
+    return {
+      pass,
+      message: () => pass ? "" : "IndexedString does not have expected last index, expected: " + lastIndex
+        + ", actual: " + indexedStr.getLastIndex(),
+    };
+  },
+
+  toEqualToStrings(indexedStrs: IndexedString[], strs: string[]) {
+    const passes = indexedStrs.map((indexedStr, i) => indexedStr.toString() === strs[i]);
+    const pass = passes.reduce((agg, cur) => agg && cur, true);
+    return {
+      pass,
+      message: () => {
+        if (pass) {
+          return '';
+        }
+        let msg = 'Split IndexedString does not have expected parts:';
+        msg += passes
+          .map((p, i) => p ? '' : '\n- Part ' + i + ' - expected: ' + strs[i] + ', actual: ' + indexedStrs[i])
+          .join('');
+        return msg;
       },
     };
   },

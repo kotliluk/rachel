@@ -1,57 +1,62 @@
 import {IndexedChar, IndexedString} from "../indexedString";
 import {StartEndPair} from "../startEndPair";
 
+
 const strOne: string = "Str with \n and řý87\"6§.)";
-const indexedStrOne: IndexedChar[] = strOne.split('').map((char, index) => {return {char: char, index: index}});
+const strOneChars: IndexedChar[] = strOne.split('').map((char, index) => {return {char, index}});
 
 const strTwo: string = "The quick brown fox jumps over the lazy dog.";
-const indexedStrTwo: IndexedChar[] = strTwo.split('').map((char, index) => {return {char: char, index: index}});
+const strTwoChars: IndexedChar[] = strTwo.split('').map((char, index) => {return {char, index}});
 
-const strThree: string = "abcde";
+interface NewTestInput {
+    str: string,
+    startIndex: number | undefined,
+    chars: IndexedChar[],
+    firstIndex: number,
+    lastIndex: number,
+}
 
-describe("new", () => {
-    test("Str with '\n'' and 'řý87\"6§.)'", () => {
+describe("IndexedString.new creates expected string", () => {
+    const newTestInputs: NewTestInput[] = [
+        {
+            str: strOne,
+            startIndex: undefined,
+            chars: strOneChars,
+            firstIndex: 0,
+            lastIndex: strOne.length - 1,
+        },
+        {
+            str: "",
+            startIndex: undefined,
+            chars: [],
+            firstIndex: NaN,
+            lastIndex: NaN,
+        },
+        {
+            str: strOne,
+            startIndex: 5,
+            chars: strOneChars.map(ic => { return { char: ic.char, index: ic.index + 5 } }),
+            firstIndex: 5,
+            lastIndex: strOne.length - 1 + 5,
+        },
+        {
+            str: strOne,
+            startIndex: NaN,
+            chars: strOneChars.map(({ char }) => { return { char, index: NaN } }),
+            firstIndex: NaN,
+            lastIndex: NaN,
+        },
+    ];
+
+    test.each(newTestInputs)("%s", ({ str, startIndex, chars, firstIndex, lastIndex }) => {
         // act
-        const indexedString = IndexedString.new(strOne);
+        const indexedString = IndexedString.new(str, startIndex);
         // assert
-        expect(indexedString.toString()).toStrictEqual(strOne);
-        expect(indexedString.length()).toStrictEqual(strOne.length);
-        expect(indexedString.getChars()).toStrictEqual(indexedStrOne);
-        expect(indexedString.getFirstIndex()).toStrictEqual(0);
-        expect(indexedString.getLastIndex()).toStrictEqual(strOne.length - 1);
-    });
-
-    test("Empty string", () => {
-        // act
-        const indexedString = IndexedString.new("");
-        // assert
-        expect(indexedString.toString()).toStrictEqual('');
-        expect(indexedString.length()).toStrictEqual(0);
-        expect(indexedString.getChars()).toStrictEqual([]);
-        expect(indexedString.getFirstIndex()).toBeNaN();
-        expect(indexedString.getLastIndex()).toBeNaN();
-    });
-
-    test("number startIndex given", () => {
-        // act
-        const indexedString = IndexedString.new(strOne, 5);
-        // assert
-        expect(indexedString.toString()).toStrictEqual(strOne);
-        expect(indexedString.length()).toStrictEqual(strOne.length);
-        expect(indexedString.getChars()).toStrictEqual(indexedStrOne.map(ic => {return {char: ic.char, index: ic.index + 5}}));
-        expect(indexedString.getFirstIndex()).toStrictEqual(5);
-        expect(indexedString.getLastIndex()).toStrictEqual(strOne.length - 1 + 5);
-    });
-
-    test("NaN startIndex given", () => {
-        // act
-        const indexedString = IndexedString.new(strOne, NaN);
-        // assert
-        expect(indexedString.toString()).toStrictEqual(strOne);
-        expect(indexedString.length()).toStrictEqual(strOne.length);
-        expect(indexedString.getChars()).toStrictEqual(indexedStrOne.map(ic => {return {char: ic.char, index: NaN}}));
-        expect(indexedString.getFirstIndex()).toStrictEqual(NaN);
-        expect(indexedString.getLastIndex()).toStrictEqual(NaN);
+        expect(indexedString)
+          .toRepresentString(str)
+          .toHaveChars(chars)
+          .toHaveFirstIndex(firstIndex)
+          .toHaveLastIndex(lastIndex)
     });
 });
 
@@ -62,9 +67,34 @@ describe("copy", () => {
         // act
         const copy = indexedString.copy();
         // assert
-        expect(copy.getChars()).toStrictEqual(indexedString.getChars());
+        expect(copy).toHaveChars(strOneChars);
+    });
+
+    test("change of original does not affect copy", () => {
+        // arrange
+        const indexedString = IndexedString.new(strOne);
+        // act
+        const copy = indexedString.copy();
+        indexedString.getChars()[0].index++;
+        // assert
+        expect(copy).toHaveChars(strOneChars);
+    });
+
+    test("change of copy does not affect original", () => {
+        // arrange
+        const indexedString = IndexedString.new(strOne);
+        // act
+        const copy = indexedString.copy();
+        copy.getChars()[0].index++;
+        // assert
+        expect(indexedString).toHaveChars(strOneChars);
     });
 });
+
+interface SplitTestInput {
+    str: string,
+    separator: string,
+}
 
 describe("split", () => {
     test("original string not changed", () => {
@@ -73,65 +103,32 @@ describe("split", () => {
         // act
         indexedString.split('');
         // assert
-        expect(indexedString.getChars()).toStrictEqual(indexedStrTwo);
+        expect(indexedString).toHaveChars(strTwoChars);
     });
 
-    test("non-empty split(' ')", () => {
-        // arrange
-        const indexedString = IndexedString.new(strTwo);
-        const split: string[] = strTwo.split(' ');
-        // act
-        const indexedSplit: IndexedString[] = indexedString.split(' ');
-        // assert
-        expect(indexedSplit.length).toStrictEqual(split.length);
-        split.forEach((part, i) => {
-            expect(indexedSplit[i].getChars().map(ic => ic.char).join('')).toStrictEqual(part);
-            expect(indexedSplit[i].toString()).toStrictEqual(part);
-        })
-    });
+    const splitTestInputs: SplitTestInput[] = [
+        { str: strTwo, separator: ' ' },
+        { str: "", separator: ' ' },
+        { str: strOne, separator: '' },
+        { str: "", separator: '' },
+    ]
 
-    test("empty split(' ')", () => {
+    test.each(splitTestInputs)("%s", ({ str, separator }) => {
         // arrange
-        const indexedString = IndexedString.empty();
-        const split: string[] = ''.split(' ');
+        const indexedString = IndexedString.new(str);
+        const split: string[] = str.split(separator);
         // act
-        const indexedSplit: IndexedString[] = indexedString.split(' ');
+        const indexedSplit: IndexedString[] = indexedString.split(separator);
         // assert
-        expect(indexedSplit.length).toStrictEqual(split.length);
-        split.forEach((part, i) => {
-            expect(indexedSplit[i].getChars().map(ic => ic.char).join('')).toStrictEqual(part);
-            expect(indexedSplit[i].toString()).toStrictEqual(part);
-        })
-    });
-
-    test("non-empty split('')", () => {
-        // arrange
-        const indexedString = IndexedString.new(strOne);
-        const split: string[] = strOne.split(' ');
-        // act
-        const indexedSplit: IndexedString[] = indexedString.split(' ');
-        // assert
-        expect(indexedSplit.length).toStrictEqual(split.length);
-        split.forEach((part, i) => {
-            expect(indexedSplit[i].getChars().map(ic => ic.char).join('')).toStrictEqual(part);
-            expect(indexedSplit[i].toString()).toStrictEqual(part);
-        });
-    });
-
-    test("empty split('')", () => {
-        // arrange
-        const indexedString = IndexedString.empty();
-        const split: string[] = ''.split('');
-        // act
-        const indexedSplit: IndexedString[] = indexedString.split('');
-        // assert
-        expect(indexedSplit.length).toStrictEqual(split.length);
-        split.forEach((part, i) => {
-            expect(indexedSplit[i].getChars().map(ic => ic.char).join('')).toStrictEqual(part);
-            expect(indexedSplit[i].toString()).toStrictEqual(part);
-        });
+        expect(indexedSplit).toEqualToStrings(split);
     });
 });
+
+interface SliceTestInput {
+    str: string,
+    start: number,
+    end: number | undefined,
+}
 
 describe("slice", () => {
     test("original string not changed", () => {
@@ -140,123 +137,41 @@ describe("slice", () => {
         // act
         indexedString.slice(5, 15);
         // assert
-        expect(indexedString.getChars()).toStrictEqual(indexedStrTwo);
+        expect(indexedString).toHaveChars(strTwoChars);
     });
 
-    test("valid slice with start and end", () => {
+    const sliceTestValidInputs: SliceTestInput[] = [
+        { str: strTwo, start: 5, end: 15 },
+        { str: strTwo, start: 0, end: 5 },
+        { str: strTwo, start: 5, end: undefined },
+        { str: strTwo, start: 0, end: undefined },
+        { str: strTwo, start: 0, end: 0 },
+        { str: strTwo, start: -25, end: -12 },
+        { str: strTwo, start: -2, end: -1 },
+    ];
+
+    test.each(sliceTestValidInputs)("%s", ({ str, start, end}) => {
         // arrange
-        const indexedString = IndexedString.new(strTwo);
-        const slice: string = strTwo.slice(5, 15);
+        const indexedString = IndexedString.new(str);
+        const slice: string = strTwo.slice(start, end);
         // act
-        const indexedSlice: IndexedString = indexedString.slice(5, 15);
+        const indexedSlice: IndexedString = indexedString.slice(start, end);
         // assert
-        expect(indexedSlice.toString()).toStrictEqual(slice);
-        expect(indexedString.getChars()).toStrictEqual(indexedStrTwo);
+        expect(indexedSlice).toRepresentString(slice);
     });
 
-    test("valid slice with start and end", () => {
-        // arrange
-        const indexedString = IndexedString.new(strThree);
-        const slice: string = strThree.slice(0, 5);
-        // act
-        const indexedSlice: IndexedString = indexedString.slice(0, 5);
-        // assert
-        expect(indexedSlice.toString()).toStrictEqual(slice);
-    });
+    const sliceTestInvalidInputs: SliceTestInput[] = [
+        { str: strTwo, start: -6, end: 3 },
+        { str: strTwo, start: 2, end: -100 },
+        { str: strTwo, start: 4, end: 2 },
+        { str: strTwo, start: 2, end: 100 },
+    ];
 
-    test("valid slice with start only", () => {
+    test.each(sliceTestInvalidInputs)("%s", ({ str, start, end }) => {
         // arrange
-        const indexedString = IndexedString.new(strTwo);
-        const slice: string = strTwo.slice(5);
-        // act
-        const indexedSlice: IndexedString = indexedString.slice(5);
-        // assert
-        expect(indexedSlice.toString()).toStrictEqual(slice);
-    });
-
-    test("valid slice with start only", () => {
-        // arrange
-        const indexedString = IndexedString.new(strThree);
-        const slice: string = strThree.slice(0);
-        // act
-        const indexedSlice: IndexedString = indexedString.slice(0);
-        // assert
-        expect(indexedSlice.toString()).toStrictEqual(slice);
-    });
-
-    test("valid slice with negative start and negative end", () => {
-        // arrange
-        const indexedString = IndexedString.new(strTwo);
-        const slice: string = strTwo.slice(-25, -12);
-        // act
-        const indexedSlice: IndexedString = indexedString.slice(-25, -12);
-        // assert
-        expect(indexedSlice.toString()).toStrictEqual(slice);
-    });
-
-    test("valid slice with negative start and negative end", () => {
-        // arrange
-        const indexedString = IndexedString.new(strThree);
-        const slice: string = strThree.slice(-5, -1);
-        // act
-        const indexedSlice: IndexedString = indexedString.slice(-5, -1);
-        // assert
-        expect(indexedSlice.toString()).toStrictEqual(slice);
-    });
-
-    test("valid slice with 0 start and 0 end", () => {
-        // arrange
-        const indexedString = IndexedString.new(strThree);
-        const slice: string = strThree.slice(0, 0);
-        // act
-        const indexedSlice: IndexedString = indexedString.slice(0, 0);
-        // assert
-        expect(indexedSlice.toString()).toStrictEqual(slice);
-    });
-
-    test("valid slice with 0 start", () => {
-        // arrange
-        const indexedString = IndexedString.new(strThree);
-        const slice: string = strThree.slice(0);
-        // act
-        const indexedSlice: IndexedString = indexedString.slice(0);
-        // assert
-        expect(indexedSlice.toString()).toStrictEqual(slice);
-    });
-
-    test("invalid negative start", () => {
-        // arrange
-        const indexedString = IndexedString.new(strThree);
+        const indexedString = IndexedString.new(str);
         // act and assert
-        expect(() => {indexedString.slice(-6, 3)}).toThrow();
-    });
-
-    test("invalid negative end", () => {
-        // arrange
-        const indexedString = IndexedString.new(strThree);
-        // act and assert
-        expect(() => {indexedString.slice(2, -6)}).toThrow();
-    });
-
-    test("invalid positive start (greater than end)", () => {
-        // arrange
-        const indexedString = IndexedString.new(strThree);
-        // act and assert
-        expect(() => {indexedString.slice(4, 2)}).toThrow();
-    });
-
-    test("invalid positive end", () => {
-        // arrange
-        const indexedString = IndexedString.new(strThree);
-        // act and assert
-        expect(() => {indexedString.slice(2, 6)}).toThrow();
-    });
-
-    test("invalid positive start and end", () => {
-        // arrange
-        const indexedString = IndexedString.new(strThree);
-        // act and assert
-        expect(() => {indexedString.slice(8, 11)}).toThrow();
+        expect(() => {indexedString.slice(start, end)}).toThrow();
     });
 });
 
@@ -267,29 +182,22 @@ describe("trim", () => {
         // act
         indexedString.trim();
         // assert
-        expect(indexedString.getChars()).toStrictEqual(indexedStrTwo);
+        expect(indexedString).toHaveChars(strTwoChars);
     });
 
-    test("trim 1", () => {
+    const trimTestInputs: string[] = [
+        "  \n \tfeib jfnsbiu   hf  \t\t",
+        "feib jfnsbiu   hf",
+    ]
+
+    test.each(trimTestInputs)("%s", (str) => {
         // arrange
-        const original: string = "  \n \tfeib jfnsbiu   hf  \t\t";
-        const trim: string = "feib jfnsbiu   hf";
-        const indexedString = IndexedString.new(original);
+        const trim: string = str.trim();
+        const indexedString = IndexedString.new(str);
         // act
         const actual: IndexedString = indexedString.trim();
         // assert
-        expect(actual.toString()).toStrictEqual(trim);
-    });
-
-    test("trim 2", () => {
-        // arrange
-        const original: string = "feib jfnsbiu   hf";
-        const trim: string = "feib jfnsbiu   hf";
-        const indexedString = IndexedString.new(original);
-        // act
-        const actual: IndexedString = indexedString.trim();
-        // assert
-        expect(actual.toString()).toStrictEqual(trim);
+        expect(actual).toRepresentString(trim);
     });
 });
 
@@ -298,37 +206,27 @@ describe("concat", () => {
         // arrange
         const a: string = "abc def";
         const b: string = "123 456";
-        const c: string = "ěšč řžý";
-        const d: string = ",./ ;'\\";
         const isA = IndexedString.new(a);
         const isB = IndexedString.new(b);
-        const isC = IndexedString.new(c);
-        const isD = IndexedString.new(d);
         // act
-        isA.concat(isB, isC, isD);
+        isA.concat(isB);
         // assert
-        expect(isA.toString()).toStrictEqual(a);
-        expect(isB.toString()).toStrictEqual(b);
-        expect(isC.toString()).toStrictEqual(c);
-        expect(isD.toString()).toStrictEqual(d);
+        expect(isA).toRepresentString(a);
+        expect(isB).toRepresentString(b);
     });
 
     test("original indexes kept", () => {
         // arrange
-        const a: IndexedChar[] = [{ char: 'a', index: 5 }];
-        const b: IndexedChar[] = [{ char: 'b', index: 8 }];
-        const c: IndexedChar[] = [{ char: 'c', index: 11 }];
-        const isA = IndexedString.newFromArray(a);
-        const isB = IndexedString.newFromArray(b);
-        const isC = IndexedString.newFromArray(c);
+        const isA = IndexedString.newFromArray([{ char: 'a', index: 5 }]);
+        const isB = IndexedString.newFromArray([{ char: 'b', index: 8 }]);
+        const isC = IndexedString.newFromArray([{ char: 'c', index: 11 }]);
         // act
         const result = isA.concat(isB, isC);
         // assert
-        expect(result.getFirstIndex()).toBe(5);
-        expect(result.getLastIndex()).toBe(11);
+        expect(result).toHaveFirstIndex(5).toHaveLastIndex(11);
     });
 
-    test("concat 4", () => {
+    test("concat 4 strings", () => {
         // arrange
         const a: string = "abc def";
         const b: string = "123 456";
@@ -342,10 +240,10 @@ describe("concat", () => {
         // act
         const actual: IndexedString = isA.concat(isB, isC, isD);
         // assert
-        expect(actual.toString()).toStrictEqual(expected);
+        expect(actual).toRepresentString(expected);
     });
 
-    test("concat 1", () => {
+    test("concat 1 string", () => {
         // arrange
         const a: string = "abc def";
         const isA = IndexedString.new(a);
@@ -353,84 +251,7 @@ describe("concat", () => {
         // act
         const actual: IndexedString = isA.concat();
         // assert
-        expect(actual.toString()).toStrictEqual(expected);
-    });
-});
-
-describe("getFirstIndex", () => {
-    test("empty string returns NaN", () => {
-        // arrange
-        const is: IndexedString = IndexedString.empty();
-        // act
-        const actual: number = is.getFirstIndex();
-        // assert
-        expect(actual).toBeNaN();
-    });
-
-    test("starting with number", () => {
-        // arrange
-        const arr: IndexedChar[] = [{ char: 'a', index: 0 }, { char: 'a', index: 1 }, { char: 'a', index: 2 },
-            { char: 'a', index: 3 }, { char: 'a', index: 4 }, { char: 'a', index: 5 }];
-        const is: IndexedString = IndexedString.newFromArray(arr);
-        // act
-        const actual: number = is.getFirstIndex();
-        // assert
-        expect(actual).toBe(0);
-    });
-
-    test("starting with NaN", () => {
-        // arrange
-        const arr: IndexedChar[] = [{ char: 'a', index: NaN }, { char: 'a', index: NaN }, { char: 'a', index: 2 },
-            { char: 'a', index: NaN }, { char: 'a', index: 4 }, { char: 'a', index: NaN }];
-        const is: IndexedString = IndexedString.newFromArray(arr);
-        // act
-        const actual: number = is.getFirstIndex();
-        // assert
-        expect(actual).toBeNaN();
-    });
-});
-
-describe("getLastIndex", () => {
-    test("empty string returns undefined", () => {
-        // arrange
-        const is: IndexedString = IndexedString.empty();
-        // act
-        const actual: number = is.getLastIndex();
-        // assert
-        expect(actual).toBeNaN();
-    });
-
-    test("ending with number", () => {
-        // arrange
-        const arr: IndexedChar[] = [{ char: 'a', index: 0 }, { char: 'a', index: 1 }, { char: 'a', index: 2 },
-            { char: 'a', index: 3 }, { char: 'a', index: 4 }, { char: 'a', index: 5 }];
-        const is: IndexedString = IndexedString.newFromArray(arr);
-        // act
-        const actual: number = is.getLastIndex();
-        // assert
-        expect(actual).toBe(5);
-    });
-
-    test("ending with NaN", () => {
-        // arrange
-        const arr: IndexedChar[] = [{ char: 'a', index: NaN }, { char: 'a', index: NaN }, { char: 'a', index: 2 },
-            { char: 'a', index: NaN }, { char: 'a', index: 4 }, { char: 'a', index: NaN }];
-        const is: IndexedString = IndexedString.newFromArray(arr);
-        // act
-        const actual: number = is.getLastIndex();
-        // assert
-        expect(actual).toBeNaN()
-    });
-
-    test("all NaN", () => {
-        // arrange
-        const arr: IndexedChar[] = [{ char: 'a', index: NaN }, { char: 'a', index: NaN }, { char: 'a', index: NaN },
-            { char: 'a', index: NaN }, { char: 'a', index: NaN }, { char: 'a', index: NaN }];
-        const is: IndexedString = IndexedString.newFromArray(arr);
-        // act
-        const actual: number = is.getLastIndex();
-        // assert
-        expect(actual).toBeNaN();
+        expect(actual).toRepresentString(expected);
     });
 });
 
@@ -446,34 +267,21 @@ describe("getRange", () => {
 
     test("all numbers", () => {
         // arrange
-        const arr: IndexedChar[] = [{ char: 'a', index: 0 }, { char: 'a', index: 1 }, { char: 'a', index: 2 },
-            { char: 'a', index: 3 }, { char: 'a', index: 4 }, { char: 'a', index: 5 }];
+        const arr: IndexedChar[] = [ { char: 'a', index: 0 }, { char: 'a', index: 1 }, { char: 'a', index: 2 } ];
         const is: IndexedString = IndexedString.newFromArray(arr);
         // act
         const actual: StartEndPair | undefined = is.getRange();
         // assert
-        expect(actual).toStrictEqual({start: 0, end: 5});
+        expect(actual).toStrictEqual({ start: 0, end: 2 });
     });
 
     test("starting and ending with NaN", () => {
         // arrange
-        const arr: IndexedChar[] = [{ char: 'a', index: NaN }, { char: 'a', index: NaN }, { char: 'a', index: 2 },
-            { char: 'a', index: NaN }, { char: 'a', index: 4 }, { char: 'a', index: NaN }];
+        const arr: IndexedChar[] = [ { char: 'a', index: NaN }, { char: 'a', index: 1 }, { char: 'a', index: NaN } ];
         const is: IndexedString = IndexedString.newFromArray(arr);
         // act
         const actual: StartEndPair | undefined = is.getRange();
         // assert
-        expect(actual).toStrictEqual({start: NaN, end: NaN});
-    });
-
-    test("all NaN returns undefined", () => {
-        // arrange
-        const arr: IndexedChar[] = [{ char: 'a', index: NaN }, { char: 'a', index: NaN }, { char: 'a', index: NaN },
-            { char: 'a', index: NaN }, { char: 'a', index: NaN }, { char: 'a', index: NaN }];
-        const is: IndexedString = IndexedString.newFromArray(arr);
-        // act
-        const actual: StartEndPair | undefined = is.getRange();
-        // assert
-        expect(actual).toStrictEqual({start: NaN, end: NaN});
+        expect(actual).toStrictEqual({ start: NaN, end: NaN });
     });
 });
