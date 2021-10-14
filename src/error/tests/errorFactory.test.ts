@@ -1,93 +1,136 @@
-import {assertParamsCount, joinStringArrays} from "../errorFactory";
+import {assertParamsCount, ErrorFactory, joinStringArrays} from "../errorFactory";
+import {StartEndPair} from "../../types/startEndPair";
 
-describe("assertParamsCount", () => {
-    test("expected 0, given 0", () => {
-        // arrange
-        const expectedCount: number = 0;
-        const params: string[] = [];
-        const expected: string[] = [];
-        // act
-        assertParamsCount(expectedCount, params);
-        // assert
-        expect(params).toStrictEqual(expected);
-    });
 
-    test("expected 0, given 1", () => {
-        // arrange
-        const expectedCount: number = 0;
-        const params: string[] = ['aaa'];
-        const expected: string[] = ['aaa'];
-        // act
-        assertParamsCount(expectedCount, params);
-        // assert
-        expect(params).toStrictEqual(expected);
-    });
+// mocks language to not affect tests
+jest.mock("../../language/language", () => {
+  return {
+    language: () => {
+      return {
+        syntaxError: '',
+        semanticError: '',
+      };
+    },
+  }
+})
 
-    test("expected 2, given 1", () => {
-        // arrange
-        const expectedCount: number = 2;
-        const params: string[] = ['aaa'];
-        const expected: string[] = ['aaa', ''];
-        // act
-        assertParamsCount(expectedCount, params);
-        // assert
-        expect(params).toStrictEqual(expected);
-    });
+interface CodeErrorTestInput {
+  msgParts: string[],
+  params: string[],
+  expectedMsg: string,
+}
 
-    test("expected 5, given 3", () => {
-        // arrange
-        const expectedCount: number = 5;
-        const params: string[] = ['aaa', 'bbb', 'ccc'];
-        const expected: string[] = ['aaa', 'bbb', 'ccc', '', ''];
-        // act
-        assertParamsCount(expectedCount, params);
-        // assert
-        expect(params).toStrictEqual(expected);
-    });
+describe("codeError", () => {
+  const codeErrorTestInputs: CodeErrorTestInput[] = [
+    {
+      msgParts: ["AAA", "BBB", "CCC"],
+      params: ["111", "222"],
+      expectedMsg: "AAA111BBB222CCC",
+    },
+    {
+      msgParts: ["AAA", "BBB", "CCC"],
+      params: ["111", "222", "333"],
+      expectedMsg: "AAA111BBB222CCC",
+    },
+    {
+      msgParts: ["AAA", "BBB", "CCC"],
+      params: [],
+      expectedMsg: "AAABBBCCC",
+    },
+  ];
+
+  test.each(codeErrorTestInputs)("%s", ({ msgParts, params, expectedMsg }) => {
+    // act
+    const error = ErrorFactory.codeError(msgParts, ...params);
+    // assert
+    expect(error).toHaveMessage(expectedMsg);
+  })
 });
 
+interface SyntaxAndSemanticErrorTestInput {
+  msgParts: string[],
+  range: StartEndPair | undefined,
+  params: string[],
+  expectedMsg: string,
+}
+
+describe("ErrorWithTextRange", () => {
+  const codeErrorTestInputs: SyntaxAndSemanticErrorTestInput[] = [
+    {
+      msgParts: ["AAA", "BBB", "CCC"],
+      range: { start: 0, end: 13 },
+      params: ["111", "222"],
+      expectedMsg: "AAA111BBB222CCC",
+    },
+    {
+      msgParts: ["AAA", "BBB", "CCC"],
+      range: { start: 8, end: NaN },
+      params: ["111", "222", "333"],
+      expectedMsg: "AAA111BBB222CCC",
+    },
+    {
+      msgParts: ["AAA", "BBB", "CCC"],
+      range: undefined,
+      params: [],
+      expectedMsg: "AAABBBCCC",
+    },
+  ];
+
+  test.each(codeErrorTestInputs)("syntaxError - %s", ({ msgParts, range, params, expectedMsg }) => {
+    // act
+    const error = ErrorFactory.syntaxError(msgParts, range, ...params);
+    // assert
+    expect(error).toHaveMessage(expectedMsg).toHaveTextRange(range);
+  });
+
+  test.each(codeErrorTestInputs)("semanticError - %s", ({ msgParts, range, params, expectedMsg }) => {
+    // act
+    const error = ErrorFactory.semanticError(msgParts, range, ...params);
+    // assert
+    expect(error).toHaveMessage(expectedMsg).toHaveTextRange(range);
+  });
+});
+
+interface AssertParamsCountTestInput {
+  count: number,
+  params: string[],
+  expected: string[],
+}
+
+describe("assertParamsCount", () => {
+  const assertParamsCountTestInputs: AssertParamsCountTestInput[] = [
+    { count: 0, params: [], expected: [] },
+    { count: 0, params: ["aaa"], expected: ["aaa"] },
+    { count: 2, params: ["aaa"], expected: ["aaa", ""] },
+    { count: 5, params: ["aaa", "bbb", "ccc"], expected: ["aaa", "bbb", "ccc", "", ""] },
+  ];
+
+  test.each(assertParamsCountTestInputs)("%s", ({ count, params, expected }) => {
+    // act
+    assertParamsCount(count, params);
+    // assert
+    expect(params).toStrictEqual(expected);
+  });
+});
+
+interface JoinStringArraysTestInput {
+  a: string[],
+  b: string[],
+  expected: string,
+}
+
 describe("joinStringArrays", () => {
-    test("[a, bb, ccc, d], [1, 222, 3]", () => {
-        // arrange
-        const arrA: string[] = ['a', 'bb', 'ccc', 'd'];
-        const arrB: string[] = ['1', '222', '3'];
-        const expected: string = "a1bb222ccc3d";
-        // act
-        const actual: string = joinStringArrays(arrA, arrB);
-        // assert
-        expect(actual).toStrictEqual(expected);
-    });
+  const joinStringArraysTestInputs: JoinStringArraysTestInput[] = [
+    { a: ["a", "bb", "ccc", "d"], b: ["1", "222", "3"], expected: "a1bb222ccc3d" },
+    { a: ["abcd"], b: [], expected: "abcd" },
+    { a: ["a", "bb", "ccc", "d"], b: ["", "0   0", ""], expected: "abb0   0cccd" },
+    { a: ["a", "bb", "ccc", "d"], b: ["1", "2", "3", "4", "5"], expected: "a1bb2ccc3d" },
+  ]
 
-    test("[abcd], []", () => {
-        // arrange
-        const arrA: string[] = ['abcd'];
-        const arrB: string[] = [];
-        const expected: string = "abcd";
-        // act
-        const actual: string = joinStringArrays(arrA, arrB);
-        // assert
-        expect(actual).toStrictEqual(expected);
-    });
-
-    test("[a, bb, ccc, d], ['', '0   0', '']", () => {
-        // arrange
-        const arrA: string[] = ['a', 'bb', 'ccc', 'd'];
-        const arrB: string[] = ['', '0   0', ''];
-        const expected: string = "abb0   0cccd";
-        // act
-        const actual: string = joinStringArrays(arrA, arrB);
-        // assert
-        expect(actual).toStrictEqual(expected);
-    });
-
-    test("more in second array: [a, bb, ccc, d], [1, 2, 3, 4, 5]", () => {
-        // arrange
-        const arrA: string[] = ['a', 'bb', 'ccc', 'd'];
-        const arrB: string[] = ['1', '2', '3', '4', '5'];
-        const expected: string = "a1bb2ccc3d";
-        // act
-        const actual: string = joinStringArrays(arrA, arrB);
-        // assert
-        expect(actual).toStrictEqual(expected);
-    });
+  test.each(joinStringArraysTestInputs)("%s", ({ a, b, expected }) => {
+    // act
+    const actual: string = joinStringArrays(a, b);
+    // assert
+    expect(actual).toStrictEqual(expected);
+  });
 });

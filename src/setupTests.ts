@@ -6,10 +6,20 @@ import {Pair} from "./types/pair";
 import {IndexedChar, IndexedString} from "./types/indexedString";
 import {ColumnContent, SupportedColumnType} from "./relation/columnType";
 import {VEResult} from "./vetree/veTreeNode";
+import {StartEndPair} from "./types/startEndPair";
+import {ErrorWithTextRange} from "./error/errorWithTextRange";
 
 
 declare global {
   namespace jest {
+    interface Matchers<R> {
+      // For Error testing
+      toHaveMessage(msg: string): R;
+    }
+    interface Matchers<R> {
+      // For ErrorWithTextRange testing
+      toHaveTextRange(range: StartEndPair | undefined): R;
+    }
     interface Matchers<R> {
       // For StoredRelation testing
       toHaveName(name: string): R;
@@ -42,6 +52,33 @@ declare global {
     }
   }
 }
+
+/**
+ * For Error testing.
+ */
+expect.extend({
+  toHaveMessage(error: Error, msg: string) {
+    const pass = error.message === msg;
+    return {
+      pass,
+      message: () => pass ? "" : "Error has unexpected message, expected: " + msg + ", actual: " + error.message,
+    };
+  },
+});
+
+/**
+ * For ErrorWithTextRange testing.
+ */
+expect.extend({
+  toHaveTextRange(error: ErrorWithTextRange, range: StartEndPair | undefined) {
+    const pass = isDeepStrictEqual(error.range, range);
+    return {
+      pass,
+      message: () => pass ? "" : "ErrorWithTextRange has unexpected range, expected: " + range + ", actual: "
+        + error.range,
+    };
+  },
+});
 
 /**
  * For StoredRelation testing.
@@ -105,7 +142,7 @@ expect.extend({
 });
 
 /**
- * For general testing.
+ * For VEResult testing.
  */
 expect.extend({
   toHaveValueAndType(result: VEResult, value: ColumnContent, type: SupportedColumnType | "null") {
@@ -125,7 +162,7 @@ expect.extend({
 });
 
 /**
- * For StoredRelation testing.
+ * For IndexedString testing.
  */
 expect.extend({
   toRepresentString(indexedStr: IndexedString, str: string) {
