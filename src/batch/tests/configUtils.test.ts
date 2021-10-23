@@ -6,131 +6,64 @@ import {
 } from "../configUtils";
 import {OperationsCount} from "../operationsCount";
 
+
+interface CreateCountComparatorTestInput {
+  count: any
+  toCompare: number
+  expected: string
+}
+
 describe('createCountComparator', () => {
-  test('number count', () => {
-    // arrange
-    const count = 5;
-    // act
-    const comparator = createCountComparator(count);
-    // assert
-    expect(comparator).toBeDefined();
-    if (comparator) {
-      expect(comparator(4)).toEqual("Expected 5, found 4");
-      expect(comparator(5)).toEqual("");
-      expect(comparator(6)).toEqual("Expected 5, found 6");
-    }
-  });
 
-  test('object count - eq only', () => {
-    // arrange
-    const count = { "$eq": 5 };
-    // act
-    const comparator = createCountComparator(count);
-    // assert
-    expect(comparator).toBeDefined();
-    if (comparator) {
-      expect(comparator(4)).toEqual("Expected 5, found 4");
-      expect(comparator(5)).toEqual("");
-      expect(comparator(6)).toEqual("Expected 5, found 6");
-    }
-  });
+  const testInputs: CreateCountComparatorTestInput[] = [
+    { count: 5, toCompare: 4, expected: "Expected 5, found 4" },
+    { count: 5, toCompare: 5, expected: "" },
+    { count: 5, toCompare: 6, expected: "Expected 5, found 6" },
+    { count: { "$eq": 5 }, toCompare: 4, expected: "Expected 5, found 4" },
+    { count: { "$eq": 5 }, toCompare: 5, expected: "" },
+    { count: { "$eq": 5 }, toCompare: 6, expected: "Expected 5, found 6" },
+    { count: { "$gte": 5 }, toCompare: 4, expected: "Expected greater or equal to 5, found 4" },
+    { count: { "$gte": 5 }, toCompare: 5, expected: "" },
+    { count: { "$gte": 5 }, toCompare: 6, expected: "" },
+    { count: { "$gt": 5 }, toCompare: 4, expected: "Expected greater than 5, found 4" },
+    { count: { "$gt": 5 }, toCompare: 5, expected: "Expected greater than 5, found 5" },
+    { count: { "$gt": 5 }, toCompare: 6, expected: "" },
+    { count: { "$lte": 5 }, toCompare: 4, expected: "" },
+    { count: { "$lte": 5 }, toCompare: 5, expected: "" },
+    { count: { "$lte": 5 }, toCompare: 6, expected: "Expected less or equal to 5, found 6" },
+    { count: { "$lt": 5 }, toCompare: 4, expected: "" },
+    { count: { "$lt": 5 }, toCompare: 5, expected: "Expected less than 5, found 5" },
+    { count: { "$lt": 5 }, toCompare: 6, expected: "Expected less than 5, found 6" },
+    { count: { "$gte": 5, "$lte": 6 }, toCompare: 4, expected: "Expected greater or equal to 5, found 4" },
+    { count: { "$gte": 5, "$lte": 6 }, toCompare: 5, expected: "" },
+    { count: { "$gte": 5, "$lte": 6 }, toCompare: 6, expected: "" },
+    { count: { "$gt": 5, "$lt": 6 }, toCompare: 4, expected: "Expected greater than 5, found 4" },
+    { count: { "$gt": 5, "$lt": 6 }, toCompare: 5, expected: "Expected greater than 5, found 5" },
+    { count: { "$gt": 5, "$lt": 6 }, toCompare: 6, expected: "Expected less than 6, found 6" },
+    {
+      count: { "$eq": 5, "$gte": 4, "$lte": 6, "$gt": 4, "$lt": 6 },
+      toCompare: 4,
+      expected: "Expected 5, found 4 + Expected greater than 4, found 4",
+    },
+    {
+      count: { "$eq": 5, "$gte": 4, "$lte": 6, "$gt": 4, "$lt": 6 },
+      toCompare: 5,
+      expected: "",
+    },
+    {
+      count: { "$eq": 5, "$gte": 4, "$lte": 6, "$gt": 4, "$lt": 6 },
+      toCompare: 6,
+      expected: "Expected 5, found 6 + Expected less than 6, found 6",
+    },
+  ]
 
-  test('object count - gte only', () => {
-    // arrange
-    const count = { "$gte": 5 };
+  test.each(testInputs)('%s', ({ count, toCompare, expected }) => {
     // act
     const comparator = createCountComparator(count);
     // assert
     expect(comparator).toBeDefined();
-    if (comparator) {
-      expect(comparator(4)).toEqual("Expected greater or equal to 5, found 4");
-      expect(comparator(5)).toEqual("");
-      expect(comparator(6)).toEqual("");
-    }
-  });
-
-  test('object count - gt only', () => {
-    // arrange
-    const count = { "$gt": 5 };
-    // act
-    const comparator = createCountComparator(count);
-    // assert
-    expect(comparator).toBeDefined();
-    if (comparator) {
-      expect(comparator(4)).toEqual("Expected greater than 5, found 4");
-      expect(comparator(5)).toEqual("Expected greater than 5, found 5");
-      expect(comparator(6)).toEqual("");
-    }
-  });
-
-  test('object count - lte only', () => {
-    // arrange
-    const count = { "$lte": 5 };
-    // act
-    const comparator = createCountComparator(count);
-    // assert
-    expect(comparator).toBeDefined();
-    if (comparator) {
-      expect(comparator(4)).toEqual("");
-      expect(comparator(5)).toEqual("");
-      expect(comparator(6)).toEqual("Expected less or equal to 5, found 6");
-    }
-  });
-
-  test('object count - lt only', () => {
-    // arrange
-    const count = { "$lt": 5 };
-    // act
-    const comparator = createCountComparator(count);
-    // assert
-    expect(comparator).toBeDefined();
-    if (comparator) {
-      expect(comparator(4)).toEqual("");
-      expect(comparator(5)).toEqual("Expected less than 5, found 5");
-      expect(comparator(6)).toEqual("Expected less than 5, found 6");
-    }
-  });
-
-  test('object count - gte and lte', () => {
-    // arrange
-    const count = { "$gte": 5, "$lte": 6 };
-    // act
-    const comparator = createCountComparator(count);
-    // assert
-    expect(comparator).toBeDefined();
-    if (comparator) {
-      expect(comparator(4)).toEqual("Expected greater or equal to 5, found 4");
-      expect(comparator(5)).toEqual("");
-      expect(comparator(6)).toEqual("");
-    }
-  });
-
-  test('object count - gt and lt', () => {
-    // arrange
-    const count = { "$gt": 5, "$lt": 6 };
-    // act
-    const comparator = createCountComparator(count);
-    // assert
-    expect(comparator).toBeDefined();
-    if (comparator) {
-      expect(comparator(4)).toEqual("Expected greater than 5, found 4");
-      expect(comparator(5)).toEqual("Expected greater than 5, found 5");
-      expect(comparator(6)).toEqual("Expected less than 6, found 6");
-    }
-  });
-
-  test('object count - all', () => {
-    // arrange
-    const count = { "$eq": 5, "$gte": 4, "$lte": 6, "$gt": 4, "$lt": 6 };
-    // act
-    const comparator = createCountComparator(count);
-    // assert
-    expect(comparator).toBeDefined();
-    if (comparator) {
-      expect(comparator(4)).toEqual("Expected 5, found 4 + Expected greater than 4, found 4");
-      expect(comparator(5)).toEqual("");
-      expect(comparator(6)).toEqual("Expected 5, found 6 + Expected less than 6, found 6");
-    }
+    // @ts-ignore - must be defined after passing previous assertion
+    expect(comparator(toCompare)).toEqual(expected);
   });
 });
 
@@ -159,9 +92,8 @@ describe('createOperationsCounter', () => {
     const counter = createOperationsCounter(ops);
     // assert
     expect(counter).toBeDefined();
-    if (counter) {
-      expect(counter(operations)).toBe(2);
-    }
+    // @ts-ignore - must be defined after passing previous assertion
+    expect(counter(operations)).toBe(2);
   });
 
   test('array ops', () => {
@@ -171,9 +103,8 @@ describe('createOperationsCounter', () => {
     const counter = createOperationsCounter(ops);
     // assert
     expect(counter).toBeDefined();
-    if (counter) {
-      expect(counter(operations)).toBe(5);
-    }
+    // @ts-ignore - must be defined after passing previous assertion
+    expect(counter(operations)).toBe(5);
   });
 });
 
@@ -185,9 +116,8 @@ describe('createOperationsIndicator', () => {
     const counter = createOperationsIndicator(ops);
     // assert
     expect(counter).toBeDefined();
-    if (counter) {
-      expect(counter(operations)).toBe(1);
-    }
+    // @ts-ignore - must be defined after passing previous assertion
+    expect(counter(operations)).toBe(1);
   });
 
   test('array ops', () => {
@@ -197,163 +127,42 @@ describe('createOperationsIndicator', () => {
     const counter = createOperationsIndicator(ops);
     // assert
     expect(counter).toBeDefined();
-    if (counter) {
-      expect(counter(operations)).toBe(2);
-    }
+    // @ts-ignore - must be defined after passing previous assertion
+    expect(counter(operations)).toBe(2);
   });
 });
 
+interface CreateReportNameModifierTestInput {
+  config: any
+  original: string
+  expected: string
+}
+
 describe('createReportNameModifier', () => {
-  test("no config", () => {
-    // arrange
-    const config = {};
-    const originalName = "some/path/to/my-file.extension";
-    const expectedName = "some/path/to/my-file.txt";
-    // act
-    const modifier = createReportNameModifier(config);
-    const actualName = modifier(originalName);
-    // assert
-    expect(actualName).toEqual(expectedName);
-  });
 
-  test("invalid config - not object", () => {
-    // arrange
-    const config = "blah blah";
-    const originalName = "some/path/to/my-file.extension";
-    const expectedName = "some/path/to/my-file.txt";
-    // act
-    const modifier = createReportNameModifier(config);
-    const actualName = modifier(originalName);
-    // assert
-    expect(actualName).toEqual(expectedName);
-  });
+  const testInputs: CreateReportNameModifierTestInput[] = [
+    { config: {}, original: "some/path/to/my-file.extension", expected: "some/path/to/my-file.txt" },
+    { config: "invalid", original: "some/path/to/my-file.extension", expected: "some/path/to/my-file.txt" },
+    { config: { invalidField: "a" }, original: "some/path/to/my-file.extension", expected: "some/path/to/my-file.txt" },
+    { config: { prefix: "a_" }, original: "some/path/to/my-file.extension", expected: "a_some/path/to/my-file.txt" },
+    { config: { suffix: "_z" }, original: "some/path/to/my-file.extension", expected: "some/path/to/my-file_z.txt" },
+    { config: { joinPathParts: "-" }, original: "some/path/to/my-file.extension", expected: "some-path-to-my-file.txt" },
+    { config: { joinPathParts: "-a-" }, original: "some/path/to/my-file.extension", expected: "some-a-path-a-to-a-my-file.txt" },
+    { config: { usePathParts: [1] }, original: "some/path/to/my-file.extension", expected: "my-file.txt" },
+    { config: { usePathParts: [1, 3] }, original: "some/path/to/my-file.extension", expected: "path/my-file.txt" },
+    { config: { usePathParts: [1, 3, 100] }, original: "some/path/to/my-file.extension", expected: "path/my-file.txt" },
+    {
+      config: { prefix: 'aaa_', suffix: '_xxx', usePathParts: [1, 3], joinPathParts: '-' },
+      original: "some/path/to/my-file.extension",
+      expected: "aaa_path-my-file_xxx.txt",
+    },
+  ]
 
-  test("invalid config - invalid field", () => {
-    // arrange
-    const config = {
-      invalidField: 'abc_'
-    };
-    const originalName = "some/path/to/my-file.extension";
-    const expectedName = "some/path/to/my-file.txt";
+  test.each(testInputs)("%s", ({ config, original, expected }) => {
     // act
     const modifier = createReportNameModifier(config);
-    const actualName = modifier(originalName);
+    const actualName = modifier(original);
     // assert
-    expect(actualName).toEqual(expectedName);
-  });
-
-  test("prefix 'abc_'", () => {
-    // arrange
-    const config = {
-      prefix: 'abc_'
-    };
-    const originalName = "some/path/to/my-file.extension";
-    const expectedName = "abc_some/path/to/my-file.txt";
-    // act
-    const modifier = createReportNameModifier(config);
-    const actualName = modifier(originalName);
-    // assert
-    expect(actualName).toEqual(expectedName);
-  });
-
-  test("suffix '_xyz'", () => {
-    // arrange
-    const config = {
-      suffix: '_xyz'
-    };
-    const originalName = "some/path/to/my-file.extension";
-    const expectedName = "some/path/to/my-file_xyz.txt";
-    // act
-    const modifier = createReportNameModifier(config);
-    const actualName = modifier(originalName);
-    // assert
-    expect(actualName).toEqual(expectedName);
-  });
-
-  test("join path with '-'", () => {
-    // arrange
-    const config = {
-      joinPathParts: '-'
-    };
-    const originalName = "some/path/to/my-file.extension";
-    const expectedName = "some-path-to-my-file.txt";
-    // act
-    const modifier = createReportNameModifier(config);
-    const actualName = modifier(originalName);
-    // assert
-    expect(actualName).toEqual(expectedName);
-  });
-
-  test("join path with '-abc-'", () => {
-    // arrange
-    const config = {
-      joinPathParts: '-abc-'
-    };
-    const originalName = "some/path/to/my-file.extension";
-    const expectedName = "some-abc-path-abc-to-abc-my-file.txt";
-    // act
-    const modifier = createReportNameModifier(config);
-    const actualName = modifier(originalName);
-    // assert
-    expect(actualName).toEqual(expectedName);
-  });
-
-  test("use path part '1'", () => {
-    // arrange
-    const config = {
-      usePathParts: [1]
-    };
-    const originalName = "some/path/to/my-file.extension";
-    const expectedName = "my-file.txt";
-    // act
-    const modifier = createReportNameModifier(config);
-    const actualName = modifier(originalName);
-    // assert
-    expect(actualName).toEqual(expectedName);
-  });
-
-  test("use path part '1,3'", () => {
-    // arrange
-    const config = {
-      usePathParts: [1, 3]
-    };
-    const originalName = "some/path/to/my-file.extension";
-    const expectedName = "path/my-file.txt";
-    // act
-    const modifier = createReportNameModifier(config);
-    const actualName = modifier(originalName);
-    // assert
-    expect(actualName).toEqual(expectedName);
-  });
-
-  test("use path part '1,3,666' - 666 is ignored", () => {
-    // arrange
-    const config = {
-      usePathParts: [1, 3, 666]
-    };
-    const originalName = "some/path/to/my-file.extension";
-    const expectedName = "path/my-file.txt";
-    // act
-    const modifier = createReportNameModifier(config);
-    const actualName = modifier(originalName);
-    // assert
-    expect(actualName).toEqual(expectedName);
-  });
-
-  test("prefix 'aaa_', suffix '_xxx', use path part '1,3' join path with '-'", () => {
-    // arrange
-    const config = {
-      prefix: 'aaa_',
-      suffix: '_xxx',
-      usePathParts: [1, 3],
-      joinPathParts: '-'
-    };
-    const originalName = "some/path/to/my-file.extension";
-    const expectedName = "aaa_path-my-file_xxx.txt";
-    // act
-    const modifier = createReportNameModifier(config);
-    const actualName = modifier(originalName);
-    // assert
-    expect(actualName).toEqual(expectedName);
+    expect(actualName).toEqual(expected);
   });
 });
