@@ -1,11 +1,11 @@
-import {RATreeNode} from "./raTreeNode";
+import { RATreeNode } from './raTreeNode'
 
 /**
  * Classes extending unary node.
  * @category RATree
  * @public
  */
-export type UnaryNodeClass = "rename" | "projection" | "selection";
+export type UnaryNodeClass = 'rename' | 'projection' | 'selection'
 
 /**
  * Abstract node of the relational algebra syntactic tree with one subtree.
@@ -15,26 +15,26 @@ export type UnaryNodeClass = "rename" | "projection" | "selection";
  */
 export abstract class UnaryNode extends RATreeNode {
 
-    protected subtree: RATreeNode;
+  protected subtree: RATreeNode
 
-    /**
+  /**
      * Creates a new UnaryNode.
      *
      * @param subtree subtree of the node {@type RATreeNode}
      * @public
      */
-    protected constructor(subtree: RATreeNode) {
-        super();
-        this.subtree = subtree;
-    }
+  protected constructor (subtree: RATreeNode) {
+    super()
+    this.subtree = subtree
+  }
 
-    /**
+  /**
      * Returns subtree of the unary node.
      *
      * @return subtree of the unary node {@type RATreeNode}
      * @public
      */
-    public getSubtree(): RATreeNode {
-        return this.subtree;
-    }
+  getSubtree (): RATreeNode {
+    return this.subtree
+  }
 }

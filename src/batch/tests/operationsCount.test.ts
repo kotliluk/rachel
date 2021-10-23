@@ -5,20 +5,21 @@ import {
   operationsOfTree,
   totalOperations,
   unaryOperations,
-  zeroOperations
-} from "../operationsCount";
-import {RATreeNode} from "../../ratree/raTreeNode";
-import {AntijoinNode, AntijoinType} from "../../ratree/antijoinNode";
-import {CartesianProductNode} from "../../ratree/cartesianProductNode";
-import {DivisionNode} from "../../ratree/divisionNode";
-import {RelationNode} from "../../ratree/relationNode";
-import {Relation} from "../../relation/relation";
-import {ProjectionNode} from "../../ratree/projectionNode";
-import {IndexedString} from "../../types/indexedString";
-import {SelectionNode} from "../../ratree/selectionNode";
-import {SetOperationNode, SetOperationType} from "../../ratree/setOperationNode";
-import {RenameNode} from "../../ratree/renameNode";
-import {ThetaJoinNode, ThetaJoinType} from "../../ratree/thetaJoinNode";
+  zeroOperations,
+} from '../operationsCount'
+import { RATreeNode } from '../../ratree/raTreeNode'
+import { AntijoinNode, AntijoinType } from '../../ratree/antijoinNode'
+import { CartesianProductNode } from '../../ratree/cartesianProductNode'
+import { DivisionNode } from '../../ratree/divisionNode'
+import { RelationNode } from '../../ratree/relationNode'
+import { Relation } from '../../relation/relation'
+import { ProjectionNode } from '../../ratree/projectionNode'
+import { IndexedString } from '../../types/indexedString'
+import { SelectionNode } from '../../ratree/selectionNode'
+import { SetOperationNode, SetOperationType } from '../../ratree/setOperationNode'
+import { RenameNode } from '../../ratree/renameNode'
+import { ThetaJoinNode, ThetaJoinType } from '../../ratree/thetaJoinNode'
+
 
 const getAllZeros = (): OperationsCount => {
   return {
@@ -89,15 +90,15 @@ describe('zeroOperations', () => {
 })
 
 interface AddOperationsTestInput {
-  toAdd: OperationsCount[],
-  expected: OperationsCount,
+  toAdd: OperationsCount[]
+  expected: OperationsCount
 }
 
 describe('addOperations', () => {
   const inputs: AddOperationsTestInput[] = [
     { toAdd: [], expected: getAllZeros() },
-    { toAdd: [ getAllZeros() ], expected: getAllZeros() },
-    { toAdd: [ getAllZeros(), getAllOnes(), getAllOnes() ], expected: getAllTwos() },
+    { toAdd: [getAllZeros()], expected: getAllZeros() },
+    { toAdd: [getAllZeros(), getAllOnes(), getAllOnes()], expected: getAllTwos() },
   ]
   test.each(inputs)('%s', ({ toAdd, expected }) => {
     // act
@@ -108,8 +109,8 @@ describe('addOperations', () => {
 })
 
 interface CountOperationsTestInput {
-  toSum: OperationsCount,
-  expected: number,
+  toSum: OperationsCount
+  expected: number
 }
 
 describe('totalOperations', () => {

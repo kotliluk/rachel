@@ -1,9 +1,9 @@
-import {LocalStorage} from "../utils/localStorage";
-import {EN} from "./en";
-import {CS} from "./cs";
-import {CodeErrorMessages} from "../error/codeError";
-import {SemanticErrorMessages} from "../error/raSemanticError";
-import {SyntaxErrorMessages} from "../error/raSyntaxError";
+import { LocalStorage } from '../utils/localStorage'
+import { EN } from './en'
+import { CS } from './cs'
+import { CodeErrorMessages } from '../error/codeError'
+import { SemanticErrorMessages } from '../error/raSemanticError'
+import { SyntaxErrorMessages } from '../error/raSyntaxError'
 
 /**
  * IF YOU WANT TO ADD A NEW LANGUAGE, READ THIS:
@@ -27,14 +27,14 @@ import {SyntaxErrorMessages} from "../error/raSyntaxError";
  * @category Language
  * @public
  */
-export const allSupportedLanguages: string[] = (<L extends string>(arr: L[]) => arr)(["EN", "CS"]);
+export const allSupportedLanguages: string[] = (<L extends string>(arr: L[]) => arr)(['EN', 'CS'])
 
 /**
  * Abbreviation of supported languages in the application.
  * @category Language
  * @public
  */
-export type SupportedLanguage = (typeof allSupportedLanguages)[number];
+export type SupportedLanguage = (typeof allSupportedLanguages)[number]
 
 /**
  * Definition of a language for Rachel.
@@ -44,193 +44,193 @@ export type SupportedLanguage = (typeof allSupportedLanguages)[number];
  * @public
  */
 export interface LanguageDef {
-    /**
+  /**
      * Abbreviation of the language
      * @public
      */
-    abbr: SupportedLanguage,
-    /**
+  abbr: SupportedLanguage
+  /**
      * Description of errors in relation definitions.
      * @public
      */
-    relationErrors: {
-        emptyColumn: string,
-        duplicitColumn: string,
-        keywordColumn: string,
-        invalidColumn: string,
+  relationErrors: {
+    emptyColumn: string,
+    duplicitColumn: string,
+    keywordColumn: string,
+    invalidColumn: string,
 
-        unsupportedNull: string,
-        invalidNumber: string,
-        invalidBoolean: string,
-    },
-    /**
+    unsupportedNull: string,
+    invalidNumber: string,
+    invalidBoolean: string,
+  }
+  /**
      * Description of unexpected errors.
      * @public
      */
-    codeErrors: CodeErrorMessages,
-    /**
+  codeErrors: CodeErrorMessages
+  /**
      * Description of semantic errors in expressions.
      * @public
      */
-    semanticErrors: SemanticErrorMessages,
-    /**
+  semanticErrors: SemanticErrorMessages
+  /**
      * Default semantic error message.
      * @public
      */
-    semanticError: string,
-    /**
+  semanticError: string
+  /**
      * Description of syntactic errors in expressions.
      * @public
      */
-    syntaxErrors: SyntaxErrorMessages,
-    /**
+  syntaxErrors: SyntaxErrorMessages
+  /**
      * Default syntax error message.
      * @public
      */
-    syntaxError: string,
-    /**
+  syntaxError: string
+  /**
      * Info messages for the user in pop-up message box.
      * @public
      */
-    userMessages: {
-        loadedRelationsTotalNo: string,
-        loadedRelationsTotalSome: string,
-        loadRelationNew: string,
-        // 2 parts expected - see English language as an example
-        loadAllRelationsNew: string[],
-        deleteLoadedRelations: string,
+  userMessages: {
+    loadedRelationsTotalNo: string,
+    loadedRelationsTotalSome: string,
+    loadRelationNew: string,
+    // 2 parts expected - see English language as an example
+    loadAllRelationsNew: string[],
+    deleteLoadedRelations: string,
 
-        relationsExportOK: string,
-        relationsExportErr: string,
-        // 2 parts expected - see English language as an example
-        relationsImport: string[],
+    relationsExportOK: string,
+    relationsExportErr: string,
+    // 2 parts expected - see English language as an example
+    relationsImport: string[],
 
-        expressionsExportOK: string,
-        expressionsExportErr: string,
-        // 4 parts expected - see English language as an example
-        expressionsImport: string[]
-    },
-    /**
+    expressionsExportOK: string,
+    expressionsExportErr: string,
+    // 4 parts expected - see English language as an example
+    expressionsImport: string[],
+  }
+  /**
      * Names of RA operations.
      * @public
      */
-    operations: {
-        selection: string,
-        projection: string,
-        rename: string,
-        union: string,
-        intersection: string,
-        difference: string,
-        naturalJoin: string,
-        cartesianProduct: string,
-        leftSemiJoin: string,
-        rightSemiJoin: string,
-        leftAntijoin: string,
-        rightAntijoin: string,
-        thetaJoin: string,
-        leftThetaSemiJoin: string,
-        rightThetaSemiJoin: string,
-        fullOuterJoin: string,
-        leftOuterJoin: string,
-        rightOuterJoin: string,
-        division: string
-    }
-    /**
+  operations: {
+    selection: string,
+    projection: string,
+    rename: string,
+    union: string,
+    intersection: string,
+    difference: string,
+    naturalJoin: string,
+    cartesianProduct: string,
+    leftSemiJoin: string,
+    rightSemiJoin: string,
+    leftAntijoin: string,
+    rightAntijoin: string,
+    thetaJoin: string,
+    leftThetaSemiJoin: string,
+    rightThetaSemiJoin: string,
+    fullOuterJoin: string,
+    leftOuterJoin: string,
+    rightOuterJoin: string,
+    division: string,
+  }
+  /**
      * Description of elements in management section.
      * @public
      */
-    managementSection: {
-        batchTitle: string,
-        batchLoad: string,
-        batchConfig: string,
-        batchConfigInfo: string[],
-        batchNoConfig: string,
+  managementSection: {
+    batchTitle: string,
+    batchLoad: string,
+    batchConfig: string,
+    batchConfigInfo: string[],
+    batchNoConfig: string,
 
-        loadButton: string,
-        saveButton: string,
+    loadButton: string,
+    saveButton: string,
 
-        samplesButton: string,
-        samplesMenuTitle: string,
+    samplesButton: string,
+    samplesMenuTitle: string,
 
-        settingsButton: string,
-        settingsNullValues: string,
-        settingsNullValuesAllowed: string,
-        settingsNullValuesForbidden: string,
-        settingsCSVSeparator: string,
-        settingsCSVSeparatorSemicolon: string,
-        settingsCSVSeparatorComma: string,
-        settingsTheme: string,
-        settingsThemeLight: string,
-        settingsThemeDark: string,
-        settingsLanguage: string,
+    settingsButton: string,
+    settingsNullValues: string,
+    settingsNullValuesAllowed: string,
+    settingsNullValuesForbidden: string,
+    settingsCSVSeparator: string,
+    settingsCSVSeparatorSemicolon: string,
+    settingsCSVSeparatorComma: string,
+    settingsTheme: string,
+    settingsThemeLight: string,
+    settingsThemeDark: string,
+    settingsLanguage: string,
 
-        aboutButton: string
-    },
-    /**
+    aboutButton: string,
+  }
+  /**
      * Description of elements in relation section.
      * @public
      */
-    relationSection: {
-        relationSectionHeader: string,
+  relationSection: {
+    relationSectionHeader: string,
 
-        loadAllButton: string,
-        loadAllButtonTooltip: string,
-        removeLoadedButton: string,
-        removeLoadedButtonTooltip: string,
-        importButton: string,
-        importButtonTooltip: string,
-        exportButton: string,
-        exportButtonTooltip: string,
+    loadAllButton: string,
+    loadAllButtonTooltip: string,
+    removeLoadedButton: string,
+    removeLoadedButtonTooltip: string,
+    importButton: string,
+    importButtonTooltip: string,
+    exportButton: string,
+    exportButtonTooltip: string,
 
-        loadButton: string,
-        loadButtonTooltip: string,
-        renameButton: string,
-        deleteButton: string,
-        deleteButtonTooltip: string,
-        revertButton: string,
-        revertButtonTooltip: string
-    },
-    /**
+    loadButton: string,
+    loadButtonTooltip: string,
+    renameButton: string,
+    deleteButton: string,
+    deleteButtonTooltip: string,
+    revertButton: string,
+    revertButtonTooltip: string,
+  }
+  /**
      * Description of elements in expression section.
      * @public
      */
-    expressionSection: {
-        expressionSectionHeader: string,
+  expressionSection: {
+    expressionSectionHeader: string,
 
-        importButton: string,
-        importButtonTooltip: string,
-        exportButton: string,
-        exportButtonTooltip: string,
+    importButton: string,
+    importButtonTooltip: string,
+    exportButton: string,
+    exportButtonTooltip: string,
 
-        evaluateButton: string,
-        evaluateButtonTooltip: string,
-        renameButton: string,
-        deleteButton: string,
-        deleteButtonTooltip: string,
+    evaluateButton: string,
+    evaluateButtonTooltip: string,
+    renameButton: string,
+    deleteButton: string,
+    deleteButtonTooltip: string,
 
-        expressionTextareaPlaceholder: string,
+    expressionTextareaPlaceholder: string,
 
-        lineComment: string,
-        blockComment: string
-    }
-    /**
+    lineComment: string,
+    blockComment: string,
+  }
+  /**
      * Description of elements in result section.
      * @public
      */
-    resultSection: {
-        resultSectionHeader: string,
+  resultSection: {
+    resultSectionHeader: string,
 
-        exportEvalTreeButton: string,
-        exportEvalTreeButtonTooltip: string,
-        evalTreeTitle: string,
+    exportEvalTreeButton: string,
+    exportEvalTreeButtonTooltip: string,
+    evalTreeTitle: string,
 
-        resultRelationTitle: string,
-        intermediateRelationTitle: string,
-        addButton: string,
-        addButtonTooltip: string,
-        exportRelationButton: string,
-        exportRelationButtonTooltip: string,
-    }
+    resultRelationTitle: string,
+    intermediateRelationTitle: string,
+    addButton: string,
+    addButtonTooltip: string,
+    exportRelationButton: string,
+    exportRelationButtonTooltip: string,
+  }
 }
 
 /**
@@ -238,9 +238,9 @@ export interface LanguageDef {
  * NOTE FOR NEW LANGUAGES: If you define a new language, add its definition mapping here.
  */
 const languageMap: Map<SupportedLanguage, LanguageDef> = new Map<SupportedLanguage, LanguageDef>([
-    ["EN", EN],
-    ["CS", CS],
-]);
+  ['EN', EN],
+  ['CS', CS],
+])
 
 /**
  * Returns true if the given value is a supported language.
@@ -249,8 +249,8 @@ const languageMap: Map<SupportedLanguage, LanguageDef> = new Map<SupportedLangua
  * @category Language
  * @public
  */
-export function isSupportedLanguage(lan: any): boolean {
-    return allSupportedLanguages.includes(lan);
+export function isSupportedLanguage (lan: any): boolean {
+  return allSupportedLanguages.includes(lan)
 }
 
 /**
@@ -259,10 +259,10 @@ export function isSupportedLanguage(lan: any): boolean {
  * @category Language
  * @public
  */
-export function language(): LanguageDef {
-    const lang = languageMap.get(LocalStorage.getLanguage());
-    if (lang === undefined) {
-        return EN;
-    }
-    return lang;
+export function language (): LanguageDef {
+  const lang = languageMap.get(LocalStorage.getLanguage())
+  if (lang === undefined) {
+    return EN
+  }
+  return lang
 }

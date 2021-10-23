@@ -8,9 +8,9 @@
  * @category Utils
  * @public
  */
-export function mod(n: number, m: number): number {
-    if (m <= 0) {
-        return NaN;
-    }
-    return ((n % m) + m) % m;
+export function mod (n: number, m: number): number {
+  if (m <= 0) {
+    return NaN
+  }
+  return ((n % m) + m) % m
 }

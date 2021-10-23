@@ -8,7 +8,7 @@
  * @category Relation
  * @public
  */
-export type SupportedColumnType = "string" | "number" | "boolean";
+export type SupportedColumnType = 'string' | 'number' | 'boolean'
 
 /**
  * Possible types of the content of columns (null values included).
@@ -16,7 +16,7 @@ export type SupportedColumnType = "string" | "number" | "boolean";
  * @category Relation
  * @public
  */
-export type ColumnContent = string | number | boolean | null;
+export type ColumnContent = string | number | boolean | null
 
 /**
  * Returns true if the given obj is string with value SupportedColumnType value.
@@ -25,9 +25,9 @@ export type ColumnContent = string | number | boolean | null;
  * @category Relation
  * @public
  */
-export function isSupportedColumnType(obj: any): boolean {
-    if (typeof obj !== "string") {
-        return false;
-    }
-    return obj === "string" || obj === "number" || obj === "boolean";
+export function isSupportedColumnType (obj: any): boolean {
+  if (typeof obj !== 'string') {
+    return false
+  }
+  return obj === 'string' || obj === 'number' || obj === 'boolean'
 }

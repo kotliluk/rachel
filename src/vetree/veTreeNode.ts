@@ -1,5 +1,5 @@
-import {Row} from "../relation/row";
-import {ColumnContent, SupportedColumnType} from "../relation/columnType";
+import { Row } from '../relation/row'
+import { ColumnContent, SupportedColumnType } from '../relation/columnType'
 
 /**
  * Result of the VETreeNode evaluation.
@@ -7,18 +7,18 @@ import {ColumnContent, SupportedColumnType} from "../relation/columnType";
  * @public
  */
 export interface VEResult {
-    /**
+  /**
      * result value
      * @type ColumnContent
      * @public
      */
-    value: ColumnContent,
-    /**
+  value: ColumnContent
+  /**
      * result type
      * @type (SupportedColumnType | "null")
      * @public
      */
-    type: SupportedColumnType | "null"
+  type: SupportedColumnType | 'null'
 }
 
 /**
@@ -28,20 +28,20 @@ export interface VEResult {
  */
 export abstract class VETreeNode {
 
-    /**
+  /**
      * Evaluates this value-evaluating tree.
      *
      * @param source row with values to be used to reference to {@type Row}
      * @return evaluated value and its type {@type VEResult}
      * @public
      */
-    public abstract eval(source: Row): VEResult;
+  public abstract eval (source: Row): VEResult
 
-    /**
+  /**
      * Returns string representation of the node.
      *
      * @return string representation of the node {@type string}
      * @public
      */
-    public abstract toString(): string;
+  public abstract toString (): string
 }

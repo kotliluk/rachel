@@ -9,7 +9,7 @@ export interface Pair<T> {
    * @type T
    * @public
    */
-  first: T,
+  first: T
   /**
    * second value
    * @type T

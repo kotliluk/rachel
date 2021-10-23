@@ -9,7 +9,7 @@ export interface StartEndPair {
    * @type number
    * @public
    */
-  start: number,
+  start: number
   /**
    * end number
    * @type number

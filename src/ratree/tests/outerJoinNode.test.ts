@@ -1,1009 +1,1010 @@
-import {Relation} from "../../relation/relation";
-import {Row} from "../../relation/row";
-import {RelationNode} from "../relationNode";
-import {OuterJoinNode, OuterJoinType} from "../outerJoinNode";
-import {IndexedString} from "../../types/indexedString";
-import {SelectionNode} from "../selectionNode";
+import { Relation } from '../../relation/relation'
+import { Row } from '../../relation/row'
+import { RelationNode } from '../relationNode'
+import { OuterJoinNode, OuterJoinType } from '../outerJoinNode'
+import { IndexedString } from '../../types/indexedString'
+import { SelectionNode } from '../selectionNode'
+
 
 describe('full outer join', () => {
-    test('1 Auto and 1 Majitel with common MajitelId = 1 -> should be joined as 1 row', () => {
-        const left: Relation = new Relation("Auto");
-        left.addColumn("AutoId", "number");
-        left.addColumn("MajitelId", "number");
-        left.addColumn("Kola", "number");
-        left.addColumn("Motor", "string");
-        left.addColumn("Vyrobce", "string");
-        left.addColumn("Barva", "string");
-        const lefta: Row = new Row(left.getColumns());
-        lefta.addValue("AutoId", 1);
-        lefta.addValue("MajitelId", 1);
-        lefta.addValue("Kola", 4);
-        lefta.addValue("Motor", "Motor V4");
-        lefta.addValue("Vyrobce", "Skoda");
-        lefta.addValue("Barva", "Modra");
-        left.addRow(lefta);
+  test('1 Auto and 1 Majitel with common MajitelId = 1 -> should be joined as 1 row', () => {
+    const left: Relation = new Relation('Auto')
+    left.addColumn('AutoId', 'number')
+    left.addColumn('MajitelId', 'number')
+    left.addColumn('Kola', 'number')
+    left.addColumn('Motor', 'string')
+    left.addColumn('Vyrobce', 'string')
+    left.addColumn('Barva', 'string')
+    const lefta: Row = new Row(left.getColumns())
+    lefta.addValue('AutoId', 1)
+    lefta.addValue('MajitelId', 1)
+    lefta.addValue('Kola', 4)
+    lefta.addValue('Motor', 'Motor V4')
+    lefta.addValue('Vyrobce', 'Skoda')
+    lefta.addValue('Barva', 'Modra')
+    left.addRow(lefta)
 
-        const right: Relation = new Relation("Majitel");
-        right.addColumn("MajitelId", "number");
-        right.addColumn("Jmeno", "string");
-        right.addColumn("Prijmeni", "string");
-        right.addColumn("Bydliste", "string");
-        const righta: Row = new Row(right.getColumns());
-        righta.addValue("MajitelId", 1);
-        righta.addValue("Jmeno", "Lukas");
-        righta.addValue("Prijmeni", "Kotlik");
-        righta.addValue("Bydliste", "Praha, CR");
-        right.addRow(righta);
+    const right: Relation = new Relation('Majitel')
+    right.addColumn('MajitelId', 'number')
+    right.addColumn('Jmeno', 'string')
+    right.addColumn('Prijmeni', 'string')
+    right.addColumn('Bydliste', 'string')
+    const righta: Row = new Row(right.getColumns())
+    righta.addValue('MajitelId', 1)
+    righta.addValue('Jmeno', 'Lukas')
+    righta.addValue('Prijmeni', 'Kotlik')
+    righta.addValue('Bydliste', 'Praha, CR')
+    right.addRow(righta)
 
-        const expected: Relation = new Relation("(Auto*F*Majitel)");
-        expected.addColumn("AutoId", "number");
-        expected.addColumn("Kola", "number");
-        expected.addColumn("Motor", "string");
-        expected.addColumn("Vyrobce", "string");
-        expected.addColumn("Barva", "string");
-        expected.addColumn("MajitelId", "number");
-        expected.addColumn("Jmeno", "string");
-        expected.addColumn("Prijmeni", "string");
-        expected.addColumn("Bydliste", "string");
-        const expectedA: Row = new Row(expected.getColumns());
-        expectedA.addValue("AutoId", 1);
-        expectedA.addValue("MajitelId", 1);
-        expectedA.addValue("Kola", 4);
-        expectedA.addValue("Motor", "Motor V4");
-        expectedA.addValue("Vyrobce", "Skoda");
-        expectedA.addValue("Barva", "Modra");
-        expectedA.addValue("Jmeno", "Lukas");
-        expectedA.addValue("Prijmeni", "Kotlik");
-        expectedA.addValue("Bydliste", "Praha, CR");
-        expected.addRow(expectedA);
+    const expected: Relation = new Relation('(Auto*F*Majitel)')
+    expected.addColumn('AutoId', 'number')
+    expected.addColumn('Kola', 'number')
+    expected.addColumn('Motor', 'string')
+    expected.addColumn('Vyrobce', 'string')
+    expected.addColumn('Barva', 'string')
+    expected.addColumn('MajitelId', 'number')
+    expected.addColumn('Jmeno', 'string')
+    expected.addColumn('Prijmeni', 'string')
+    expected.addColumn('Bydliste', 'string')
+    const expectedA: Row = new Row(expected.getColumns())
+    expectedA.addValue('AutoId', 1)
+    expectedA.addValue('MajitelId', 1)
+    expectedA.addValue('Kola', 4)
+    expectedA.addValue('Motor', 'Motor V4')
+    expectedA.addValue('Vyrobce', 'Skoda')
+    expectedA.addValue('Barva', 'Modra')
+    expectedA.addValue('Jmeno', 'Lukas')
+    expectedA.addValue('Prijmeni', 'Kotlik')
+    expectedA.addValue('Bydliste', 'Praha, CR')
+    expected.addRow(expectedA)
 
-        const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.full, new RelationNode(left), new RelationNode(right));
-        const actual = node.getResult();
-        expect(expected.equals(actual)).toBeTruthy();
-    });
+    const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.full, new RelationNode(left), new RelationNode(right))
+    const actual = node.getResult()
+    expect(expected.equals(actual)).toBeTruthy()
+  })
 
-    test('Majitel 1 with 2 Autos, Majitel 2 with 1 Autos, 1 Auto without a Majitel, 1 Majitel without an Auto -> 3 rows naturally, 2 with nulls', () => {
-        // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
-        const left: Relation = new Relation("Auto");
-        left.addColumn("AutoId", "number");
-        left.addColumn("MajitelId", "number");
-        left.addColumn("Kola", "number");
-        left.addColumn("Motor", "string");
-        left.addColumn("Vyrobce", "string");
-        left.addColumn("Barva", "string");
-        const lefta: Row = new Row(left.getColumns());
-        lefta.addValue("AutoId", 1);
-        lefta.addValue("MajitelId", 1);
-        lefta.addValue("Kola", 4);
-        lefta.addValue("Motor", "Motor V4");
-        lefta.addValue("Vyrobce", "Skoda");
-        lefta.addValue("Barva", "Modra");
-        left.addRow(lefta);
-        const leftb: Row = new Row(left.getColumns());
-        leftb.addValue("AutoId", 2);
-        leftb.addValue("MajitelId", 2);
-        leftb.addValue("Kola", 8);
-        leftb.addValue("Motor", "Motor V16");
-        leftb.addValue("Vyrobce", "Tatra");
-        leftb.addValue("Barva", "Modra");
-        left.addRow(leftb);
-        const leftc: Row = new Row(left.getColumns());
-        leftc.addValue("AutoId", 3);
-        leftc.addValue("MajitelId", 2);
-        leftc.addValue("Kola", 6);
-        leftc.addValue("Motor", "Motor V8");
-        leftc.addValue("Vyrobce", "Tatra");
-        leftc.addValue("Barva", "Cervena");
-        left.addRow(leftc);
-        const leftd: Row = new Row(left.getColumns());
-        leftd.addValue("AutoId", 4);
-        leftd.addValue("MajitelId", 3);   // Majitel with ID 3 does not exist
-        leftd.addValue("Kola", 6);
-        leftd.addValue("Motor", "Motor V8");
-        leftd.addValue("Vyrobce", "Tatra");
-        leftd.addValue("Barva", "Cervena");
-        left.addRow(leftd);
+  test('Majitel 1 with 2 Autos, Majitel 2 with 1 Autos, 1 Auto without a Majitel, 1 Majitel without an Auto -> 3 rows naturally, 2 with nulls', () => {
+    // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
+    const left: Relation = new Relation('Auto')
+    left.addColumn('AutoId', 'number')
+    left.addColumn('MajitelId', 'number')
+    left.addColumn('Kola', 'number')
+    left.addColumn('Motor', 'string')
+    left.addColumn('Vyrobce', 'string')
+    left.addColumn('Barva', 'string')
+    const lefta: Row = new Row(left.getColumns())
+    lefta.addValue('AutoId', 1)
+    lefta.addValue('MajitelId', 1)
+    lefta.addValue('Kola', 4)
+    lefta.addValue('Motor', 'Motor V4')
+    lefta.addValue('Vyrobce', 'Skoda')
+    lefta.addValue('Barva', 'Modra')
+    left.addRow(lefta)
+    const leftb: Row = new Row(left.getColumns())
+    leftb.addValue('AutoId', 2)
+    leftb.addValue('MajitelId', 2)
+    leftb.addValue('Kola', 8)
+    leftb.addValue('Motor', 'Motor V16')
+    leftb.addValue('Vyrobce', 'Tatra')
+    leftb.addValue('Barva', 'Modra')
+    left.addRow(leftb)
+    const leftc: Row = new Row(left.getColumns())
+    leftc.addValue('AutoId', 3)
+    leftc.addValue('MajitelId', 2)
+    leftc.addValue('Kola', 6)
+    leftc.addValue('Motor', 'Motor V8')
+    leftc.addValue('Vyrobce', 'Tatra')
+    leftc.addValue('Barva', 'Cervena')
+    left.addRow(leftc)
+    const leftd: Row = new Row(left.getColumns())
+    leftd.addValue('AutoId', 4)
+    leftd.addValue('MajitelId', 3)   // Majitel with ID 3 does not exist
+    leftd.addValue('Kola', 6)
+    leftd.addValue('Motor', 'Motor V8')
+    leftd.addValue('Vyrobce', 'Tatra')
+    leftd.addValue('Barva', 'Cervena')
+    left.addRow(leftd)
 
-        const right: Relation = new Relation("Majitel");
-        right.addColumn("MajitelId", "number");
-        right.addColumn("Jmeno", "string");
-        right.addColumn("Prijmeni", "string");
-        right.addColumn("Bydliste", "string");
-        const righta: Row = new Row(right.getColumns());
-        righta.addValue("MajitelId", 1);
-        righta.addValue("Jmeno", "Lukas");
-        righta.addValue("Prijmeni", "Kotlik");
-        righta.addValue("Bydliste", "Praha, CR");
-        right.addRow(righta);
-        const rightb: Row = new Row(right.getColumns());
-        rightb.addValue("MajitelId", 2);
-        rightb.addValue("Jmeno", "Pepa");
-        rightb.addValue("Prijmeni", "Ridic");
-        rightb.addValue("Bydliste", "Velke Mezirici");
-        right.addRow(rightb);
-        const rightc: Row = new Row(right.getColumns());
-        rightc.addValue("MajitelId", 5);
-        rightc.addValue("Jmeno", "Jarda");
-        rightc.addValue("Prijmeni", "Novak");
-        rightc.addValue("Bydliste", "Pacov");
-        right.addRow(rightc);
+    const right: Relation = new Relation('Majitel')
+    right.addColumn('MajitelId', 'number')
+    right.addColumn('Jmeno', 'string')
+    right.addColumn('Prijmeni', 'string')
+    right.addColumn('Bydliste', 'string')
+    const righta: Row = new Row(right.getColumns())
+    righta.addValue('MajitelId', 1)
+    righta.addValue('Jmeno', 'Lukas')
+    righta.addValue('Prijmeni', 'Kotlik')
+    righta.addValue('Bydliste', 'Praha, CR')
+    right.addRow(righta)
+    const rightb: Row = new Row(right.getColumns())
+    rightb.addValue('MajitelId', 2)
+    rightb.addValue('Jmeno', 'Pepa')
+    rightb.addValue('Prijmeni', 'Ridic')
+    rightb.addValue('Bydliste', 'Velke Mezirici')
+    right.addRow(rightb)
+    const rightc: Row = new Row(right.getColumns())
+    rightc.addValue('MajitelId', 5)
+    rightc.addValue('Jmeno', 'Jarda')
+    rightc.addValue('Prijmeni', 'Novak')
+    rightc.addValue('Bydliste', 'Pacov')
+    right.addRow(rightc)
 
-        const expected: Relation = new Relation("(Auto*F*Majitel)");
-        expected.addColumn("AutoId", "number");
-        expected.addColumn("Kola", "number");
-        expected.addColumn("Motor", "string");
-        expected.addColumn("Vyrobce", "string");
-        expected.addColumn("Barva", "string");
-        expected.addColumn("MajitelId", "number");
-        expected.addColumn("Jmeno", "string");
-        expected.addColumn("Prijmeni", "string");
-        expected.addColumn("Bydliste", "string");
-        const expectedA: Row = new Row(expected.getColumns());
-        expectedA.addValue("AutoId", 1);
-        expectedA.addValue("Kola", 4);
-        expectedA.addValue("Motor", "Motor V4");
-        expectedA.addValue("Vyrobce", "Skoda");
-        expectedA.addValue("Barva", "Modra");
-        expectedA.addValue("MajitelId", 1);
-        expectedA.addValue("Jmeno", "Lukas");
-        expectedA.addValue("Prijmeni", "Kotlik");
-        expectedA.addValue("Bydliste", "Praha, CR");
-        expected.addRow(expectedA);
-        const expectedd: Row = new Row(expected.getColumns());
-        expectedd.addValue("AutoId", 2);
-        expectedd.addValue("Kola", 8);
-        expectedd.addValue("Motor", "Motor V16");
-        expectedd.addValue("Vyrobce", "Tatra");
-        expectedd.addValue("Barva", "Modra");
-        expectedd.addValue("MajitelId", 2);
-        expectedd.addValue("Jmeno", "Pepa");
-        expectedd.addValue("Prijmeni", "Ridic");
-        expectedd.addValue("Bydliste", "Velke Mezirici");
-        expected.addRow(expectedd);
-        const expectede: Row = new Row(expected.getColumns());
-        expectede.addValue("AutoId", 3);
-        expectede.addValue("Kola", 6);
-        expectede.addValue("Motor", "Motor V8");
-        expectede.addValue("Vyrobce", "Tatra");
-        expectede.addValue("Barva", "Cervena");
-        expectede.addValue("MajitelId", 2);
-        expectede.addValue("Jmeno", "Pepa");
-        expectede.addValue("Prijmeni", "Ridic");
-        expectede.addValue("Bydliste", "Velke Mezirici");
-        expected.addRow(expectede);
-        const expectedf: Row = new Row(expected.getColumns());
-        expectedf.addValue("AutoId", 4);
-        expectedf.addValue("MajitelId", 3);
-        expectedf.addValue("Kola", 6);
-        expectedf.addValue("Motor", "Motor V8");
-        expectedf.addValue("Vyrobce", "Tatra");
-        expectedf.addValue("Barva", "Cervena");
-        expected.addRow(expectedf);
-        const expectedg: Row = new Row(expected.getColumns());
-        expectedg.addValue("MajitelId", 5);
-        expectedg.addValue("Jmeno", "Jarda");
-        expectedg.addValue("Prijmeni", "Novak");
-        expectedg.addValue("Bydliste", "Pacov");
-        expected.addRow(expectedg);
+    const expected: Relation = new Relation('(Auto*F*Majitel)')
+    expected.addColumn('AutoId', 'number')
+    expected.addColumn('Kola', 'number')
+    expected.addColumn('Motor', 'string')
+    expected.addColumn('Vyrobce', 'string')
+    expected.addColumn('Barva', 'string')
+    expected.addColumn('MajitelId', 'number')
+    expected.addColumn('Jmeno', 'string')
+    expected.addColumn('Prijmeni', 'string')
+    expected.addColumn('Bydliste', 'string')
+    const expectedA: Row = new Row(expected.getColumns())
+    expectedA.addValue('AutoId', 1)
+    expectedA.addValue('Kola', 4)
+    expectedA.addValue('Motor', 'Motor V4')
+    expectedA.addValue('Vyrobce', 'Skoda')
+    expectedA.addValue('Barva', 'Modra')
+    expectedA.addValue('MajitelId', 1)
+    expectedA.addValue('Jmeno', 'Lukas')
+    expectedA.addValue('Prijmeni', 'Kotlik')
+    expectedA.addValue('Bydliste', 'Praha, CR')
+    expected.addRow(expectedA)
+    const expectedd: Row = new Row(expected.getColumns())
+    expectedd.addValue('AutoId', 2)
+    expectedd.addValue('Kola', 8)
+    expectedd.addValue('Motor', 'Motor V16')
+    expectedd.addValue('Vyrobce', 'Tatra')
+    expectedd.addValue('Barva', 'Modra')
+    expectedd.addValue('MajitelId', 2)
+    expectedd.addValue('Jmeno', 'Pepa')
+    expectedd.addValue('Prijmeni', 'Ridic')
+    expectedd.addValue('Bydliste', 'Velke Mezirici')
+    expected.addRow(expectedd)
+    const expectede: Row = new Row(expected.getColumns())
+    expectede.addValue('AutoId', 3)
+    expectede.addValue('Kola', 6)
+    expectede.addValue('Motor', 'Motor V8')
+    expectede.addValue('Vyrobce', 'Tatra')
+    expectede.addValue('Barva', 'Cervena')
+    expectede.addValue('MajitelId', 2)
+    expectede.addValue('Jmeno', 'Pepa')
+    expectede.addValue('Prijmeni', 'Ridic')
+    expectede.addValue('Bydliste', 'Velke Mezirici')
+    expected.addRow(expectede)
+    const expectedf: Row = new Row(expected.getColumns())
+    expectedf.addValue('AutoId', 4)
+    expectedf.addValue('MajitelId', 3)
+    expectedf.addValue('Kola', 6)
+    expectedf.addValue('Motor', 'Motor V8')
+    expectedf.addValue('Vyrobce', 'Tatra')
+    expectedf.addValue('Barva', 'Cervena')
+    expected.addRow(expectedf)
+    const expectedg: Row = new Row(expected.getColumns())
+    expectedg.addValue('MajitelId', 5)
+    expectedg.addValue('Jmeno', 'Jarda')
+    expectedg.addValue('Prijmeni', 'Novak')
+    expectedg.addValue('Bydliste', 'Pacov')
+    expected.addRow(expectedg)
 
-        const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.full, new RelationNode(left), new RelationNode(right));
-        const actual = node.getResult();
-        expect(expected.equals(actual)).toBeTruthy();
-    });
+    const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.full, new RelationNode(left), new RelationNode(right))
+    const actual = node.getResult()
+    expect(expected.equals(actual)).toBeTruthy()
+  })
 
-    test('No common column, there should be joined as Cartesian product -> 1 row expected', () => {
-        // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
-        const left: Relation = new Relation("Auto");
-        left.addColumn("AutoId", "number");
-        left.addColumn("Majitel", "number");
-        left.addColumn("Kola", "number");
-        left.addColumn("Motor", "string");
-        left.addColumn("Vyrobce", "string");
-        left.addColumn("Barva", "string");
-        const lefta: Row = new Row(left.getColumns());
-        lefta.addValue("AutoId", 1);
-        lefta.addValue("Majitel", 1);
-        lefta.addValue("Kola", 4);
-        lefta.addValue("Motor", "Motor V4");
-        lefta.addValue("Vyrobce", "Skoda");
-        lefta.addValue("Barva", "Modra");
-        left.addRow(lefta);
+  test('No common column, there should be joined as Cartesian product -> 1 row expected', () => {
+    // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
+    const left: Relation = new Relation('Auto')
+    left.addColumn('AutoId', 'number')
+    left.addColumn('Majitel', 'number')
+    left.addColumn('Kola', 'number')
+    left.addColumn('Motor', 'string')
+    left.addColumn('Vyrobce', 'string')
+    left.addColumn('Barva', 'string')
+    const lefta: Row = new Row(left.getColumns())
+    lefta.addValue('AutoId', 1)
+    lefta.addValue('Majitel', 1)
+    lefta.addValue('Kola', 4)
+    lefta.addValue('Motor', 'Motor V4')
+    lefta.addValue('Vyrobce', 'Skoda')
+    lefta.addValue('Barva', 'Modra')
+    left.addRow(lefta)
 
-        const right: Relation = new Relation("Majitel");
-        right.addColumn("MajitelId", "number");
-        right.addColumn("Jmeno", "string");
-        right.addColumn("Prijmeni", "string");
-        right.addColumn("Bydliste", "string");
-        const righta: Row = new Row(right.getColumns());
-        righta.addValue("MajitelId", 1);
-        righta.addValue("Jmeno", "Lukas");
-        righta.addValue("Prijmeni", "Kotlik");
-        righta.addValue("Bydliste", "Praha, CR");
-        right.addRow(righta);
+    const right: Relation = new Relation('Majitel')
+    right.addColumn('MajitelId', 'number')
+    right.addColumn('Jmeno', 'string')
+    right.addColumn('Prijmeni', 'string')
+    right.addColumn('Bydliste', 'string')
+    const righta: Row = new Row(right.getColumns())
+    righta.addValue('MajitelId', 1)
+    righta.addValue('Jmeno', 'Lukas')
+    righta.addValue('Prijmeni', 'Kotlik')
+    righta.addValue('Bydliste', 'Praha, CR')
+    right.addRow(righta)
 
-        const expected: Relation = new Relation("(Auto*F*Majitel)");
-        expected.addColumn("AutoId", "number");
-        expected.addColumn("Majitel", "number");
-        expected.addColumn("Kola", "number");
-        expected.addColumn("Motor", "string");
-        expected.addColumn("Vyrobce", "string");
-        expected.addColumn("Barva", "string");
-        expected.addColumn("MajitelId", "number");
-        expected.addColumn("Jmeno", "string");
-        expected.addColumn("Prijmeni", "string");
-        expected.addColumn("Bydliste", "string");
-        const expectedA: Row = new Row(expected.getColumns());
-        expectedA.addValue("AutoId", 1);
-        expectedA.addValue("Majitel", 1);
-        expectedA.addValue("Kola", 4);
-        expectedA.addValue("Motor", "Motor V4");
-        expectedA.addValue("Vyrobce", "Skoda");
-        expectedA.addValue("Barva", "Modra");
-        expectedA.addValue("MajitelId", 1);
-        expectedA.addValue("Jmeno", "Lukas");
-        expectedA.addValue("Prijmeni", "Kotlik");
-        expectedA.addValue("Bydliste", "Praha, CR");
-        expected.addRow(expectedA);
+    const expected: Relation = new Relation('(Auto*F*Majitel)')
+    expected.addColumn('AutoId', 'number')
+    expected.addColumn('Majitel', 'number')
+    expected.addColumn('Kola', 'number')
+    expected.addColumn('Motor', 'string')
+    expected.addColumn('Vyrobce', 'string')
+    expected.addColumn('Barva', 'string')
+    expected.addColumn('MajitelId', 'number')
+    expected.addColumn('Jmeno', 'string')
+    expected.addColumn('Prijmeni', 'string')
+    expected.addColumn('Bydliste', 'string')
+    const expectedA: Row = new Row(expected.getColumns())
+    expectedA.addValue('AutoId', 1)
+    expectedA.addValue('Majitel', 1)
+    expectedA.addValue('Kola', 4)
+    expectedA.addValue('Motor', 'Motor V4')
+    expectedA.addValue('Vyrobce', 'Skoda')
+    expectedA.addValue('Barva', 'Modra')
+    expectedA.addValue('MajitelId', 1)
+    expectedA.addValue('Jmeno', 'Lukas')
+    expectedA.addValue('Prijmeni', 'Kotlik')
+    expectedA.addValue('Bydliste', 'Praha, CR')
+    expected.addRow(expectedA)
 
-        const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.full, new RelationNode(left), new RelationNode(right));
-        const actual = node.getResult();
-        expect(expected.equals(actual)).toBeTruthy();
-    });
+    const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.full, new RelationNode(left), new RelationNode(right))
+    const actual = node.getResult()
+    expect(expected.equals(actual)).toBeTruthy()
+  })
 
-    test('Common column MajitelId has different values in relations -> 2 row with nulls', () => {
-        // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
-        const left: Relation = new Relation("Auto");
-        left.addColumn("AutoId", "number");
-        left.addColumn("MajitelId", "number");
-        left.addColumn("Kola", "number");
-        left.addColumn("Motor", "string");
-        left.addColumn("Vyrobce", "string");
-        left.addColumn("Barva", "string");
-        const lefta: Row = new Row(left.getColumns());
-        lefta.addValue("AutoId", 1);
-        lefta.addValue("MajitelId", 2);
-        lefta.addValue("Kola", 4);
-        lefta.addValue("Motor", "Motor V4");
-        lefta.addValue("Vyrobce", "Skoda");
-        lefta.addValue("Barva", "Modra");
-        left.addRow(lefta);
+  test('Common column MajitelId has different values in relations -> 2 row with nulls', () => {
+    // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
+    const left: Relation = new Relation('Auto')
+    left.addColumn('AutoId', 'number')
+    left.addColumn('MajitelId', 'number')
+    left.addColumn('Kola', 'number')
+    left.addColumn('Motor', 'string')
+    left.addColumn('Vyrobce', 'string')
+    left.addColumn('Barva', 'string')
+    const lefta: Row = new Row(left.getColumns())
+    lefta.addValue('AutoId', 1)
+    lefta.addValue('MajitelId', 2)
+    lefta.addValue('Kola', 4)
+    lefta.addValue('Motor', 'Motor V4')
+    lefta.addValue('Vyrobce', 'Skoda')
+    lefta.addValue('Barva', 'Modra')
+    left.addRow(lefta)
 
-        const right: Relation = new Relation("Majitel");
-        right.addColumn("MajitelId", "number");
-        right.addColumn("Jmeno", "string");
-        right.addColumn("Prijmeni", "string");
-        right.addColumn("Bydliste", "string");
-        const righta: Row = new Row(right.getColumns());
-        righta.addValue("MajitelId", 1);
-        righta.addValue("Jmeno", "Lukas");
-        righta.addValue("Prijmeni", "Kotlik");
-        righta.addValue("Bydliste", "Praha, CR");
-        right.addRow(righta);
+    const right: Relation = new Relation('Majitel')
+    right.addColumn('MajitelId', 'number')
+    right.addColumn('Jmeno', 'string')
+    right.addColumn('Prijmeni', 'string')
+    right.addColumn('Bydliste', 'string')
+    const righta: Row = new Row(right.getColumns())
+    righta.addValue('MajitelId', 1)
+    righta.addValue('Jmeno', 'Lukas')
+    righta.addValue('Prijmeni', 'Kotlik')
+    righta.addValue('Bydliste', 'Praha, CR')
+    right.addRow(righta)
 
-        const expected: Relation = new Relation("(Auto*F*Majitel)");
-        expected.addColumn("AutoId", "number");
-        expected.addColumn("Kola", "number");
-        expected.addColumn("Motor", "string");
-        expected.addColumn("Vyrobce", "string");
-        expected.addColumn("Barva", "string");
-        expected.addColumn("MajitelId", "number");
-        expected.addColumn("Jmeno", "string");
-        expected.addColumn("Prijmeni", "string");
-        expected.addColumn("Bydliste", "string");
-        const expectedA: Row = new Row(expected.getColumns());
-        expectedA.addValue("AutoId", 1);
-        expectedA.addValue("MajitelId", 2);
-        expectedA.addValue("Kola", 4);
-        expectedA.addValue("Motor", "Motor V4");
-        expectedA.addValue("Vyrobce", "Skoda");
-        expectedA.addValue("Barva", "Modra");
-        expected.addRow(expectedA);
-        const expectedB: Row = new Row(expected.getColumns());
-        expectedB.addValue("MajitelId", 1);
-        expectedB.addValue("Jmeno", "Lukas");
-        expectedB.addValue("Prijmeni", "Kotlik");
-        expectedB.addValue("Bydliste", "Praha, CR");
-        expected.addRow(expectedB);
+    const expected: Relation = new Relation('(Auto*F*Majitel)')
+    expected.addColumn('AutoId', 'number')
+    expected.addColumn('Kola', 'number')
+    expected.addColumn('Motor', 'string')
+    expected.addColumn('Vyrobce', 'string')
+    expected.addColumn('Barva', 'string')
+    expected.addColumn('MajitelId', 'number')
+    expected.addColumn('Jmeno', 'string')
+    expected.addColumn('Prijmeni', 'string')
+    expected.addColumn('Bydliste', 'string')
+    const expectedA: Row = new Row(expected.getColumns())
+    expectedA.addValue('AutoId', 1)
+    expectedA.addValue('MajitelId', 2)
+    expectedA.addValue('Kola', 4)
+    expectedA.addValue('Motor', 'Motor V4')
+    expectedA.addValue('Vyrobce', 'Skoda')
+    expectedA.addValue('Barva', 'Modra')
+    expected.addRow(expectedA)
+    const expectedB: Row = new Row(expected.getColumns())
+    expectedB.addValue('MajitelId', 1)
+    expectedB.addValue('Jmeno', 'Lukas')
+    expectedB.addValue('Prijmeni', 'Kotlik')
+    expectedB.addValue('Bydliste', 'Praha, CR')
+    expected.addRow(expectedB)
 
-        const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.full, new RelationNode(left), new RelationNode(right));
-        const actual = node.getResult();
-        expect(expected.equals(actual)).toBeTruthy();
-    });
-});
+    const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.full, new RelationNode(left), new RelationNode(right))
+    const actual = node.getResult()
+    expect(expected.equals(actual)).toBeTruthy()
+  })
+})
 
 describe('left outer join', () => {
-    test('1 Auto and 1 Majitel with common MajitelId = 1 -> should be joined as 1 row', () => {
-        // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
-        const left: Relation = new Relation("Auto");
-        left.addColumn("AutoId", "number");
-        left.addColumn("MajitelId", "number");
-        left.addColumn("Kola", "number");
-        left.addColumn("Motor", "string");
-        left.addColumn("Vyrobce", "string");
-        left.addColumn("Barva", "string");
-        const lefta: Row = new Row(left.getColumns());
-        lefta.addValue("AutoId", 1);
-        lefta.addValue("MajitelId", 1);
-        lefta.addValue("Kola", 4);
-        lefta.addValue("Motor", "Motor V4");
-        lefta.addValue("Vyrobce", "Skoda");
-        lefta.addValue("Barva", "Modra");
-        left.addRow(lefta);
+  test('1 Auto and 1 Majitel with common MajitelId = 1 -> should be joined as 1 row', () => {
+    // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
+    const left: Relation = new Relation('Auto')
+    left.addColumn('AutoId', 'number')
+    left.addColumn('MajitelId', 'number')
+    left.addColumn('Kola', 'number')
+    left.addColumn('Motor', 'string')
+    left.addColumn('Vyrobce', 'string')
+    left.addColumn('Barva', 'string')
+    const lefta: Row = new Row(left.getColumns())
+    lefta.addValue('AutoId', 1)
+    lefta.addValue('MajitelId', 1)
+    lefta.addValue('Kola', 4)
+    lefta.addValue('Motor', 'Motor V4')
+    lefta.addValue('Vyrobce', 'Skoda')
+    lefta.addValue('Barva', 'Modra')
+    left.addRow(lefta)
 
-        const right: Relation = new Relation("Majitel");
-        right.addColumn("MajitelId", "number");
-        right.addColumn("Jmeno", "string");
-        right.addColumn("Prijmeni", "string");
-        right.addColumn("Bydliste", "string");
-        const righta: Row = new Row(right.getColumns());
-        righta.addValue("MajitelId", 1);
-        righta.addValue("Jmeno", "Lukas");
-        righta.addValue("Prijmeni", "Kotlik");
-        righta.addValue("Bydliste", "Praha, CR");
-        right.addRow(righta);
+    const right: Relation = new Relation('Majitel')
+    right.addColumn('MajitelId', 'number')
+    right.addColumn('Jmeno', 'string')
+    right.addColumn('Prijmeni', 'string')
+    right.addColumn('Bydliste', 'string')
+    const righta: Row = new Row(right.getColumns())
+    righta.addValue('MajitelId', 1)
+    righta.addValue('Jmeno', 'Lukas')
+    righta.addValue('Prijmeni', 'Kotlik')
+    righta.addValue('Bydliste', 'Praha, CR')
+    right.addRow(righta)
 
-        const expected: Relation = new Relation("(Auto*L*Majitel)");
-        expected.addColumn("AutoId", "number");
-        expected.addColumn("Kola", "number");
-        expected.addColumn("Motor", "string");
-        expected.addColumn("Vyrobce", "string");
-        expected.addColumn("Barva", "string");
-        expected.addColumn("MajitelId", "number");
-        expected.addColumn("Jmeno", "string");
-        expected.addColumn("Prijmeni", "string");
-        expected.addColumn("Bydliste", "string");
-        const expectedA: Row = new Row(expected.getColumns());
-        expectedA.addValue("AutoId", 1);
-        expectedA.addValue("MajitelId", 1);
-        expectedA.addValue("Kola", 4);
-        expectedA.addValue("Motor", "Motor V4");
-        expectedA.addValue("Vyrobce", "Skoda");
-        expectedA.addValue("Barva", "Modra");
-        expectedA.addValue("Jmeno", "Lukas");
-        expectedA.addValue("Prijmeni", "Kotlik");
-        expectedA.addValue("Bydliste", "Praha, CR");
-        expected.addRow(expectedA);
+    const expected: Relation = new Relation('(Auto*L*Majitel)')
+    expected.addColumn('AutoId', 'number')
+    expected.addColumn('Kola', 'number')
+    expected.addColumn('Motor', 'string')
+    expected.addColumn('Vyrobce', 'string')
+    expected.addColumn('Barva', 'string')
+    expected.addColumn('MajitelId', 'number')
+    expected.addColumn('Jmeno', 'string')
+    expected.addColumn('Prijmeni', 'string')
+    expected.addColumn('Bydliste', 'string')
+    const expectedA: Row = new Row(expected.getColumns())
+    expectedA.addValue('AutoId', 1)
+    expectedA.addValue('MajitelId', 1)
+    expectedA.addValue('Kola', 4)
+    expectedA.addValue('Motor', 'Motor V4')
+    expectedA.addValue('Vyrobce', 'Skoda')
+    expectedA.addValue('Barva', 'Modra')
+    expectedA.addValue('Jmeno', 'Lukas')
+    expectedA.addValue('Prijmeni', 'Kotlik')
+    expectedA.addValue('Bydliste', 'Praha, CR')
+    expected.addRow(expectedA)
 
-        const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.left, new RelationNode(left), new RelationNode(right));
-        const actual = node.getResult();
-        expect(expected.equals(actual)).toBeTruthy();
-    });
+    const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.left, new RelationNode(left), new RelationNode(right))
+    const actual = node.getResult()
+    expect(expected.equals(actual)).toBeTruthy()
+  })
 
-    test('Majitel 1 with 2 Autos, Majitel 2 with 1 Autos, 1 Auto without a Majitel -> 3 rows naturally, 1 with nulls', () => {
-        // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
-        const left: Relation = new Relation("Auto");
-        left.addColumn("AutoId", "number");
-        left.addColumn("MajitelId", "number");
-        left.addColumn("Kola", "number");
-        left.addColumn("Motor", "string");
-        left.addColumn("Vyrobce", "string");
-        left.addColumn("Barva", "string");
-        const lefta: Row = new Row(left.getColumns());
-        lefta.addValue("AutoId", 1);
-        lefta.addValue("MajitelId", 1);
-        lefta.addValue("Kola", 4);
-        lefta.addValue("Motor", "Motor V4");
-        lefta.addValue("Vyrobce", "Skoda");
-        lefta.addValue("Barva", "Modra");
-        left.addRow(lefta);
-        const leftb: Row = new Row(left.getColumns());
-        leftb.addValue("AutoId", 2);
-        leftb.addValue("MajitelId", 2);
-        leftb.addValue("Kola", 8);
-        leftb.addValue("Motor", "Motor V16");
-        leftb.addValue("Vyrobce", "Tatra");
-        leftb.addValue("Barva", "Modra");
-        left.addRow(leftb);
-        const leftc: Row = new Row(left.getColumns());
-        leftc.addValue("AutoId", 3);
-        leftc.addValue("MajitelId", 2);
-        leftc.addValue("Kola", 6);
-        leftc.addValue("Motor", "Motor V8");
-        leftc.addValue("Vyrobce", "Tatra");
-        leftc.addValue("Barva", "Cervena");
-        left.addRow(leftc);
-        const leftd: Row = new Row(left.getColumns());
-        leftd.addValue("AutoId", 4);
-        leftd.addValue("MajitelId", 3);   // Majitel with ID 3 does not exist
-        leftd.addValue("Kola", 6);
-        leftd.addValue("Motor", "Motor V8");
-        leftd.addValue("Vyrobce", "Tatra");
-        leftd.addValue("Barva", "Cervena");
-        left.addRow(leftd);
+  test('Majitel 1 with 2 Autos, Majitel 2 with 1 Autos, 1 Auto without a Majitel -> 3 rows naturally, 1 with nulls', () => {
+    // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
+    const left: Relation = new Relation('Auto')
+    left.addColumn('AutoId', 'number')
+    left.addColumn('MajitelId', 'number')
+    left.addColumn('Kola', 'number')
+    left.addColumn('Motor', 'string')
+    left.addColumn('Vyrobce', 'string')
+    left.addColumn('Barva', 'string')
+    const lefta: Row = new Row(left.getColumns())
+    lefta.addValue('AutoId', 1)
+    lefta.addValue('MajitelId', 1)
+    lefta.addValue('Kola', 4)
+    lefta.addValue('Motor', 'Motor V4')
+    lefta.addValue('Vyrobce', 'Skoda')
+    lefta.addValue('Barva', 'Modra')
+    left.addRow(lefta)
+    const leftb: Row = new Row(left.getColumns())
+    leftb.addValue('AutoId', 2)
+    leftb.addValue('MajitelId', 2)
+    leftb.addValue('Kola', 8)
+    leftb.addValue('Motor', 'Motor V16')
+    leftb.addValue('Vyrobce', 'Tatra')
+    leftb.addValue('Barva', 'Modra')
+    left.addRow(leftb)
+    const leftc: Row = new Row(left.getColumns())
+    leftc.addValue('AutoId', 3)
+    leftc.addValue('MajitelId', 2)
+    leftc.addValue('Kola', 6)
+    leftc.addValue('Motor', 'Motor V8')
+    leftc.addValue('Vyrobce', 'Tatra')
+    leftc.addValue('Barva', 'Cervena')
+    left.addRow(leftc)
+    const leftd: Row = new Row(left.getColumns())
+    leftd.addValue('AutoId', 4)
+    leftd.addValue('MajitelId', 3)   // Majitel with ID 3 does not exist
+    leftd.addValue('Kola', 6)
+    leftd.addValue('Motor', 'Motor V8')
+    leftd.addValue('Vyrobce', 'Tatra')
+    leftd.addValue('Barva', 'Cervena')
+    left.addRow(leftd)
 
-        const right: Relation = new Relation("Majitel");
-        right.addColumn("MajitelId", "number");
-        right.addColumn("Jmeno", "string");
-        right.addColumn("Prijmeni", "string");
-        right.addColumn("Bydliste", "string");
-        const righta: Row = new Row(right.getColumns());
-        righta.addValue("MajitelId", 1);
-        righta.addValue("Jmeno", "Lukas");
-        righta.addValue("Prijmeni", "Kotlik");
-        righta.addValue("Bydliste", "Praha, CR");
-        right.addRow(righta);
-        const rightb: Row = new Row(right.getColumns());
-        rightb.addValue("MajitelId", 2);
-        rightb.addValue("Jmeno", "Pepa");
-        rightb.addValue("Prijmeni", "Ridic");
-        rightb.addValue("Bydliste", "Velke Mezirici");
-        right.addRow(rightb);
-        const rightc: Row = new Row(right.getColumns());
-        rightc.addValue("MajitelId", 5);
-        rightc.addValue("Jmeno", "Jarda");
-        rightc.addValue("Prijmeni", "Novak");
-        rightc.addValue("Bydliste", "Pacov");
-        right.addRow(rightc);
+    const right: Relation = new Relation('Majitel')
+    right.addColumn('MajitelId', 'number')
+    right.addColumn('Jmeno', 'string')
+    right.addColumn('Prijmeni', 'string')
+    right.addColumn('Bydliste', 'string')
+    const righta: Row = new Row(right.getColumns())
+    righta.addValue('MajitelId', 1)
+    righta.addValue('Jmeno', 'Lukas')
+    righta.addValue('Prijmeni', 'Kotlik')
+    righta.addValue('Bydliste', 'Praha, CR')
+    right.addRow(righta)
+    const rightb: Row = new Row(right.getColumns())
+    rightb.addValue('MajitelId', 2)
+    rightb.addValue('Jmeno', 'Pepa')
+    rightb.addValue('Prijmeni', 'Ridic')
+    rightb.addValue('Bydliste', 'Velke Mezirici')
+    right.addRow(rightb)
+    const rightc: Row = new Row(right.getColumns())
+    rightc.addValue('MajitelId', 5)
+    rightc.addValue('Jmeno', 'Jarda')
+    rightc.addValue('Prijmeni', 'Novak')
+    rightc.addValue('Bydliste', 'Pacov')
+    right.addRow(rightc)
 
-        const expected: Relation = new Relation("(Auto*L*Majitel)");
-        expected.addColumn("AutoId", "number");
-        expected.addColumn("Kola", "number");
-        expected.addColumn("Motor", "string");
-        expected.addColumn("Vyrobce", "string");
-        expected.addColumn("Barva", "string");
-        expected.addColumn("MajitelId", "number");
-        expected.addColumn("Jmeno", "string");
-        expected.addColumn("Prijmeni", "string");
-        expected.addColumn("Bydliste", "string");
-        const expectedA: Row = new Row(expected.getColumns());
-        expectedA.addValue("AutoId", 1);
-        expectedA.addValue("Kola", 4);
-        expectedA.addValue("Motor", "Motor V4");
-        expectedA.addValue("Vyrobce", "Skoda");
-        expectedA.addValue("Barva", "Modra");
-        expectedA.addValue("MajitelId", 1);
-        expectedA.addValue("Jmeno", "Lukas");
-        expectedA.addValue("Prijmeni", "Kotlik");
-        expectedA.addValue("Bydliste", "Praha, CR");
-        expected.addRow(expectedA);
-        const expectedd: Row = new Row(expected.getColumns());
-        expectedd.addValue("AutoId", 2);
-        expectedd.addValue("Kola", 8);
-        expectedd.addValue("Motor", "Motor V16");
-        expectedd.addValue("Vyrobce", "Tatra");
-        expectedd.addValue("Barva", "Modra");
-        expectedd.addValue("MajitelId", 2);
-        expectedd.addValue("Jmeno", "Pepa");
-        expectedd.addValue("Prijmeni", "Ridic");
-        expectedd.addValue("Bydliste", "Velke Mezirici");
-        expected.addRow(expectedd);
-        const expectede: Row = new Row(expected.getColumns());
-        expectede.addValue("AutoId", 3);
-        expectede.addValue("Kola", 6);
-        expectede.addValue("Motor", "Motor V8");
-        expectede.addValue("Vyrobce", "Tatra");
-        expectede.addValue("Barva", "Cervena");
-        expectede.addValue("MajitelId", 2);
-        expectede.addValue("Jmeno", "Pepa");
-        expectede.addValue("Prijmeni", "Ridic");
-        expectede.addValue("Bydliste", "Velke Mezirici");
-        expected.addRow(expectede);
-        const expectedf: Row = new Row(expected.getColumns());
-        expectedf.addValue("AutoId", 4);
-        expectedf.addValue("MajitelId", 3);
-        expectedf.addValue("Kola", 6);
-        expectedf.addValue("Motor", "Motor V8");
-        expectedf.addValue("Vyrobce", "Tatra");
-        expectedf.addValue("Barva", "Cervena");
-        expected.addRow(expectedf);
+    const expected: Relation = new Relation('(Auto*L*Majitel)')
+    expected.addColumn('AutoId', 'number')
+    expected.addColumn('Kola', 'number')
+    expected.addColumn('Motor', 'string')
+    expected.addColumn('Vyrobce', 'string')
+    expected.addColumn('Barva', 'string')
+    expected.addColumn('MajitelId', 'number')
+    expected.addColumn('Jmeno', 'string')
+    expected.addColumn('Prijmeni', 'string')
+    expected.addColumn('Bydliste', 'string')
+    const expectedA: Row = new Row(expected.getColumns())
+    expectedA.addValue('AutoId', 1)
+    expectedA.addValue('Kola', 4)
+    expectedA.addValue('Motor', 'Motor V4')
+    expectedA.addValue('Vyrobce', 'Skoda')
+    expectedA.addValue('Barva', 'Modra')
+    expectedA.addValue('MajitelId', 1)
+    expectedA.addValue('Jmeno', 'Lukas')
+    expectedA.addValue('Prijmeni', 'Kotlik')
+    expectedA.addValue('Bydliste', 'Praha, CR')
+    expected.addRow(expectedA)
+    const expectedd: Row = new Row(expected.getColumns())
+    expectedd.addValue('AutoId', 2)
+    expectedd.addValue('Kola', 8)
+    expectedd.addValue('Motor', 'Motor V16')
+    expectedd.addValue('Vyrobce', 'Tatra')
+    expectedd.addValue('Barva', 'Modra')
+    expectedd.addValue('MajitelId', 2)
+    expectedd.addValue('Jmeno', 'Pepa')
+    expectedd.addValue('Prijmeni', 'Ridic')
+    expectedd.addValue('Bydliste', 'Velke Mezirici')
+    expected.addRow(expectedd)
+    const expectede: Row = new Row(expected.getColumns())
+    expectede.addValue('AutoId', 3)
+    expectede.addValue('Kola', 6)
+    expectede.addValue('Motor', 'Motor V8')
+    expectede.addValue('Vyrobce', 'Tatra')
+    expectede.addValue('Barva', 'Cervena')
+    expectede.addValue('MajitelId', 2)
+    expectede.addValue('Jmeno', 'Pepa')
+    expectede.addValue('Prijmeni', 'Ridic')
+    expectede.addValue('Bydliste', 'Velke Mezirici')
+    expected.addRow(expectede)
+    const expectedf: Row = new Row(expected.getColumns())
+    expectedf.addValue('AutoId', 4)
+    expectedf.addValue('MajitelId', 3)
+    expectedf.addValue('Kola', 6)
+    expectedf.addValue('Motor', 'Motor V8')
+    expectedf.addValue('Vyrobce', 'Tatra')
+    expectedf.addValue('Barva', 'Cervena')
+    expected.addRow(expectedf)
 
-        const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.left, new RelationNode(left), new RelationNode(right));
-        const actual = node.getResult();
-        expect(expected.equals(actual)).toBeTruthy();
-    });
+    const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.left, new RelationNode(left), new RelationNode(right))
+    const actual = node.getResult()
+    expect(expected.equals(actual)).toBeTruthy()
+  })
 
-    test('No common column, there should be joined as Cartesian product -> 1 row expected', () => {
-        // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
-        const left: Relation = new Relation("Auto");
-        left.addColumn("AutoId", "number");
-        left.addColumn("Majitel", "number");
-        left.addColumn("Kola", "number");
-        left.addColumn("Motor", "string");
-        left.addColumn("Vyrobce", "string");
-        left.addColumn("Barva", "string");
-        const lefta: Row = new Row(left.getColumns());
-        lefta.addValue("AutoId", 1);
-        lefta.addValue("Majitel", 1);
-        lefta.addValue("Kola", 4);
-        lefta.addValue("Motor", "Motor V4");
-        lefta.addValue("Vyrobce", "Skoda");
-        lefta.addValue("Barva", "Modra");
-        left.addRow(lefta);
+  test('No common column, there should be joined as Cartesian product -> 1 row expected', () => {
+    // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
+    const left: Relation = new Relation('Auto')
+    left.addColumn('AutoId', 'number')
+    left.addColumn('Majitel', 'number')
+    left.addColumn('Kola', 'number')
+    left.addColumn('Motor', 'string')
+    left.addColumn('Vyrobce', 'string')
+    left.addColumn('Barva', 'string')
+    const lefta: Row = new Row(left.getColumns())
+    lefta.addValue('AutoId', 1)
+    lefta.addValue('Majitel', 1)
+    lefta.addValue('Kola', 4)
+    lefta.addValue('Motor', 'Motor V4')
+    lefta.addValue('Vyrobce', 'Skoda')
+    lefta.addValue('Barva', 'Modra')
+    left.addRow(lefta)
 
-        const right: Relation = new Relation("Majitel");
-        right.addColumn("MajitelId", "number");
-        right.addColumn("Jmeno", "string");
-        right.addColumn("Prijmeni", "string");
-        right.addColumn("Bydliste", "string");
-        const righta: Row = new Row(right.getColumns());
-        righta.addValue("MajitelId", 1);
-        righta.addValue("Jmeno", "Lukas");
-        righta.addValue("Prijmeni", "Kotlik");
-        righta.addValue("Bydliste", "Praha, CR");
-        right.addRow(righta);
+    const right: Relation = new Relation('Majitel')
+    right.addColumn('MajitelId', 'number')
+    right.addColumn('Jmeno', 'string')
+    right.addColumn('Prijmeni', 'string')
+    right.addColumn('Bydliste', 'string')
+    const righta: Row = new Row(right.getColumns())
+    righta.addValue('MajitelId', 1)
+    righta.addValue('Jmeno', 'Lukas')
+    righta.addValue('Prijmeni', 'Kotlik')
+    righta.addValue('Bydliste', 'Praha, CR')
+    right.addRow(righta)
 
-        const expected: Relation = new Relation("(Auto*L*Majitel)");
-        expected.addColumn("AutoId", "number");
-        expected.addColumn("Majitel", "number");
-        expected.addColumn("Kola", "number");
-        expected.addColumn("Motor", "string");
-        expected.addColumn("Vyrobce", "string");
-        expected.addColumn("Barva", "string");
-        expected.addColumn("MajitelId", "number");
-        expected.addColumn("Jmeno", "string");
-        expected.addColumn("Prijmeni", "string");
-        expected.addColumn("Bydliste", "string");
-        const expectedA: Row = new Row(expected.getColumns());
-        expectedA.addValue("AutoId", 1);
-        expectedA.addValue("Majitel", 1);
-        expectedA.addValue("Kola", 4);
-        expectedA.addValue("Motor", "Motor V4");
-        expectedA.addValue("Vyrobce", "Skoda");
-        expectedA.addValue("Barva", "Modra");
-        expectedA.addValue("MajitelId", 1);
-        expectedA.addValue("Jmeno", "Lukas");
-        expectedA.addValue("Prijmeni", "Kotlik");
-        expectedA.addValue("Bydliste", "Praha, CR");
-        expected.addRow(expectedA);
+    const expected: Relation = new Relation('(Auto*L*Majitel)')
+    expected.addColumn('AutoId', 'number')
+    expected.addColumn('Majitel', 'number')
+    expected.addColumn('Kola', 'number')
+    expected.addColumn('Motor', 'string')
+    expected.addColumn('Vyrobce', 'string')
+    expected.addColumn('Barva', 'string')
+    expected.addColumn('MajitelId', 'number')
+    expected.addColumn('Jmeno', 'string')
+    expected.addColumn('Prijmeni', 'string')
+    expected.addColumn('Bydliste', 'string')
+    const expectedA: Row = new Row(expected.getColumns())
+    expectedA.addValue('AutoId', 1)
+    expectedA.addValue('Majitel', 1)
+    expectedA.addValue('Kola', 4)
+    expectedA.addValue('Motor', 'Motor V4')
+    expectedA.addValue('Vyrobce', 'Skoda')
+    expectedA.addValue('Barva', 'Modra')
+    expectedA.addValue('MajitelId', 1)
+    expectedA.addValue('Jmeno', 'Lukas')
+    expectedA.addValue('Prijmeni', 'Kotlik')
+    expectedA.addValue('Bydliste', 'Praha, CR')
+    expected.addRow(expectedA)
 
-        const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.left, new RelationNode(left), new RelationNode(right));
-        const actual = node.getResult();
-        expect(expected.equals(actual)).toBeTruthy();
-    });
+    const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.left, new RelationNode(left), new RelationNode(right))
+    const actual = node.getResult()
+    expect(expected.equals(actual)).toBeTruthy()
+  })
 
-    test('Common column MajitelId has different values in relations -> 1 row with nulls', () => {
-        // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
-        const left: Relation = new Relation("Auto");
-        left.addColumn("AutoId", "number");
-        left.addColumn("MajitelId", "number");
-        left.addColumn("Kola", "number");
-        left.addColumn("Motor", "string");
-        left.addColumn("Vyrobce", "string");
-        left.addColumn("Barva", "string");
-        const lefta: Row = new Row(left.getColumns());
-        lefta.addValue("AutoId", 1);
-        lefta.addValue("MajitelId", 2);
-        lefta.addValue("Kola", 4);
-        lefta.addValue("Motor", "Motor V4");
-        lefta.addValue("Vyrobce", "Skoda");
-        lefta.addValue("Barva", "Modra");
-        left.addRow(lefta);
+  test('Common column MajitelId has different values in relations -> 1 row with nulls', () => {
+    // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
+    const left: Relation = new Relation('Auto')
+    left.addColumn('AutoId', 'number')
+    left.addColumn('MajitelId', 'number')
+    left.addColumn('Kola', 'number')
+    left.addColumn('Motor', 'string')
+    left.addColumn('Vyrobce', 'string')
+    left.addColumn('Barva', 'string')
+    const lefta: Row = new Row(left.getColumns())
+    lefta.addValue('AutoId', 1)
+    lefta.addValue('MajitelId', 2)
+    lefta.addValue('Kola', 4)
+    lefta.addValue('Motor', 'Motor V4')
+    lefta.addValue('Vyrobce', 'Skoda')
+    lefta.addValue('Barva', 'Modra')
+    left.addRow(lefta)
 
-        const right: Relation = new Relation("Majitel");
-        right.addColumn("MajitelId", "number");
-        right.addColumn("Jmeno", "string");
-        right.addColumn("Prijmeni", "string");
-        right.addColumn("Bydliste", "string");
-        const righta: Row = new Row(right.getColumns());
-        righta.addValue("MajitelId", 1);
-        righta.addValue("Jmeno", "Lukas");
-        righta.addValue("Prijmeni", "Kotlik");
-        righta.addValue("Bydliste", "Praha, CR");
-        right.addRow(righta);
+    const right: Relation = new Relation('Majitel')
+    right.addColumn('MajitelId', 'number')
+    right.addColumn('Jmeno', 'string')
+    right.addColumn('Prijmeni', 'string')
+    right.addColumn('Bydliste', 'string')
+    const righta: Row = new Row(right.getColumns())
+    righta.addValue('MajitelId', 1)
+    righta.addValue('Jmeno', 'Lukas')
+    righta.addValue('Prijmeni', 'Kotlik')
+    righta.addValue('Bydliste', 'Praha, CR')
+    right.addRow(righta)
 
-        const expected: Relation = new Relation("(Auto*L*Majitel)");
-        expected.addColumn("AutoId", "number");
-        expected.addColumn("Kola", "number");
-        expected.addColumn("Motor", "string");
-        expected.addColumn("Vyrobce", "string");
-        expected.addColumn("Barva", "string");
-        expected.addColumn("MajitelId", "number");
-        expected.addColumn("Jmeno", "string");
-        expected.addColumn("Prijmeni", "string");
-        expected.addColumn("Bydliste", "string");
-        const expectedA: Row = new Row(expected.getColumns());
-        expectedA.addValue("AutoId", 1);
-        expectedA.addValue("MajitelId", 2);
-        expectedA.addValue("Kola", 4);
-        expectedA.addValue("Motor", "Motor V4");
-        expectedA.addValue("Vyrobce", "Skoda");
-        expectedA.addValue("Barva", "Modra");
-        expected.addRow(expectedA);
+    const expected: Relation = new Relation('(Auto*L*Majitel)')
+    expected.addColumn('AutoId', 'number')
+    expected.addColumn('Kola', 'number')
+    expected.addColumn('Motor', 'string')
+    expected.addColumn('Vyrobce', 'string')
+    expected.addColumn('Barva', 'string')
+    expected.addColumn('MajitelId', 'number')
+    expected.addColumn('Jmeno', 'string')
+    expected.addColumn('Prijmeni', 'string')
+    expected.addColumn('Bydliste', 'string')
+    const expectedA: Row = new Row(expected.getColumns())
+    expectedA.addValue('AutoId', 1)
+    expectedA.addValue('MajitelId', 2)
+    expectedA.addValue('Kola', 4)
+    expectedA.addValue('Motor', 'Motor V4')
+    expectedA.addValue('Vyrobce', 'Skoda')
+    expectedA.addValue('Barva', 'Modra')
+    expected.addRow(expectedA)
 
-        const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.left, new RelationNode(left), new RelationNode(right));
-        const actual = node.getResult();
-        expect(expected.equals(actual)).toBeTruthy();
-    });
-});
+    const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.left, new RelationNode(left), new RelationNode(right))
+    const actual = node.getResult()
+    expect(expected.equals(actual)).toBeTruthy()
+  })
+})
 
 describe('right outer join', () => {
-    test('1 Auto and 1 Majitel with common MajitelId = 1 -> should be joined as 1 row', () => {
-        // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
-        const left: Relation = new Relation("Auto");
-        left.addColumn("AutoId", "number");
-        left.addColumn("MajitelId", "number");
-        left.addColumn("Kola", "number");
-        left.addColumn("Motor", "string");
-        left.addColumn("Vyrobce", "string");
-        left.addColumn("Barva", "string");
-        const lefta: Row = new Row(left.getColumns());
-        lefta.addValue("AutoId", 1);
-        lefta.addValue("MajitelId", 1);
-        lefta.addValue("Kola", 4);
-        lefta.addValue("Motor", "Motor V4");
-        lefta.addValue("Vyrobce", "Skoda");
-        lefta.addValue("Barva", "Modra");
-        left.addRow(lefta);
+  test('1 Auto and 1 Majitel with common MajitelId = 1 -> should be joined as 1 row', () => {
+    // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
+    const left: Relation = new Relation('Auto')
+    left.addColumn('AutoId', 'number')
+    left.addColumn('MajitelId', 'number')
+    left.addColumn('Kola', 'number')
+    left.addColumn('Motor', 'string')
+    left.addColumn('Vyrobce', 'string')
+    left.addColumn('Barva', 'string')
+    const lefta: Row = new Row(left.getColumns())
+    lefta.addValue('AutoId', 1)
+    lefta.addValue('MajitelId', 1)
+    lefta.addValue('Kola', 4)
+    lefta.addValue('Motor', 'Motor V4')
+    lefta.addValue('Vyrobce', 'Skoda')
+    lefta.addValue('Barva', 'Modra')
+    left.addRow(lefta)
 
-        const right: Relation = new Relation("Majitel");
-        right.addColumn("MajitelId", "number");
-        right.addColumn("Jmeno", "string");
-        right.addColumn("Prijmeni", "string");
-        right.addColumn("Bydliste", "string");
-        const righta: Row = new Row(right.getColumns());
-        righta.addValue("MajitelId", 1);
-        righta.addValue("Jmeno", "Lukas");
-        righta.addValue("Prijmeni", "Kotlik");
-        righta.addValue("Bydliste", "Praha, CR");
-        right.addRow(righta);
+    const right: Relation = new Relation('Majitel')
+    right.addColumn('MajitelId', 'number')
+    right.addColumn('Jmeno', 'string')
+    right.addColumn('Prijmeni', 'string')
+    right.addColumn('Bydliste', 'string')
+    const righta: Row = new Row(right.getColumns())
+    righta.addValue('MajitelId', 1)
+    righta.addValue('Jmeno', 'Lukas')
+    righta.addValue('Prijmeni', 'Kotlik')
+    righta.addValue('Bydliste', 'Praha, CR')
+    right.addRow(righta)
 
-        const expected: Relation = new Relation("(Auto*R*Majitel)");
-        expected.addColumn("AutoId", "number");
-        expected.addColumn("Kola", "number");
-        expected.addColumn("Motor", "string");
-        expected.addColumn("Vyrobce", "string");
-        expected.addColumn("Barva", "string");
-        expected.addColumn("MajitelId", "number");
-        expected.addColumn("Jmeno", "string");
-        expected.addColumn("Prijmeni", "string");
-        expected.addColumn("Bydliste", "string");
-        const expectedA: Row = new Row(expected.getColumns());
-        expectedA.addValue("AutoId", 1);
-        expectedA.addValue("MajitelId", 1);
-        expectedA.addValue("Kola", 4);
-        expectedA.addValue("Motor", "Motor V4");
-        expectedA.addValue("Vyrobce", "Skoda");
-        expectedA.addValue("Barva", "Modra");
-        expectedA.addValue("Jmeno", "Lukas");
-        expectedA.addValue("Prijmeni", "Kotlik");
-        expectedA.addValue("Bydliste", "Praha, CR");
-        expected.addRow(expectedA);
+    const expected: Relation = new Relation('(Auto*R*Majitel)')
+    expected.addColumn('AutoId', 'number')
+    expected.addColumn('Kola', 'number')
+    expected.addColumn('Motor', 'string')
+    expected.addColumn('Vyrobce', 'string')
+    expected.addColumn('Barva', 'string')
+    expected.addColumn('MajitelId', 'number')
+    expected.addColumn('Jmeno', 'string')
+    expected.addColumn('Prijmeni', 'string')
+    expected.addColumn('Bydliste', 'string')
+    const expectedA: Row = new Row(expected.getColumns())
+    expectedA.addValue('AutoId', 1)
+    expectedA.addValue('MajitelId', 1)
+    expectedA.addValue('Kola', 4)
+    expectedA.addValue('Motor', 'Motor V4')
+    expectedA.addValue('Vyrobce', 'Skoda')
+    expectedA.addValue('Barva', 'Modra')
+    expectedA.addValue('Jmeno', 'Lukas')
+    expectedA.addValue('Prijmeni', 'Kotlik')
+    expectedA.addValue('Bydliste', 'Praha, CR')
+    expected.addRow(expectedA)
 
-        const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.right, new RelationNode(left), new RelationNode(right));
-        const actual = node.getResult();
-        expect(expected.equals(actual)).toBeTruthy();
-    });
+    const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.right, new RelationNode(left), new RelationNode(right))
+    const actual = node.getResult()
+    expect(expected.equals(actual)).toBeTruthy()
+  })
 
-    test('Majitel 1 with 2 Autos, Majitel 2 with 1 Autos, 1 Auto without a Majitel, 1 Majitel without an Auto -> 3 rows naturally, 1 with nulls', () => {
-        // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
-        const left: Relation = new Relation("Auto");
-        left.addColumn("AutoId", "number");
-        left.addColumn("MajitelId", "number");
-        left.addColumn("Kola", "number");
-        left.addColumn("Motor", "string");
-        left.addColumn("Vyrobce", "string");
-        left.addColumn("Barva", "string");
-        const lefta: Row = new Row(left.getColumns());
-        lefta.addValue("AutoId", 1);
-        lefta.addValue("MajitelId", 1);
-        lefta.addValue("Kola", 4);
-        lefta.addValue("Motor", "Motor V4");
-        lefta.addValue("Vyrobce", "Skoda");
-        lefta.addValue("Barva", "Modra");
-        left.addRow(lefta);
-        const leftb: Row = new Row(left.getColumns());
-        leftb.addValue("AutoId", 2);
-        leftb.addValue("MajitelId", 2);
-        leftb.addValue("Kola", 8);
-        leftb.addValue("Motor", "Motor V16");
-        leftb.addValue("Vyrobce", "Tatra");
-        leftb.addValue("Barva", "Modra");
-        left.addRow(leftb);
-        const leftc: Row = new Row(left.getColumns());
-        leftc.addValue("AutoId", 3);
-        leftc.addValue("MajitelId", 2);
-        leftc.addValue("Kola", 6);
-        leftc.addValue("Motor", "Motor V8");
-        leftc.addValue("Vyrobce", "Tatra");
-        leftc.addValue("Barva", "Cervena");
-        left.addRow(leftc);
-        const leftd: Row = new Row(left.getColumns());
-        leftd.addValue("AutoId", 4);
-        leftd.addValue("MajitelId", 3);   // Majitel with ID 3 does not exist
-        leftd.addValue("Kola", 6);
-        leftd.addValue("Motor", "Motor V8");
-        leftd.addValue("Vyrobce", "Tatra");
-        leftd.addValue("Barva", "Cervena");
-        left.addRow(leftd);
+  test('Majitel 1 with 2 Autos, Majitel 2 with 1 Autos, 1 Auto without a Majitel, 1 Majitel without an Auto -> 3 rows naturally, 1 with nulls', () => {
+    // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
+    const left: Relation = new Relation('Auto')
+    left.addColumn('AutoId', 'number')
+    left.addColumn('MajitelId', 'number')
+    left.addColumn('Kola', 'number')
+    left.addColumn('Motor', 'string')
+    left.addColumn('Vyrobce', 'string')
+    left.addColumn('Barva', 'string')
+    const lefta: Row = new Row(left.getColumns())
+    lefta.addValue('AutoId', 1)
+    lefta.addValue('MajitelId', 1)
+    lefta.addValue('Kola', 4)
+    lefta.addValue('Motor', 'Motor V4')
+    lefta.addValue('Vyrobce', 'Skoda')
+    lefta.addValue('Barva', 'Modra')
+    left.addRow(lefta)
+    const leftb: Row = new Row(left.getColumns())
+    leftb.addValue('AutoId', 2)
+    leftb.addValue('MajitelId', 2)
+    leftb.addValue('Kola', 8)
+    leftb.addValue('Motor', 'Motor V16')
+    leftb.addValue('Vyrobce', 'Tatra')
+    leftb.addValue('Barva', 'Modra')
+    left.addRow(leftb)
+    const leftc: Row = new Row(left.getColumns())
+    leftc.addValue('AutoId', 3)
+    leftc.addValue('MajitelId', 2)
+    leftc.addValue('Kola', 6)
+    leftc.addValue('Motor', 'Motor V8')
+    leftc.addValue('Vyrobce', 'Tatra')
+    leftc.addValue('Barva', 'Cervena')
+    left.addRow(leftc)
+    const leftd: Row = new Row(left.getColumns())
+    leftd.addValue('AutoId', 4)
+    leftd.addValue('MajitelId', 3)   // Majitel with ID 3 does not exist
+    leftd.addValue('Kola', 6)
+    leftd.addValue('Motor', 'Motor V8')
+    leftd.addValue('Vyrobce', 'Tatra')
+    leftd.addValue('Barva', 'Cervena')
+    left.addRow(leftd)
 
-        const right: Relation = new Relation("Majitel");
-        right.addColumn("MajitelId", "number");
-        right.addColumn("Jmeno", "string");
-        right.addColumn("Prijmeni", "string");
-        right.addColumn("Bydliste", "string");
-        const righta: Row = new Row(right.getColumns());
-        righta.addValue("MajitelId", 1);
-        righta.addValue("Jmeno", "Lukas");
-        righta.addValue("Prijmeni", "Kotlik");
-        righta.addValue("Bydliste", "Praha, CR");
-        right.addRow(righta);
-        const rightb: Row = new Row(right.getColumns());
-        rightb.addValue("MajitelId", 2);
-        rightb.addValue("Jmeno", "Pepa");
-        rightb.addValue("Prijmeni", "Ridic");
-        rightb.addValue("Bydliste", "Velke Mezirici");
-        right.addRow(rightb);
-        const rightc: Row = new Row(right.getColumns());
-        rightc.addValue("MajitelId", 5);
-        rightc.addValue("Jmeno", "Jarda");
-        rightc.addValue("Prijmeni", "Novak");
-        rightc.addValue("Bydliste", "Pacov");
-        right.addRow(rightc);
+    const right: Relation = new Relation('Majitel')
+    right.addColumn('MajitelId', 'number')
+    right.addColumn('Jmeno', 'string')
+    right.addColumn('Prijmeni', 'string')
+    right.addColumn('Bydliste', 'string')
+    const righta: Row = new Row(right.getColumns())
+    righta.addValue('MajitelId', 1)
+    righta.addValue('Jmeno', 'Lukas')
+    righta.addValue('Prijmeni', 'Kotlik')
+    righta.addValue('Bydliste', 'Praha, CR')
+    right.addRow(righta)
+    const rightb: Row = new Row(right.getColumns())
+    rightb.addValue('MajitelId', 2)
+    rightb.addValue('Jmeno', 'Pepa')
+    rightb.addValue('Prijmeni', 'Ridic')
+    rightb.addValue('Bydliste', 'Velke Mezirici')
+    right.addRow(rightb)
+    const rightc: Row = new Row(right.getColumns())
+    rightc.addValue('MajitelId', 5)
+    rightc.addValue('Jmeno', 'Jarda')
+    rightc.addValue('Prijmeni', 'Novak')
+    rightc.addValue('Bydliste', 'Pacov')
+    right.addRow(rightc)
 
-        const expected: Relation = new Relation("(Auto*R*Majitel)");
-        expected.addColumn("AutoId", "number");
-        expected.addColumn("Kola", "number");
-        expected.addColumn("Motor", "string");
-        expected.addColumn("Vyrobce", "string");
-        expected.addColumn("Barva", "string");
-        expected.addColumn("MajitelId", "number");
-        expected.addColumn("Jmeno", "string");
-        expected.addColumn("Prijmeni", "string");
-        expected.addColumn("Bydliste", "string");
-        const expectedA: Row = new Row(expected.getColumns());
-        expectedA.addValue("AutoId", 1);
-        expectedA.addValue("Kola", 4);
-        expectedA.addValue("Motor", "Motor V4");
-        expectedA.addValue("Vyrobce", "Skoda");
-        expectedA.addValue("Barva", "Modra");
-        expectedA.addValue("MajitelId", 1);
-        expectedA.addValue("Jmeno", "Lukas");
-        expectedA.addValue("Prijmeni", "Kotlik");
-        expectedA.addValue("Bydliste", "Praha, CR");
-        expected.addRow(expectedA);
-        const expectedd: Row = new Row(expected.getColumns());
-        expectedd.addValue("AutoId", 2);
-        expectedd.addValue("Kola", 8);
-        expectedd.addValue("Motor", "Motor V16");
-        expectedd.addValue("Vyrobce", "Tatra");
-        expectedd.addValue("Barva", "Modra");
-        expectedd.addValue("MajitelId", 2);
-        expectedd.addValue("Jmeno", "Pepa");
-        expectedd.addValue("Prijmeni", "Ridic");
-        expectedd.addValue("Bydliste", "Velke Mezirici");
-        expected.addRow(expectedd);
-        const expectede: Row = new Row(expected.getColumns());
-        expectede.addValue("AutoId", 3);
-        expectede.addValue("Kola", 6);
-        expectede.addValue("Motor", "Motor V8");
-        expectede.addValue("Vyrobce", "Tatra");
-        expectede.addValue("Barva", "Cervena");
-        expectede.addValue("MajitelId", 2);
-        expectede.addValue("Jmeno", "Pepa");
-        expectede.addValue("Prijmeni", "Ridic");
-        expectede.addValue("Bydliste", "Velke Mezirici");
-        expected.addRow(expectede);
-        const expectedg: Row = new Row(expected.getColumns());
-        expectedg.addValue("MajitelId", 5);
-        expectedg.addValue("Jmeno", "Jarda");
-        expectedg.addValue("Prijmeni", "Novak");
-        expectedg.addValue("Bydliste", "Pacov");
-        expected.addRow(expectedg);
+    const expected: Relation = new Relation('(Auto*R*Majitel)')
+    expected.addColumn('AutoId', 'number')
+    expected.addColumn('Kola', 'number')
+    expected.addColumn('Motor', 'string')
+    expected.addColumn('Vyrobce', 'string')
+    expected.addColumn('Barva', 'string')
+    expected.addColumn('MajitelId', 'number')
+    expected.addColumn('Jmeno', 'string')
+    expected.addColumn('Prijmeni', 'string')
+    expected.addColumn('Bydliste', 'string')
+    const expectedA: Row = new Row(expected.getColumns())
+    expectedA.addValue('AutoId', 1)
+    expectedA.addValue('Kola', 4)
+    expectedA.addValue('Motor', 'Motor V4')
+    expectedA.addValue('Vyrobce', 'Skoda')
+    expectedA.addValue('Barva', 'Modra')
+    expectedA.addValue('MajitelId', 1)
+    expectedA.addValue('Jmeno', 'Lukas')
+    expectedA.addValue('Prijmeni', 'Kotlik')
+    expectedA.addValue('Bydliste', 'Praha, CR')
+    expected.addRow(expectedA)
+    const expectedd: Row = new Row(expected.getColumns())
+    expectedd.addValue('AutoId', 2)
+    expectedd.addValue('Kola', 8)
+    expectedd.addValue('Motor', 'Motor V16')
+    expectedd.addValue('Vyrobce', 'Tatra')
+    expectedd.addValue('Barva', 'Modra')
+    expectedd.addValue('MajitelId', 2)
+    expectedd.addValue('Jmeno', 'Pepa')
+    expectedd.addValue('Prijmeni', 'Ridic')
+    expectedd.addValue('Bydliste', 'Velke Mezirici')
+    expected.addRow(expectedd)
+    const expectede: Row = new Row(expected.getColumns())
+    expectede.addValue('AutoId', 3)
+    expectede.addValue('Kola', 6)
+    expectede.addValue('Motor', 'Motor V8')
+    expectede.addValue('Vyrobce', 'Tatra')
+    expectede.addValue('Barva', 'Cervena')
+    expectede.addValue('MajitelId', 2)
+    expectede.addValue('Jmeno', 'Pepa')
+    expectede.addValue('Prijmeni', 'Ridic')
+    expectede.addValue('Bydliste', 'Velke Mezirici')
+    expected.addRow(expectede)
+    const expectedg: Row = new Row(expected.getColumns())
+    expectedg.addValue('MajitelId', 5)
+    expectedg.addValue('Jmeno', 'Jarda')
+    expectedg.addValue('Prijmeni', 'Novak')
+    expectedg.addValue('Bydliste', 'Pacov')
+    expected.addRow(expectedg)
 
-        const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.right, new RelationNode(left), new RelationNode(right));
-        const actual = node.getResult();
-        expect(expected.equals(actual)).toBeTruthy();
-    });
+    const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.right, new RelationNode(left), new RelationNode(right))
+    const actual = node.getResult()
+    expect(expected.equals(actual)).toBeTruthy()
+  })
 
-    test('No common column, there should be joined as Cartesian product -> 1 row expected', () => {
-        // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
-        const left: Relation = new Relation("Auto");
-        left.addColumn("AutoId", "number");
-        left.addColumn("Majitel", "number");
-        left.addColumn("Kola", "number");
-        left.addColumn("Motor", "string");
-        left.addColumn("Vyrobce", "string");
-        left.addColumn("Barva", "string");
-        const lefta: Row = new Row(left.getColumns());
-        lefta.addValue("AutoId", 1);
-        lefta.addValue("Majitel", 1);
-        lefta.addValue("Kola", 4);
-        lefta.addValue("Motor", "Motor V4");
-        lefta.addValue("Vyrobce", "Skoda");
-        lefta.addValue("Barva", "Modra");
-        left.addRow(lefta);
+  test('No common column, there should be joined as Cartesian product -> 1 row expected', () => {
+    // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
+    const left: Relation = new Relation('Auto')
+    left.addColumn('AutoId', 'number')
+    left.addColumn('Majitel', 'number')
+    left.addColumn('Kola', 'number')
+    left.addColumn('Motor', 'string')
+    left.addColumn('Vyrobce', 'string')
+    left.addColumn('Barva', 'string')
+    const lefta: Row = new Row(left.getColumns())
+    lefta.addValue('AutoId', 1)
+    lefta.addValue('Majitel', 1)
+    lefta.addValue('Kola', 4)
+    lefta.addValue('Motor', 'Motor V4')
+    lefta.addValue('Vyrobce', 'Skoda')
+    lefta.addValue('Barva', 'Modra')
+    left.addRow(lefta)
 
-        const right: Relation = new Relation("Majitel");
-        right.addColumn("MajitelId", "number");
-        right.addColumn("Jmeno", "string");
-        right.addColumn("Prijmeni", "string");
-        right.addColumn("Bydliste", "string");
-        const righta: Row = new Row(right.getColumns());
-        righta.addValue("MajitelId", 1);
-        righta.addValue("Jmeno", "Lukas");
-        righta.addValue("Prijmeni", "Kotlik");
-        righta.addValue("Bydliste", "Praha, CR");
-        right.addRow(righta);
+    const right: Relation = new Relation('Majitel')
+    right.addColumn('MajitelId', 'number')
+    right.addColumn('Jmeno', 'string')
+    right.addColumn('Prijmeni', 'string')
+    right.addColumn('Bydliste', 'string')
+    const righta: Row = new Row(right.getColumns())
+    righta.addValue('MajitelId', 1)
+    righta.addValue('Jmeno', 'Lukas')
+    righta.addValue('Prijmeni', 'Kotlik')
+    righta.addValue('Bydliste', 'Praha, CR')
+    right.addRow(righta)
 
-        const expected: Relation = new Relation("(Auto*R*Majitel)");
-        expected.addColumn("AutoId", "number");
-        expected.addColumn("Majitel", "number");
-        expected.addColumn("Kola", "number");
-        expected.addColumn("Motor", "string");
-        expected.addColumn("Vyrobce", "string");
-        expected.addColumn("Barva", "string");
-        expected.addColumn("MajitelId", "number");
-        expected.addColumn("Jmeno", "string");
-        expected.addColumn("Prijmeni", "string");
-        expected.addColumn("Bydliste", "string");
-        const expectedA: Row = new Row(expected.getColumns());
-        expectedA.addValue("AutoId", 1);
-        expectedA.addValue("Majitel", 1);
-        expectedA.addValue("Kola", 4);
-        expectedA.addValue("Motor", "Motor V4");
-        expectedA.addValue("Vyrobce", "Skoda");
-        expectedA.addValue("Barva", "Modra");
-        expectedA.addValue("MajitelId", 1);
-        expectedA.addValue("Jmeno", "Lukas");
-        expectedA.addValue("Prijmeni", "Kotlik");
-        expectedA.addValue("Bydliste", "Praha, CR");
-        expected.addRow(expectedA);
+    const expected: Relation = new Relation('(Auto*R*Majitel)')
+    expected.addColumn('AutoId', 'number')
+    expected.addColumn('Majitel', 'number')
+    expected.addColumn('Kola', 'number')
+    expected.addColumn('Motor', 'string')
+    expected.addColumn('Vyrobce', 'string')
+    expected.addColumn('Barva', 'string')
+    expected.addColumn('MajitelId', 'number')
+    expected.addColumn('Jmeno', 'string')
+    expected.addColumn('Prijmeni', 'string')
+    expected.addColumn('Bydliste', 'string')
+    const expectedA: Row = new Row(expected.getColumns())
+    expectedA.addValue('AutoId', 1)
+    expectedA.addValue('Majitel', 1)
+    expectedA.addValue('Kola', 4)
+    expectedA.addValue('Motor', 'Motor V4')
+    expectedA.addValue('Vyrobce', 'Skoda')
+    expectedA.addValue('Barva', 'Modra')
+    expectedA.addValue('MajitelId', 1)
+    expectedA.addValue('Jmeno', 'Lukas')
+    expectedA.addValue('Prijmeni', 'Kotlik')
+    expectedA.addValue('Bydliste', 'Praha, CR')
+    expected.addRow(expectedA)
 
-        const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.right, new RelationNode(left), new RelationNode(right));
-        const actual = node.getResult();
-        expect(expected.equals(actual)).toBeTruthy();
-    });
+    const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.right, new RelationNode(left), new RelationNode(right))
+    const actual = node.getResult()
+    expect(expected.equals(actual)).toBeTruthy()
+  })
 
-    test('Common column MajitelId has different values in relations -> 1 row with nulls', () => {
-        // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
-        const left: Relation = new Relation("Auto");
-        left.addColumn("AutoId", "number");
-        left.addColumn("MajitelId", "number");
-        left.addColumn("Kola", "number");
-        left.addColumn("Motor", "string");
-        left.addColumn("Vyrobce", "string");
-        left.addColumn("Barva", "string");
-        const lefta: Row = new Row(left.getColumns());
-        lefta.addValue("AutoId", 1);
-        lefta.addValue("MajitelId", 2);
-        lefta.addValue("Kola", 4);
-        lefta.addValue("Motor", "Motor V4");
-        lefta.addValue("Vyrobce", "Skoda");
-        lefta.addValue("Barva", "Modra");
-        left.addRow(lefta);
+  test('Common column MajitelId has different values in relations -> 1 row with nulls', () => {
+    // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
+    const left: Relation = new Relation('Auto')
+    left.addColumn('AutoId', 'number')
+    left.addColumn('MajitelId', 'number')
+    left.addColumn('Kola', 'number')
+    left.addColumn('Motor', 'string')
+    left.addColumn('Vyrobce', 'string')
+    left.addColumn('Barva', 'string')
+    const lefta: Row = new Row(left.getColumns())
+    lefta.addValue('AutoId', 1)
+    lefta.addValue('MajitelId', 2)
+    lefta.addValue('Kola', 4)
+    lefta.addValue('Motor', 'Motor V4')
+    lefta.addValue('Vyrobce', 'Skoda')
+    lefta.addValue('Barva', 'Modra')
+    left.addRow(lefta)
 
-        const right: Relation = new Relation("Majitel");
-        right.addColumn("MajitelId", "number");
-        right.addColumn("Jmeno", "string");
-        right.addColumn("Prijmeni", "string");
-        right.addColumn("Bydliste", "string");
-        const righta: Row = new Row(right.getColumns());
-        righta.addValue("MajitelId", 1);
-        righta.addValue("Jmeno", "Lukas");
-        righta.addValue("Prijmeni", "Kotlik");
-        righta.addValue("Bydliste", "Praha, CR");
-        right.addRow(righta);
+    const right: Relation = new Relation('Majitel')
+    right.addColumn('MajitelId', 'number')
+    right.addColumn('Jmeno', 'string')
+    right.addColumn('Prijmeni', 'string')
+    right.addColumn('Bydliste', 'string')
+    const righta: Row = new Row(right.getColumns())
+    righta.addValue('MajitelId', 1)
+    righta.addValue('Jmeno', 'Lukas')
+    righta.addValue('Prijmeni', 'Kotlik')
+    righta.addValue('Bydliste', 'Praha, CR')
+    right.addRow(righta)
 
-        const expected: Relation = new Relation("(Auto*R*Majitel)");
-        expected.addColumn("AutoId", "number");
-        expected.addColumn("Kola", "number");
-        expected.addColumn("Motor", "string");
-        expected.addColumn("Vyrobce", "string");
-        expected.addColumn("Barva", "string");
-        expected.addColumn("MajitelId", "number");
-        expected.addColumn("Jmeno", "string");
-        expected.addColumn("Prijmeni", "string");
-        expected.addColumn("Bydliste", "string");
-        const expectedB: Row = new Row(expected.getColumns());
-        expectedB.addValue("MajitelId", 1);
-        expectedB.addValue("Jmeno", "Lukas");
-        expectedB.addValue("Prijmeni", "Kotlik");
-        expectedB.addValue("Bydliste", "Praha, CR");
-        expected.addRow(expectedB);
+    const expected: Relation = new Relation('(Auto*R*Majitel)')
+    expected.addColumn('AutoId', 'number')
+    expected.addColumn('Kola', 'number')
+    expected.addColumn('Motor', 'string')
+    expected.addColumn('Vyrobce', 'string')
+    expected.addColumn('Barva', 'string')
+    expected.addColumn('MajitelId', 'number')
+    expected.addColumn('Jmeno', 'string')
+    expected.addColumn('Prijmeni', 'string')
+    expected.addColumn('Bydliste', 'string')
+    const expectedB: Row = new Row(expected.getColumns())
+    expectedB.addValue('MajitelId', 1)
+    expectedB.addValue('Jmeno', 'Lukas')
+    expectedB.addValue('Prijmeni', 'Kotlik')
+    expectedB.addValue('Bydliste', 'Praha, CR')
+    expected.addRow(expectedB)
 
-        const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.right, new RelationNode(left), new RelationNode(right));
-        const actual = node.getResult();
-        expect(expected.equals(actual)).toBeTruthy();
-    });
-});
+    const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.right, new RelationNode(left), new RelationNode(right))
+    const actual = node.getResult()
+    expect(expected.equals(actual)).toBeTruthy()
+  })
+})
 
-const leftRelation: Relation = new Relation("LAuto");
-leftRelation.addColumn("LId", "number");
-leftRelation.addColumn("LMajitel", "string");
-leftRelation.addColumn("LKola", "number");
-const leftRowA: Row = new Row(leftRelation.getColumns());
-leftRowA.addValue("LId", 1);
-leftRowA.addValue("LMajitel", "Lukas Left");
-leftRowA.addValue("LKola", 4);
-leftRelation.addRow(leftRowA);
-const leftRowB: Row = new Row(leftRelation.getColumns());
-leftRowB.addValue("LId", 2);
-leftRowB.addValue("LMajitel", "Lukas Left");
-leftRowB.addValue("LKola", 2);
-leftRelation.addRow(leftRowB);
-const leftRowC: Row = new Row(leftRelation.getColumns());
-leftRowC.addValue("LId", 3);
-leftRowC.addValue("LMajitel", "Pepa Left");
-leftRowC.addValue("LKola", 8);
-leftRelation.addRow(leftRowC);
-const leftSource: RelationNode = new RelationNode(leftRelation);
+const leftRelation: Relation = new Relation('LAuto')
+leftRelation.addColumn('LId', 'number')
+leftRelation.addColumn('LMajitel', 'string')
+leftRelation.addColumn('LKola', 'number')
+const leftRowA: Row = new Row(leftRelation.getColumns())
+leftRowA.addValue('LId', 1)
+leftRowA.addValue('LMajitel', 'Lukas Left')
+leftRowA.addValue('LKola', 4)
+leftRelation.addRow(leftRowA)
+const leftRowB: Row = new Row(leftRelation.getColumns())
+leftRowB.addValue('LId', 2)
+leftRowB.addValue('LMajitel', 'Lukas Left')
+leftRowB.addValue('LKola', 2)
+leftRelation.addRow(leftRowB)
+const leftRowC: Row = new Row(leftRelation.getColumns())
+leftRowC.addValue('LId', 3)
+leftRowC.addValue('LMajitel', 'Pepa Left')
+leftRowC.addValue('LKola', 8)
+leftRelation.addRow(leftRowC)
+const leftSource: RelationNode = new RelationNode(leftRelation)
 
-const rightRelation: Relation = new Relation("RAuto");
-rightRelation.addColumn("RId", "number");
-rightRelation.addColumn("RMajitel", "string");
-rightRelation.addColumn("RKola", "number");
-const rightRowA: Row = new Row(rightRelation.getColumns());
-rightRowA.addValue("RId", 1);
-rightRowA.addValue("RMajitel", "Lukas Right");
-rightRowA.addValue("RKola", 4);
-rightRelation.addRow(rightRowA);
-const rightRowB: Row = new Row(rightRelation.getColumns());
-rightRowB.addValue("RId", 2);
-rightRowB.addValue("RMajitel", "Lukas Right");
-rightRowB.addValue("RKola", 2);
-rightRelation.addRow(rightRowB);
-const rightRowC: Row = new Row(rightRelation.getColumns());
-rightRowC.addValue("RId", 3);
-rightRowC.addValue("RMajitel", "Pepa Right");
-rightRowC.addValue("RKola", 8);
-rightRelation.addRow(rightRowC);
-const rightSource: RelationNode = new RelationNode(rightRelation);
+const rightRelation: Relation = new Relation('RAuto')
+rightRelation.addColumn('RId', 'number')
+rightRelation.addColumn('RMajitel', 'string')
+rightRelation.addColumn('RKola', 'number')
+const rightRowA: Row = new Row(rightRelation.getColumns())
+rightRowA.addValue('RId', 1)
+rightRowA.addValue('RMajitel', 'Lukas Right')
+rightRowA.addValue('RKola', 4)
+rightRelation.addRow(rightRowA)
+const rightRowB: Row = new Row(rightRelation.getColumns())
+rightRowB.addValue('RId', 2)
+rightRowB.addValue('RMajitel', 'Lukas Right')
+rightRowB.addValue('RKola', 2)
+rightRelation.addRow(rightRowB)
+const rightRowC: Row = new Row(rightRelation.getColumns())
+rightRowC.addValue('RId', 3)
+rightRowC.addValue('RMajitel', 'Pepa Right')
+rightRowC.addValue('RKola', 8)
+rightRelation.addRow(rightRowC)
+const rightSource: RelationNode = new RelationNode(rightRelation)
 
-describe('fakeEval' , () => {
-    test('creates correct schema when cursor not in subtrees', () => {
-        // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
-        const left: Relation = new Relation("Auto");
-        left.addColumn("AutoId", "number");
-        left.addColumn("MajitelId", "number");
-        left.addColumn("Kola", "number");
-        left.addColumn("Motor", "string");
-        const lefta: Row = new Row(left.getColumns());
-        lefta.addValue("AutoId", 1);
-        lefta.addValue("MajitelId", 1);
-        lefta.addValue("Kola", 4);
-        lefta.addValue("Motor", "Motor V4");
-        left.addRow(lefta);
+describe('fakeEval', () => {
+  test('creates correct schema when cursor not in subtrees', () => {
+    // 'l' for left, 'r' for right, 'e' for expected, 'a' for result
+    const left: Relation = new Relation('Auto')
+    left.addColumn('AutoId', 'number')
+    left.addColumn('MajitelId', 'number')
+    left.addColumn('Kola', 'number')
+    left.addColumn('Motor', 'string')
+    const lefta: Row = new Row(left.getColumns())
+    lefta.addValue('AutoId', 1)
+    lefta.addValue('MajitelId', 1)
+    lefta.addValue('Kola', 4)
+    lefta.addValue('Motor', 'Motor V4')
+    left.addRow(lefta)
 
-        const right: Relation = new Relation("Majitel");
-        right.addColumn("MajitelId", "number");
-        right.addColumn("Jmeno", "string");
-        right.addColumn("Prijmeni", "string");
-        const righta: Row = new Row(right.getColumns());
-        righta.addValue("MajitelId", 1);
-        righta.addValue("Jmeno", "Lukas");
-        righta.addValue("Prijmeni", "Kotlik");
-        right.addRow(righta);
+    const right: Relation = new Relation('Majitel')
+    right.addColumn('MajitelId', 'number')
+    right.addColumn('Jmeno', 'string')
+    right.addColumn('Prijmeni', 'string')
+    const righta: Row = new Row(right.getColumns())
+    righta.addValue('MajitelId', 1)
+    righta.addValue('Jmeno', 'Lukas')
+    righta.addValue('Prijmeni', 'Kotlik')
+    right.addRow(righta)
 
-        const expected: Relation = new Relation("Binary");
-        expected.addColumn("AutoId", "number");
-        expected.addColumn("Kola", "number");
-        expected.addColumn("Motor", "string");
-        expected.addColumn("MajitelId", "number");
-        expected.addColumn("Jmeno", "string");
-        expected.addColumn("Prijmeni", "string");
+    const expected: Relation = new Relation('Binary')
+    expected.addColumn('AutoId', 'number')
+    expected.addColumn('Kola', 'number')
+    expected.addColumn('Motor', 'string')
+    expected.addColumn('MajitelId', 'number')
+    expected.addColumn('Jmeno', 'string')
+    expected.addColumn('Prijmeni', 'string')
 
-        const nodeFull: OuterJoinNode = new OuterJoinNode(OuterJoinType.full, new RelationNode(left), new RelationNode(right));
-        const actualFull = nodeFull.fakeEval(-5);
-        expect(expected.equals(actualFull.result)).toBeTruthy();
+    const nodeFull: OuterJoinNode = new OuterJoinNode(OuterJoinType.full, new RelationNode(left), new RelationNode(right))
+    const actualFull = nodeFull.fakeEval(-5)
+    expect(expected.equals(actualFull.result)).toBeTruthy()
 
-        const nodeLeft: OuterJoinNode = new OuterJoinNode(OuterJoinType.left, new RelationNode(left), new RelationNode(right));
-        const actualLeft = nodeLeft.fakeEval(-5);
-        expect(expected.equals(actualLeft.result)).toBeTruthy();
+    const nodeLeft: OuterJoinNode = new OuterJoinNode(OuterJoinType.left, new RelationNode(left), new RelationNode(right))
+    const actualLeft = nodeLeft.fakeEval(-5)
+    expect(expected.equals(actualLeft.result)).toBeTruthy()
 
-        const nodeRight: OuterJoinNode = new OuterJoinNode(OuterJoinType.right, new RelationNode(left), new RelationNode(right));
-        const actualRight = nodeRight.fakeEval(-5);
-        expect(expected.equals(actualRight.result)).toBeTruthy();
-    });
+    const nodeRight: OuterJoinNode = new OuterJoinNode(OuterJoinType.right, new RelationNode(left), new RelationNode(right))
+    const actualRight = nodeRight.fakeEval(-5)
+    expect(expected.equals(actualRight.result)).toBeTruthy()
+  })
 
-    describe('passes found whispers' , () => {
-        test('from left: LAuto(LId == 1)*F*RAuto', () => {
-            const exprPrev: IndexedString = IndexedString.new("(LId == 1)", 10);
-            const expected: Set<string> = new Set(["LId", "LMajitel", "LKola"]);
+  describe('passes found whispers', () => {
+    test('from left: LAuto(LId == 1)*F*RAuto', () => {
+      const exprPrev: IndexedString = IndexedString.new('(LId == 1)', 10)
+      const expected: Set<string> = new Set(['LId', 'LMajitel', 'LKola'])
 
-            const nodePrev: SelectionNode = new SelectionNode(exprPrev, leftSource, true);
-            const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.full, nodePrev, rightSource);
-            const actual = node.fakeEval(15);
-            expect(new Set(actual.whispers)).toStrictEqual(expected);
-        });
+      const nodePrev: SelectionNode = new SelectionNode(exprPrev, leftSource, true)
+      const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.full, nodePrev, rightSource)
+      const actual = node.fakeEval(15)
+      expect(new Set(actual.whispers)).toStrictEqual(expected)
+    })
 
-        test('from right: LAuto*F*RAuto(RId == 1)', () => {
-            const exprPrev: IndexedString = IndexedString.new("(LId == 1)", 20);
-            const expected: Set<string> = new Set(["RId", "RMajitel", "RKola"]);
+    test('from right: LAuto*F*RAuto(RId == 1)', () => {
+      const exprPrev: IndexedString = IndexedString.new('(LId == 1)', 20)
+      const expected: Set<string> = new Set(['RId', 'RMajitel', 'RKola'])
 
-            const nodePrev: SelectionNode = new SelectionNode(exprPrev, rightSource, true);
-            const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.full, leftSource, nodePrev);
-            const actual = node.fakeEval(25);
-            expect(new Set(actual.whispers)).toStrictEqual(expected);
-        });
-    });
-});
+      const nodePrev: SelectionNode = new SelectionNode(exprPrev, rightSource, true)
+      const node: OuterJoinNode = new OuterJoinNode(OuterJoinType.full, leftSource, nodePrev)
+      const actual = node.fakeEval(25)
+      expect(new Set(actual.whispers)).toStrictEqual(expected)
+    })
+  })
+})

@@ -1,21 +1,21 @@
-import {getStartOfWordBeforeIndex} from "../whisperUtils";
-import {sortWhispers} from "../whisperUtils";
+import { getStartOfWordBeforeIndex } from '../whisperUtils'
+import { sortWhispers } from '../whisperUtils'
 
 
 describe('getStartOfWordBeforeIndex', () => {
   test.each([
-    {str: 'Word', index: 0, expected: 0},
-    {str: 'Word', index: 1, expected: 0},
-    {str: 'Word one two', index: 3, expected: 0},
-    {str: 'Word one two', index: 5, expected: 5},
-    {str: 'Word one two', index: 7, expected: 5},
-  ])('%s', ({str, index, expected}) => {
+    { str: 'Word', index: 0, expected: 0 },
+    { str: 'Word', index: 1, expected: 0 },
+    { str: 'Word one two', index: 3, expected: 0 },
+    { str: 'Word one two', index: 5, expected: 5 },
+    { str: 'Word one two', index: 7, expected: 5 },
+  ])('%s', ({ str, index, expected }) => {
     // act
-    const actual = getStartOfWordBeforeIndex(str, index);
+    const actual = getStartOfWordBeforeIndex(str, index)
     // assert
-    expect(actual).toBe(expected);
-  });
-});
+    expect(actual).toBe(expected)
+  })
+})
 
 describe('sortWhispers - sorts correctly and inserts HTML tags', () => {
   test.each([
@@ -55,10 +55,10 @@ describe('sortWhispers - sorts correctly and inserts HTML tags', () => {
         '<span class=\'whisper-rejected-word\'>Some</span>',
       ],
     },
-  ])('%s', ({whispers, wordBeforeCursor, expected}) => {
+  ])('%s', ({ whispers, wordBeforeCursor, expected }) => {
     // act
-    const actual = sortWhispers(whispers, wordBeforeCursor);
+    const actual = sortWhispers(whispers, wordBeforeCursor)
     // assert
-    expect(actual).toStrictEqual(expected);
-  });
-});
+    expect(actual).toStrictEqual(expected)
+  })
+})

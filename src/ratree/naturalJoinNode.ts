@@ -1,8 +1,8 @@
-import {BinaryNode} from "./binaryNode";
-import {RATreeNode} from "./raTreeNode";
-import {Relation} from "../relation/relation";
-import {Row} from "../relation/row";
-import {language} from "../language/language";
+import { BinaryNode } from './binaryNode'
+import { RATreeNode } from './raTreeNode'
+import { Relation } from '../relation/relation'
+import { Row } from '../relation/row'
+import { language } from '../language/language'
 
 /**
  * Enum of types of natural join node: natural, left semi, right semi.
@@ -11,9 +11,9 @@ import {language} from "../language/language";
  * @public
  */
 export enum NaturalJoinType {
-    natural = "*",
-    leftSemi = "<*",
-    rightSemi = "*>"
+  natural = '*',
+  leftSemi = '<*',
+  rightSemi = '*>'
 }
 
 /**
@@ -24,9 +24,9 @@ export enum NaturalJoinType {
  */
 export class NaturalJoinNode extends BinaryNode {
 
-    private readonly type: NaturalJoinType;
+  private readonly type: NaturalJoinType
 
-    /**
+  /**
      * Creates a new NaturalJoinNode.
      *
      * @param operator type of natural join {@type NaturalJoinNode}
@@ -34,51 +34,52 @@ export class NaturalJoinNode extends BinaryNode {
      * @param rightSubtree right subtree {@type RATreeNode}
      * @public
      */
-    public constructor(operator: NaturalJoinType, leftSubtree: RATreeNode, rightSubtree: RATreeNode) {
-        super(leftSubtree, rightSubtree);
-        this.type = operator;
-    }
+  constructor (operator: NaturalJoinType, leftSubtree: RATreeNode, rightSubtree: RATreeNode) {
+    super(leftSubtree, rightSubtree)
+    this.type = operator
+  }
 
-    /**
+  /**
      * Evaluates the RA query in this node and its subtree.
      * Expectations on source schemas: none
      * @public
      */
-    public eval(): void {
-        if (this.isEvaluated()) {
-            return;
-        }
-        const leftSource: Relation = this.leftSubtree.getResult();
-        const rightSource: Relation = this.rightSubtree.getResult();
-        // intersection of columns in left and right subtree
-        const commonColumns: string[] = leftSource.getColumnNames().filter(lc => rightSource.hasColumn(lc));
-        // change of relational schema
-        const result: Relation = new Relation("(" + leftSource.getName() + this.type + rightSource.getName() + ")");
-        if (this.type === NaturalJoinType.leftSemi || this.type === NaturalJoinType.natural) {
-            leftSource.forEachColumn((type, name) => result.addColumn(name, type));
-        }
-        if (this.type === NaturalJoinType.rightSemi || this.type === NaturalJoinType.natural) {
-            rightSource.forEachColumn((type, name) => result.addColumn(name, type));
-        }
-        // join of relation rows
-        leftSource.getRows().forEach(leftRow => {
-            rightSource.getRows().forEach(rightRow => {
-                // if all common columns have the same value
-                if ([...commonColumns].every(c => leftRow.getValue(c) === rightRow.getValue(c))) {
-                    let newRow: Row = new Row(result.getColumns());
-                    if (this.type === NaturalJoinType.leftSemi || this.type === NaturalJoinType.natural) {
-                        leftRow.getValues().forEach((value, name) => newRow.addValue(name, value));
-                    }
-                    if (this.type === NaturalJoinType.rightSemi || this.type === NaturalJoinType.natural) {
-                        rightRow.getValues().forEach((value, name) => newRow.addValue(name, value));
-                    }
-                    result.addRow(newRow);
-                }
-            });
-        });
-        this.resultRelation = result;
+  eval (): void {
+    if (this.isEvaluated()) {
+      return
     }
-    /**
+    const leftSource: Relation = this.leftSubtree.getResult()
+    const rightSource: Relation = this.rightSubtree.getResult()
+    // intersection of columns in left and right subtree
+    const commonColumns: string[] = leftSource.getColumnNames().filter(lc => rightSource.hasColumn(lc))
+    // change of relational schema
+    const result: Relation = new Relation('(' + leftSource.getName() + this.type + rightSource.getName() + ')')
+    if (this.type === NaturalJoinType.leftSemi || this.type === NaturalJoinType.natural) {
+      leftSource.forEachColumn((type, name) => result.addColumn(name, type))
+    }
+    if (this.type === NaturalJoinType.rightSemi || this.type === NaturalJoinType.natural) {
+      rightSource.forEachColumn((type, name) => result.addColumn(name, type))
+    }
+    // join of relation rows
+    leftSource.getRows().forEach(leftRow => {
+      rightSource.getRows().forEach(rightRow => {
+        // if all common columns have the same value
+        if ([...commonColumns].every(c => leftRow.getValue(c) === rightRow.getValue(c))) {
+          const newRow: Row = new Row(result.getColumns())
+          if (this.type === NaturalJoinType.leftSemi || this.type === NaturalJoinType.natural) {
+            leftRow.getValues().forEach((value, name) => newRow.addValue(name, value))
+          }
+          if (this.type === NaturalJoinType.rightSemi || this.type === NaturalJoinType.natural) {
+            rightRow.getValues().forEach((value, name) => newRow.addValue(name, value))
+          }
+          result.addRow(newRow)
+        }
+      })
+    })
+    this.resultRelation = result
+  }
+
+  /**
      * Evaluates the RA query in this node and its subtree.
      * It searches for given cursor index in parametrized nodes and if it finds it, returns the available columns.
      * Otherwise returns the result relation schema (only column names, no rows).
@@ -91,65 +92,62 @@ export class NaturalJoinNode extends BinaryNode {
      * @return resulting relation schema gained by evaluating this node and its subtree or found columns to whisper {@type NodeFakeEvalResult}
      * @public
      */
-    public fakeEval(cursorIndex: number) {
-        let type: "union" | "left" | "right" = "union";
-        if (this.type === NaturalJoinType.leftSemi) {
-            type = "left";
-        }
-        else if (this.type === NaturalJoinType.rightSemi) {
-            type = "right";
-        }
-        return this.fakeEvalBinary(cursorIndex, type);
+  fakeEval (cursorIndex: number) {
+    let type: 'union' | 'left' | 'right' = 'union'
+    if (this.type === NaturalJoinType.leftSemi) {
+      type = 'left'
+    } else if (this.type === NaturalJoinType.rightSemi) {
+      type = 'right'
     }
+    return this.fakeEvalBinary(cursorIndex, type)
+  }
 
-    /**
+  /**
      * Creates a string with a structure of the RA tree in one line.
      *
      * @return string with a structure of the RA tree in one line {@type string}
      * @public
      */
-    public printInLine(): string {
-        return "(" + this.leftSubtree.printInLine() + this.getOperationSymbol() + this.rightSubtree.printInLine() + ")";
-    }
+  printInLine (): string {
+    return '(' + this.leftSubtree.printInLine() + this.getOperationSymbol() + this.rightSubtree.printInLine() + ')'
+  }
 
-    /**
+  /**
      * Return the word name of the RA operation of the node.
      * Example: returns "Selection" for SelectionNode.
      *
      * @return name of the RA operation of the node {@type string}
      * @public
      */
-    public getOperationName(): string {
-        const lang = language().operations;
-        if (this.type === NaturalJoinType.leftSemi) {
-            return lang.leftSemiJoin;
-        }
-        else if (this.type === NaturalJoinType.rightSemi) {
-            return lang.rightSemiJoin;
-        }
-        else {
-            return lang.naturalJoin;
-        }
+  getOperationName (): string {
+    const lang = language().operations
+    if (this.type === NaturalJoinType.leftSemi) {
+      return lang.leftSemiJoin
+    } else if (this.type === NaturalJoinType.rightSemi) {
+      return lang.rightSemiJoin
+    } else {
+      return lang.naturalJoin
     }
+  }
 
-    /**
+  /**
      * Return the symbolic representation of the RA operation of the node.
      * Example: returns "(some + expr = 15)" for SelectionNode.
      *
      * @return name of the RA operation of the node {@type string}
      * @public
      */
-    public getOperationSymbol(): string {
-        return "*";
-    }
+  getOperationSymbol (): string {
+    return '*'
+  }
 
-    /**
+  /**
      * Returns type of the NaturalJoinNode.
      *
      * @return type of the node {@type NaturalJoinType}
      * @public
      */
-    public getType(): NaturalJoinType {
-        return this.type;
-    }
+  getType (): NaturalJoinType {
+    return this.type
+  }
 }

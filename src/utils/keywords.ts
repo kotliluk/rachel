@@ -1,4 +1,4 @@
-import {IndexedString} from "../types/indexedString";
+import { IndexedString } from '../types/indexedString'
 
 /**
  * Lowercase reserved keywords which cannot be used for column names. They are:
@@ -6,14 +6,14 @@ import {IndexedString} from "../types/indexedString";
  * - Boolean values: true, false
  * - Empty string: ""
  */
-const forbiddenColumnNames: string[] = ["null", "true", "false", ""];
+const forbiddenColumnNames: string[] = ['null', 'true', 'false', '']
 
 /**
  * Reserved keywords which cannot be used for relation names. They are:
  * - First characters of outer joins: F, L, R
  * - Empty string: ""
  */
-const forbiddenRelationNames: string[] = ["F", "L", "R", ""];
+const forbiddenRelationNames: string[] = ['F', 'L', 'R', '']
 
 /**
  * Returns lowercase reserved keywords which cannot be used for column names. They are:
@@ -25,8 +25,8 @@ const forbiddenRelationNames: string[] = ["F", "L", "R", ""];
  * @category Utils
  * @public
  */
-export function getForbiddenColumnNames(): string[] {
-    return forbiddenColumnNames;
+export function getForbiddenColumnNames (): string[] {
+  return forbiddenColumnNames
 }
 
 /**
@@ -38,8 +38,8 @@ export function getForbiddenColumnNames(): string[] {
  * @category Utils
  * @public
  */
-export function getForbiddenRelationNames(): string[] {
-    return forbiddenRelationNames;
+export function getForbiddenRelationNames (): string[] {
+  return forbiddenRelationNames
 }
 
 /**
@@ -50,8 +50,8 @@ export function getForbiddenRelationNames(): string[] {
  * @category Utils
  * @public
  */
-export function isForbiddenColumnName(str: string | IndexedString): boolean {
-    return forbiddenColumnNames.indexOf(str.toString().toLowerCase()) > -1;
+export function isForbiddenColumnName (str: string | IndexedString): boolean {
+  return forbiddenColumnNames.includes(str.toString().toLowerCase())
 }
 
 /**
@@ -62,7 +62,7 @@ export function isForbiddenColumnName(str: string | IndexedString): boolean {
  * @category Utils
  * @public
  */
-export function isForbiddenRelationName(str: string | IndexedString): boolean {
-    // does not use to lower because forbidden names are upper
-    return forbiddenRelationNames.indexOf(str.toString()) > -1;
+export function isForbiddenRelationName (str: string | IndexedString): boolean {
+  // does not use to lower because forbidden names are upper
+  return forbiddenRelationNames.includes(str.toString())
 }
