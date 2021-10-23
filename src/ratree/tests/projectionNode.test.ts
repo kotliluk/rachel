@@ -3,7 +3,7 @@ import {Row} from "../../relation/row";
 import {ProjectionNode} from "../projectionNode";
 import {RelationNode} from "../relationNode";
 import {IndexedString} from "../../types/indexedString";
-import {ColumnContent, SupportedColumnType} from "../../relation/columnType";
+import {createRelation} from "./common";
 
 
 const getSourceNode = (): RelationNode => {
@@ -25,21 +25,6 @@ const getSourceNode = (): RelationNode => {
   sourceRelation.addRow(s1a);
 
   return new RelationNode(sourceRelation);
-}
-
-const createRelation = (
-  name: string,
-  columns: [string, SupportedColumnType][],
-  rows: [string, ColumnContent][][],
-): Relation => {
-  const relation: Relation = new Relation(name);
-  columns.forEach(columnData => relation.addColumn(...columnData));
-  rows.forEach(rowValues => {
-    const row: Row = new Row(relation.getColumns());
-    rowValues.forEach(rowValue => row.addValue(...rowValue));
-    relation.addRow(row);
-  });
-  return relation;
 }
 
 
