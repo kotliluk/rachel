@@ -13,6 +13,10 @@ import {ErrorWithTextRange} from "./error/errorWithTextRange";
 declare global {
   namespace jest {
     interface Matchers<R> {
+      // For objects with 'equals(any): boolean' method
+      toEqualTo(expected: any): R;
+    }
+    interface Matchers<R> {
       // For Error testing
       toHaveMessage(msg: string): R;
     }
@@ -52,6 +56,20 @@ declare global {
     }
   }
 }
+
+/**
+ * For objects with 'equals(any): boolean' method.
+ */
+expect.extend({
+  toEqualTo(obj: { equals: (other: any) => boolean }, expected: any) {
+    const pass = obj.equals(expected)
+    return {
+      pass,
+      message: () => pass ? "" : "Object is not equal to the expected one, expected: " + expected
+        + ", actual: " + obj,
+    };
+  },
+});
 
 /**
  * For Error testing.
