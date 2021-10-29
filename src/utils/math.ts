@@ -9,8 +9,8 @@
  * @public
  */
 export function mod (n: number, m: number): number {
-  if (m <= 0) {
-    return NaN
+  if (m > 0) {
+    return ((n % m) + m) % m
   }
-  return ((n % m) + m) % m
+  return NaN
 }

@@ -1,0 +1,5 @@
+n,m,expected
+1,0,NaN
+1,-5e-324,NaN
+1,NaN,NaN
+1,5e-324,0
