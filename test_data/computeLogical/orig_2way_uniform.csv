@@ -1,0 +1,16 @@
+type,a,b
+and,aTrue,bUndef
+and,aFalse,bFalseNull
+and,aNull,bTrue
+or,aTrue,bFalseNull
+or,aFalse,bTrue
+or,aNull,bUndef
+not,aTrue,bTrue
+not,aFalse,bUndef
+not,aNull,bFalseNull
+or,aTrue,bNumStr
+not,aFalse,bNumStr
+and,aNull,bNumStr
+or,aNumStr,bTrue
+not,aNumStr,bUndef
+and,aNumStr,bFalseNull

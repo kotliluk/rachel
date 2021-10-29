@@ -9,10 +9,10 @@ import { language } from '../language/language'
  * @category VETree
  * @public
  */
-enum LogicalOperatorType {
-  and,
-  or,
-  not
+export enum LogicalOperatorType {
+  and = 'and',
+  or = 'or',
+  not = 'not',
 }
 
 /**

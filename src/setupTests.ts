@@ -18,6 +18,10 @@ declare global {
     }
     interface Matchers<R> {
       // For Error testing
+      toThrowErrorWithSubstr(msg: string): R
+    }
+    interface Matchers<R> {
+      // For Error testing
       toHaveMessage(msg: string): R
     }
     interface Matchers<R> {
@@ -69,6 +73,36 @@ expect.extend({
         ? ''
         : 'Object is not equal to the expected one, expected: ' + expected
         + ', actual: ' + obj,
+    }
+  },
+})
+
+/**
+ * For Error throwing testing.
+ */
+expect.extend({
+  toThrowErrorWithSubstr (callback: () => void, substr: string) {
+    let passThrow = false
+    let passError = false
+    let passSubstr = false
+    let error: any
+    try {
+      callback()
+    } catch (e) {
+      error = e
+      passThrow = true
+      passError = e instanceof Error
+      passSubstr = e.message.includes(substr)
+    }
+    return {
+      pass: passThrow && passError && passSubstr,
+      message: () => {
+        if (!passThrow) return 'Expression did not throw'
+
+        if (!passError) return `Expression did not throw error but ${error}`
+
+        return `Thrown error '${error.message}' does not contain expected substring: ${substr}`
+      },
     }
   },
 })
