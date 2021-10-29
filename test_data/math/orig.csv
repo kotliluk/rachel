@@ -1,3 +1,4 @@
 n,m
-n,mInvalid
-n,mValid
+nValid,mValid
+nValid,mInvalid
+nInvalid,mValid
