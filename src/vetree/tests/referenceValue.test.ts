@@ -43,37 +43,39 @@ interface EvalTestInputTypeOnly {
   wantedColumn: string
 }
 
-describe('eval', () => {
-  describe('rows which contain wanted value', () => {
-    const evalTestInputsWithExpected: EvalTestInputWithExpected[] = [
-      { row: numRowWithAllValues, wantedColumn: 'One', expected: { value: 1, type: 'number' } },
-      { row: strRowWithAllValues, wantedColumn: 'AAA', expected: { value: 'aaa', type: 'string' } },
-      { row: boolRowWithAllValues, wantedColumn: 'True', expected: { value: true, type: 'boolean' } },
-      { row: numRowWithOneNumberNullValue, wantedColumn: 'One', expected: { value: null, type: 'number' } },
-    ]
+describe('ReferenceValue (group: #ZKS, #VETree)', () => {
+  describe('eval', () => {
+    describe('rows which contain wanted value', () => {
+      const evalTestInputsWithExpected: EvalTestInputWithExpected[] = [
+        {row: numRowWithAllValues, wantedColumn: 'One', expected: {value: 1, type: 'number'}},
+        {row: strRowWithAllValues, wantedColumn: 'AAA', expected: {value: 'aaa', type: 'string'}},
+        {row: boolRowWithAllValues, wantedColumn: 'True', expected: {value: true, type: 'boolean'}},
+        {row: numRowWithOneNumberNullValue, wantedColumn: 'One', expected: {value: null, type: 'number'}},
+      ]
 
-    test.each(evalTestInputsWithExpected)('%s', ({ row, wantedColumn, expected }) => {
-      // arrange
-      const reference: ReferenceValue = new ReferenceValue(IndexedString.new(wantedColumn))
-      // act
-      const actual = reference.eval(row)
-      // assert
-      expect(actual).toStrictEqual(expected)
+      test.each(evalTestInputsWithExpected)('%s', ({row, wantedColumn, expected}) => {
+        // arrange
+        const reference: ReferenceValue = new ReferenceValue(IndexedString.new(wantedColumn))
+        // act
+        const actual = reference.eval(row)
+        // assert
+        expect(actual).toStrictEqual(expected)
+      })
     })
-  })
 
-  describe('rows which do not contain wanted value', () => {
-    const evalTestInputsTypeOnly: EvalTestInputTypeOnly[] = [
-      { row: numRowWithAllValues, wantedColumn: 'Three' },
-      { row: strRowWithAllValues, wantedColumn: 'CCC' },
-      { row: boolRowWithAllValues, wantedColumn: 'NotTrueNotFalse' },
-    ]
+    describe('rows which do not contain wanted value', () => {
+      const evalTestInputsTypeOnly: EvalTestInputTypeOnly[] = [
+        {row: numRowWithAllValues, wantedColumn: 'Three'},
+        {row: strRowWithAllValues, wantedColumn: 'CCC'},
+        {row: boolRowWithAllValues, wantedColumn: 'NotTrueNotFalse'},
+      ]
 
-    test.each(evalTestInputsTypeOnly)('%s', ({ row, wantedColumn }) => {
-      // arrange
-      const reference: ReferenceValue = new ReferenceValue(IndexedString.new(wantedColumn))
-      // act + assert
-      expect(() => reference.eval(row)).toThrow()
+      test.each(evalTestInputsTypeOnly)('%s', ({row, wantedColumn}) => {
+        // arrange
+        const reference: ReferenceValue = new ReferenceValue(IndexedString.new(wantedColumn))
+        // act + assert
+        expect(() => reference.eval(row)).toThrow()
+      })
     })
   })
 })

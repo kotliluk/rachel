@@ -140,42 +140,44 @@ const treeC: RATreeNode = new TestBinary(
     )
 )
 
-describe('depthSearch', () => {
-  describe('present index given', () => {
-    test.each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])('finds index %i in 11 nodes', (index) => {
-      // act
-      const result: RATreeNode | null = depthSearch(treeA, index)
-      // assert
-      expect(result?.getOperationName()).toStrictEqual('Node ' + index)
-    })
-  })
-
-  describe('absent index given', () => {
-    test.each([-1, 11, 12, 9999999])('does not find index %i in 11 nodes', (index) => {
-      // act
-      const result: RATreeNode | null = depthSearch(treeA, index)
-      // assert
-      expect(result).toBeNull()
-    })
-  })
-})
-
 interface GetTreeDepthTestInput {
   tree: RATreeNode
   expectedDepth: number
 }
 
-describe('getTreeDepth', () => {
-  const inputs: GetTreeDepthTestInput[] = [
-    { tree: treeA, expectedDepth: 3 },
-    { tree: treeB, expectedDepth: 0 },
-    { tree: treeC, expectedDepth: 4 },
-  ]
+describe('RATreeTools (group: #ZKS, #RATree)', () => {
+  describe('depthSearch', () => {
+    describe('present index given', () => {
+      test.each([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])('finds index %i in 11 nodes', (index) => {
+        // act
+        const result: RATreeNode | null = depthSearch(treeA, index)
+        // assert
+        expect(result?.getOperationName()).toStrictEqual('Node ' + index)
+      })
+    })
 
-  test.each(inputs)('%s', ({ tree, expectedDepth }) => {
-    // act
-    const result: number = getTreeDepth(tree)
-    // assert
-    expect(result).toBe(expectedDepth)
+    describe('absent index given', () => {
+      test.each([-1, 11, 12, 9999999])('does not find index %i in 11 nodes', (index) => {
+        // act
+        const result: RATreeNode | null = depthSearch(treeA, index)
+        // assert
+        expect(result).toBeNull()
+      })
+    })
+  })
+
+  describe('getTreeDepth', () => {
+    const inputs: GetTreeDepthTestInput[] = [
+      {tree: treeA, expectedDepth: 3},
+      {tree: treeB, expectedDepth: 0},
+      {tree: treeC, expectedDepth: 4},
+    ]
+
+    test.each(inputs)('%s', ({tree, expectedDepth}) => {
+      // act
+      const result: number = getTreeDepth(tree)
+      // assert
+      expect(result).toBe(expectedDepth)
+    })
   })
 })

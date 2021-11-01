@@ -83,7 +83,7 @@ const getInputData = (file: string): TestInput[] => {
     })
 }
 
-describe('computeArithmetic', () => {
+describe('computeArithmetic (group: #ZKS, #utils)', () => {
   test.each(getInputData('input_2way_uniform.csv'))
   ('Generated 2-way uniform: %s',
     (

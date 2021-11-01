@@ -40,6 +40,9 @@
     "start": "react-scripts start",
     "build": "set 'GENERATE_SOURCEMAP=false' && react-scripts build",
     "test": "react-scripts test",
+    "test:all": "react-scripts test --watchAll",
+    "test:zks": "react-scripts test --watchAll --testNamePattern=#ZKS",
+    "eject": "react-scripts eject",
     "docs": "rimraf docs && jsdoc src -r -a public -c jsdoc.json"
   },
   "eslintConfig": {

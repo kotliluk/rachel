@@ -21,6 +21,16 @@ import { RenameNode } from '../../ratree/renameNode'
 import { ThetaJoinNode, ThetaJoinType } from '../../ratree/thetaJoinNode'
 
 
+interface AddOperationsTestInput {
+  toAdd: OperationsCount[]
+  expected: OperationsCount
+}
+
+interface CountOperationsTestInput {
+  toSum: OperationsCount
+  expected: number
+}
+
 const getAllZeros = (): OperationsCount => {
   return {
     antijoin: 0,
@@ -78,80 +88,6 @@ const getAllTwos = (): OperationsCount => {
   }
 }
 
-describe('zeroOperations', () => {
-  test('returns zeros for all operation counts', () => {
-    // arrange
-    const expected = getAllZeros()
-    // act
-    const actual = zeroOperations()
-    // assert
-    expect(actual).toStrictEqual(expected)
-  })
-})
-
-interface AddOperationsTestInput {
-  toAdd: OperationsCount[]
-  expected: OperationsCount
-}
-
-describe('addOperations', () => {
-  const inputs: AddOperationsTestInput[] = [
-    { toAdd: [], expected: getAllZeros() },
-    { toAdd: [getAllZeros()], expected: getAllZeros() },
-    { toAdd: [getAllZeros(), getAllOnes(), getAllOnes()], expected: getAllTwos() },
-  ]
-  test.each(inputs)('%s', ({ toAdd, expected }) => {
-    // act
-    const actual = addOperations(...toAdd)
-    // assert
-    expect(actual).toStrictEqual(expected)
-  })
-})
-
-interface CountOperationsTestInput {
-  toSum: OperationsCount
-  expected: number
-}
-
-describe('totalOperations', () => {
-  const inputs: CountOperationsTestInput[] = [
-    { toSum: getAllZeros(), expected: 0 },
-    { toSum: getAllOnes(), expected: 14 },
-  ]
-  test.each(inputs)('%s', ({ toSum, expected }) => {
-    // act
-    const actual = totalOperations(toSum)
-    // assert
-    expect(actual).toStrictEqual(expected)
-  })
-})
-
-describe('binaryOperations', () => {
-  const inputs: CountOperationsTestInput[] = [
-    { toSum: getAllZeros(), expected: 0 },
-    { toSum: getAllOnes(), expected: 11 },
-  ]
-  test.each(inputs)('%s', ({ toSum, expected }) => {
-    // act
-    const actual = binaryOperations(toSum)
-    // assert
-    expect(actual).toStrictEqual(expected)
-  })
-})
-
-describe('unaryOperations', () => {
-  const inputs: CountOperationsTestInput[] = [
-    { toSum: getAllZeros(), expected: 0 },
-    { toSum: getAllOnes(), expected: 3 },
-  ]
-  test.each(inputs)('%s', ({ toSum, expected }) => {
-    // act
-    const actual = unaryOperations(toSum)
-    // assert
-    expect(actual).toStrictEqual(expected)
-  })
-})
-
 const leafNode: RelationNode = new RelationNode(new Relation(''))
 
 const tree: RATreeNode = new AntijoinNode(  // ANTIJOIN 1
@@ -189,26 +125,92 @@ const tree: RATreeNode = new AntijoinNode(  // ANTIJOIN 1
   )
 )
 
-describe('operationsOfTree', () => {
-  // arrange
-  const expected: OperationsCount = {
-    antijoin: 1,
-    cartesian: 2,
-    division: 1,
-    natural: 0,
-    outerJoin: 0,
-    projection: 2,
-    rename: 4,
-    selection: 2,
-    semijoin: 0,
-    union: 0,
-    intersection: 0,
-    difference: 1,
-    thetaJoin: 1,
-    thetaSemijoin: 1,
-  }
-  // act
-  const actual = operationsOfTree(tree)
-  // assert
-  expect(actual).toStrictEqual(expected)
+describe('OperationsCount (group: #ZKS, #batch)', () => {
+  describe('zeroOperations', () => {
+    test('returns zeros for all operation counts', () => {
+      // arrange
+      const expected = getAllZeros()
+      // act
+      const actual = zeroOperations()
+      // assert
+      expect(actual).toStrictEqual(expected)
+    })
+  })
+
+  describe('addOperations', () => {
+    const inputs: AddOperationsTestInput[] = [
+      {toAdd: [], expected: getAllZeros()},
+      {toAdd: [getAllZeros()], expected: getAllZeros()},
+      {toAdd: [getAllZeros(), getAllOnes(), getAllOnes()], expected: getAllTwos()},
+    ]
+    test.each(inputs)('%s', ({toAdd, expected}) => {
+      // act
+      const actual = addOperations(...toAdd)
+      // assert
+      expect(actual).toStrictEqual(expected)
+    })
+  })
+
+  describe('totalOperations', () => {
+    const inputs: CountOperationsTestInput[] = [
+      {toSum: getAllZeros(), expected: 0},
+      {toSum: getAllOnes(), expected: 14},
+    ]
+    test.each(inputs)('%s', ({toSum, expected}) => {
+      // act
+      const actual = totalOperations(toSum)
+      // assert
+      expect(actual).toStrictEqual(expected)
+    })
+  })
+
+  describe('binaryOperations', () => {
+    const inputs: CountOperationsTestInput[] = [
+      {toSum: getAllZeros(), expected: 0},
+      {toSum: getAllOnes(), expected: 11},
+    ]
+    test.each(inputs)('%s', ({toSum, expected}) => {
+      // act
+      const actual = binaryOperations(toSum)
+      // assert
+      expect(actual).toStrictEqual(expected)
+    })
+  })
+
+  describe('unaryOperations', () => {
+    const inputs: CountOperationsTestInput[] = [
+      {toSum: getAllZeros(), expected: 0},
+      {toSum: getAllOnes(), expected: 3},
+    ]
+    test.each(inputs)('%s', ({toSum, expected}) => {
+      // act
+      const actual = unaryOperations(toSum)
+      // assert
+      expect(actual).toStrictEqual(expected)
+    })
+  })
+
+  describe('operationsOfTree', () => {
+    // arrange
+    const expected: OperationsCount = {
+      antijoin: 1,
+      cartesian: 2,
+      division: 1,
+      natural: 0,
+      outerJoin: 0,
+      projection: 2,
+      rename: 4,
+      selection: 2,
+      semijoin: 0,
+      union: 0,
+      intersection: 0,
+      difference: 1,
+      thetaJoin: 1,
+      thetaSemijoin: 1,
+    }
+    // act
+    const actual = operationsOfTree(tree)
+    // assert
+    expect(actual).toStrictEqual(expected)
+  })
 })
