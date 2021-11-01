@@ -91,16 +91,16 @@ const processOrig = (orig, result) => {
   origLines.slice(1)
     .filter(line => line.trim().length > 4)
     .forEach(line => {
-    // parses the line into parameters
-    const params = line.split(',')
-    const aMappings = aParamMap.get(params[1]) || []
-    const bMappings = bParamMap.get(params[2]) || []
-    const expected = getExpectedResult(params)
-    // adds boundary values for parameters
-    aMappings.forEach(n => {
-      bMappings.forEach(m => resultLines.push(params[0] + ',' + n + ',' + m + ',' + expected))
+      // parses the line into parameters
+      const params = line.split(',')
+      const aMappings = aParamMap.get(params[1]) || []
+      const bMappings = bParamMap.get(params[2]) || []
+      const expected = getExpectedResult(params)
+      // adds boundary values for parameters
+      aMappings.forEach(n => {
+        bMappings.forEach(m => resultLines.push(params[0] + ',' + n + ',' + m + ',' + expected))
+      })
     })
-  })
 
   // saves the result file
   fs.writeFileSync(result, resultLines.join('\n'))

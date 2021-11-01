@@ -17,10 +17,10 @@ const createLiteralValue = (value: ColumnContent, order: 'First' | 'Second'): Li
 
 /**
  * Parses a LogicalOperator node for a given type and evaluates it with given sources.
- * If the type is "not" and the second parameter is defined, throws error.
- * Else, if the type is "and" or "or" and the second parameter is undefined, throws error.
- * Else, if the first parameter is string or number, throws error.
- * Else, if the second parameter is string or number, throws error.
+ * If the type is "not" and the right source is defined, throws error.
+ * Else, if the type is "and" or "or" and the right source is undefined, throws error.
+ * Else, if the left source is string or number, throws error.
+ * Else, if the right source is string or number, throws error.
  *
  * @param type type of the logical operation
  * @param a left source, expected to be boolean or null
