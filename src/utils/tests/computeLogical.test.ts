@@ -1,7 +1,7 @@
 import * as fs from 'fs'
-import {LogicalOperatorType} from "../../vetree/logicalOperator";
-import {ColumnContent} from "../../relation/columnType";
-import {computeLogical} from "../computeLogical";
+import {LogicalOperatorType} from '../../vetree/logicalOperator'
+import {ColumnContent} from '../../relation/columnType'
+import {computeLogical} from '../computeLogical'
 
 
 interface TestInput {

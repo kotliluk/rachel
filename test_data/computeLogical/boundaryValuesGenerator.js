@@ -54,7 +54,7 @@ const getExpectedResultIndex = (str) => {
       return 3
 
     default:
-      return 5
+      throw new Error('Unexpected EC name: ' + str)
   }
 }
 

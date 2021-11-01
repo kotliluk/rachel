@@ -9,7 +9,7 @@ import { StartEndPair } from '../types/startEndPair'
  * @category VETree
  * @public
  */
-enum ComputingOperatorType {
+export enum ComputingOperatorType {
   plus = '+',
   minus = '-',
   multiplication = '*',
