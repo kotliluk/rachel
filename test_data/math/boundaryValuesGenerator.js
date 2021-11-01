@@ -6,12 +6,12 @@ const RESULT_FILENAME = 'input.csv'
 
 // boundary values for each EC of n parameter
 const nParamMap = new Map([
-  ['nInvalid', ['NaN', '-Inf', 'Inf']],
+  ['nInvalid', ['NaN', '-Infinity', 'Infinity']],
   ['nValid', ['-1.7976931348623157e+308', '1.7976931348623157e+308']],
 ])
 // boundary values for each EC of m parameter
 const mParamMap = new Map([
-  ['mInvalid', ['NaN', '-Inf', '0', 'Inf']],
+  ['mInvalid', ['NaN', '-Infinity', '0', 'Infinity']],
   ['mValid', ['5e-324', '1.7976931348623157e+308']],
 ])
 
