@@ -1,7 +1,7 @@
 import * as fs from 'fs'
-import {LogicalOperatorType} from '../../vetree/logicalOperator'
-import {ColumnContent} from '../../relation/columnType'
-import {computeLogical} from '../computeLogical'
+import { LogicalOperatorType } from '../../vetree/logicalOperator'
+import { ColumnContent } from '../../relation/columnType'
+import { computeLogical } from '../computeLogical'
 
 
 interface TestInput {
@@ -10,19 +10,6 @@ interface TestInput {
   b: ColumnContent | undefined,
   expectedError: string | undefined,
   expectedResult: boolean,
-}
-
-const getTypeFromStr = (str: string): LogicalOperatorType => {
-  switch (str) {
-    case 'and':
-      return LogicalOperatorType.and
-    case 'or':
-      return LogicalOperatorType.or
-    case 'not':
-      return LogicalOperatorType.not
-    default:
-      throw Error('Unexpected type: ' + str)
-  }
 }
 
 const getColumnContent = (str: string): ColumnContent => {
@@ -65,7 +52,7 @@ const getInputData = (file: string): TestInput[] => {
     .map(line => {
       const params = line.split(',')
       return {
-        type: getTypeFromStr(params[0]),
+        type: params[0] as LogicalOperatorType,
         a: getColumnContent(params[1]),
         b: params[2] === 'undefined' ? undefined : getColumnContent(params[2]),
         expectedError: getExpectedError(params[3]),
@@ -77,9 +64,7 @@ const getInputData = (file: string): TestInput[] => {
 describe('computeLogical (group: #ZKS, #utils)', () => {
   test.each(getInputData('input_2way_uniform.csv'))
   ('Generated 2-way uniform: %s',
-    (
-      { type, a, b, expectedError, expectedResult }
-    ) => {
+    ({ type, a, b, expectedError, expectedResult }) => {
       if (expectedError) {
         // act and assert
         expect(() => computeLogical(type, a, b)).toThrowErrorWithSubstr(expectedError)
@@ -93,9 +78,7 @@ describe('computeLogical (group: #ZKS, #utils)', () => {
 
   test.each(getInputData('input_2way_mixed.csv'))
   ('Generated 2-way mixed: %s',
-    (
-      { type, a, b, expectedError, expectedResult }
-    ) => {
+    ({ type, a, b, expectedError, expectedResult }) => {
       if (expectedError) {
         // act and assert
         expect(() => computeLogical(type, a, b)).toThrowErrorWithSubstr(expectedError)
@@ -109,9 +92,7 @@ describe('computeLogical (group: #ZKS, #utils)', () => {
 
   test.each(getInputData('input_3way_uniform.csv'))
   ('Generated 3-way uniform: %s',
-    (
-      { type, a, b, expectedError, expectedResult }
-    ) => {
+    ({ type, a, b, expectedError, expectedResult }) => {
       if (expectedError) {
         // act and assert
         expect(() => computeLogical(type, a, b)).toThrowErrorWithSubstr(expectedError)

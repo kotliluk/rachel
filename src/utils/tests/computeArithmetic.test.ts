@@ -1,7 +1,7 @@
 import * as fs from 'fs'
-import {ComputingOperatorType} from '../../vetree/computingOperator'
-import {ColumnContent} from '../../relation/columnType'
-import {computeArithmetic} from '../computeArithmetic'
+import { ComputingOperatorType } from '../../vetree/computingOperator'
+import { ColumnContent } from '../../relation/columnType'
+import { computeArithmetic } from '../computeArithmetic'
 
 
 interface TestInput {
@@ -10,21 +10,6 @@ interface TestInput {
   b: ColumnContent,
   expectedError: string | undefined,
   expectedResult: number | null,
-}
-
-const getTypeFromStr = (str: string): ComputingOperatorType => {
-  switch (str) {
-    case 'plus':
-      return ComputingOperatorType.plus
-    case 'minus':
-      return ComputingOperatorType.minus
-    case 'multiplication':
-      return ComputingOperatorType.multiplication
-    case 'division':
-      return ComputingOperatorType.division
-    default:
-      throw Error('Unexpected type: ' + str)
-  }
 }
 
 const getColumnContent = (str: string): ColumnContent => {
@@ -74,7 +59,7 @@ const getInputData = (file: string): TestInput[] => {
     .map(line => {
       const params = line.split(',')
       return {
-        type: getTypeFromStr(params[0]),
+        type: params[0] as ComputingOperatorType,
         a: getColumnContent(params[1]),
         b: getColumnContent(params[2]),
         expectedError: getExpectedError(params[3]),
@@ -86,9 +71,7 @@ const getInputData = (file: string): TestInput[] => {
 describe('computeArithmetic (group: #ZKS, #utils)', () => {
   test.each(getInputData('input_2way_uniform.csv'))
   ('Generated 2-way uniform: %s',
-    (
-      { type, a, b, expectedError, expectedResult }
-    ) => {
+    ({ type, a, b, expectedError, expectedResult }) => {
       if (expectedError) {
         // act and assert
         expect(() => computeArithmetic(type, a, b)).toThrowErrorWithSubstr(expectedError)
@@ -102,9 +85,7 @@ describe('computeArithmetic (group: #ZKS, #utils)', () => {
 
   test.each(getInputData('input_2way_mixed.csv'))
   ('Generated 2-way mixed: %s',
-    (
-      { type, a, b, expectedError, expectedResult }
-    ) => {
+    ({ type, a, b, expectedError, expectedResult }) => {
       if (expectedError) {
         // act and assert
         expect(() => computeArithmetic(type, a, b)).toThrowErrorWithSubstr(expectedError)
@@ -118,9 +99,7 @@ describe('computeArithmetic (group: #ZKS, #utils)', () => {
 
   test.each(getInputData('input_3way_uniform.csv'))
   ('Generated 3-way uniform: %s',
-    (
-      { type, a, b, expectedError, expectedResult }
-    ) => {
+    ({ type, a, b, expectedError, expectedResult }) => {
       if (expectedError) {
         // act and assert
         expect(() => computeArithmetic(type, a, b)).toThrowErrorWithSubstr(expectedError)
