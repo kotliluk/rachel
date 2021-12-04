@@ -40,7 +40,8 @@
     "start": "react-scripts start",
     "build": "set 'GENERATE_SOURCEMAP=false' && react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "test:all": "react-scripts test --watchAll",
+    "test:ci": "react-scripts test --ci --watchAll",
     "docs": "rimraf docs && jsdoc src -r -a public -c jsdoc.json"
   },
   "eslintConfig": {
