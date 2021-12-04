@@ -1,4 +1,4 @@
-name: main-ci-cd
+name: CI/CD
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [ 12.x ]
 
     steps:
     - name: Checkout repository
@@ -34,11 +34,12 @@ jobs:
       run: npm install
 
   test:
+    needs: [ prepare ]
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [ 12.x ]
 
     steps:
     - name: Checkout repository
@@ -57,35 +58,37 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
 
     - name: Run the tests
-      run: npm test
+      run: npm run test:ci
 
-  build:
-    runs-on: ubuntu-latest
+  # build:
+  #   needs: [ prepare, test ]
+  #   runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [12.x]
+  #   strategy:
+  #     matrix:
+  #       node-version: [ 12.x ]
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+  #   steps:
+  #   - name: Checkout repository
+  #     uses: actions/checkout@v2
 
-    - name: Set up Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
+  #   - name: Set up Node.js ${{ matrix.node-version }}
+  #     uses: actions/setup-node@v1
+  #     with:
+  #       node-version: ${{ matrix.node-version }}
 
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: |
-          **/node_modules
-        key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+  #   - name: Cache dependencies
+  #     uses: actions/cache@v2
+  #     with:
+  #       path: |
+  #         **/node_modules
+  #       key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
 
-    - name: Build
-      run: npm run build
+  #   - name: Build
+  #     run: npm run build
 
   deploy:
+    needs: [ prepare, test ]
     runs-on: ubuntu-latest
 
     strategy:
