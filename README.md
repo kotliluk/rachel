@@ -1,5 +1,7 @@
 # Rachel
 
+![CI/CD status](https://github.com/kotliluk/rachel/workflows/CI%2FCD/badge.svg)
+
 ## About
 
 Rachel is an evaluator and syntax checker for relational algebra (RA). It provides both
