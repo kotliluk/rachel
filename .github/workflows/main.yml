@@ -34,6 +34,7 @@ jobs:
       run: npm install
 
   test:
+    needs: [ prepare ]
     runs-on: ubuntu-latest
 
     strategy:
@@ -60,6 +61,7 @@ jobs:
       run: npm test
 
   build:
+    needs: [ test ]
     runs-on: ubuntu-latest
 
     strategy:
@@ -86,6 +88,7 @@ jobs:
       run: npm run build
 
   deploy:
+    needs: [ test ]
     runs-on: ubuntu-latest
 
     strategy:
