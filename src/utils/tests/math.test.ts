@@ -5,7 +5,7 @@ describe('mod', () => {
         // arrange
         const n = 0;
         const m = 2;
-        const expected = 1;
+        const expected = 0;
         // act
         const actual = mod(n, m);
         // assert
