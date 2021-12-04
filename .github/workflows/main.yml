@@ -67,7 +67,7 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
 
     - name: Run the tests
-      run: npm run test:ci
+      run: npm test
 
   # build:
   #   needs: [ test ]
