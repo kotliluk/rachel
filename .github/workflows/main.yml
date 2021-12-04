@@ -10,14 +10,18 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [ 12.x ]
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Node.js
+    - name: Set up Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
-        node-version: 12.x
+        node-version: ${{ matrix.node-version }}
 
     - name: Cache dependencies
       uses: actions/cache@v2
@@ -33,14 +37,18 @@ jobs:
     # needs: [ prepare ]
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [ 12.x ]
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Node.js
+    - name: Set up Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
-        node-version: 12.x
+        node-version: ${{ matrix.node-version }}
 
     - name: Cache dependencies
       uses: actions/cache@v2
@@ -49,25 +57,25 @@ jobs:
           **/node_modules
         key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
 
-    - name: Install dependencies
-      run: npm install
-
     - name: Run the tests
-      run: npm test
+      run: npm run test:ci
 
   # build:
   #   needs: [ prepare, test ]
   #   runs-on: ubuntu-latest
 
+  #   strategy:
+  #     matrix:
+  #       node-version: [ 12.x ]
 
   #   steps:
   #   - name: Checkout repository
   #     uses: actions/checkout@v2
 
-    # - name: Set up Node.js
-    #   uses: actions/setup-node@v1
-    #   with:
-    #     node-version: 12.x
+  #   - name: Set up Node.js ${{ matrix.node-version }}
+  #     uses: actions/setup-node@v1
+  #     with:
+  #       node-version: ${{ matrix.node-version }}
 
   #   - name: Cache dependencies
   #     uses: actions/cache@v2
@@ -83,14 +91,18 @@ jobs:
     # needs: [ prepare, test ]
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [12.x]
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Node.js
+    - name: Set up Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
-        node-version: 12.x
+        node-version: ${{ matrix.node-version }}
 
     - name: Cache dependencies
       uses: actions/cache@v2
@@ -98,9 +110,6 @@ jobs:
         path: |
           **/node_modules
         key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-
-    - name: Install dependencies
-      run: npm install
 
     # - name: Deploy
     #   run: |
