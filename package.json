@@ -39,8 +39,9 @@
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "set 'GENERATE_SOURCEMAP=false' && react-scripts build",
-    "test": "react-scripts test --watchAll",
-    "test:new": "react-scripts test",
+    "test": "react-scripts test",
+    "test:all": "react-scripts test --watchAll",
+    "test:ci": "react-scripts test --ci --watchAll",
     "docs": "rimraf docs && jsdoc src -r -a public -c jsdoc.json"
   },
   "eslintConfig": {
