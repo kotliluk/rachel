@@ -10,18 +10,14 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [ 12.x ]
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Node.js ${{ matrix.node-version }}
+    - name: Set up Node.js
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 12.x
 
     - name: Cache dependencies
       uses: actions/cache@v2
@@ -37,18 +33,14 @@ jobs:
     needs: [ prepare ]
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [ 12.x ]
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Node.js ${{ matrix.node-version }}
+    - name: Set up Node.js
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 12.x
 
     - name: Cache dependencies
       uses: actions/cache@v2
@@ -58,24 +50,21 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
 
     - name: Run the tests
-      run: npm run test:ci
+      run: npm test
 
   # build:
   #   needs: [ prepare, test ]
   #   runs-on: ubuntu-latest
 
-  #   strategy:
-  #     matrix:
-  #       node-version: [ 12.x ]
 
   #   steps:
   #   - name: Checkout repository
   #     uses: actions/checkout@v2
 
-  #   - name: Set up Node.js ${{ matrix.node-version }}
-  #     uses: actions/setup-node@v1
-  #     with:
-  #       node-version: ${{ matrix.node-version }}
+    # - name: Set up Node.js
+    #   uses: actions/setup-node@v1
+    #   with:
+    #     node-version: 12.x
 
   #   - name: Cache dependencies
   #     uses: actions/cache@v2
