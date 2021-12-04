@@ -1,4 +1,4 @@
-name: CI/CD
+name: main-ci-cd
 
 on:
   push:
@@ -50,7 +50,6 @@ jobs:
   test:
     needs: [ prepare ]
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
