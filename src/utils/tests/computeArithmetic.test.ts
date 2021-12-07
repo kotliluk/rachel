@@ -1,7 +1,7 @@
 import * as fs from 'fs'
-import { ComputingOperatorType } from '../../vetree/computingOperator'
-import { ColumnContent } from '../../relation/columnType'
-import { computeArithmetic } from '../computeArithmetic'
+import {ComputingOperatorType} from '../../vetree/computingOperator'
+import {ColumnContent} from '../../relation/columnType'
+import {computeArithmetic} from '../computeArithmetic'
 
 
 interface TestInput {
@@ -10,6 +10,18 @@ interface TestInput {
   b: ColumnContent,
   expectedError: string | undefined,
   expectedResult: number | null,
+}
+
+const getComputingOperatorType = (str: string): ComputingOperatorType => {
+  switch (str) {
+    case 'plus':
+    case 'minus':
+    case 'division':
+    case 'multiplication':
+      return ComputingOperatorType[str]
+    default:
+      throw Error('Unexpected computing operator: ' + str)
+  }
 }
 
 const getColumnContent = (str: string): ColumnContent => {
@@ -53,13 +65,15 @@ const getExpectedError = (str: string): string | undefined => {
 
 const getInputData = (file: string): TestInput[] => {
   return fs.readFileSync('test_data/computeArithmetic/' + file,'utf8')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
     .split('\n')
     .slice(1)
     .filter(line => line.trim().length !== 0)
     .map(line => {
       const params = line.split(',')
       return {
-        type: params[0] as ComputingOperatorType,
+        type: getComputingOperatorType(params[0]),
         a: getColumnContent(params[1]),
         b: getColumnContent(params[2]),
         expectedError: getExpectedError(params[3]),

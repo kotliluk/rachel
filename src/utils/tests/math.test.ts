@@ -10,6 +10,8 @@ interface TestInput {
 
 const getInputData = (): TestInput[] => {
   return fs.readFileSync('test_data/math/input.csv','utf8')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
     .split('\n')
     .slice(1)
     .filter(line => line.trim().length !== 0)

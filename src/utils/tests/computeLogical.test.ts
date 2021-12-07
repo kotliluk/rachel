@@ -46,6 +46,8 @@ const getExpectedError = (str: string): string | undefined => {
 
 const getInputData = (file: string): TestInput[] => {
   return fs.readFileSync('test_data/computeLogical/' + file,'utf8')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
     .split('\n')
     .slice(1)
     .filter(line => line.trim().length !== 0)
