@@ -3,8 +3,6 @@ name: CI/CD
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
   prepare:
@@ -30,14 +28,8 @@ jobs:
       with:
         node-version: 12.x
 
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: |
-          **/node_modules
-        key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-
-    - name: Cache dependencies
+    - name: Try to get cached dependencies
+      id: cache
       uses: actions/cache@v2
       with:
         path: |
@@ -45,11 +37,13 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
 
     - name: Install dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
       run: npm install
 
   test:
-    # needs: [ prepare ]
+    needs: [ prepare ]
     runs-on: ubuntu-latest
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -66,34 +60,8 @@ jobs:
           **/node_modules
         key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
 
-    - name: Install dependencies
-      run: npm install
-
     - name: Run the tests
       run: npm test
-
-  # build:
-  #   needs: [ test ]
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #   - name: Checkout repository
-  #     uses: actions/checkout@v2
-
-  #   - name: Set up Node.js
-  #     uses: actions/setup-node@v1
-  #     with:
-  #       node-version: 12.x
-
-  #   - name: Cache dependencies
-  #     uses: actions/cache@v2
-  #     with:
-  #       path: |
-  #         **/node_modules
-  #       key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-
-  #   - name: Build
-  #     run: npm run build
 
   deploy:
     needs: [ test ]
