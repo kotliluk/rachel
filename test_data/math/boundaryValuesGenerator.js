@@ -1,6 +1,8 @@
 const fs = require('fs')
 
 
+process.chdir(__dirname)
+
 const expectedResults = [
   ['NaN', 'NaN'],
   ['NaN', '0'],
@@ -45,7 +47,10 @@ const processOrig = (orig, result) => {
   const resultLines = []
 
   // loads original file
-  const origLines = fs.readFileSync(orig, 'utf8').split('\n')
+  const origLines = fs.readFileSync(orig,'utf8')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .split('\n')
 
   // adds param names line
   resultLines.push(origLines[0] + ',expected')

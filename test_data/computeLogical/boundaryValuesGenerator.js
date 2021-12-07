@@ -1,6 +1,8 @@
 const fs = require('fs')
 
 
+process.chdir(__dirname)
+
 const expectedResults = [
   // type = and
   [
@@ -83,7 +85,10 @@ const processOrig = (orig, result) => {
   const resultLines = []
 
   // loads original file
-  const origLines = fs.readFileSync(orig,'utf8').split('\n')
+  const origLines = fs.readFileSync(orig,'utf8')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .split('\n')
 
   // adds param names line
   resultLines.push(origLines[0] + ',expected')
@@ -106,6 +111,6 @@ const processOrig = (orig, result) => {
   fs.writeFileSync(result, resultLines.join('\n'))
 }
 
-// processOrig('orig_2way_uniform.csv', 'input_2way_uniform.csv')
-// processOrig('orig_2way_mixed.csv', 'input_2way_mixed.csv')
-// processOrig('orig_3way_uniform.csv', 'input_3way_uniform.csv')
+processOrig('orig_2way_uniform.csv', 'input_2way_uniform.csv')
+processOrig('orig_2way_mixed.csv', 'input_2way_mixed.csv')
+processOrig('orig_3way_uniform.csv', 'input_3way_uniform.csv')
