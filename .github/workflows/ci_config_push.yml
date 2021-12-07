@@ -1,4 +1,4 @@
-name: CI/CD
+name: Push to configure-ci
 
 on:
   push:
