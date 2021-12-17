@@ -40,6 +40,7 @@ describe('mod (group: #ZKS, #utils)', () => {
     { n: 7, m: 5, expected: 2 },
     { n: -1, m: 2, expected: 1 },
     { n: -4, m: 2, expected: 0 },
+    { n: -7, m: 3, expected: 2 },
   ]
 
   test.each(testInputs)('Manual: %s', ({ n, m, expected }) => {
