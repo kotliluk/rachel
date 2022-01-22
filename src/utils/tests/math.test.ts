@@ -1,69 +1,52 @@
-import {mod} from "../math";
+import { mod } from '../math'
+import * as fs from 'fs'
 
-describe('mod', () => {
-    test('0 % 2 = 0', () => {
-        // arrange
-        const n = 0;
-        const m = 2;
-        const expected = 0;
-        // act
-        const actual = mod(n, m);
-        // assert
-        expect(actual).toBe(expected);
-    });
 
-    test('1 % 2 = 1', () => {
-        // arrange
-        const n = 1;
-        const m = 2;
-        const expected = 1;
-        // act
-        const actual = mod(n, m);
-        // assert
-        expect(actual).toBe(expected);
-    });
+interface TestInput {
+  n: number
+  m: number
+  expected: number
+}
 
-    test('2 % 2 = 0', () => {
-        // arrange
-        const n = 2;
-        const m = 2;
-        const expected = 0;
-        // act
-        const actual = mod(n, m);
-        // assert
-        expect(actual).toBe(expected);
-    });
+const getInputData = (): TestInput[] => {
+  return fs.readFileSync('test_data/math/input.csv','utf8')
+    .replace(/\r\n/g, '\n')
+    .replace(/\r/g, '\n')
+    .split('\n')
+    .slice(1)
+    .filter(line => line.trim().length !== 0)
+    .map(line => {
+      const params = line.split(',')
+      return {
+        n: Number.parseFloat(params[0]),
+        m: Number.parseFloat(params[1]),
+        expected: Number.parseFloat(params[2]),
+      }
+    })
+}
 
-    test('7 % 5 = 2', () => {
-        // arrange
-        const n = 7;
-        const m = 5;
-        const expected = 2;
-        // act
-        const actual = mod(n, m);
-        // assert
-        expect(actual).toBe(expected);
-    });
+describe('mod (group: #utils)', () => {
+  test.each(getInputData())('Generated: %s', ({ n, m, expected }) => {
+    // act
+    const actual = mod(n, m)
+    // assert
+    expect(actual).toBe(expected)
+  })
 
-    test('-1 % 2 = 1', () => {
-        // arrange
-        const n = -1;
-        const m = 2;
-        const expected = 1;
-        // act
-        const actual = mod(n, m);
-        // assert
-        expect(actual).toBe(expected);
-    });
+  const testInputs: TestInput[] = [
+    { n: 0, m: 2, expected: 0 },
+    { n: 1, m: 2, expected: 1 },
+    { n: 2, m: 2, expected: 0 },
+    { n: 7, m: 5, expected: 2 },
+    { n: -1, m: 2, expected: 1 },
+    { n: -4, m: 2, expected: 0 },
+    { n: -7, m: 3, expected: 2 },
+  ]
 
-    test('-4 % 2 = 0', () => {
-        // arrange
-        const n = -4;
-        const m = 2;
-        const expected = 0;
-        // act
-        const actual = mod(n, m);
-        // assert
-        expect(actual).toBe(expected);
-    });
-});
+  test.each(testInputs)('Manual: %s', ({ n, m, expected }) => {
+    // act
+    const actual = mod(n, m)
+    // assert
+    expect(actual).toBe(expected)
+  })
+})

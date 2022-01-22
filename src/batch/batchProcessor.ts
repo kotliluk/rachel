@@ -1,12 +1,12 @@
-import {FileDialog} from "../utils/fileDialog";
-import JSZip from "jszip";
-import {saveAs} from "file-saver";
-import {Relation} from "../relation/relation";
-import {isProjectObject, Project} from "../project/project";
-import {ExprParser} from "../expression/exprParser";
-import {StoredRelation, StoredRelationData} from "../relation/storedRelation";
-import {Expression} from "../expression/expression";
-import {MessageBox} from "../components/messageBox";
+import { FileDialog } from '../utils/fileDialog'
+import JSZip from 'jszip'
+import { saveAs } from 'file-saver'
+import { Relation } from '../relation/relation'
+import { isProjectObject, Project } from '../project/project'
+import { ExprParser } from '../expression/exprParser'
+import { StoredRelation, StoredRelationData } from '../relation/storedRelation'
+import { Expression } from '../expression/expression'
+import { MessageBox } from '../components/messageBox'
 import {
   addOperations,
   binaryOperations,
@@ -14,8 +14,8 @@ import {
   operationsOfTree,
   totalOperations,
   unaryOperations,
-  zeroOperations
-} from "./operationsCount";
+  zeroOperations,
+} from './operationsCount'
 import {
   createCountOperationRule,
   createEachOperationRule,
@@ -26,9 +26,9 @@ import {
   OperationRule,
   QueryRule,
   ReportNameModifier,
-  TableRule
-} from "./configUtils";
-import {language} from "../language/language";
+  TableRule,
+} from './configUtils'
+import { language } from '../language/language'
 
 /**
  * Class for processing multiple input .rachel project files and generating their reports.
@@ -37,13 +37,13 @@ import {language} from "../language/language";
  */
 export class BatchProcessor {
 
-  private static loadType: "files" | "zip" = "zip";
-  private static resultFilename: string = "rachel-eval-results";
-  private static configurationFileName: string | null = null;
-  private static reportNameModifier: ReportNameModifier = identityReportNameModifier;
-  private static operationRules: OperationRule[] = [];
-  private static tableRules: TableRule[] = [];
-  private static queryRules: QueryRule[] = [];
+  private static loadType: 'files' | 'zip' = 'zip'
+  private static resultFilename = 'rachel-eval-results'
+  private static configurationFileName: string | null = null
+  private static reportNameModifier: ReportNameModifier = identityReportNameModifier
+  private static operationRules: OperationRule[] = []
+  private static tableRules: TableRule[] = []
+  private static queryRules: QueryRule[] = []
 
   /**
    * Opens file dialog and loads configuration from a JSON file.
@@ -51,54 +51,54 @@ export class BatchProcessor {
    * @return promise with string description of the loaded configuration
    * @public
    */
-  public static config(): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      FileDialog.openFile(".json").then(file => {
+  static async config (): Promise<string> {
+    return await new Promise<string>((resolve, reject) => {
+      FileDialog.openFile('.json').then(file => {
         if (file.text === null) {
-          return reject('No content read from the configuration file ' + file.name);
-        } else if (file.name.match(/\.json$/)) {
-          BatchProcessor.loadType = "zip";
-          BatchProcessor.configurationFileName = file.name;
-          BatchProcessor.reportNameModifier = identityReportNameModifier;
-          BatchProcessor.operationRules = [];
-          BatchProcessor.tableRules = [];
-          BatchProcessor.queryRules = [];
+          return reject('No content read from the configuration file ' + file.name)
+        } else if (/\.json$/.exec(file.name)) {
+          BatchProcessor.loadType = 'zip'
+          BatchProcessor.configurationFileName = file.name
+          BatchProcessor.reportNameModifier = identityReportNameModifier
+          BatchProcessor.operationRules = []
+          BatchProcessor.tableRules = []
+          BatchProcessor.queryRules = []
           try {
-            const config = JSON.parse(file.text);
-            let loaded = 0;
-            let skipped = 0;
+            const config = JSON.parse(file.text)
+            let loaded = 0
+            let skipped = 0
             for (const ruleName in config) {
-              const rule = config[ruleName];
+              const rule = config[ruleName]
               // sets loading type
-              if (ruleName === "loadType" && typeof rule === "string" && (rule === "zip" || rule === "files")) {
-                BatchProcessor.loadType = rule;
-                continue;
+              if (ruleName === 'loadType' && typeof rule === 'string' && (rule === 'zip' || rule === 'files')) {
+                BatchProcessor.loadType = rule
+                continue
               }
               // sets result zip file name
-              if (ruleName === "resultFilename" && typeof rule === "string") {
-                BatchProcessor.resultFilename = rule;
-                continue;
+              if (ruleName === 'resultFilename' && typeof rule === 'string') {
+                BatchProcessor.resultFilename = rule
+                continue
               }
               // sets result zip file name
-              if (ruleName === "reportName") {
-                BatchProcessor.reportNameModifier = createReportNameModifier(rule);
-                continue;
+              if (ruleName === 'reportName') {
+                BatchProcessor.reportNameModifier = createReportNameModifier(rule)
+                continue
               }
               if (BatchProcessor.createRule(ruleName, rule)) {
-                ++loaded;
+                ++loaded
               } else {
-                ++skipped;
+                ++skipped
               }
             }
-            return resolve(loaded + ' rules loaded from the configuration file, ' + skipped + ' skipped');
+            return resolve(loaded + ' rules loaded from the configuration file, ' + skipped + ' skipped')
           } catch (e) {
-            return reject('Invalid configuration file ' + file.name + ': ' + e);
+            return reject('Invalid configuration file ' + file.name + ': ' + e)
           }
         } else {
-          return reject('Unsupported type of the configuration file ' + file.name);
+          return reject('Unsupported type of the configuration file ' + file.name)
         }
-      });
-    });
+      })
+    })
   }
 
   /**
@@ -106,13 +106,13 @@ export class BatchProcessor {
    *
    * @return string information
    */
-  public static getConfigInfo(): string {
+  static getConfigInfo (): string {
     if (BatchProcessor.configurationFileName !== null) {
-      const msg = language().managementSection.batchConfigInfo;
-      return msg[0] + BatchProcessor.configurationFileName + msg[1] +
-        (BatchProcessor.operationRules.length + BatchProcessor.tableRules.length + BatchProcessor.queryRules.length) + msg[2];
+      const msg = language().managementSection.batchConfigInfo
+      return msg[0] + BatchProcessor.configurationFileName + msg[1]
+        + (BatchProcessor.operationRules.length + BatchProcessor.tableRules.length + BatchProcessor.queryRules.length) + msg[2]
     }
-    return language().managementSection.batchNoConfig;
+    return language().managementSection.batchNoConfig
   }
 
   /**
@@ -122,53 +122,53 @@ export class BatchProcessor {
    * @param ruleDef rule definition from the configuration JSON file
    * @return true if the rule was created successfully
    */
-  private static createRule(ruleName: string, ruleDef: any): boolean {
-    const fields: string[] = [];
+  private static createRule (ruleName: string, ruleDef: any): boolean {
+    const fields: string[] = []
     for (const field in ruleDef) {
-      fields.push(field);
+      fields.push(field)
     }
     if (fields.length === 0) {
-      console.log("Rule " + ruleName + " has no fields specified.");
-      return false;
+      console.log('Rule ' + ruleName + ' has no fields specified.')
+      return false
     }
     // case of an operation rule
-    if (fields.indexOf("operations") > -1) {
-      const ops: string[] = Array.isArray(ruleDef.operations) ? ruleDef.operations : [ruleDef.operations];
+    if (fields.includes('operations')) {
+      const ops: string[] = Array.isArray(ruleDef.operations) ? ruleDef.operations : [ruleDef.operations]
       // creates a rule for a total count of all listed operations together
-      if (fields.indexOf("count") > -1) {
-        const rule = createCountOperationRule(ruleDef, ops);
+      if (fields.includes('count')) {
+        const rule = createCountOperationRule(ruleDef, ops)
         if (rule !== undefined) {
-          BatchProcessor.operationRules.push(rule);
-          return true;
+          BatchProcessor.operationRules.push(rule)
+          return true
         }
       }
       // creates a rule for a count of each listed operation
-      else if (fields.indexOf("each") > -1) {
-        const rule = createEachOperationRule(ruleDef, ops);
+      else if (fields.includes('each')) {
+        const rule = createEachOperationRule(ruleDef, ops)
         if (rule !== undefined) {
-          BatchProcessor.operationRules.push(rule);
-          return true;
+          BatchProcessor.operationRules.push(rule)
+          return true
         }
       }
-      return false;
+      return false
     }
     // case of a table rule
-    else if (fields.indexOf("tables") > -1) {
-      const rule = createTableRule(ruleDef);
+    else if (fields.includes('tables')) {
+      const rule = createTableRule(ruleDef)
       if (rule !== undefined) {
-        BatchProcessor.tableRules.push(rule);
-        return true;
+        BatchProcessor.tableRules.push(rule)
+        return true
       }
     }
     // case of a query rule
-    else if (fields.indexOf("queries") > -1) {
-      const rule = createQueryRule(ruleDef);
+    else if (fields.includes('queries')) {
+      const rule = createQueryRule(ruleDef)
       if (rule !== undefined) {
-        BatchProcessor.queryRules.push(rule);
-        return true;
+        BatchProcessor.queryRules.push(rule)
+        return true
       }
     }
-    return false;
+    return false
   }
 
   /**
@@ -179,32 +179,32 @@ export class BatchProcessor {
    *
    * @public
    */
-  public static process(): void {
-    if (BatchProcessor.loadType === "files") {
-      FileDialog.openFiles(".rachel").then(files => BatchProcessor.processFiles(files));
+  static process (): void {
+    if (BatchProcessor.loadType === 'files') {
+      FileDialog.openFiles('.rachel').then(files => BatchProcessor.processFiles(files))
     } else {
       FileDialog.openZip()
-        .then(result => JSZip.loadAsync(result, {createFolders: true}))
+        .then(async result => await JSZip.loadAsync(result, { createFolders: true }))
         .then(zip => {
           // final array of unzipped files
-          const files: { name: string, text: string }[] = [];
+          const files: { name: string, text: string }[] = []
           // uses only .rachel files in a ZIP
-          const zippedFiles = Object.values(zip.files).filter(file => !file.dir);
-          const count = zippedFiles.length;
+          const zippedFiles = Object.values(zip.files).filter(file => !file.dir)
+          const count = zippedFiles.length
           zippedFiles.forEach(zippedFile => {
-            zippedFile.async("string").then(text => {
-              files.push({name: zippedFile.name, text});
+            zippedFile.async('string').then(text => {
+              files.push({ name: zippedFile.name, text })
               // if all files are unzipped, processes them
               if (files.length === count) {
-                BatchProcessor.processFiles(files);
+                BatchProcessor.processFiles(files)
               }
-            });
-          });
+            })
+          })
         })
         .catch(_ => {
-          console.warn("Error in loading a zip file.");
-          MessageBox.error("Error in loading a zip file.");
-        });
+          console.warn('Error in loading a zip file.')
+          MessageBox.error('Error in loading a zip file.')
+        })
     }
   }
 
@@ -213,13 +213,13 @@ export class BatchProcessor {
    *
    * @param files loaded textual files expected to be .rachel project files
    */
-  private static processFiles = (files: { name: string, text: string | null }[]) => {
-    console.log(files.length + ' files loaded to BatchProcessor');
-    console.time("Batch duration");
+  private static readonly processFiles = (files: { name: string, text: string | null }[]) => {
+    console.log(files.length + ' files loaded to BatchProcessor')
+    console.time('Batch duration')
 
-    let reports: { name: string, text: string }[] = [];
-    let processed: number = 0;
-    let skipped: number = 0;
+    const reports: { name: string, text: string }[] = []
+    let processed = 0
+    let skipped = 0
 
     /**
      * Processes a file on the given index and calls the processing of the next file.
@@ -227,45 +227,45 @@ export class BatchProcessor {
      */
     const processNext = (i: number) => {
       if (i >= files.length) {
-        return downloadReports();
+        return downloadReports()
       }
-      const file = files[i];
-      const name = BatchProcessor.reportNameModifier(file.name);
+      const file = files[i]
+      const name = BatchProcessor.reportNameModifier(file.name)
       if (file.text === null) {
-        skipped += 1;
-        console.warn('Null read from ' + file.name);
-      } else if (file.name.match(/\.rachel$/)) {
-        // @ts-ignore - file.text cannot be null now
-        const report = BatchProcessor.processFile(file, name);
-        reports.push(report);
-        processed += 1;
+        skipped += 1
+        console.warn('Null read from ' + file.name)
+      } else if (/\.rachel$/.exec(file.name)) {
+        // @ts-ignore
+        const report = BatchProcessor.processFile(file, name)
+        reports.push(report)
+        processed += 1
       } else {
-        skipped += 1;
-        console.warn('Unsupported filetype: ' + file.name);
+        skipped += 1
+        console.warn('Unsupported filetype: ' + file.name)
       }
-      MessageBox.message("Batch in progress... " + (processed + skipped) + "/" + files.length);
-      setTimeout(() => processNext(i + 1), 0);
+      MessageBox.message('Batch in progress... ' + (processed + skipped) + '/' + files.length)
+      setTimeout(() => processNext(i + 1), 0)
     }
 
     /**
      * Downloads created reports.
      */
     const downloadReports = () => {
-      const zip: JSZip = JSZip();
+      const zip: JSZip = JSZip()
       reports.forEach(report => {
-        zip.file(report.name, report.text);
+        zip.file(report.name, report.text)
       })
-      zip.generateAsync({type: "blob"}).then(content => {
-        saveAs(content, BatchProcessor.resultFilename + ".zip");
-        console.log("Batch finished: " + processed + " files processed, " + skipped + " skipped.");
-        MessageBox.message("Batch finished: " + processed + " files processed, " + skipped + " skipped.");
+      zip.generateAsync({ type: 'blob' }).then(content => {
+        saveAs(content, BatchProcessor.resultFilename + '.zip')
+        console.log('Batch finished: ' + processed + ' files processed, ' + skipped + ' skipped.')
+        MessageBox.message('Batch finished: ' + processed + ' files processed, ' + skipped + ' skipped.')
       }).catch(err => {
-        MessageBox.error("Batch results saving error: " + err.message);
-      });
-      console.timeEnd("Batch duration");
+        MessageBox.error('Batch results saving error: ' + err.message)
+      })
+      console.timeEnd('Batch duration')
     }
 
-    processNext(0);
+    processNext(0)
   }
 
   /**
@@ -277,74 +277,73 @@ export class BatchProcessor {
    * @param name name of the generated report
    * @throws SyntaxError when the given file content is not a valid JSON
    */
-  private static processFile = (file: { name: string, text: string }, name: string): { name: string, text: string } => {
-    let project: Project;
+  private static readonly processFile = (file: { name: string, text: string }, name: string): { name: string, text: string } => {
+    let project: Project
     try {
-      project = JSON.parse(file.text);
-      const status = isProjectObject(project);
-      if (status !== "OK") {
-        return {name, text: "Invalid JSON file: " + status};
+      project = JSON.parse(file.text)
+      const status = isProjectObject(project)
+      if (status !== 'OK') {
+        return { name, text: 'Invalid JSON file: ' + status }
       }
-    }
-    catch (e) {
-      console.warn('Batch processing error in file ' + file.name + ': ' + e);
-      return {name, text: "Invalid JSON file: " + e};
+    } catch (e) {
+      console.warn('Batch processing error in file ' + file.name + ': ' + e)
+      return { name, text: 'Invalid JSON file: ' + e }
     }
 
-    const relations: Map<string, Relation> = BatchProcessor.parseRelations(project.relations, project.nullValuesSupport);
-    const exprParser: ExprParser = new ExprParser(relations, project.nullValuesSupport);
+    const relations: Map<string, Relation> = BatchProcessor.parseRelations(project.relations, project.nullValuesSupport)
+    const exprParser: ExprParser = new ExprParser(relations, project.nullValuesSupport)
 
-    const exprCount: number = project.expressions.length;
-    const reports = project.expressions.map(e => BatchProcessor.processExpression(e, exprParser));
-    const ops: OperationsCount = addOperations(...reports.map(r => r.counts));
-    const errors: number = reports.reduce((agg, report) => agg + report.error, 0);
+    const exprCount: number = project.expressions.length
+    const reports = project.expressions.map(e => BatchProcessor.processExpression(e, exprParser))
+    const ops: OperationsCount = addOperations(...reports.map(r => r.counts))
+    const errors: number = reports.reduce((agg, report) => agg + report.error, 0)
 
     return {
       name,
-      text: BatchProcessor.reportHeader(file.name, project.relations.length, exprCount, errors, ops, project.nullValuesSupport) +
-        BatchProcessor.formatRelations(project.relations) +
-        sectionLine + "\n\nQUERIES (" + exprCount + ")\n\n" +
-        reports.map(r => r.text).join('') + sectionLine + '\n\n'
-    };
+      text: BatchProcessor.reportHeader(file.name, project.relations.length, exprCount, errors, ops, project.nullValuesSupport)
+        + BatchProcessor.formatRelations(project.relations)
+        + sectionLine + '\n\nQUERIES (' + exprCount + ')\n\n'
+        + reports.map(r => r.text).join('') + sectionLine + '\n\n',
+    }
   }
 
   /**
    * Creates Relation representation for given StoredRelationData array.
    */
-  private static parseRelations(storedData: StoredRelationData[], nullValuesSupport: boolean): Map<string, Relation> {
-    const map: Map<string, Relation> = new Map();
+  private static parseRelations (storedData: StoredRelationData[], nullValuesSupport: boolean): Map<string, Relation> {
+    const map: Map<string, Relation> = new Map()
     storedData.forEach(data => {
       try {
-        const storedRelation: StoredRelation = StoredRelation.fromData(data, nullValuesSupport);
+        const storedRelation: StoredRelation = StoredRelation.fromData(data, nullValuesSupport)
         if (storedRelation.isValid()) {
-          map.set(storedRelation.getName(), storedRelation.createRelation());
+          map.set(storedRelation.getName(), storedRelation.createRelation())
         }
       } catch (ignored) {
       }
-    });
-    return map;
+    })
+    return map
   }
 
   /**
    * Processes the given expression in the context of the given parser. Returns a formatted expression and its result
    * (or error), a count of used RA operations and 0/1 error indicator.
    */
-  private static processExpression = (expr: Expression, parser: ExprParser): { text: string, counts: OperationsCount, error: number } => {
+  private static readonly processExpression = (expr: Expression, parser: ExprParser): { text: string, counts: OperationsCount, error: number } => {
     try {
-      const evaluationTree = parser.parse(expr.text);
-      const counts: OperationsCount = operationsOfTree(evaluationTree);
-      const relation: Relation = evaluationTree.getResult();
+      const evaluationTree = parser.parse(expr.text)
+      const counts: OperationsCount = operationsOfTree(evaluationTree)
+      const relation: Relation = evaluationTree.getResult()
       return {
         text: contentLine + '\n' + expr.name + '\n\n' + expr.text + '\n\n' + relation.contentString() + '\n\n\n',
         counts: counts,
-        error: 0
-      };
+        error: 0,
+      }
     } catch (err) {
       return {
         text: contentLine + '\n' + expr.name + '\n\n' + expr.text + '\n\nERROR: ' + err.message + '\n\n\n',
         counts: zeroOperations(),
-        error: 1
-      };
+        error: 1,
+      }
     }
   }
 
@@ -359,49 +358,51 @@ export class BatchProcessor {
    * @param ops count of operations
    * @param nvs whether null values are supported
    */
-  private static reportHeader = (name: string, rels: number, exprs: number, errs: number, ops: OperationsCount, nvs: boolean): string => {
-    const total: number = totalOperations(ops);
-    const binary: number = binaryOperations(ops);
-    const unary: number = unaryOperations(ops);
-    let ruleErrors: string[] = BatchProcessor.operationRules.map(rule => rule(ops));
-    ruleErrors.push(...BatchProcessor.tableRules.map(rule => rule(rels)));
-    ruleErrors.push(...BatchProcessor.queryRules.map(rule => rule(exprs)));
-    const rulesCount = ruleErrors.length;
-    ruleErrors = ruleErrors.filter(msg => msg !== "OK");
-    const errorsCount = ruleErrors.length;
-    return sectionLine + '\n\nRachel project report from ' + new Date().toLocaleString('cs-CZ') + '\nSource: ' +
-      name + '\n\n' + sectionLine + '\n\nQueries: ' + exprs + '    Invalid queries: ' + errs + '\n\n' +
-      (errorsCount === 0 ? 'No errors' : 'Errors (' + errorsCount + ' errors/' + rulesCount + ' rules):\n' +
-        ruleErrors.map((err, i) => `${i + 1}) ${err}`).join('\n')) + '\n\n' +
-      'Used operations (' + total + ' in total: ' + binary + ' binary, ' + unary + ' unary):\n' +
-      '    Selection: ' + ops.selection + '\n' +
-      '    Projection: ' + ops.projection + '\n' +
-      '    Rename: ' + ops.rename + '\n\n' +
-      '    Union: ' + ops.union + '\n' +
-      '    Intersection: ' + ops.intersection + '\n' +
-      '    Difference: ' + ops.difference + '\n\n' +
-      '    Natural join: ' + ops.natural + '\n' +
-      '    Cartesian product: ' + ops.cartesian + '\n' +
-      '    Semijoin: ' + ops.semijoin + '\n' +
-      '    Antijoin: ' + ops.antijoin + '\n' +
-      '    Theta Join: ' + ops.thetaJoin + '\n' +
-      '    Theta Semijoin: ' + ops.thetaSemijoin + '\n\n' +
-      '    Outer Join: ' + ops.outerJoin + '\n\n' +
-      '    Division: ' + ops.division + '\n\n' +
-      'Null values ' + (nvs ? 'ALLOWED.\n\n' : 'FORBIDDEN.\n\n');
+  private static readonly reportHeader = (name: string, rels: number, exprs: number, errs: number, ops: OperationsCount, nvs: boolean): string => {
+    const total: number = totalOperations(ops)
+    const binary: number = binaryOperations(ops)
+    const unary: number = unaryOperations(ops)
+    let ruleErrors: string[] = BatchProcessor.operationRules.map(rule => rule(ops))
+    ruleErrors.push(...BatchProcessor.tableRules.map(rule => rule(rels)))
+    ruleErrors.push(...BatchProcessor.queryRules.map(rule => rule(exprs)))
+    const rulesCount = ruleErrors.length
+    ruleErrors = ruleErrors.filter(msg => msg !== 'OK')
+    const errorsCount = ruleErrors.length
+    return sectionLine + '\n\nRachel project report from ' + new Date().toLocaleString('cs-CZ') + '\nSource: '
+      + name + '\n\n' + sectionLine + '\n\nQueries: ' + exprs + '    Invalid queries: ' + errs + '\n\n'
+      + (errorsCount === 0
+        ? 'No errors'
+        : 'Errors (' + errorsCount + ' errors/' + rulesCount + ' rules):\n'
+        + ruleErrors.map((err, i) => `${i + 1}) ${err}`).join('\n')) + '\n\n'
+      + 'Used operations (' + total + ' in total: ' + binary + ' binary, ' + unary + ' unary):\n'
+      + '    Selection: ' + ops.selection + '\n'
+      + '    Projection: ' + ops.projection + '\n'
+      + '    Rename: ' + ops.rename + '\n\n'
+      + '    Union: ' + ops.union + '\n'
+      + '    Intersection: ' + ops.intersection + '\n'
+      + '    Difference: ' + ops.difference + '\n\n'
+      + '    Natural join: ' + ops.natural + '\n'
+      + '    Cartesian product: ' + ops.cartesian + '\n'
+      + '    Semijoin: ' + ops.semijoin + '\n'
+      + '    Antijoin: ' + ops.antijoin + '\n'
+      + '    Theta Join: ' + ops.thetaJoin + '\n'
+      + '    Theta Semijoin: ' + ops.thetaSemijoin + '\n\n'
+      + '    Outer Join: ' + ops.outerJoin + '\n\n'
+      + '    Division: ' + ops.division + '\n\n'
+      + 'Null values ' + (nvs ? 'ALLOWED.\n\n' : 'FORBIDDEN.\n\n')
   }
 
   /**
    * Returns formatted string for the given StoredRelationsData array.
    */
-  private static formatRelations = (storedData: StoredRelationData[]): string => {
+  private static readonly formatRelations = (storedData: StoredRelationData[]): string => {
     const inlines = storedData.map(data => {
-      return data.name + "(" + data.columnNames.join(", ") + ")\n"
-    }).join('');
-    return sectionLine + "\n\nTABLES (" + storedData.length + ")\n\n" + inlines + "\n" +
-      storedData.map(data => contentLine + "\n" + data.name + '\n\n' + StoredRelation.format(data)).join('');
+      return data.name + '(' + data.columnNames.join(', ') + ')\n'
+    }).join('')
+    return sectionLine + '\n\nTABLES (' + storedData.length + ')\n\n' + inlines + '\n'
+      + storedData.map(data => contentLine + '\n' + data.name + '\n\n' + StoredRelation.format(data)).join('')
   }
 }
 
-const sectionLine: string = "################################################################################";
-const contentLine: string = "--------------------------------------------------------------------------------";
+const sectionLine = '################################################################################'
+const contentLine = '--------------------------------------------------------------------------------'

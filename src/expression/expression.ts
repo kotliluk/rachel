@@ -4,18 +4,18 @@
  * @public
  */
 export interface Expression {
-    /**
+  /**
      * name of the expression
      * @type string
      * @public
      */
-    name: string,
-    /**
+  name: string
+  /**
      * text of the expression
      * @type string
      * @public
      */
-    text: string
+  text: string
 }
 
 /**
@@ -26,11 +26,11 @@ export interface Expression {
  * @category Expression
  * @public
  */
-export function isExpression(obj: any): boolean {
-    if (typeof obj !== "object") {
-        return false;
-    }
-    return ("name" in obj) && (typeof obj.name === "string") && ("text" in obj) && (typeof obj.text === "string");
+export function isExpression (obj: any): boolean {
+  if (typeof obj !== 'object') {
+    return false
+  }
+  return ('name' in obj) && (typeof obj.name === 'string') && ('text' in obj) && (typeof obj.text === 'string')
 }
 
 /**
@@ -41,6 +41,6 @@ export function isExpression(obj: any): boolean {
  * @category Expression
  * @public
  */
-export function copyExpression(exp: Expression): Expression {
-    return {name: exp.name, text: exp.text};
+export function copyExpression (exp: Expression): Expression {
+  return { name: exp.name, text: exp.text }
 }

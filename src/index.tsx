@@ -1,8 +1,8 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import * as serviceWorker from './serviceWorker';
-import {MainScreen} from "./components/mainScreen";
+import React from 'react'
+import ReactDOM from 'react-dom'
+import './index.css'
+import * as serviceWorker from './serviceWorker'
+import { MainScreen } from './components/mainScreen'
 
 /**
  * @license The software is Licensed under the MIT License
@@ -93,9 +93,9 @@ import {MainScreen} from "./components/mainScreen";
  */
 ReactDOM.render(
     <React.StrictMode>
-        <MainScreen/>
+      <MainScreen/>
     </React.StrictMode>,
     document.getElementById('root')
-);
+)
 
-serviceWorker.unregister();
+serviceWorker.unregister()

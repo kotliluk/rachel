@@ -1,33 +1,65 @@
-import {Row} from "../row";
-import {SupportedColumnType} from "../columnType";
+import { Row } from '../row'
+import {ColumnContent, SupportedColumnType} from '../columnType'
 
-let columns = new Map<string, SupportedColumnType>();
-columns.set("First", "string");
-columns.set("Second", "string");
-columns.set("Third", "number");
-let row = new Row(columns);
 
-test('is created correctly', () => {
-    expect(row.isFinished()).toBeFalsy(); // should not be finished after creation
+const columns = new Map<string, SupportedColumnType>()
+columns.set('First', 'string')
+columns.set('Second', 'number')
+let row = new Row(columns)
 
-    let added = [...row.getColumnNames()];
-    expect(added.length).toBe(3);
-    expect(added.indexOf("First") > -1).toBeTruthy();
-    expect(added.indexOf("Second") > -1).toBeTruthy();
-    expect(added.indexOf("Third") > -1).toBeTruthy();
+beforeEach(() => {
+  row = new Row(columns)
+})
 
-    expect(row.getValue("First")).toBeNull();
-    expect(row.getValue("Second")).toBeNull();
-    expect(row.getValue("Third")).toBeNull();
-});
+interface AddValueTestInput {
+  name: string,
+  value: ColumnContent,
+  expectedAdded: boolean,
+  expectedGotValue: ColumnContent | undefined,
+}
 
-test('adds values correctly', () => {
-    expect(row.addValue("First", "Some string")).toBeTruthy();
-    expect(row.addValue("First", "New string")).toBeTruthy();
-    expect(row.addValue("First", 5)).toBeFalsy(); // should not add a different type
-    expect(row.getValue("First")).toBe("New string");
-});
+describe('Row (group: #relation)', () => {
+  describe('is created correctly', () => {
+    test('should not be finished after creation', () => {
+      // assert
+      const finished = row.isFinished()
+      expect(finished).toBeFalsy()
+    })
 
-test('returns undefined for absent columns', () => {
-    expect(row.getValue("Absent")).toBeUndefined();
-});
+    test('should contain initial columns', () => {
+      const added = [...row.getColumnNames()]
+      expect(added)
+        .toHaveLength(2)
+        .toContain('First')
+        .toContain('Second')
+    })
+
+    test('should contain initial columns with null values', () => {
+      expect(row.getValue('First')).toBeNull()
+      expect(row.getValue('Second')).toBeNull()
+    })
+
+    test('should contain initial columns with correct types', () => {
+      expect(row.getType('First')).toBe('string')
+      expect(row.getType('Second')).toBe('number')
+    })
+  })
+
+  describe('adds values correctly', () => {
+    const testInputs: AddValueTestInput[] = [
+      {name: 'First', value: 'Some string', expectedAdded: true, expectedGotValue: 'Some string'},
+      {name: 'Second', value: 10.01, expectedAdded: true, expectedGotValue: 10.01},
+      {name: 'First', value: 10.01, expectedAdded: false, expectedGotValue: null},
+      {name: 'Third', value: 'abc', expectedAdded: false, expectedGotValue: undefined},
+    ]
+
+    test.each(testInputs)('%s', ({name, value, expectedAdded, expectedGotValue}) => {
+      // act
+      const actualAdded = row.addValue(name, value)
+      const actualGotValue = row.getValue(name)
+      // assert
+      expect(actualAdded).toBe(expectedAdded)
+      expect(actualGotValue).toBe(expectedGotValue)
+    })
+  })
+})
