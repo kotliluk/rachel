@@ -20,7 +20,7 @@ class IsToISMapTest extends ISToISMap {
 }
 
 
-describe('ISToISMap (group: #ZKS, #types)', () => {
+describe('ISToISMap (group: #types)', () => {
   describe('get', () => {
     test.each([
       // present string keys

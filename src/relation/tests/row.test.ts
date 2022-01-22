@@ -18,7 +18,7 @@ interface AddValueTestInput {
   expectedGotValue: ColumnContent | undefined,
 }
 
-describe('Row (group: #ZKS, #relation)', () => {
+describe('Row (group: #relation)', () => {
   describe('is created correctly', () => {
     test('should not be finished after creation', () => {
       // assert

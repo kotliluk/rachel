@@ -26,7 +26,7 @@ interface FakeEvalCorrectWhispersTestInput {
   expected: string[]
 }
 
-describe('ProjectionNode (group: #ZKS, #RATree)', () => {
+describe('ProjectionNode (group: #RATree)', () => {
   describe('eval', () => {
     test('projects valid columns correctly: [Wheels, Id]', () => {
       // arrange

@@ -25,7 +25,7 @@ const getInputData = (): TestInput[] => {
     })
 }
 
-describe('mod (group: #ZKS, #utils)', () => {
+describe('mod (group: #utils)', () => {
   test.each(getInputData())('Generated: %s', ({ n, m, expected }) => {
     // act
     const actual = mod(n, m)

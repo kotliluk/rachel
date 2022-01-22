@@ -27,7 +27,7 @@ interface SliceTestInput {
   end: number | undefined
 }
 
-describe('IndexedString (group: #ZKS, #types)', () => {
+describe('IndexedString (group: #types)', () => {
   describe('IndexedString.new creates expected string', () => {
     const newTestInputs: NewTestInput[] = [
       {

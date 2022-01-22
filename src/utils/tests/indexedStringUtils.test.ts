@@ -2,7 +2,7 @@ import { IndexedStringUtils } from '../indexedStringUtils'
 import { IndexedString } from '../../types/indexedString'
 
 
-describe('IndexedStringUtils (group: #ZKS, #utils)', () => {
+describe('IndexedStringUtils (group: #utils)', () => {
   describe('isWord', () => {
     describe('true for only-letter-string', () => {
       test.each(['Word', 'WordWord', 'aaaaWord', 'čřžšá', 'ŠČíáopL']

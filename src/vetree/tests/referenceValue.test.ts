@@ -43,7 +43,7 @@ interface EvalTestInputTypeOnly {
   wantedColumn: string
 }
 
-describe('ReferenceValue (group: #ZKS, #VETree)', () => {
+describe('ReferenceValue (group: #VETree)', () => {
   describe('eval', () => {
     describe('rows which contain wanted value', () => {
       const evalTestInputsWithExpected: EvalTestInputWithExpected[] = [

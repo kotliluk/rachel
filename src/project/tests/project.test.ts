@@ -22,7 +22,7 @@ const errMsg3 = 'The file must contain the field "expressions: Expression[]" of 
 const errMsg4 = 'The file must contain the field "nullValuesSupport: boolean"'
 const okMsg = 'OK'
 
-describe('Project (group: #ZKS, #project)', () => {
+describe('Project (group: #project)', () => {
   describe('isProjectObject', () => {
     test.each([
       {obj: undefined, expected: errMsg1},

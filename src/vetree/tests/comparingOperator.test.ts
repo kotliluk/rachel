@@ -26,7 +26,7 @@ interface EvalTestInputTypeOnly {
   typeStr: string
 }
 
-describe('ComparingOperator (group: #ZKS, #VETree)', () => {
+describe('ComparingOperator (group: #VETree)', () => {
   describe('eval', () => {
     const evalTestInputsWithExpected: EvalTestInputWithExpected[] = [
       { type: 'equal', typeStr: '==', expected: false },

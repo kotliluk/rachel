@@ -7,7 +7,7 @@ const getStoredRelation = (): StoredRelation => {
   return StoredRelation.new(name, true)
 }
 
-describe('StoredRelation (group: #ZKS, #relation)', () => {
+describe('StoredRelation (group: #relation)', () => {
   test('constructor creates one default column', () => {
     // arrange
     const expectedColumnNames = ['Column1']

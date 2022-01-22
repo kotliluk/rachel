@@ -39,7 +39,7 @@ interface JoinStringArraysTestInput {
   expected: string
 }
 
-describe('ErrorFactory (group: #ZKS, #error)', () => {
+describe('ErrorFactory (group: #error)', () => {
   describe('codeError', () => {
     const codeErrorTestInputs: CodeErrorTestInput[] = [
       {

@@ -36,7 +36,7 @@ const operations: OperationsCount = {
   thetaSemijoin: 1,
 }
 
-describe('ConfigUtils (group: #ZKS, #batch)', () => {
+describe('ConfigUtils (group: #batch)', () => {
   describe('createCountComparator', () => {
 
     const testInputs: CreateCountComparatorTestInput[] = [

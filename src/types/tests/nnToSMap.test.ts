@@ -19,7 +19,7 @@ class NNToSMapTest extends NNToSMap {
 }
 
 
-describe('NNToSMap (group: #ZKS, #types)', () => {
+describe('NNToSMap (group: #types)', () => {
   describe('get', () => {
     test.each([
       ...testInitData,

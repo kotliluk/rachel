@@ -14,7 +14,7 @@ beforeEach(() => {
   relation.addColumn('Second', 'number')
 })
 
-describe('Relation (group: #ZKS, #relation)', () => {
+describe('Relation (group: #relation)', () => {
   describe('addColumn', () => {
     test('adding columns should not finish the schema', () => {
       // assert

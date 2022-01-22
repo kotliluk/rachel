@@ -24,7 +24,7 @@ interface FakeEvalCorrectWhispersTestInput {
   expected: string[]
 }
 
-describe('SelectionNode (group: #ZKS, #RATree)', () => {
+describe('SelectionNode (group: #RATree)', () => {
   describe('eval', () => {
     describe('selects rows correctly', () => {
       test('(Id == 1)', () => {

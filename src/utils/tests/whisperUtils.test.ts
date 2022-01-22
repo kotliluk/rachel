@@ -2,7 +2,7 @@ import { getStartOfWordBeforeIndex } from '../whisperUtils'
 import { sortWhispers } from '../whisperUtils'
 
 
-describe('WhisperUtils (group: #ZKS, #utils)', () => {
+describe('WhisperUtils (group: #utils)', () => {
   describe('getStartOfWordBeforeIndex', () => {
     test.each([
       { str: 'Word', index: 0, expected: 0 },

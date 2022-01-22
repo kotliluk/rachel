@@ -125,7 +125,7 @@ const tree: RATreeNode = new AntijoinNode(  // ANTIJOIN 1
   )
 )
 
-describe('OperationsCount (group: #ZKS, #batch)', () => {
+describe('OperationsCount (group: #batch)', () => {
   describe('zeroOperations', () => {
     test('returns zeros for all operation counts', () => {
       // arrange
